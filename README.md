@@ -24,7 +24,7 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ### Generating Types
 
-For maximum type safety on the Supabase client api some configuration is needed. Follow [this](https://supabase.com/docs/reference/cli/supabase-link) for how to install the Supbase CLI.
+For maximum type safety on the Supabase API client some configuration is needed. Follow [this](https://supabase.com/docs/reference/cli/supabase-link) for how to install the Supbase CLI.
 
 <details><summary>Quick guide here</summary>
 
@@ -46,4 +46,4 @@ Once installed and configured, you are safe to run the npm script inside the pac
 npm run update-types
 ```
 
-This command will generate the appropirate types for your Supabase API client
+This command will generate the appropirate types for your Supabase API client. More info [here](https://supabase.com/docs/guides/api/generating-types) and [here](https://supabase.com/docs/reference/javascript/typescript-support)
