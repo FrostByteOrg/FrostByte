@@ -10,7 +10,7 @@ yarn dev
 pnpm dev
 ```
 
-Rename the `.env.example` to `.env` and fill in the variables
+Rename the `.env.example` to `.env.local` and fill in the variables
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
