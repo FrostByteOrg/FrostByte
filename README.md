@@ -46,4 +46,4 @@ Once installed and configured, you are safe to run the npm script inside the pac
 npm run update-types
 ```
 
-This command will generate the appropirate types for your Supabase API client. More info [here](https://supabase.com/docs/guides/api/generating-types) and [here](https://supabase.com/docs/reference/javascript/typescript-support)
+This command will generate the appropriate types for your Supabase API client. More info [here](https://supabase.com/docs/guides/api/generating-types) and [here](https://supabase.com/docs/reference/javascript/typescript-support)
