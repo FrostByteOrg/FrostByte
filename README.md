@@ -24,7 +24,7 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ### Generating Types
 
-For maximum type safety on the Supabase API client some configuration is needed. Follow [this](https://supabase.com/docs/reference/cli/supabase-link) for how to install the Supbase CLI.
+For maximum type safety on the Supabase API client some configuration is needed. Follow [this](https://supabase.com/docs/reference/cli/supabase-link) for how to install the Supabase CLI.
 
 <details><summary>Quick guide here</summary>
 
