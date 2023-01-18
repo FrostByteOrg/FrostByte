@@ -24,7 +24,9 @@ export default function Home() {
             Get started by editing&nbsp;
             <code className={styles.code}>pages/index.tsx</code>
           </p>
-          <h1 className="text-3xl font-bold underline">Hello world!</h1>
+          <h1 className="text-3xl font-bold text-frost-300">
+            Frost <h2 className="text-grey-400">Grey</h2>
+          </h1>
           <div>
             <a
               href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
