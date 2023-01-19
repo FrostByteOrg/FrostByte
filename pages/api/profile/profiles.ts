@@ -22,11 +22,13 @@ export default async function handler(
       if (error) res.status(409).json({ error });
 
       return profiles;
-    } catch (error: any) {
+    }
+    catch (error: any) {
       console.log(error);
       res.status(409).json({ error });
     }
-  } else {
+  }
+  else {
     res.setHeader('Allow', 'GET');
     res.status(405).end(`Method ${method} Not Allowed`);
   }
