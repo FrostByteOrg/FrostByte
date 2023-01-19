@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+package-lock.json
 /.pnp
 .pnp.js
 
@@ -16,7 +17,7 @@
 /build
 
 # misc
-.DS_Store 
+.DS_Store
 *.pem
 
 # debug
@@ -25,11 +26,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files 
+# local env files
 .env*.local
 
 # vercel
-.vercel 
+.vercel
 
 # typescript
 *.tsbuildinfo
