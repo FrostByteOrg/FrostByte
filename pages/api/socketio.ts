@@ -24,13 +24,13 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
           .select('*')
           .eq('id', serverId)
           .single()
-          .then(server => {
-            if (server.error) {
-              console.error(`Error adding ${user.username} to server ${serverId}: ${server.error}`);
+          .then(cursor => {
+            if (cursor.error) {
+              console.error(`Error adding ${user.username} to server ${serverId}: ${cursor.error}`);
               return;
             }
 
-            console.log(`User ${user.username} joined ${server.data.name}`);
+            console.log(`User ${user.username} joined ${cursor.data.name}`);
             // TODO: Build out a System channel/default channel to announce user joins. Discord defaults this to #general
             // socket.join(channel.id.toString());
             // socket.to(channel.id.toString()).emit('serverBroadcastsUserJoin', user, channel);
@@ -56,15 +56,15 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
             )
           `)
           .single()
-          .then((savedMessage) => {
-            if (savedMessage.error) {
-              console.error(savedMessage.error);
+          .then((cursor) => {
+            if (cursor.error) {
+              console.error(cursor.error);
               return;
             }
 
-            io.to(message.channelId.toString()).emit('serverBroadcastsUserSentMessage', savedMessage);
+            io.to(message.channelId.toString()).emit('serverBroadcastsUserSentMessage', cursor);
             // TODO: Sort out the relationship on this, we should only be returning a single channel/server_user object from the query
-            console.log(`[${savedMessage.data.server_users[0].nickname} @ ${savedMessage.data.channels[0].name}]: ${savedMessage.data.content}`);
+            console.log(`[${cursor.data.server_users[0].nickname} @ ${cursor.data.channels[0].name}]: ${cursor.data.content}`);
           });
       });
 
@@ -81,15 +81,15 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
             )
           `)
           .single()
-          .then((server_user) => {
-            if (server_user.error) {
-              console.error(server_user.error);
+          .then((cursor) => {
+            if (cursor.error) {
+              console.error(cursor.error);
               return;
             }
 
-            console.log(`User ${user.username} left ${server_user.data.servers!.name}`);
-            socket.leave(server_user.data.server_id.toString());
-            socket.to(server_user.data.server_id.toString()).emit('serverBroadcastsUserLeave', user, server_user.data.servers);
+            console.log(`User ${user.username} left ${cursor.data.servers!.name}`);
+            socket.leave(cursor.data.server_id.toString());
+            socket.to(cursor.data.server_id.toString()).emit('serverBroadcastsUserLeave', user, cursor.data.servers);
           });
       });
 
@@ -97,13 +97,13 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
         supabase
           .from('profiles')
           .select('username')
-          .then((username) => {
-            if (username.error) {
-              console.error(username.error);
+          .then((cursor) => {
+            if (cursor.error) {
+              console.error(cursor.error);
               return;
             }
 
-            console.log(`User ${username} is online.`);
+            console.log(`User ${cursor} is online.`);
           });
 
         socket.emit('serverBroadcastsUserConnected', userId);
@@ -113,13 +113,13 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
         supabase
           .from('profiles')
           .select('username')
-          .then((username) => {
-            if (username.error) {
-              console.error(username.error);
+          .then((cursor) => {
+            if (cursor.error) {
+              console.error(cursor.error);
               return;
             }
 
-            console.log(`User ${username} is offline.`);
+            console.log(`User ${cursor} is offline.`);
           });
 
         socket.emit('serverBroadcastsUserDisconnected', userId);
