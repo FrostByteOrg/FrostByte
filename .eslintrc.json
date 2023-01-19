@@ -16,6 +16,8 @@
       "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
       "indent": ["error", 2],
       "semi": ["error", "always"],
-      "quotes": ["error", "single"]
+      "quotes": ["error", "single"],
+      "@typescript-eslint/prefer-ts-expect-error": "warn",
+      "@typescript-eslint/ban-ts-comment": "error"
     }
 }
