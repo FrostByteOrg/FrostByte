@@ -1,3 +1,21 @@
 {
-  "extends": "next/core-web-vitals"
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": "next/core-web-vitals",
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+      "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
+      "indent": ["error", 2],
+      "semi": ["error", "always"],
+      "quotes": ["error", "single"]
+    }
 }
