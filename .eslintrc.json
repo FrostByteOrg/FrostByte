@@ -1,21 +1,20 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": "next/core-web-vitals",
-    "overrides": [
-    ],
-    "parserOptions": {
-        "ecmaVersion": "latest"
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-      "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
-      "indent": ["error", 2],
-      "semi": ["error", "always"],
-      "quotes": ["error", "single"]
-    }
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": "next/core-web-vitals",
+  "overrides": [],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
+    "indent": ["error", 2],
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"],
+    "@typescript-eslint/prefer-ts-expect-error": "warn",
+    "@typescript-eslint/ban-ts-comment": "error"
+  }
 }
