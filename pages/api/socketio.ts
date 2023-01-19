@@ -62,7 +62,7 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
               return;
             }
 
-            io.to(message.channelId.toString()).emit('serverBroadcastsUserSentMessage', cursor);
+            io.to(message.channelId.toString()).emit('serverBroadcastsUserSentMessage', cursor.data);
             // TODO: Sort out the relationship on this, we should only be returning a single channel/server_user object from the query
             console.log(`[${cursor.data.server_users[0].nickname} @ ${cursor.data.channels[0].name}]: ${cursor.data.content}`);
           });
