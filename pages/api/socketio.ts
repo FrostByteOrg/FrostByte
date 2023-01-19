@@ -35,8 +35,11 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
             });
 
             socket.on("userSendsMessage", (message) => {
-                supabase.from("channels")
-                    .insert()
+                supabase.from("messages")
+                    .insert({
+                        channel: message.channelId,
+
+                    })
                 prisma.message.create({
                     data: {
                         content: message.content,
