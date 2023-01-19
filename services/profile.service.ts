@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabaseClient';
 
 export async function getProfiles() {
-  return await supabase.from('profiles').select(`id, username`);
+  return await supabase.from('profiles').select('id, username');
 }
 
 type ProfilesResponse = Awaited<ReturnType<typeof getProfiles>>;

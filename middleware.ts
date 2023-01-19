@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname == '/login') return res;
 
   redirectUrl.pathname = '/login';
-  redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
+  redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname);
   return NextResponse.redirect(redirectUrl);
 }
 
