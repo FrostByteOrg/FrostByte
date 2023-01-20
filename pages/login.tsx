@@ -3,6 +3,7 @@ import Head from 'next/head';
 import styles from '@/styles/Login.module.css';
 import Auth from '@/components/Auth';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function Login() {
   const user = useUser();
@@ -20,9 +21,19 @@ export default function Login() {
 
       <main>
         <div
-          className={` ${styles.loginMD} items-center overflow-auto h-screen w-full`}
+          className={` ${styles.loginMD} items-center overflow-auto h-screen w-full `}
         >
-          <div className="col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full items-center justify-center bg-frost-300 ">
+          <div className="col-start-4 col-end-10 row-start-2 row-end-3 flex flex-col w-full h-screen items-center bg-gradient-to-t from-frost-300 to-frost-600 ">
+            <div className="basis-1/4 flex items-center relative">
+              <Image
+                className="md:hidden rounded-full shadow-2xl shadow-white "
+                src="/favicon.ico"
+                alt="Next.js Logo"
+                width={100}
+                height={37}
+                priority
+              />
+            </div>
             <Auth type={authType} setAuthType={setAuthType} />
           </div>
         </div>

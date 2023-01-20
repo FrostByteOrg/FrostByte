@@ -5,5 +5,9 @@ export default function Login({
 }: {
   setServerError: Dispatch<SetStateAction<string | null>>;
 }) {
-  return <form>Login</form>;
+  return (
+    <form className="flex flex-col bg-frost-800">
+      <div>Login</div>
+    </form>
+  );
 }
