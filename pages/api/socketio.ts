@@ -64,7 +64,7 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
 
             io.to(message.channelId.toString()).emit('serverBroadcastsUserSentMessage', cursor.data);
             // TODO: Sort out the relationship on this, we should only be returning a single channel/server_user object from the query
-            console.log(`[${cursor.data.server_users[0].nickname} @ ${cursor.data.channels[0].name}]: ${cursor.data.content}`);
+            console.log(`[${(cursor.data.server_users! as {nickname: string | null}[])[0].nickname} @ ${(cursor.data.channels as {name: string | null}).name}]: ${cursor.data.content}`);
           });
       });
 
@@ -87,7 +87,7 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
               return;
             }
 
-            console.log(`User ${user.username} left ${cursor.data.servers!.name}`);
+            console.log(`User ${user.username} left ${(cursor.data.servers as {created_at: string | null, id: number, name: string}[])[0].name}`);
             socket.leave(cursor.data.server_id.toString());
             socket.to(cursor.data.server_id.toString()).emit('serverBroadcastsUserLeave', user, cursor.data.servers);
           });
