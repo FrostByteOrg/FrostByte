@@ -1,10 +1,14 @@
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import Head from 'next/head';
+import styles from '@/styles/Login.module.css';
+import Auth from '@/components/Auth';
+import { useState } from 'react';
 
 export default function Login() {
   const user = useUser();
   const supabase = useSupabaseClient();
-  //
+  const [authType, setAuthType] = useState<'login' | 'register'>('login');
+
   return (
     <>
       <Head>
@@ -13,7 +17,16 @@ export default function Login() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      login page
+
+      <main>
+        <div
+          className={` ${styles.loginMD} items-center overflow-auto h-screen w-full`}
+        >
+          <div className="col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full items-center justify-center bg-frost-300 ">
+            <Auth type={authType} setAuthType={setAuthType} />
+          </div>
+        </div>
+      </main>
     </>
   );
 }

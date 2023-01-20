@@ -1,0 +1,10 @@
+@media only screen and (min-width: 640px) {
+  .loginMD {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(16px, 1fr)) repeat(6, minmax(0, 192px))
+      repeat(3, minmax(16px, 1fr));
+
+    grid-template-rows: minmax(48px, 1fr) minmax(768px, 1fr) minmax(48px, 1fr);
+  }
+}
