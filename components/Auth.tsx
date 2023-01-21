@@ -23,10 +23,10 @@ export default function Auth({
       </div>
       {type == 'login' ? (
         <div className="basis-1/3 flex justify-center items-center">
-          <div>
-            Not registed?{'  '}
+          <div className="text-frost-600 ">
+            Not registered?{'  '}
             <span
-              className="hover:cursor-pointer "
+              className="hover:cursor-pointer text-white hover:text-frost-600"
               onClick={() => setAuthType('register')}
             >
               Sign up now
@@ -35,10 +35,10 @@ export default function Auth({
         </div>
       ) : (
         <div className="basis-1/3 flex justify-center items-center">
-          <div>
+          <div className="text-frost-600 ">
             Have an account?{' '}
             <span
-              className="hover:cursor-pointer"
+              className="hover:cursor-pointer text-white hover:text-frost-600"
               onClick={() => setAuthType('login')}
             >
               Login here
