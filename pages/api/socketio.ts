@@ -1,12 +1,6 @@
 import { Server } from 'socket.io';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createClient } from '@supabase/supabase-js';
-import { Database } from 'lib/database.types';
-
-const supabase = createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from '@/lib/supabaseClient';
 
 const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
   // TODO: See about these null issues. How often are they occurring and how fixable is this
