@@ -138,4 +138,3 @@ export default function Login({
     </form>
   );
 }
-// bg-gradient-to-r from-frost-300 to-frost-500

@@ -27,13 +27,7 @@ export default function Login() {
                 <div className={`${styles.frostCord}`}>FrostCord</div>
               </div>
               <div className="h-13 relative">
-                <Image
-                  // eslint-disable-next-line quotes
-                  className="w-13 "
-                  src={Yeti}
-                  alt="Yeti"
-                  priority
-                />
+                <Image className="w-13 " src={Yeti} alt="Yeti" priority />
               </div>
             </div>
             <div
@@ -41,8 +35,7 @@ export default function Login() {
             >
               <div className="basis-1/4 flex items-center relative mt-8">
                 <Image
-                  // eslint-disable-next-line quotes
-                  className={`rounded-full shadow-2xl shadow-white `}
+                  className="rounded-full shadow-2xl shadow-white"
                   src="/favicon.ico"
                   alt="FrostCord Logo"
                   width={120}

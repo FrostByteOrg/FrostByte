@@ -3,7 +3,7 @@ import styles from '@/styles/Login.module.css';
 import { createUserSchema, CreateUserInput } from '@/types/client/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Database } from '@/types/database.supabase';
 
 export default function Register({
