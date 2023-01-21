@@ -26,7 +26,7 @@ export default function Auth({
           <div className="text-frost-600 text-lg">
             Not registered?{'  '}
             <span
-              className="hover:cursor-pointer text-white hover:text-frost-600 drop-shadow-xl "
+              className="hover:cursor-pointer text-frost-900 font-bold hover:text-frost-500 drop-shadow-xl "
               onClick={() => setAuthType('register')}
             >
               Sign up now
@@ -38,7 +38,7 @@ export default function Auth({
           <div className="text-frost-600 text-lg">
             Have an account?{' '}
             <span
-              className="hover:cursor-pointer text-white hover:text-frost-600 drop-shadow-xl "
+              className="hover:cursor-pointer text-frost-900 font-bold hover:text-frost-500 drop-shadow-xl "
               onClick={() => setAuthType('login')}
             >
               Login here
