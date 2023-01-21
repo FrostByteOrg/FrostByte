@@ -1,4 +1,3 @@
-import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import Head from 'next/head';
 import styles from '@/styles/Login.module.css';
 import Auth from '@/components/Auth';
@@ -7,8 +6,6 @@ import Image from 'next/image';
 import Yeti from '../public/Yeti.png';
 
 export default function Login() {
-  const user = useUser();
-  const supabase = useSupabaseClient();
   const [authType, setAuthType] = useState<'login' | 'register'>('login');
 
   return (

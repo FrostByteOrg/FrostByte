@@ -6,12 +6,17 @@ import {
 } from '@/types/client/session';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/router';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { Database } from '@/types/database.supabase';
 
 export default function Login({
   setServerError,
 }: {
   setServerError: Dispatch<SetStateAction<string | null>>;
 }) {
+  const router = useRouter();
+  const supabase = useSupabaseClient<Database>();
   const {
     register,
     handleSubmit,
@@ -20,8 +25,21 @@ export default function Login({
     resolver: zodResolver(createSessionSchema),
   });
 
-  const onSubmit = async (data: CreateSessionInput) => {
-    //
+  const onSubmit = async (formData: CreateSessionInput) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (error) {
+      setServerError(error.message);
+      setTimeout(() => {
+        setServerError(null);
+      }, 7000);
+    }
+    if (data && !error) {
+      router.push('/');
+    }
   };
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
