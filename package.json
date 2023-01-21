@@ -10,6 +10,7 @@
     "update-types": "npx supabase gen types typescript --project-id hmmdmicyvzwicpckacld > types/supabase.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.9.10",
     "@next/font": "13.1.2",
     "@supabase/auth-helpers-nextjs": "^0.5.2",
     "@supabase/auth-helpers-react": "^0.3.1",
@@ -25,7 +26,11 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "socket.io": "^4.5.4",
-    "socket.io-client": "^4.5.4"
+    "socket.io-client": "^4.5.4",
+    "react-hook-form": "^7.42.1",
+    "swr": "^2.0.1",
+    "typescript": "4.9.4",
+    "zod": "^3.20.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.48.2",
