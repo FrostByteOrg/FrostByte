@@ -7,7 +7,7 @@ export const createUserSchema = object({
   email: z.string().min(1, { message: 'Email is required' }),
   password: string({
     required_error: 'Password is required',
-  }).min(6, 'Password must be at least 3 characters'),
+  }).min(6, 'Password must be at least 6 characters'),
   passwordConfirmation: z
     .string()
     .min(1, { message: 'Password confirmation is required' }),
