@@ -1,15 +1,53 @@
 import { Dispatch, SetStateAction } from 'react';
 import styles from '@/styles/Login.module.css';
+import { createUserSchema, CreateUserInput } from '@/types/client/user';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function Register({
   setServerError,
+  setAuthType,
 }: {
   setServerError: Dispatch<SetStateAction<string | null>>;
+  setAuthType: Dispatch<SetStateAction<'login' | 'register'>>;
 }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateUserInput>({
+    resolver: zodResolver(createUserSchema),
+  });
+
+  const onSubmit = async (formData: CreateUserInput) => {
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          username: formData.username,
+        },
+      },
+    });
+    if (error) {
+      setServerError(error.message);
+      setTimeout(() => {
+        setServerError(null);
+      }, 7000);
+    }
+    if (data && !error) {
+      setAuthType('login');
+    }
+  };
+
   return (
-    <form className="flex flex-col justify-evenly mt-5">
+    <form
+      className="flex flex-col justify-evenly mt-5 relative"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="relative">
-        <div className={`${styles.icon}`}>
+        <div className={`${errors.username ? styles.iconError : styles.icon} `}>
           <svg
             width="18"
             height="18"
@@ -40,10 +78,17 @@ export default function Register({
                           focus:outline-frost-50
                           m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
           placeholder="Enter Username"
+          {...register('username')}
         ></input>
+        {errors.username && (
+          <span className="text-red-700 mt-1 text-sm font-bold">
+            {errors.username?.message}
+          </span>
+        )}
       </div>
-      <div className="mt-6 relative">
-        <div className={`${styles.icon}`}>
+
+      <div className={`${errors.username ? 'mt-2' : 'mt-6'}  relative`}>
+        <div className={`${errors.email ? styles.iconError : styles.icon} `}>
           <svg
             width="18"
             height="18"
@@ -74,11 +119,17 @@ export default function Register({
                           focus:outline-frost-50
                           m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
           placeholder="Enter Email"
+          {...register('email')}
         ></input>
+        {errors.email && (
+          <p className="text-red-700 mt-1 text-sm font-bold">
+            {errors.email?.message}
+          </p>
+        )}
       </div>
 
-      <div className="mt-6 relative">
-        <div className={`${styles.icon}`}>
+      <div className={`${errors.email ? 'mt-2' : 'mt-6'}  relative`}>
+        <div className={`${errors.password ? styles.iconError : styles.icon} `}>
           <svg
             width="18"
             height="18"
@@ -109,11 +160,21 @@ export default function Register({
                           focus:outline-frost-50
                           m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
           placeholder="Enter password"
+          {...register('password')}
         ></input>
+        {errors.password && (
+          <p className="text-red-700 mt-1 text-sm font-bold">
+            {errors.password?.message}
+          </p>
+        )}
       </div>
 
-      <div className="mt-6 relative">
-        <div className={`${styles.icon}`}>
+      <div className={`${errors.password ? 'mt-2' : 'mt-6'}  relative`}>
+        <div
+          className={`${
+            errors.passwordConfirmation ? styles.iconError : styles.icon
+          } `}
+        >
           <svg
             width="18"
             height="18"
@@ -144,10 +205,16 @@ export default function Register({
                           focus:outline-frost-50
                           m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
           placeholder="Confirm password"
+          {...register('passwordConfirmation')}
         ></input>
+        {errors.passwordConfirmation && (
+          <p className="text-red-700 mt-1 text-sm font-bold">
+            {errors.passwordConfirmation.message}
+          </p>
+        )}
       </div>
 
-      <div className="mt-6">
+      <div className={`${errors.passwordConfirmation ? 'mt-3' : 'mt-6'} `}>
         <button
           className={` bg-frost-600 hover:bg-frost-700  font-bold py-2 px-4 w-full rounded-2xl tracking-widest text-frost-100 text-2xl ${styles.button}`}
           type="submit"

@@ -13,12 +13,12 @@ export default function Auth({
   const [serverError, setServerError] = useState<null | string>(null);
   return (
     <div className="basis-3/4 flex flex-col w-12 ">
-      <div>{serverError ?? serverError}</div>
+      <div className="text-red-300">{serverError ?? serverError}</div>
       <div className="flex flex-col h-13">
         {type == 'login' ? (
           <Login setServerError={setServerError} />
         ) : (
-          <Register setServerError={setServerError} />
+          <Register setServerError={setServerError} setAuthType={setAuthType} />
         )}
       </div>
       {type == 'login' ? (

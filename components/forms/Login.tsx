@@ -1,15 +1,32 @@
 import { Dispatch, SetStateAction } from 'react';
 import styles from '@/styles/Login.module.css';
+import {
+  createSessionSchema,
+  CreateSessionInput,
+} from '@/types/client/session';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function Login({
   setServerError,
 }: {
   setServerError: Dispatch<SetStateAction<string | null>>;
 }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateSessionInput>({
+    resolver: zodResolver(createSessionSchema),
+  });
+
+  const onSubmit = async (data: CreateSessionInput) => {
+    //
+  };
   return (
-    <form className="flex flex-col  ">
+    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
       <div className="relative mt-7">
-        <div className={`${styles.icon}`}>
+        <div className={`${errors.email ? styles.iconError : styles.icon} `}>
           <svg
             width="18"
             height="18"
@@ -41,11 +58,17 @@ export default function Login({
                           focus:outline-frost-50
                           m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
           placeholder="Enter Email"
+          {...register('email')}
         ></input>
+        {errors.email && (
+          <p className="text-red-700 mt-1 text-sm font-bold">
+            {errors.email?.message}
+          </p>
+        )}
       </div>
 
-      <div className="relative mt-7">
-        <div className={`${styles.icon}`}>
+      <div className={`${errors.email ? 'mt-2' : 'mt-6'}  relative`}>
+        <div className={`${errors.password ? styles.iconError : styles.icon} `}>
           <svg
             width="18"
             height="18"
@@ -77,10 +100,16 @@ export default function Login({
                           focus:outline-frost-50
                           m-0 focus:outline-none  bg-inherit flex-1 ${styles.input}`}
           placeholder="Enter password"
+          {...register('password')}
         ></input>
+        {errors.password && (
+          <p className="text-red-700 mt-1 text-sm font-bold">
+            {errors.password?.message}
+          </p>
+        )}
       </div>
 
-      <div className="mt-8 ">
+      <div className={`${errors.password ? 'mt-7' : 'mt-8'}  relative`}>
         <button
           className={` ${styles.button} bg-frost-600 hover:bg-frost-700 font-bold py-2 px-4 w-full rounded-2xl tracking-widest text-frost-100 text-2xl`}
           type="submit"
