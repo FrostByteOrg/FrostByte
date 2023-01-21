@@ -122,7 +122,7 @@ export default function Login({
         ></input>
         {errors.password && (
           <p className="text-red-700 mt-1 text-sm font-bold">
-            {errors.password?.message}
+            {errors.password.message}
           </p>
         )}
       </div>
