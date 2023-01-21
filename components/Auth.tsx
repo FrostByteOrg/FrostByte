@@ -12,9 +12,9 @@ export default function Auth({
 }) {
   const [serverError, setServerError] = useState<null | string>(null);
   return (
-    <div className="basis-3/4 flex flex-col w-12">
+    <div className="basis-3/4 flex flex-col w-12 ">
       <div>{serverError ?? serverError}</div>
-      <div className="basis-2/3 flex flex-col ">
+      <div className="flex flex-col h-13">
         {type == 'login' ? (
           <Login setServerError={setServerError} />
         ) : (
@@ -22,11 +22,11 @@ export default function Auth({
         )}
       </div>
       {type == 'login' ? (
-        <div className="basis-1/3 flex justify-center items-center">
-          <div className="text-frost-600 ">
+        <div className=" flex justify-center mt-8">
+          <div className="text-frost-600 text-lg">
             Not registered?{'  '}
             <span
-              className="hover:cursor-pointer text-white hover:text-frost-600"
+              className="hover:cursor-pointer text-white hover:text-frost-600 drop-shadow-xl "
               onClick={() => setAuthType('register')}
             >
               Sign up now
@@ -34,11 +34,11 @@ export default function Auth({
           </div>
         </div>
       ) : (
-        <div className="basis-1/3 flex justify-center items-center">
-          <div className="text-frost-600 ">
+        <div className=" flex justify-center mt-8">
+          <div className="text-frost-600 text-lg">
             Have an account?{' '}
             <span
-              className="hover:cursor-pointer text-white hover:text-frost-600"
+              className="hover:cursor-pointer text-white hover:text-frost-600 drop-shadow-xl "
               onClick={() => setAuthType('login')}
             >
               Login here
