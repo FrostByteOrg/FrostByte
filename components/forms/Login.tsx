@@ -80,7 +80,7 @@ export default function Login({
         ></input>
         {errors.email && (
           <p className="text-red-700 mt-1 text-sm font-bold">
-            {errors.email?.message}
+            {errors.email.message}
           </p>
         )}
       </div>
