@@ -33,7 +33,12 @@ jobs:
           git commit -m "Update database types" -a
       - name: Push changes
         if: ${{contains(steps.git_status.outputs.status, ' ')}}
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            uses: ad-m/github-push-action@master
+            with:
+              github_token: ${{ secrets.GITHUB_TOKEN }}
+              branch: ${{ env.GITHUB_REF }}
+          fi
