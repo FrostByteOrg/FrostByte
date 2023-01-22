@@ -61,7 +61,7 @@ export default function Login({
         </div>
         <input
           type="email"
-          className={`${Input}${styles.input}`}
+          className={`${Input} ${styles.input}`}
           placeholder="Enter Email"
           {...register('email')}
         ></input>
