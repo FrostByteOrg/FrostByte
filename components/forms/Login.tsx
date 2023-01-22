@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Database } from '@/types/database.supabase';
+import { Input } from './Styles';
 
 export default function Login({
   setServerError,
@@ -60,21 +61,7 @@ export default function Login({
         </div>
         <input
           type="email"
-          className={`form-control
-                w-full
-                py-2 
-                pl-6
-                          self-start
-                          text-base
-                          font-normal
-                          placeholder:text-white
-                          placeholder:opacity-60     
-                          border-2 border-solid border-blueGrey-600
-                          rounded-2xl
-                          transition
-                          ease-in-out
-                          focus:outline-frost-50
-                          m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
+          className={`${Input}${styles.input}`}
           placeholder="Enter Email"
           {...register('email')}
         ></input>
@@ -103,20 +90,7 @@ export default function Login({
 
         <input
           type="password"
-          className={`form-control
-                w-full
-                py-2 pl-6
-                          self-start
-                          text-base
-                          font-normal
-                          placeholder:text-white
-                          placeholder:opacity-60  
-                          border-2 border-solid border-white
-                          rounded-2xl
-                          transition
-                          ease-in-out
-                          focus:outline-frost-50
-                          m-0 focus:outline-none  bg-inherit flex-1 ${styles.input}`}
+          className={`${Input} ${styles.input}`}
           placeholder="Enter password"
           {...register('password')}
         ></input>
@@ -129,7 +103,18 @@ export default function Login({
 
       <div className={`${errors.password ? 'mt-7' : 'mt-8'}  relative`}>
         <button
-          className={` ${styles.button} bg-frost-600 hover:bg-frost-700 font-bold py-2 px-4 w-full rounded-2xl tracking-widest text-frost-100 text-2xl`}
+          className={`
+           ${styles.button} 
+         bg-frost-600 
+         hover:bg-frost-700 
+           font-bold 
+           py-2 px-4 
+           w-full 
+           rounded-2xl 
+           tracking-widest 
+         text-frost-100 
+           text-2xl
+          `}
           type="submit"
         >
           Login

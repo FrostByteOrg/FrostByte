@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Database } from '@/types/database.supabase';
+import { Input } from './Styles';
 
 export default function Register({
   setServerError,
@@ -65,20 +66,7 @@ export default function Register({
         </div>
         <input
           type="text"
-          className={`form-control
-                w-full
-                py-2 pl-6
-                          self-start
-                          text-base
-                          font-normal
-                          placeholder:text-white
-                          placeholder:opacity-60   
-                          border-2 border-solid border-blueGrey-600
-                          rounded-2xl
-                          transition
-                          ease-in-out
-                          focus:outline-frost-50
-                          m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
+          className={`${Input} ${styles.input}`}
           placeholder="Enter Username"
           {...register('username')}
         ></input>
@@ -106,20 +94,7 @@ export default function Register({
         </div>
         <input
           type="email"
-          className={`form-control
-                w-full
-                py-2 pl-6
-                          self-start
-                          text-base
-                          font-normal
-                          placeholder:text-white
-                          placeholder:opacity-60     
-                          border-2 border-solid border-blueGrey-600
-                          rounded-2xl
-                          transition
-                          ease-in-out
-                          focus:outline-frost-50
-                          m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
+          className={`${Input} ${styles.input}`}
           placeholder="Enter Email"
           {...register('email')}
         ></input>
@@ -147,20 +122,7 @@ export default function Register({
         </div>
         <input
           type="password"
-          className={`form-control
-                w-full
-                py-2 pl-6
-                          self-start
-                          text-base
-                          font-normal
-                          placeholder:text-white
-                          placeholder:opacity-60  
-                          border-2 border-solid border-white
-                          rounded-2xl
-                          transition
-                          ease-in-out
-                          focus:outline-frost-50
-                          m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
+          className={`${Input} ${styles.input}`}
           placeholder="Enter password"
           {...register('password')}
         ></input>
@@ -192,20 +154,7 @@ export default function Register({
         </div>
         <input
           type="password"
-          className={`form-control
-                w-full
-                py-2 pl-6
-                          self-start
-                          text-base
-                          font-normal
-                          placeholder:text-white
-                          placeholder:opacity-60 
-                           border-2 border-white
-                          rounded-2xl
-                          transition
-                          ease-in-out
-                          focus:outline-frost-50
-                          m-0 focus:outline-none  bg-inherit flex-1  ${styles.input}`}
+          className={`${Input} ${styles.input}`}
           placeholder="Confirm password"
           {...register('passwordConfirmation')}
         ></input>
@@ -218,7 +167,19 @@ export default function Register({
 
       <div className={`${errors.passwordConfirmation ? 'mt-3' : 'mt-6'} `}>
         <button
-          className={` bg-frost-600 hover:bg-frost-700  font-bold py-2 px-4 w-full rounded-2xl tracking-widest text-frost-100 text-2xl ${styles.button}`}
+          className={`
+          bg-frost-600
+          hover:bg-frost-700
+           font-bold 
+           py-2 
+           px-4 
+           w-full 
+           rounded-2xl 
+           tracking-widest 
+           text-frost-100 
+           text-2xl 
+           ${styles.button}
+          `}
           type="submit"
         >
           Register
