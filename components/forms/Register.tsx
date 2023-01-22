@@ -168,8 +168,8 @@ export default function Register({
       <div className={`${errors.passwordConfirmation ? 'mt-3' : 'mt-6'} `}>
         <button
           className={`
-          bg-frost-600
-          hover:bg-frost-700
+           bg-frost-600
+           hover:bg-frost-700
            font-bold 
            py-2 
            px-4 
