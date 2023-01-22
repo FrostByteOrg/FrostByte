@@ -105,14 +105,14 @@ export default function Login({
         <button
           className={`
            ${styles.button} 
-          bg-frost-600 
-          hover:bg-frost-700 
+           bg-frost-600 
+           hover:bg-frost-700 
            font-bold 
            py-2 px-4 
            w-full 
            rounded-2xl 
            tracking-widest 
-          text-frost-100 
+           text-frost-100 
            text-2xl
           `}
           type="submit"
