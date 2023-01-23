@@ -12,7 +12,7 @@ export default function Register({
   setAuthType,
 }: {
   setServerError: Dispatch<SetStateAction<string | null>>;
-  setAuthType: Dispatch<SetStateAction<'login' | 'register'>>;
+  setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
 }) {
   const supabase = useSupabaseClient<Database>();
   const {
@@ -46,7 +46,7 @@ export default function Register({
 
   return (
     <form
-      className="flex flex-col justify-evenly mt-5 relative"
+      className="flex flex-col justify-evenly mt-3 relative"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="relative">

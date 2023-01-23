@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import styles from '@/styles/Login.module.css';
 import {
   createSessionSchema,
@@ -13,8 +13,10 @@ import { Input } from './Styles';
 
 export default function Login({
   setServerError,
+  setAuthType
 }: {
-  setServerError: Dispatch<SetStateAction<string | null>>;
+  setServerError: Dispatch<SetStateAction<string | null>>,
+  setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
 }) {
   const router = useRouter();
   const supabase = useSupabaseClient<Database>();
@@ -100,6 +102,7 @@ export default function Login({
           </p>
         )}
       </div>
+      <span onClick={() => setAuthType('resetPassword')} className='text-sm mt-3 text-frost-800 font-bold hover:text-frost-600 hover:cursor-pointer'>Forgot password?</span>
 
       <div className={`${errors.password ? 'mt-7' : 'mt-8'}  relative`}>
         <button

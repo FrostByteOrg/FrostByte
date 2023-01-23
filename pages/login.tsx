@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Yeti from '../public/Yeti.png';
 
 export default function Login() {
-  const [authType, setAuthType] = useState<'login' | 'register'>('login');
+  const [authType, setAuthType] = useState<'login' | 'register' | 'resetPassword'>('login');
 
   return (
     <>
