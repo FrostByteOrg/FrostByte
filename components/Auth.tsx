@@ -22,7 +22,7 @@ export default function Auth({
     //TODO: get email from field
     const { data, error } = await supabase.auth.resetPasswordForEmail('', {
       redirectTo: 'http://localhost:3000/passwordreset',
-    })
+    });
 
   }
 
@@ -34,7 +34,7 @@ export default function Auth({
       </p>
       <div className={`flex flex-col  ${serverError ? '' : 'mt-5'}`}>
         {/* TODO: make this render either 1 of 3 states */}
-              {/* {type == 'resetPassword' ? <PasswordReset> : type == 'login' ? (
+        {/* {type == 'resetPassword' ? <PasswordReset> : type == 'login' ? (
           <Login setServerError={setServerError} setAuthType={setAuthType}/>
         ) : (
           <Register setServerError={setServerError} setAuthType={setAuthType} />
