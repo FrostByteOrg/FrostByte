@@ -6,7 +6,9 @@ import Image from 'next/image';
 import Yeti from '../public/Yeti.png';
 
 export default function Login() {
-  const [authType, setAuthType] = useState<'login' | 'register' | 'resetPassword'>('login');
+  const [authType, setAuthType] = useState<
+    'login' | 'register' | 'resetPassword'
+  >('login');
 
   return (
     <>
@@ -19,9 +21,11 @@ export default function Login() {
 
       <main className="bg-grey-700">
         <div
-          className={` ${styles.loginMD} items-center overflow-auto h-screen w-full `}
+          className={`${styles.loginMD} items-center overflow-auto h-screen w-full `}
         >
-          <div className="col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full">
+          <div
+            className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full bg-grey-800 xl:rounded-3xl`}
+          >
             <div className=" w-full hidden xl:flex xl:flex-col  h-full ">
               <div className="h-full flex justify-center items-center text-8xl font-extrabold">
                 <div className={`${styles.frostCord}`}>FrostCord</div>
@@ -35,7 +39,8 @@ export default function Login() {
             >
               <div className="basis-1/4 flex items-center relative mt-8">
                 <Image
-                  className="rounded-full shadow-2xl shadow-white"
+                  // shadow-2xl shadow-white
+                  className={`rounded-full  ${styles.logo}`}
                   src="/favicon.ico"
                   alt="FrostCord Logo"
                   width={120}

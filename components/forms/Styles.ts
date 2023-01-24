@@ -6,9 +6,9 @@ text-base
 font-normal
 placeholder:text-white
 placeholder:opacity-60     
-border-2
+border
 border-solid 
-border-blueGrey-600
+border-grey-400
 rounded-2xl
 transition
 ease-in-out

@@ -13,9 +13,9 @@ import { Input } from './Styles';
 
 export default function Login({
   setServerError,
-  setAuthType
+  setAuthType,
 }: {
-  setServerError: Dispatch<SetStateAction<string | null>>,
+  setServerError: Dispatch<SetStateAction<string | null>>;
   setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
 }) {
   const router = useRouter();
@@ -46,7 +46,7 @@ export default function Login({
   };
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <div className="relative mt-7">
+      <div className="relative mt-5">
         <div className={`${errors.email ? styles.iconError : styles.icon} `}>
           <svg
             width="18"
@@ -74,7 +74,7 @@ export default function Login({
         )}
       </div>
 
-      <div className={`${errors.email ? 'mt-2' : 'mt-6'}  relative`}>
+      <div className={`${errors.email ? 'mt-2' : 'mt-7'}  relative`}>
         <div className={`${errors.password ? styles.iconError : styles.icon} `}>
           <svg
             width="18"
@@ -102,14 +102,21 @@ export default function Login({
           </p>
         )}
       </div>
-      <span onClick={() => setAuthType('resetPassword')} className='text-sm mt-3 text-frost-800 font-bold hover:text-frost-600 hover:cursor-pointer'>Forgot password?</span>
+      <span
+        onClick={() => setAuthType('resetPassword')}
+        className="text-sm mt-3 text-frost-800 font-bold hover:text-frost-600 hover:cursor-pointer"
+      >
+        Forgot password?
+      </span>
 
       <div className={`${errors.password ? 'mt-7' : 'mt-8'}  relative`}>
         <button
           className={`
            ${styles.button} 
            bg-frost-600 
-           hover:bg-frost-700 
+           hover:bg-frost-700
+           active:shadow-lg
+           active:bg-frost-800
            font-bold 
            py-2 px-4 
            w-full 

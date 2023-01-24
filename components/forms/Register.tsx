@@ -170,6 +170,8 @@ export default function Register({
           className={`
            bg-frost-600
            hover:bg-frost-700
+           active:shadow-lg
+           active:bg-frost-800
            font-bold 
            py-2 
            px-4 

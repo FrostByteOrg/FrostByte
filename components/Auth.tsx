@@ -23,9 +23,7 @@ export default function Auth({
     const { data, error } = await supabase.auth.resetPasswordForEmail('', {
       redirectTo: 'http://localhost:3000/passwordreset',
     });
-
   }
-
 
   return (
     <div className="basis-3/4 flex flex-col w-12 ">
@@ -40,15 +38,14 @@ export default function Auth({
           <Register setServerError={setServerError} setAuthType={setAuthType} />
         )} */}
 
-
         {type == 'login' ? (
-          <Login setServerError={setServerError} setAuthType={setAuthType}/>
+          <Login setServerError={setServerError} setAuthType={setAuthType} />
         ) : (
           <Register setServerError={setServerError} setAuthType={setAuthType} />
         )}
       </div>
       {type == 'login' ? (
-        <div className=" flex justify-center mt-6">
+        <div className=" flex justify-center mt-9">
           <div className="text-frost-600 text-lg">
             Not registered?{'  '}
             <span
@@ -60,7 +57,7 @@ export default function Auth({
           </div>
         </div>
       ) : (
-        <div className=" flex justify-center mt-2">
+        <div className=" flex justify-center mt-7">
           <div className="text-frost-600 text-lg">
             Have an account?{' '}
             <span
