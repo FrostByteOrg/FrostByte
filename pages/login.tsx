@@ -39,7 +39,6 @@ export default function Login() {
             >
               <div className="basis-1/4 flex items-center relative mt-8">
                 <Image
-                  // shadow-2xl shadow-white
                   className={`rounded-full  ${styles.logo}`}
                   src="/favicon.ico"
                   alt="FrostCord Logo"

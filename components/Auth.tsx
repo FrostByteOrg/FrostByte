@@ -25,24 +25,32 @@ export default function Auth({
     });
   }
 
+  function renderAuth(type: 'login' | 'register' | 'resetPassword') {
+    switch (type) {
+      case 'login':
+        return (
+          <Login setServerError={setServerError} setAuthType={setAuthType} />
+        );
+      case 'register':
+        return (
+          <Register setServerError={setServerError} setAuthType={setAuthType} />
+        );
+      case 'resetPassword':
+        return <PasswordReset />;
+      default:
+        return (
+          <Login setServerError={setServerError} setAuthType={setAuthType} />
+        );
+    }
+  }
+
   return (
     <div className="basis-3/4 flex flex-col w-12 ">
       <p className="text-red-700  font-bold flex items-center justify-center">
         {serverError ?? serverError}
       </p>
       <div className={`flex flex-col  ${serverError ? '' : 'mt-5'}`}>
-        {/* TODO: make this render either 1 of 3 states */}
-        {/* {type == 'resetPassword' ? <PasswordReset> : type == 'login' ? (
-          <Login setServerError={setServerError} setAuthType={setAuthType}/>
-        ) : (
-          <Register setServerError={setServerError} setAuthType={setAuthType} />
-        )} */}
-
-        {type == 'login' ? (
-          <Login setServerError={setServerError} setAuthType={setAuthType} />
-        ) : (
-          <Register setServerError={setServerError} setAuthType={setAuthType} />
-        )}
+        {renderAuth(type)}
       </div>
       {type == 'login' ? (
         <div className=" flex justify-center mt-9">
