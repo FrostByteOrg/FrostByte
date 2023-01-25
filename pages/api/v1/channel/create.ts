@@ -5,6 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { method } = req;
 
   if (method === 'POST') {
+    // TODO: Require user to have permission to create channels
     await createChannel(
       req.body.serverId,
       req.body.name,
