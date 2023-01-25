@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import styles from '@/styles/Login.module.css';
+import { Dispatch, SetStateAction } from 'react';
+import styles from '@/styles/Auth.module.css';
 import {
   createSessionSchema,
   CreateSessionInput,

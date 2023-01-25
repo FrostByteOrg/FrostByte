@@ -4,10 +4,7 @@ import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 export default function  Passwordreset() {
 
   const user = useUser();
-
-  useEffect(() => {
-    console.log(user);
-  },[user]);
+  //TODO: redirect user to this page after clicking link in email
 
   return (
     <div>

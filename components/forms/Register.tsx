@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import styles from '@/styles/Login.module.css';
+import styles from '@/styles/Auth.module.css';
 import { createUserSchema, CreateUserInput } from '@/types/client/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';

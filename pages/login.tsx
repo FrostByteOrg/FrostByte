@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import styles from '@/styles/Login.module.css';
+import styles from '@/styles/Auth.module.css';
 import Auth from '@/components/Auth';
 import { useState } from 'react';
 import Image from 'next/image';

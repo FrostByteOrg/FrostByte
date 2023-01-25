@@ -45,8 +45,8 @@
 }
 
 .input {
-  box-shadow: inset 0 5px 4px hsla(0, 0%, 0%, 0.1),
-    0 4px 1px hsla(0, 0%, 90%, 0.15);
+  box-shadow: inset 0 5px 2px hsla(0, 0%, 0%, 0.1),
+    0 3px 2px hsla(0, 0%, 90%, 0.15);
 }
 
 .frostCord {
@@ -56,5 +56,5 @@
 
 .logo {
   box-shadow: inset 0 2px 1px hsl(194, 71%, 50%),
-    0 20px 25px hsla(0, 0%, 100%, 0.649);
+    0 20px 25px hsla(0, 0%, 100%, 0.649), 0 15px 25px hsla(0, 3%, 46%, 0.649);
 }
