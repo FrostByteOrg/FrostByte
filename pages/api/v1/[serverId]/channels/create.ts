@@ -6,12 +6,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (method === 'POST') {
     // TODO: Require user to have permission to create channels
+    let serverId: number;
+
+    try {
+      serverId = parseInt(req.query.serverId as string);
+    }
+
+    catch (err: any) {
+      return res.status(400).send({ error: 'Invalid server ID' });
+    }
+
     await createChannel(
-      req.body.serverId,
+      serverId,
       req.body.name,
       req.body.description || null
     );
   }
+
   else {
     res.setHeader('Allow', ['POST']);
     res.status(405).json({ message: 'Method not allowed' });
