@@ -1,6 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
 import { createChannel } from '@/services/channels.service';
-import { getInviteByCode } from '@/services/invites.service';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -12,5 +10,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       req.body.name,
       req.body.description || null
     );
+  }
+  else {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).json({ message: 'Method not allowed' });
   }
 }
