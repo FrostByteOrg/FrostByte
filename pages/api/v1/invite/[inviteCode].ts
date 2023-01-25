@@ -1,11 +1,12 @@
 import { supabase } from '@/lib/supabaseClient';
-import { createInvite, getInviteByCode } from '@/services/invites.service';
+import { getInviteByCode } from '@/services/invites.service';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 
   if (method === 'GET') {
+    // TODO: Remove this try catch block and use the error handling supplied by supabase
     try {
       const { data: invite, error } = await getInviteByCode(req.query.inviteCode as string);
 
