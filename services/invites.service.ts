@@ -44,6 +44,7 @@ export async function createInvite(
       num_uses: numUses,
       url_id: urlId,
     })
+    .select()
     .single();
 }
 
