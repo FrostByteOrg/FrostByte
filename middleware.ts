@@ -8,11 +8,21 @@ export async function middleware(req: NextRequest) {
   // Create authenticated Supabase Client.
   const supabase = createMiddlewareSupabaseClient({ req, res });
   // Check if we have a session
+
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log(event);
+    // console.log(session);
+    if (event == 'PASSWORD_RECOVERY') {
+      console.log('passreco');
+      return res;
+    }
+  });
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
   const redirectUrl = req.nextUrl.clone();
+  console.log(redirectUrl);
   // Check auth condition
   if (session?.user) {
     // Authentication successful, forward request to protected route.

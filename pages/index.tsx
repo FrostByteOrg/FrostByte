@@ -5,6 +5,8 @@ import styles from '@/styles/Home.module.css';
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,6 +20,20 @@ export default function Home() {
     if (error) console.log(error);
     router.push('/login');
   };
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(event);
+      console.log(session);
+      if (event == 'PASSWORD_RECOVERY') {
+        console.log('passreco');
+        toast.success('passwordrec', {
+          position: 'top-center',
+          autoClose: 3000
+        });
+      }
+    });
+  });
   return (
     <>
       <Head>

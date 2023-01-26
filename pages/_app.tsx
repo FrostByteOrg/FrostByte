@@ -5,6 +5,8 @@ import { AppProps } from 'next/app';
 import { useState } from 'react';
 import { Source_Sans_3 } from '@next/font/google';
 import { Database } from '@/types/database.supabase';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
@@ -23,6 +25,7 @@ function App({
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
+      <ToastContainer  />
       <main className={sourceSans3.className}>
         <Component {...pageProps} />
       </main>

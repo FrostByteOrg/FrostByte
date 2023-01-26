@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Database } from '@/types/database.supabase';
+import { toast } from 'react-toastify';
 
 export default function PasswordReset({
   setServerError,
@@ -25,9 +26,26 @@ export default function PasswordReset({
     resolver: zodResolver(createPasswordRecoverySchema),
   });
 
+
   const onSubmit = async (formData: CreatePasswordInputRecovery) => {
-    //TODO: send password recovery email, set auth type to login and 
-    //display toast message with "A password recovery email has been set"
+
+    const { data, error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+      redirectTo: 'http://localhost:3000/passwordreset',
+    });
+
+    if (error) {
+      setServerError(error.message);
+      setTimeout(() => {
+        setServerError(null);
+      }, 7000);
+    }
+    if (data && !error) {
+      toast.success(`An email has been sent to ${formData.email}`, {
+        position: 'top-center',
+        autoClose: 3000
+      });
+      setAuthType('login');
+    }
   };
 
   return (
@@ -71,7 +89,7 @@ export default function PasswordReset({
            ${styles.button}
            bg-frost-600 
            hover:bg-frost-700
-           active:shadow-lg
+           active:shadow-sm
            active:bg-frost-800
            font-bold 
            py-2 px-4 

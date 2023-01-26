@@ -14,16 +14,6 @@ export default function Auth({
   setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
 }) {
   const [serverError, setServerError] = useState<null | string>(null);
-  const [resetPassword, setResetPassword] = useState<boolean>(false);
-
-  const supabase = useSupabaseClient<Database>();
-
-  async function handleReset() {
-    //TODO: get email from field
-    const { data, error } = await supabase.auth.resetPasswordForEmail('', {
-      redirectTo: 'http://localhost:3000/passwordreset',
-    });
-  }
 
   function renderAuth(type: 'login' | 'register' | 'resetPassword') {
     switch (type) {
