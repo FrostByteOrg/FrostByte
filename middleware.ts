@@ -5,18 +5,13 @@ import type { NextRequest } from 'next/server';
 export async function middleware(req: NextRequest) {
   // We need to create a response and hand it to the supabase client to be able to modify the response headers.
   const res = NextResponse.next();
+  return res;
+  // Forward req if User tries to reset password, authorization will happen on the client 
+  if (req.nextUrl.pathname == '/passwordreset') return res;
   // Create authenticated Supabase Client.
   const supabase = createMiddlewareSupabaseClient({ req, res });
   // Check if we have a session
 
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log(event);
-    // console.log(session);
-    if (event == 'PASSWORD_RECOVERY') {
-      console.log('passreco');
-      return res;
-    }
-  });
   const {
     data: { session },
   } = await supabase.auth.getSession();

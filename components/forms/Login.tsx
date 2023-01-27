@@ -29,6 +29,7 @@ export default function Login({
   });
 
   const onSubmit = async (formData: CreateSessionInput) => {
+    //TODO: disable login button 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.email,
       password: formData.password,

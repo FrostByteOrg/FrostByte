@@ -1,39 +1,32 @@
-import { Dispatch, SetStateAction } from 'react';
-import styles from '@/styles/Auth.module.css';
-import { createUserSchema, CreateUserInput } from '@/types/client/user';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { Database } from '@/types/database.supabase';
 import { Input } from './Styles';
+import styles from '@/styles/Auth.module.css';
+import { createUpdatePasswordSchema, CreateUpdatePasswordInput } from '@/types/client/updatePassword';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Database } from '@/types/database.supabase';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { Dispatch, SetStateAction } from 'react';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
-export default function Register({
-  setServerError,
-  setAuthType,
-}: {
-  setServerError: Dispatch<SetStateAction<string | null>>;
-  setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
-}) {
+export default function UpdatePassword({setServerError} : {setServerError: Dispatch<SetStateAction<string | null>>;}) {
+  const router = useRouter();
   const supabase = useSupabaseClient<Database>();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateUserInput>({
-    resolver: zodResolver(createUserSchema),
+  } = useForm<CreateUpdatePasswordInput>({
+    resolver: zodResolver(createUpdatePasswordSchema),
   });
 
-  const onSubmit = async (formData: CreateUserInput) => {
-    //TODO: disable register button
-    const { data, error } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        data: {
-          username: formData.username,
-        },
-      },
+  const onSubmit = async (formData: CreateUpdatePasswordInput) => {
+    //TODO: disable updatePass button, loading spinner?
+    const { data, error } = await supabase.auth.updateUser({
+      password: formData.password
     });
+
     if (error) {
       setServerError(error.message);
       setTimeout(() => {
@@ -41,72 +34,21 @@ export default function Register({
       }, 7000);
     }
     if (data && !error) {
-      setAuthType('login');
+      toast.success('Password successfully updated', {
+        position: 'top-center',
+        autoClose: 3000
+      });
+      router.push('/');
     }
   };
 
+
   return (
-    <form
-      className="flex flex-col justify-evenly mt-3 relative"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="relative">
-        <div className={`${errors.username ? styles.iconError : styles.icon} `}>
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 32 38"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M16 37.3333L10.6667 32H0V0H32V32H21.3333L16 37.3333ZM16 17.7778C17.7185 17.7778 19.1852 17.1704 20.4 15.9556C21.6148 14.7407 22.2222 13.2741 22.2222 11.5556C22.2222 9.83704 21.6148 8.37037 20.4 7.15556C19.1852 5.94074 17.7185 5.33333 16 5.33333C14.2815 5.33333 12.8148 5.94074 11.6 7.15556C10.3852 8.37037 9.77778 9.83704 9.77778 11.5556C9.77778 13.2741 10.3852 14.7407 11.6 15.9556C12.8148 17.1704 14.2815 17.7778 16 17.7778ZM16 32.3556L19.9111 28.4444H28.4444V26.4C26.8444 24.8296 24.9855 23.5923 22.8676 22.688C20.7484 21.7849 18.4593 21.3333 16 21.3333C13.5407 21.3333 11.2521 21.7849 9.13422 22.688C7.01511 23.5923 5.15556 24.8296 3.55556 26.4V28.4444H12.0889L16 32.3556Z"
-              fill="#FBFBFB"
-            />
-          </svg>
-        </div>
-        <input
-          type="text"
-          className={`${Input} ${styles.input}`}
-          placeholder="Enter Username"
-          {...register('username')}
-        ></input>
-        {errors.username && (
-          <span className="text-red-700 mt-1 text-sm font-bold">
-            {errors.username.message}
-          </span>
-        )}
-      </div>
-
-      <div className={`${errors.username ? 'mt-2' : 'mt-6'}  relative`}>
-        <div className={`${errors.email ? styles.iconError : styles.icon} `}>
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 34 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M30.3333 0.666626H3.66667C1.83334 0.666626 0.350003 2.16663 0.350003 3.99996L0.333336 24C0.333336 25.8333 1.83334 27.3333 3.66667 27.3333H30.3333C32.1667 27.3333 33.6667 25.8333 33.6667 24V3.99996C33.6667 2.16663 32.1667 0.666626 30.3333 0.666626ZM30.3333 7.33329L17 15.6666L3.66667 7.33329V3.99996L17 12.3333L30.3333 3.99996V7.33329Z"
-              fill="white"
-            />
-          </svg>
-        </div>
-        <input
-          type="email"
-          className={`${Input} ${styles.input}`}
-          placeholder="Enter Email"
-          {...register('email')}
-        ></input>
-        {errors.email && (
-          <p className="text-red-700 mt-1 text-sm font-bold">
-            {errors.email.message}
-          </p>
-        )}
-      </div>
-
-      <div className={`${errors.email ? 'mt-2' : 'mt-6'}  relative`}>
+    <form className="flex flex-col mt-7" onSubmit={handleSubmit(onSubmit)} >
+      <label htmlFor="email" className="mt-6">
+        New Password:
+      </label>
+      <div className='mt-3  relative'>
         <div className={`${errors.password ? styles.iconError : styles.icon} `}>
           <svg
             width="18"
@@ -166,7 +108,7 @@ export default function Register({
         )}
       </div>
 
-      <div className={`${errors.passwordConfirmation ? 'mt-3' : 'mt-6'} `}>
+      <div className={`${errors.passwordConfirmation ? 'mt-5' : 'mt-7'} `}>
         <button
           className={`
            bg-frost-600
@@ -185,7 +127,7 @@ export default function Register({
           `}
           type="submit"
         >
-          Register
+          Submit
         </button>
       </div>
     </form>

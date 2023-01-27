@@ -6,13 +6,11 @@ text-base
 font-normal
 placeholder:text-white
 placeholder:opacity-60     
-border
-border-solid 
-border-grey-400
 rounded-2xl
 transition
 ease-in-out
 focus:outline-frost-50
-m-0 focus:outline-none
+m-0
+focus:outline-none
 bg-inherit 
 flex-1`;

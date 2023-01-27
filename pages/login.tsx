@@ -21,7 +21,7 @@ export default function Login() {
 
       <main className="bg-grey-700">
         <div
-          className={`${styles.loginMD} items-center overflow-auto h-screen w-full `}
+          className={`${styles.authMD} items-center overflow-auto h-screen w-full `}
         >
           <div
             className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full bg-grey-800 xl:rounded-3xl`}

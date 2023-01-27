@@ -28,7 +28,7 @@ export default function PasswordReset({
 
 
   const onSubmit = async (formData: CreatePasswordInputRecovery) => {
-
+    //TODO: disable resetpass button, loading spinner?
     const { data, error } = await supabase.auth.resetPasswordForEmail(formData.email, {
       redirectTo: 'http://localhost:3000/passwordreset',
     });
@@ -105,5 +105,5 @@ export default function PasswordReset({
         </button>
       </div>
     </form>
-  );;
+  );
 }

@@ -1,5 +1,5 @@
 @media only screen and (min-width: 1280px) {
-  .loginMD {
+  .authMD {
     display: grid;
     grid-template-columns:
       repeat(3, minmax(16px, 1fr)) minmax(0, 192px) minmax(0, 192px) minmax(
@@ -16,7 +16,22 @@
       0 4px 5px hsla(0, 0%, 99%, 0.549);
   }
 }
-/* inset 0 2px 1px hsl(194, 61%, 47%) */
+
+/* 5-8 */
+@media only screen and (min-width: 1280px) {
+  .resetPWMD {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(16px, 1fr)) minmax(0, 192px) minmax(0, 192px) minmax(
+        0,
+        128px
+      )
+      minmax(0, 128px) minmax(0, 192px) minmax(0, 128px)
+      repeat(3, minmax(16px, 1fr));
+
+    grid-template-rows: minmax(8px, 1fr) minmax(640px, 1fr) minmax(32px, 1fr);
+  }
+}
 
 .mainContainer {
   filter: drop-shadow(0 2px 10px rgba(51, 50, 50, 0.904))
@@ -25,6 +40,7 @@
 
 .icon {
   padding: 8px;
+  margin-left: -1px;
   position: absolute;
   box-sizing: border-box;
   top: 50%;
