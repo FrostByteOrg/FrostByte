@@ -1,15 +1,9 @@
 # Title of Pull Request
-A brief summary of changes
+Goal of this pull request
 
 
-## The routes implemented are as follows:
-### `/api/v1/example/example1`
-#### GET
-Brief summary of route 
-
-### `/api/v1/example/example2`
-#### POST
-Brief summary of route 
+## API Changes
+An outline of the changes this pull request makes
 
 # Any additional remarks:
 Summary of additional changes

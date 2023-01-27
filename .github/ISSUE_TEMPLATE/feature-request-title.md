@@ -7,17 +7,14 @@ assignees: ''
 
 ---
 
-## The routes implemented are as follows:
-### `/api/v1/example/example1`
-#### GET
-Brief summary of route 
+# Feature Description
+*Please describe the feature you would like added*
 
-### `/api/v1/example/example2`
-#### POST
-Brief summary of route 
+# Use Case
+*Please describe the ideal use-case for this feature*
+
+# Prerequisites
+*Are there any prerequisites that need to be addressed prior to this feature?*
 
 # Any additional remarks:
 Summary of additional changes
-
-# Testing:
-Describe how this feature should be tested
