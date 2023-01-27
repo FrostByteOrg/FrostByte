@@ -12,7 +12,7 @@ assignees: ''
 #### GET
 Brief summary of route 
 
-### `/api/v1/example/example1`
+### `/api/v1/example/example2`
 #### POST
 Brief summary of route 
 
