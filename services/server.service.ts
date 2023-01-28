@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
+import { deleteChannel, getChannelsInServer } from './channels.service';
 
 export async function createServer(name: string) {
   const dbResp = await supabase.from('servers').insert({ name }).select().single();
@@ -45,7 +46,15 @@ export type UpdateServerResponseError = UpdateServerResponse['error'];
 
 export async function deleteServer(id: number) {
   // First things first, we need to delete all channels associated with this server
-  await supabase.from('channels').delete().eq('server_id', id);
+  const { data: channels, error} = await getChannelsInServer(id);
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  channels.forEach(async (channel) => {
+    await deleteChannel(channel.channel_id);
+  });
 
   // Then we can delete the server itself
   return await supabase.from('servers').delete().eq('id', id);

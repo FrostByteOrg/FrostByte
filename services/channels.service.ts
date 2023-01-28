@@ -39,6 +39,13 @@ export type CreateChannelResponseSuccess = CreateChannelResponse['data'];
 export type CreateChannelResponseError = CreateChannelResponse['error'];
 
 export async function deleteChannel(channelId: number) {
+  // Before we delete the channel, we need to delete all messages in the channel
+  await supabase
+    .from('messages')
+    .delete()
+    .eq('channel_id', channelId);
+
+  // Finally, delete the channel
   return await supabase
     .from('channels')
     .delete()
