@@ -3,8 +3,6 @@ import Login from './forms/Login';
 import Register from './forms/Register';
 import PasswordReset from './forms/PasswordReset';
 import { useState } from 'react';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { Database } from '@/types/database.supabase';
 
 export default function Auth({
   type,
@@ -15,32 +13,13 @@ export default function Auth({
 }) {
   const [serverError, setServerError] = useState<null | string>(null);
 
-  function renderAuth(type: 'login' | 'register' | 'resetPassword') {
-    switch (type) {
-    case 'login':
-      return (
-        <Login setServerError={setServerError} setAuthType={setAuthType} />
-      );
-    case 'register':
-      return (
-        <Register setServerError={setServerError} setAuthType={setAuthType} />
-      );
-    case 'resetPassword':
-      return <PasswordReset setServerError={setServerError} setAuthType={setAuthType} />;
-    default:
-      return (
-        <Login setServerError={setServerError} setAuthType={setAuthType} />
-      );
-    }
-  }
-
   return (
     <div className="basis-3/4 flex flex-col w-12 ">
       <p className="text-red-700  font-bold flex items-center justify-center">
         {serverError ?? serverError}
       </p>
       <div className={`flex flex-col  ${serverError ? '' : 'mt-5'}`}>
-        {renderAuth(type)}
+        {renderAuth(type, setServerError, setAuthType)}
       </div>
       {type == 'login' ? (
         <div className=" flex justify-center mt-9">
@@ -69,4 +48,27 @@ export default function Auth({
       )}
     </div>
   );
+}
+
+function renderAuth(
+  type: 'login' | 'register' | 'resetPassword', 
+  setServerError: Dispatch<SetStateAction<string | null>>, 
+  setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>
+) {
+  switch (type) {
+  case 'login':
+    return (
+      <Login setServerError={setServerError} setAuthType={setAuthType} />
+    );
+  case 'register':
+    return (
+      <Register setServerError={setServerError} setAuthType={setAuthType} />
+    );
+  case 'resetPassword':
+    return <PasswordReset setServerError={setServerError} setAuthType={setAuthType} />;
+  default:
+    return (
+      <Login setServerError={setServerError} setAuthType={setAuthType} />
+    );
+  }
 }

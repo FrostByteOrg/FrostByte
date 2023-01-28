@@ -5,7 +5,6 @@ import type { NextRequest } from 'next/server';
 export async function middleware(req: NextRequest) {
   // We need to create a response and hand it to the supabase client to be able to modify the response headers.
   const res = NextResponse.next();
-  return res;
   // Forward req if User tries to reset password, authorization will happen on the client 
   if (req.nextUrl.pathname == '/passwordreset') return res;
   // Create authenticated Supabase Client.
@@ -17,7 +16,7 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   const redirectUrl = req.nextUrl.clone();
-  console.log(redirectUrl);
+
   // Check auth condition
   if (session?.user) {
     // Authentication successful, forward request to protected route.
@@ -27,7 +26,6 @@ export async function middleware(req: NextRequest) {
       redirectUrl.pathname = '/';
       return NextResponse.redirect(redirectUrl);
     }
-
     return res;
   }
 
