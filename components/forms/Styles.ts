@@ -5,7 +5,7 @@ self-start
 text-base
 font-normal
 placeholder:text-white
-placeholder:opacity-60     
+placeholder:opacity-80     
 rounded-2xl
 transition
 ease-in-out
