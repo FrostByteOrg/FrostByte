@@ -35,7 +35,7 @@ export default function Login() {
               </div>
             </div>
             <div
-              className={`flex flex-col w-full  items-center bg-gradient-to-t from-frost-300 to-frost-600 xl:rounded-3xl ${styles.rightSide}`}
+              className={`flex flex-col w-full  items-center xl:rounded-3xl ${styles.rightSide}`}
             >
               <div className="basis-1/4 flex items-center relative mt-8">
                 <Image
