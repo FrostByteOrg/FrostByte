@@ -18,7 +18,7 @@ export default function Passwordreset() {
         >
           <div
             className={`
-           ${styles.mainContainer}
+           ${styles.rightSide}
            col-start-5 
            col-end-9 
            row-start-2 
@@ -35,8 +35,8 @@ export default function Passwordreset() {
           >
             <div>
               <div className='w-full flex flex-col justify-center mt-10'>
-                <div className='text-4xl font-bold text-center'>Unauthorized</div>
-                <div className="text-frost-700 text-lg">return to <span className="hover:cursor-pointer text-frost-900 font-bold hover:text-frost-500 drop-shadow-xl "
+                <div className='text-5xl font-bold text-center'>Unauthorized</div>
+                <div className="text-frost-600 text-2xl font-extrabold text-center mt-5">return to <span className="hover:cursor-pointer hover:underline text-frost-900 font-extrabold hover:text-frost-700 drop-shadow-xl "
                   onClick={() => router.push('/login')}>login</span></div>
               </div> 
             </div>

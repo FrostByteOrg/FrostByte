@@ -19,12 +19,12 @@ export default function Login() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="bg-grey-700">
+      <main className={`${styles.mainBackground} xl:bg-grey-600`}>
         <div
           className={`${styles.authMD} items-center overflow-auto h-screen w-full `}
         >
           <div
-            className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full bg-grey-800 xl:rounded-3xl`}
+            className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full  xl:rounded-3xl`}
           >
             <div className=" w-full hidden xl:flex xl:flex-col  h-full ">
               <div className="h-full flex justify-center items-center text-8xl font-extrabold">
