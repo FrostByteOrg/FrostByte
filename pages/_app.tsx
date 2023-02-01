@@ -2,8 +2,10 @@ import '@/styles/globals.css';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider, Session } from '@supabase/auth-helpers-react';
 import { AppProps } from 'next/app';
-import { useState } from 'react';
 import { Source_Sans_3 } from '@next/font/google';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Database } from '@/types/database.supabase';
 
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
@@ -13,13 +15,15 @@ function App({
 }: AppProps<{
   initialSession: Session;
 }>) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
+
+  const supabase = createBrowserSupabaseClient<Database>();
 
   return (
     <SessionContextProvider
       supabaseClient={supabase}
       initialSession={pageProps.initialSession}
     >
+      <ToastContainer  />
       <main className={sourceSans3.className}>
         <Component {...pageProps} />
       </main>

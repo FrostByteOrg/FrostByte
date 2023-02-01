@@ -4,12 +4,21 @@ import { Inter } from '@next/font/google';
 import styles from '@/styles/Home.module.css';
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) console.log(error);
+    router.push('/login');
+  };
+
   return (
     <>
       <Head>
@@ -72,7 +81,12 @@ export default function Home() {
                 theme="dark"
               />
             ) : (
-              <p>Account page will go here.</p>
+              <button
+                className=" bg-frost-600 hover:bg-frost-700 font-bold py-2 px-4 w-full rounded-2xl tracking-widest text-frost-100"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
             )}
           </div>
         </div>
