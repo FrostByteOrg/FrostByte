@@ -1,12 +1,17 @@
 import { supabase } from '@/lib/supabaseClient';
 import { deleteChannel, getChannelsInServer } from './channels.service';
 
-export async function createServer(name: string) {
-  const dbResp = await supabase.from('servers').insert({ name }).select().single();
+export async function createServer(owner_id: string, name: string, description: string | null) {
+  const dbResp = await supabase.from('servers').insert({ name, description }).select().single();
 
   if (dbResp.error) {
     return dbResp;
   }
+
+  // Let's add the owner to the server
+  await supabase
+    .from('server_users')
+    .insert({ profile_id: owner_id, server_id: dbResp.data.id, is_owner: true });
 
   // Now that we have a server, we need to create a default channel for it
   await supabase
@@ -36,8 +41,8 @@ type GetServerResponse = Awaited<ReturnType<typeof getServer>>;
 export type GetServerResponseSuccess = GetServerResponse['data'];
 export type GetServerResponseError = GetServerResponse['error'];
 
-export async function updateServer(id: number, name: string) {
-  return await supabase.from('servers').update({ name }).eq('id', id);
+export async function updateServer(id: number, name: string, description: string | null) {
+  return await supabase.from('servers').update({ name, description }).eq('id', id);
 }
 
 type UpdateServerResponse = Awaited<ReturnType<typeof updateServer>>;
@@ -45,6 +50,7 @@ export type UpdateServerResponseSuccess = UpdateServerResponse['data'];
 export type UpdateServerResponseError = UpdateServerResponse['error'];
 
 export async function deleteServer(id: number) {
+  // NOTE: only the owner should be able to delete a server
   // First things first, we need to delete all channels associated with this server
   const { data: channels, error} = await getChannelsInServer(id);
 
