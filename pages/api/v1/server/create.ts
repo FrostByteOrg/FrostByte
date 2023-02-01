@@ -1,22 +1,16 @@
 import { createServer } from '@/services/server.service';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 
   if (method === 'POST') {
-    if (!req.cookies.token) {
-      return res.status(401).send({ error: 'Unauthorized' });
-    }
-
-    // JWT first segment is the user id encoded in base64
-    const userId = Buffer.from(
-      req.cookies.token.split('.')[0],
-      'base64'
-    ).toString('ascii');
+    // NOTE: auth header cannot be null here as it passes through the auth middleware
+    const decodedJwt = jwt.decode(req.headers.authorization!.replace('Bearer', '')) as JwtPayload;
 
     const { data: server, error } = await createServer(
-      userId,
+      decodedJwt.sub!,
       req.body.name,
       req.body.description || null
     );

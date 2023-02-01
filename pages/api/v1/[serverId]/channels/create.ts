@@ -1,8 +1,10 @@
 import { createChannel } from '@/services/channels.service';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
+
   // TODO: Require user to have permission to manage channels
   let serverId: number;
 
