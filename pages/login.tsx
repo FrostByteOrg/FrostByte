@@ -1,10 +1,15 @@
-import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import Head from 'next/head';
+import styles from '@/styles/Auth.module.css';
+import Auth from '@/components/Auth';
+import { useState } from 'react';
+import Image from 'next/image';
+import Yeti from '../public/Yeti.png';
 
 export default function Login() {
-  const user = useUser();
-  const supabase = useSupabaseClient();
-  //
+  const [authType, setAuthType] = useState<
+    'login' | 'register' | 'resetPassword'
+  >('login');
+
   return (
     <>
       <Head>
@@ -13,7 +18,40 @@ export default function Login() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      login page
+
+      <main className={`${styles.mainBackground} xl:bg-grey-600`}>
+        <div
+          className={`${styles.authMD} items-center overflow-auto h-screen w-full `}
+        >
+          <div
+            className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full  xl:rounded-3xl`}
+          >
+            <div className=" w-full hidden xl:flex xl:flex-col  h-full ">
+              <div className="h-full flex justify-center items-center text-8xl font-extrabold">
+                <div className={`${styles.frostCord}`}>FrostCord</div>
+              </div>
+              <div className="h-13 relative">
+                <Image className="w-13 " src={Yeti} alt="Yeti" priority />
+              </div>
+            </div>
+            <div
+              className={`flex flex-col w-full  items-center xl:rounded-3xl ${styles.rightSide}`}
+            >
+              <div className="basis-1/4 flex items-center relative mt-8">
+                <Image
+                  className={`rounded-full  ${styles.logo}`}
+                  src="/favicon.ico"
+                  alt="FrostCord Logo"
+                  width={120}
+                  height={37}
+                  priority
+                />
+              </div>
+              <Auth type={authType} setAuthType={setAuthType} />
+            </div>
+          </div>
+        </div>
+      </main>
     </>
   );
 }
