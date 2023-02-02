@@ -42,7 +42,12 @@ export type GetServerResponseSuccess = GetServerResponse['data'];
 export type GetServerResponseError = GetServerResponse['error'];
 
 export async function updateServer(id: number, name: string, description: string | null) {
-  return await supabase.from('servers').update({ name, description }).eq('id', id);
+  return await supabase
+    .from('servers')
+    .update({ name, description })
+    .eq('id', id)
+    .select()
+    .single();
 }
 
 type UpdateServerResponse = Awaited<ReturnType<typeof updateServer>>;
