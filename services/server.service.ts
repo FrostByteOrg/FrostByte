@@ -49,20 +49,25 @@ type UpdateServerResponse = Awaited<ReturnType<typeof updateServer>>;
 export type UpdateServerResponseSuccess = UpdateServerResponse['data'];
 export type UpdateServerResponseError = UpdateServerResponse['error'];
 
-export async function deleteServer(id: number) {
+export async function deleteServer(owner_id: string, id: number) {
   // NOTE: only the owner should be able to delete a server
-  // First things first, we need to delete all channels associated with this server
-  const { data: channels, error} = await getChannelsInServer(id);
+  const { data: serverUser, error } = await supabase
+    .from('server_users')
+    .select('*')
+    .eq('profile_id', owner_id)
+    .eq('server_id', id)
+    .single();
 
   if (error) {
     return { data: null, error };
   }
 
-  channels.forEach(async (channel) => {
-    await deleteChannel(channel.channel_id);
-  });
+  if (!serverUser.is_owner) {
+    return { data: null, error: { message: 'Only the owner can delete a server' } };
+  }
 
-  // Then we can delete the server itself
+  // NOTE: Supabase has been set up to cascade delete all items related to a server (roles/invites/channels/messages)
+  // So we can delete the server itself
   return await supabase.from('servers').delete().eq('id', id);
 }
 

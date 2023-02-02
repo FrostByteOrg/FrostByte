@@ -1,4 +1,5 @@
 import { deleteServer, getServer, updateServer } from '@/services/server.service';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -41,8 +42,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   else if (method === 'DELETE') {
-    // TODO: Require user to be the owner to delete server
-    const { data: server, error } = await deleteServer(serverId);
+    // NOTE: auth header cannot be null here as it passes through the auth middleware
+    const decodedJwt = jwt.decode(req.headers.authorization!.replace('Bearer', '')) as JwtPayload;
+
+    const { data: server, error } = await deleteServer(
+      decodedJwt.sub!,
+      serverId
+    );
 
     if (error) {
       return res.status(400).send({ error });
