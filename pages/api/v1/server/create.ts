@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (method === 'POST') {
     // NOTE: auth header cannot be null here as it passes through the auth middleware
-    const decodedJwt = jwt.decode(req.headers.authorization!.replace('Bearer', '')) as JwtPayload;
+    const decodedJwt = jwt.decode(req.headers.authorization!.replace('Bearer ', '')) as JwtPayload;
 
     const { data: server, error } = await createServer(
       decodedJwt.sub!,
