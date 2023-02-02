@@ -28,17 +28,6 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
 
-    const {data: user} = await supabase.from('profiles').select().eq('id',session.user.id).single();
-
-    if (user && !user.username) {
-      redirectUrl.pathname = '/createusername';
-      return NextResponse.redirect(redirectUrl);
-    } 
-    else if (user && !user.username && req.nextUrl.pathname == '/createusername') {
-      redirectUrl.pathname = '/';
-      return NextResponse.redirect(redirectUrl);
-    }
-
     return res;
   }
 
