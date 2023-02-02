@@ -21,7 +21,7 @@ export default async function handler(
 
       if (error) res.status(409).json({ error });
 
-      return profiles;
+      return res.status(200).json(profiles);
     }
     catch (error: any) {
       console.log(error);
