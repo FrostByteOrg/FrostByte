@@ -51,24 +51,24 @@ export default function Auth({
 }
 
 function renderAuth(
-  type: 'login' | 'register' | 'resetPassword', 
-  setServerError: Dispatch<SetStateAction<string | null>>, 
+  type: 'login' | 'register' | 'resetPassword',
+  setServerError: Dispatch<SetStateAction<string | null>>,
   setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>
 ) {
   switch (type) {
-  case 'login':
-    return (
-      <Login setServerError={setServerError} setAuthType={setAuthType} />
-    );
-  case 'register':
-    return (
-      <Register setServerError={setServerError} setAuthType={setAuthType} />
-    );
-  case 'resetPassword':
-    return <PasswordReset setServerError={setServerError} setAuthType={setAuthType} />;
-  default:
-    return (
-      <Login setServerError={setServerError} setAuthType={setAuthType} />
-    );
+    case 'login':
+      return (
+        <Login setServerError={setServerError} setAuthType={setAuthType} />
+      );
+    case 'register':
+      return (
+        <Register setServerError={setServerError} setAuthType={setAuthType} />
+      );
+    case 'resetPassword':
+      return <PasswordReset setServerError={setServerError} setAuthType={setAuthType} />;
+    default:
+      return (
+        <Login setServerError={setServerError} setAuthType={setAuthType} />
+      );
   }
 }
