@@ -75,7 +75,7 @@ export async function createInvite(
     .from('server_invites')
     .insert({
       server_id: serverId,
-      num_uses: numUses,
+      uses_remaining: numUses,
       expires_at: parsedExpiresAt?.toISOString() || null,
       url_id: urlId,
     })
