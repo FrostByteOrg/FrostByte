@@ -17,11 +17,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // NOTE: All operations after this point require appropriate authorization
   if (method === 'POST') {
-    await createChannel(
+    const { data: channel, error } = await createChannel(
       serverId,
       req.body.name,
       req.body.description || null
     );
+
+    if (error) {
+      return res.status(400).send({ error });
+    }
+
+    return res.status(200).send({ channel });
   }
 
   else {

@@ -31,6 +31,7 @@ export async function createChannel(serverId: number, name: string, desciption: 
       name: name,
       description: desciption,
     })
+    .select()
     .single();
 }
 
