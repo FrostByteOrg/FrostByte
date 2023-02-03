@@ -25,6 +25,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).send(userError);
       }
 
+      // Make sure the user is not already in the server
+      const { data: serverUsers, error: serverUsersError } = await supabase
+        .from('server_users')
+        .select('id')
+        .eq('server_id', invite.server_id)
+        .eq('profile_id', user!.id)
+        .single();
+
+      if (serverUsersError) {
+        return res.status(400).send(serverUsersError);
+      }
+
+      if (serverUsers) {
+        return res.status(400).send({ error: 'User is already in the server' });
+      }
+
       // Validate times. If invite is expired, we should remove the invite from the database
       if (invite.expires_at && new Date(invite.expires_at) < new Date()) {
         await supabase
