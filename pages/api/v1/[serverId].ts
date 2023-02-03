@@ -1,5 +1,6 @@
 import { deleteServer, getServer, updateServer } from '@/services/server.service';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { Database } from '@/types/database.supabase';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,7 +17,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error(err);
     return res.status(400).send({ error: 'Invalid server ID' });
   }
-
+  const supabaseServerClient = createServerSupabaseClient<Database>({
+    req,
+    res,
+  });
   if (method === 'GET') {
     const { data: server, error } = await getServer(serverId);
 
@@ -42,19 +46,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   else if (method === 'DELETE') {
-    // NOTE: auth header cannot be null here as it passes through the auth middleware
-    const decodedJwt = jwt.decode(req.headers.authorization!.replace('Bearer ', '')) as JwtPayload;
+    const {
+      data: { user }, error: userError
+    } = await supabaseServerClient.auth.getUser();
 
-    const { data: server, error } = await deleteServer(
-      decodedJwt.sub!,
-      serverId
-    );
+    if (user) {
+      const { data: server, error } = await deleteServer(
+        user.id,
+        serverId
+      );
 
-    if (error) {
-      return res.status(400).send({ error });
+      if (error) {
+        return res.status(400).send({ error });
+      }
+  
+      return res.status(200).send(server);
     }
 
-    return res.status(200).send(server);
+    if (userError) {
+      return res.status(400).send({ userError });
+    }
+
+    return res.status(400).json({ message: 'Invalid request' });
   }
 
   else {
