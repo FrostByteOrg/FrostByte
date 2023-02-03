@@ -63,17 +63,20 @@ type UpdateServerResponse = Awaited<ReturnType<typeof updateServer>>;
 export type UpdateServerResponseSuccess = UpdateServerResponse['data'];
 export type UpdateServerResponseError = UpdateServerResponse['error'];
 
-export async function deleteServer(owner_id: string, id: number) {
+export async function deleteServer(user_id: string, server_id: number) {
   // NOTE: only the owner should be able to delete a server
   const { data: serverUser, error } = await supabase
     .from('server_users')
     .select('*')
-    .eq('profile_id', owner_id)
-    .eq('server_id', id)
+    .eq('profile_id', user_id)
+    .eq('server_id', server_id)
     .single();
 
   if (error) {
-    return { data: null, error };
+    // We mask this error and log it out
+    console.log(`[WARNING]: Row missing in server-users for user ${user_id} and server ${server_id}`);
+    console.error(error);
+    return { data: null, error: { message: 'Unauthorized.' } };
   }
 
   if (!serverUser.is_owner) {
@@ -82,7 +85,7 @@ export async function deleteServer(owner_id: string, id: number) {
 
   // NOTE: Supabase has been set up to cascade delete all items related to a server (roles/invites/channels/messages)
   // So we can delete the server itself
-  return await supabase.from('servers').delete().eq('id', id);
+  return await supabase.from('servers').delete().eq('id', server_id);
 }
 
 type DeleteServerResponse = Awaited<ReturnType<typeof deleteServer>>;
