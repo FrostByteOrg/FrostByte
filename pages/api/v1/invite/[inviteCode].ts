@@ -33,10 +33,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .eq('profile_id', user!.id)
         .single();
 
-      if (serverUsersError) {
-        return res.status(400).send(serverUsersError);
-      }
-
       if (serverUsers) {
         return res.status(400).send({ error: 'User is already in the server' });
       }
