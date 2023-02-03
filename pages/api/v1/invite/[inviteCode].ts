@@ -1,11 +1,14 @@
 import { supabase } from '@/lib/supabaseClient';
 import { getInviteByCode } from '@/services/invites.service';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 
   if (method === 'GET') {
+    const supabaseServerClient = createServerSupabaseClient({ req, res });
+
     // TODO: Remove this try catch block and use the error handling supplied by supabase
     try {
       const { data: invite, error } = await getInviteByCode(req.query.inviteCode as string);
@@ -13,6 +16,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // No invite, do nothing
       if (error) {
         return res.status(400).send(error);
+      }
+
+      const { data: { user }, error: userError } = await supabaseServerClient.auth.getUser();
+
+      // No user, do nothing
+      if (userError) {
+        return res.status(400).send(userError);
       }
 
       // Validate times. If invite is expired, we should remove the invite from the database
@@ -47,13 +57,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Add the user to the server
-      // TODO: Sort out how to provide user info to the API
-      // await supabase
-      //   .from('server_users')
-      //   .insert({
-      //     server_id: invite.server_id,
-      //     user_id
-      //   });
+      await supabase
+        .from('server_users')
+        .insert({
+          server_id: invite.server_id,
+          profile_id: user!.id,
+        });
 
       return res.status(200).send({ message: 'Joined successfully' });
     }

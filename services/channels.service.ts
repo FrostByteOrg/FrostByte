@@ -24,6 +24,11 @@ export type ChannelsInServerResponseSuccess = ChannelsInServerResponse['data'];
 export type ChannelsInServerResponseError = ChannelsInServerResponse['error'];
 
 export async function createChannel(serverId: number, name: string, desciption: string | null = null) {
+  // Validate channel name is present
+  if (!name) {
+    return { data: null, error: 'Channel name is required' };
+  }
+
   return await supabase
     .from('channels')
     .insert({

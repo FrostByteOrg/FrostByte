@@ -2,7 +2,16 @@ import { supabase } from '@/lib/supabaseClient';
 import { deleteChannel, getChannelsInServer } from './channels.service';
 
 export async function createServer(owner_id: string, name: string, description: string | null) {
-  const dbResp = await supabase.from('servers').insert({ name, description }).select().single();
+  // Validate server name is present
+  if (!name) {
+    return { data: null, error: 'Server name is required' };
+  }
+
+  const dbResp = await supabase
+    .from('servers')
+    .insert({ name, description })
+    .select()
+    .single();
 
   if (dbResp.error) {
     return dbResp;

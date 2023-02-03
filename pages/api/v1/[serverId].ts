@@ -17,10 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error(err);
     return res.status(400).send({ error: 'Invalid server ID' });
   }
-  const supabaseServerClient = createServerSupabaseClient<Database>({
-    req,
-    res,
-  });
+
+  const supabaseServerClient = createServerSupabaseClient<Database>({ req, res });
+
   if (method === 'GET') {
     const { data: server, error } = await getServer(serverId);
 
@@ -46,9 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   else if (method === 'DELETE') {
-    const {
-      data: { user }, error: userError
-    } = await supabaseServerClient.auth.getUser();
+    const { data: { user }, error: userError } = await supabaseServerClient.auth.getUser();
 
     if (user) {
       const { data: server, error } = await deleteServer(
@@ -59,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (error) {
         return res.status(400).send({ error });
       }
-  
+
       return res.status(200).send(server);
     }
 
