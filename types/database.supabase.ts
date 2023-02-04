@@ -214,6 +214,7 @@ export interface Database {
       server_users: {
         Row: {
           id: number
+          is_owner: boolean
           joined_at: string | null
           nickname: string | null
           profile_id: string
@@ -221,6 +222,7 @@ export interface Database {
         }
         Insert: {
           id?: number
+          is_owner?: boolean
           joined_at?: string | null
           nickname?: string | null
           profile_id: string
@@ -228,6 +230,7 @@ export interface Database {
         }
         Update: {
           id?: number
+          is_owner?: boolean
           joined_at?: string | null
           nickname?: string | null
           profile_id?: string
@@ -237,16 +240,19 @@ export interface Database {
       servers: {
         Row: {
           created_at: string | null
+          description: string | null
           id: number
           name: string
         }
         Insert: {
           created_at?: string | null
-          id: number
+          description?: string | null
+          id?: number
           name?: string
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: number
           name?: string
         }
