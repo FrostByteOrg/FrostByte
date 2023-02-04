@@ -1,0 +1,5 @@
+@media (min-width: 940px) {
+  .bottomNav {
+    display: none;
+  }
+}
