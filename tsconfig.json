@@ -22,7 +22,8 @@
       "@/lib/*": ["lib/*"],
       "@/types/*": ["types/*"],
       "@/styles/*": ["styles/*"],
-      "@/context/*": ["context/*"]
+      "@/context/*": ["context/*"],
+      "@/public/*": ["public/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
