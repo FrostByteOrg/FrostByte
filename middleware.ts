@@ -6,7 +6,8 @@ import { Database } from '@/types/database.supabase';
 export async function middleware(req: NextRequest) {
   // We need to create a response and hand it to the supabase client to be able to modify the response headers.
   const res = NextResponse.next();
-  // Forward req if User tries to reset password, authorization will happen on the client 
+  // Forward req if User tries to reset password, authorization will happen on the client
+  // console.log(req.cookies.has('supabase-auth-token'));
   if (req.nextUrl.pathname == '/passwordreset') return res;
   // Create authenticated Supabase Client.
   const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
@@ -40,5 +41,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: '/((?!favicon.ico|_next).*)',
+  matcher: ['/((?!favicon.ico|_next).*)','/api/:path*'],
 };

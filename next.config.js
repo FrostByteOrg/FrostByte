@@ -5,7 +5,7 @@ const nextConfig = {
   async rewrites() {
     return {
       //might need to change afterFiles => fallback
-      afterFiles: [{ source: '/:path*', destination: '/_404/:path*' }],
+      fallback: [{ source: '/:path*', destination: '/_404/:path*' }],
     };
   },
 };
