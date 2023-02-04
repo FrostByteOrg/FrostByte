@@ -1,9 +1,9 @@
-export default function MessagesIcon() {
+export default function MessagesIcon({hovered = false}) {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="0 0 24 24" 
-      fill="currentColor" 
+      fill={hovered ? '#88d4f1' : 'currentColor'} 
       className="w-6 h-6"
     >
 

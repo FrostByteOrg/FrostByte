@@ -1,9 +1,9 @@
-export default function FriendsIcon() {
+export default function FriendsIcon({hovered = false}) {
   return (<svg 
     xmlns="http://www.w3.org/2000/svg" 
     fill="none" viewBox="0 0 24 24" 
     strokeWidth={1.5} 
-    stroke="currentColor" 
+    stroke={hovered ? '#88d4f1' : 'currentColor'} 
     className="w-6 h-6"
   >
       

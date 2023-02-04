@@ -34,11 +34,11 @@ export default function Home() {
       </Head>
       <MobileViewProvider>
         <main className={`${styles.main}`}>
-          <div><RenderMobileView/></div>
+          <div className='bg-grey-700 h-screen'><RenderMobileView/></div>
           <div>
             {!user ? '' : (
               <button
-                className=" bg-frost-600 hover:bg-frost-700 font-bold py-2 px-4 w-full rounded-2xl tracking-widest text-frost-100"
+                className=" bg-frost-600 hover:bg-frost-700 font-bold py-2 px-4 fixed right-[0px] top-[0px] rounded-2xl tracking-widest text-frost-100"
                 onClick={handleLogout}
               >
                   Logout
