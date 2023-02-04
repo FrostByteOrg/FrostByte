@@ -5,26 +5,18 @@ import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 import BottomNav from '@/components/home/mobile/BottomNav';
 import { MobileViewProvider, useMobileViewSetter, useMobileViewValue } from '@/context/MobileViewCtx';
-import Chat from '@/components/home/Chat';
-import FriendsList from '@/components/home/FriendsList';
-import ServerList from '@/components/home/ServerList';
-import MessageList from '@/components/home/MessageList';
+import RenderMobileView from '@/components/home/mobile/RenderMobileView';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
 
-  //TODO: display main content based on state, display icons in navbar which will change said state
-
   //TODO: setup a global context with a possible reducer for setting the current chat. 
   //this context will be used for both mobile and normal screens
-  //where as the mainMobile is just for mobile
+  //where as the MobileViewCtx is just for mobile
   //when friends is displayed, then user clicks on a friend, it should open that chat (done via dispatch)
   //same applies to the servers and messages display state
-
-  const mobileView = useMobileViewValue();
-  const setMobileView = useMobileViewSetter();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -42,7 +34,7 @@ export default function Home() {
       </Head>
       <MobileViewProvider>
         <main className={`${styles.main}`}>
-          <div>{renderMobileView(mobileView)}</div>
+          <div><RenderMobileView/></div>
           <div>
             {!user ? '' : (
               <button
@@ -58,21 +50,4 @@ export default function Home() {
       </MobileViewProvider>
     </>
   );
-}
-
-function renderMobileView(
-  view: 'friends' | 'servers' | 'messages' | 'chat'
-) {
-  switch (view) {
-    case 'friends':
-      return <FriendsList/>;
-    case 'servers':
-      return <ServerList/>;
-    case 'messages':
-      return <MessageList/>;
-    case 'chat':
-      return <Chat/>;
-    default:
-      return <FriendsList/>;
-  }
 }
