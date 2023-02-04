@@ -4,7 +4,11 @@ import styles from '@/styles/Home.module.css';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 import BottomNav from '@/components/home/mobile/BottomNav';
-import { useState } from 'react';
+import { MobileViewProvider, useMobileViewSetter, useMobileViewValue } from '@/context/MobileViewCtx';
+import Chat from '@/components/home/Chat';
+import FriendsList from '@/components/home/FriendsList';
+import ServerList from '@/components/home/ServerList';
+import MessageList from '@/components/home/MessageList';
 
 export default function Home() {
   const user = useUser();
@@ -19,8 +23,8 @@ export default function Home() {
   //when friends is displayed, then user clicks on a friend, it should open that chat (done via dispatch)
   //same applies to the servers and messages display state
 
-  //maybe default this state from the context 
-  const [mainMobile, setMainMobile] = useState<'friends' | 'servers' | 'messages' | 'chat'>('friends');
+  const mobileView = useMobileViewValue();
+  const setMobileView = useMobileViewSetter();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -36,19 +40,39 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${styles.main}`}>
-        <div>
-          {!user ? '' : (
-            <button
-              className=" bg-frost-600 hover:bg-frost-700 font-bold py-2 px-4 w-full rounded-2xl tracking-widest text-frost-100"
-              onClick={handleLogout}
-            >
-                Logout
-            </button>
-          )}
-        </div>
-        <div className="bg-grey-950 fixed bottom-[0px] w-full h-8"><BottomNav/></div>
-      </main>
+      <MobileViewProvider>
+        <main className={`${styles.main}`}>
+          <div>{renderMobileView(mobileView)}</div>
+          <div>
+            {!user ? '' : (
+              <button
+                className=" bg-frost-600 hover:bg-frost-700 font-bold py-2 px-4 w-full rounded-2xl tracking-widest text-frost-100"
+                onClick={handleLogout}
+              >
+                  Logout
+              </button>
+            )}
+          </div>
+          <div className="bg-grey-950 fixed bottom-[0px] w-full h-8"><BottomNav/></div>
+        </main>
+      </MobileViewProvider>
     </>
   );
+}
+
+function renderMobileView(
+  view: 'friends' | 'servers' | 'messages' | 'chat'
+) {
+  switch (view) {
+    case 'friends':
+      return <FriendsList/>;
+    case 'servers':
+      return <ServerList/>;
+    case 'messages':
+      return <MessageList/>;
+    case 'chat':
+      return <Chat/>;
+    default:
+      return <FriendsList/>;
+  }
 }
