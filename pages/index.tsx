@@ -12,6 +12,9 @@ export default function Home() {
   const supabase = useSupabaseClient();
   const router = useRouter();
 
+  //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
+  //TODO: show server channels, probably skip add new channel and do chat right away since default general exists
+
   //TODO: setup a global context with a possible reducer for setting the current chat. 
   //this context will be used for both mobile and normal screens
   //where as the MobileViewCtx is just for mobile
