@@ -48,7 +48,7 @@ export default function Home() {
               </button>
             )}
           </div>
-          <div className={`${styles.bottomNav} bg-grey-950 fixed bottom-[0px] w-full h-8`}><BottomNav/></div>
+          <div className={`${styles.bottomNav} bg-grey-950 fixed bottom-[0px] w-full h-8 flex`}><BottomNav/></div>
         </main>
       </MobileViewProvider>
     </>

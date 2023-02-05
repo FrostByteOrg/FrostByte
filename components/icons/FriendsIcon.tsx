@@ -3,7 +3,7 @@ export default function FriendsIcon({hovered = false}) {
     xmlns="http://www.w3.org/2000/svg" 
     fill="none" viewBox="0 0 24 24" 
     strokeWidth={1.5} 
-    stroke={hovered ? '#88d4f1' : 'currentColor'} 
+    stroke={hovered ? '#8aa0a8' : 'currentColor'} 
     className="w-6 h-6"
   >
       

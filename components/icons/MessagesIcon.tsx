@@ -3,7 +3,7 @@ export default function MessagesIcon({hovered = false}) {
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="0 0 24 24" 
-      fill={hovered ? '#88d4f1' : 'currentColor'} 
+      fill={hovered ? '#8aa0a8' : 'currentColor'} 
       className="w-6 h-6"
     >
 
