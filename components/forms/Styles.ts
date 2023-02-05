@@ -23,7 +23,7 @@ text-base
 font-normal
 placeholder:text-white
 placeholder:opacity-70     
-rounded-2xl
+rounded-xl
 transition
 ease-in-out
 m-0

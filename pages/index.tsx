@@ -41,7 +41,7 @@ export default function Home() {
           <div>
             {!user ? '' : (
               <button
-                className=" bg-frost-600 hover:bg-frost-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-2xl tracking-wide text-frost-100"
+                className=" bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
                 onClick={handleLogout}
               >
                   Logout
