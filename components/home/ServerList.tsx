@@ -2,10 +2,26 @@ import AddServerIcon from '@/components/icons/AddServerIcon';
 import {SearchBar} from '@/components/forms/Styles';
 import { useState } from 'react';
 import supabaseLogo from '@/public/supabaseLogo.png';
-import Image from 'next/image';
-import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
+import Server from '@/components/home/Server';
+import fireShipLogo from '@/public/fireShipLogo.png';
+import { StaticImageData } from 'next/image';
+
+//NOTE: this is a temp type just for testing, to be removed 
+type Server = {
+  name: string;
+  icon: StaticImageData;
+  members: string;
+  onlineMembers: string;
+}
+
+//NOTE: this is temporary and just for testing 
+const SERVERS: Server[] = [{name: 'Supabase', icon: supabaseLogo,members: '458', onlineMembers: '32' },{name: 'Fireship', icon: fireShipLogo,members: '2833', onlineMembers: '181' }];
 
 export default function ServerList() {
+
+  //TODO: Extract and create single server component with props for clicked (boolean, when true, server is expanded and channels are shown)
+
+  //TODO: Display default page (when user belongs to and has no servers)
 
   const [addServerhover, setAddServerHover] = useState(false);
 
@@ -23,30 +39,8 @@ export default function ServerList() {
           placeholder="Search"
         ></input>
       </div>
-      <div className='pt-4'>
-        <div className='border-b-2 border-grey-700 py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center'>
-          <div className='flex items-center'>
-            <div className='bg-grey-900 p-2 rounded-xl'>
-              <Image className="w-5" src={supabaseLogo} alt="Supabase" priority />
-            </div>
-            <div className='ml-3'>
-              
-              <div className='text-lg tracking-wide font-bold'>Supabase</div>
-              <div className='text-xs tracking-wide text-grey-300 flex'>
-                <div className='flex items-center'>
-                  <span className='p-1 bg-green-300 rounded-full mr-1'></span>
-                  <span>32 Online</span>
-                </div>
-                <div className='flex items-center ml-2'>
-                  <span className='p-1 bg-grey-300 rounded-full mr-1'></span>
-                  <span>458 Members</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div><VerticalSettingsIcon/></div>
-        </div>
-      </div>
+      {SERVERS.map((server,idx) => <Server key={idx} server={server}/>)}
+      
     </div>
   );
 }
