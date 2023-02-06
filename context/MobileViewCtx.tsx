@@ -12,7 +12,7 @@ type MobileViewCtxValue = {
 };
 
 export const MobileViewCtxDefaultVal: MobileViewCtxValue = {
-  mobileView: 'friends',
+  mobileView: 'servers',
   setMobileView: (state) => {},
 };
 
