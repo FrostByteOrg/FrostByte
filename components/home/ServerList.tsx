@@ -41,7 +41,12 @@ const SERVERS: Server[] = [
     onlineMembers: '181',
     channels: [
       { id: '1', name: 'general', description: '', server_id: '53' },
-      { id: '2', name: 'off-topic', description: '', server_id: '53' },
+      {
+        id: '2',
+        name: 'off-topic',
+        description: '',
+        server_id: '53',
+      },
     ],
   },
 ];

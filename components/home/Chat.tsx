@@ -1,6 +1,5 @@
-export default function Chat() {
+export default function Chat({ channelId = '' }) {
   //TODO: display current chat, retrieve current chat from chat context
 
-
-  return (<>Chat</>);
+  return <>Chat, channelId: {channelId}</>;
 }

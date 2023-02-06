@@ -2,6 +2,8 @@ import Image, { StaticImageData } from 'next/image';
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { SyntheticEvent } from 'react';
+import { useChannelIdSetter } from '@/context/ChatCtx';
+import { useMobileViewSetter } from '@/context/MobileViewCtx';
 
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Server = {
@@ -29,15 +31,19 @@ export default function Server({
 }) {
   const expand = expanded == server.id;
 
-  function testClick(e: SyntheticEvent) {
+  const setChannelId = useChannelIdSetter();
+  const setMobileView = useMobileViewSetter();
+
+  function joinChannel(e: SyntheticEvent, channelId: string) {
     e.stopPropagation();
-    console.log('test');
+    setChannelId(channelId);
+    setMobileView('chat');
   }
 
   if (expand) {
     return (
-      <div className="pt-4 relative">
-        <div className="border-b-2 hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10 ">
+      <div className="relative">
+        <div className="border-b-2  hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div className="bg-grey-900 p-2 rounded-xl">
               <Image
@@ -67,17 +73,19 @@ export default function Server({
             <VerticalSettingsIcon />
           </div>
         </div>
-        <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4 px-8">
+        <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
           {server.channels.map((channel) => (
             <div
-              className="channel flex items-center pt-2"
-              onClick={(e) => testClick(e)}
+              className="channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px]  "
+              onClick={(e) => joinChannel(e, channel.id)}
               key={channel.id}
             >
               <div>
                 <ChannelMessageIcon />
               </div>
-              <div className="ml-2">{channel.name}</div>
+              <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[90px] overflow-hidden hover:overflow-visible">
+                {channel.name}
+              </div>
             </div>
           ))}
         </div>

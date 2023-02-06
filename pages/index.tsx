@@ -4,8 +4,9 @@ import styles from '@/styles/Home.module.css';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 import BottomNav from '@/components/home/mobile/BottomNav';
-import { MobileViewProvider, useMobileViewSetter, useMobileViewValue } from '@/context/MobileViewCtx';
+import { MobileViewProvider } from '@/context/MobileViewCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
+import { ChatCtxProvider } from '@/context/ChatCtx';
 
 export default function Home() {
   const user = useUser();
@@ -15,7 +16,7 @@ export default function Home() {
   //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
   //TODO: show server channels, probably skip add new channel and do chat right away since default general exists
 
-  //TODO: setup a global context with a possible reducer for setting the current chat. 
+  //TODO: setup a global context with a possible reducer for setting the current chat.
   //this context will be used for both mobile and normal screens
   //where as the MobileViewCtx is just for mobile
   //when friends is displayed, then user clicks on a friend, it should open that chat (done via dispatch)
@@ -35,22 +36,32 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MobileViewProvider>
-        <main className={`${styles.main}`}>
-          <div className='bg-grey-800 h-screen'><RenderMobileView/></div>
-          <div>
-            {!user ? '' : (
-              <button
-                className=" bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
-                onClick={handleLogout}
-              >
+      <ChatCtxProvider>
+        <MobileViewProvider>
+          <main className={`${styles.main}`}>
+            <div className="bg-grey-800 h-screen">
+              <RenderMobileView />
+            </div>
+            <div>
+              {!user ? (
+                ''
+              ) : (
+                <button
+                  className=" bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                  onClick={handleLogout}
+                >
                   Logout
-              </button>
-            )}
-          </div>
-          <div className={`${styles.bottomNav} bg-grey-950 fixed bottom-[0px] w-full h-8 flex`}><BottomNav/></div>
-        </main>
-      </MobileViewProvider>
+                </button>
+              )}
+            </div>
+            <div
+              className={`${styles.bottomNav} bg-grey-950 fixed bottom-[0px] w-full h-8 flex`}
+            >
+              <BottomNav />
+            </div>
+          </main>
+        </MobileViewProvider>
+      </ChatCtxProvider>
     </>
   );
 }
