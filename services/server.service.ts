@@ -91,3 +91,14 @@ export async function deleteServer(user_id: string, server_id: number) {
 type DeleteServerResponse = Awaited<ReturnType<typeof deleteServer>>;
 export type DeleteServerResponseSuccess = DeleteServerResponse['data'];
 export type DeleteServerResponseError = DeleteServerResponse['error'];
+
+export async function getServersForUser(user_id: string) {
+  return await supabase
+    .from('server_users')
+    .select('server_id, servers ( * )')
+    .eq('profile_id', user_id);
+}
+
+type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
+export type GetServersForUserResponseSuccess = GetServersForUserResponse['data'];
+export type GetServersForUserResponseError = GetServersForUserResponse['error'];
