@@ -34,5 +34,6 @@ export async function updateUserProfile(
       website
     })
     .eq('id', id)
+    .select('*')
     .single();
 }

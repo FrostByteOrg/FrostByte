@@ -65,6 +65,7 @@ export async function updateChannel(channelId: number, name: string, description
       description: description,
     })
     .eq('id', channelId)
+    .select()
     .single();
 }
 
