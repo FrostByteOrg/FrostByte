@@ -37,3 +37,7 @@ export async function updateUserProfile(
     .select('*')
     .single();
 }
+
+type UpdateUserProfileResponse = Awaited<ReturnType<typeof updateUserProfile>>;
+export type UpdateUserProfileResponseSuccess = UpdateUserProfileResponse['data'];
+export type UpdateUserProfileResponseError = UpdateUserProfileResponse['error'];
