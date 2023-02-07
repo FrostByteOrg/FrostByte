@@ -123,7 +123,7 @@ export interface Database {
           full_name: string | null
           id: string
           updated_at: string | null
-          username: string | null
+          username: string
           website: string | null
         }
         Insert: {
@@ -132,7 +132,7 @@ export interface Database {
           full_name?: string | null
           id: string
           updated_at?: string | null
-          username?: string | null
+          username: string
           website?: string | null
         }
         Update: {
@@ -141,7 +141,7 @@ export interface Database {
           full_name?: string | null
           id?: string
           updated_at?: string | null
-          username?: string | null
+          username?: string
           website?: string | null
         }
       }

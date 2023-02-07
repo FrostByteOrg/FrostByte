@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { getUserProfile, updateUserProfile } from '@/services/profile.service';
+import { getProfile, updateUserProfile } from '@/services/profile.service';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (method === 'GET') {
     // Fetch user profile
-    const { data: profile, error } = await getUserProfile(user.id);
+    const { data: profile, error } = await getProfile(user.id);
 
     // No profile, return not found error
     if (!profile) {

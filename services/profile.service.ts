@@ -8,17 +8,17 @@ type ProfilesResponse = Awaited<ReturnType<typeof getProfiles>>;
 export type ProfilesResponseSuccess = ProfilesResponse['data'];
 export type ProfilesResponseError = ProfilesResponse['error'];
 
-export async function getUserProfile(id: string) {
+export async function getProfile(id: string) {
   return await supabase
     .from('profiles')
-    .select('*')
-    .eq('id', id)
+    .select()
+    .eq('id',id)
     .single();
 }
 
-type UserProfileResponse = Awaited<ReturnType<typeof getUserProfile>>;
-export type UserProfileResponseSuccess = UserProfileResponse['data'];
-export type UserProfileResponseError = UserProfileResponse['error'];
+type ProfileResponse = Awaited<ReturnType<typeof getProfile>>;
+export type ProfileResponseSeccess = ProfileResponse['data']
+export type ProfileResponseError = ProfileResponse['error']
 
 export async function updateUserProfile(
   id: string,

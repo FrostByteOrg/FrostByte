@@ -1,6 +1,7 @@
 import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { Database } from '@/types/database.supabase';
 
 export async function middleware(req: NextRequest) {
   // We need to create a response and hand it to the supabase client to be able to modify the response headers.
@@ -9,7 +10,7 @@ export async function middleware(req: NextRequest) {
   // console.log(req.cookies.has('supabase-auth-token'));
   if (req.nextUrl.pathname == '/passwordreset') return res;
   // Create authenticated Supabase Client.
-  const supabase = createMiddlewareSupabaseClient({ req, res });
+  const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
   // Check if we have a session
 
   const {
@@ -27,6 +28,7 @@ export async function middleware(req: NextRequest) {
       redirectUrl.pathname = '/';
       return NextResponse.redirect(redirectUrl);
     }
+
     return res;
   }
 
