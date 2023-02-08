@@ -15,7 +15,7 @@ export default function Chat() {
   const { messages } = useStore({channelId: channelId});
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
-  const socket: Socket<SocketServerEvents, SocketClientEvents> = io('http://localhost:3000', {path: '/api/socket.io'});
+  const socket: Socket<SocketServerEvents, SocketClientEvents> = io({path: '/api/socket.io'});
 
   const sendMessage = (channel_id: number, profile_id: string, content: string) => {
     socket.emit('messageCreated', {
