@@ -11,7 +11,7 @@ export function useStore({ channelId }: { channelId: number }) {
   //to passing the supabase instance in function params
   //TODO: FIX TYPESSSSS
 
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any>([]);
   const [newMessage, handleNewMessage] = useState<any>(null);
   const [deletedMessage, handleDeletedMessage] = useState<any>(null);
 
@@ -44,7 +44,7 @@ export function useStore({ channelId }: { channelId: number }) {
       const handleAsync = async () => {
         await fetchMessages(channelId, (messages: any) => {        
           setMessages(messages);
-          console.log(messages);
+          // console.log(messages);
         });
       };
       handleAsync();
@@ -55,7 +55,18 @@ export function useStore({ channelId }: { channelId: number }) {
   // New message received from Postgres
   useEffect(() => {
     if (newMessage && newMessage.channel_id == channelId) {
-      setMessages(messages.concat(newMessage));
+      //TODO: fix this!, make this work, currently newMessage is a message but it does not include the user profile
+      //hence why react cant render the thang, with type checks it will show the errors but currently everything is 
+      //set to any:DDD
+      // setMessages([...messages, newMessage]);
+      const handleAsync = async () => {
+        await fetchMessages(channelId, (messages: any) => {        
+          setMessages(messages);
+        });
+      };
+      handleAsync();
+      handleNewMessage(null);
+
     }
   }, [newMessage, messages, channelId]);
 

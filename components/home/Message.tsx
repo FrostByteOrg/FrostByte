@@ -31,5 +31,5 @@ function isMessageSuccess(
     | MessageWithUsersResponseError
     | null
 ): message is MessageWithUsersResponseSuccess {
-  return (message as MessageWithUsersResponseSuccess).author_id !== undefined;
+  return (message as MessageWithUsersResponseSuccess).author_id !== undefined && (message as MessageWithUsersResponseSuccess) !== null && (message as MessageWithUsersResponseSuccess).author_id !== null && message !== null;
 }
