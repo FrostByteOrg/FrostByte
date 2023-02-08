@@ -4,20 +4,38 @@ import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useStore, addMessage } from '@/lib/Store';
-import Message from './Message';
+import Message, { ChatMessage } from './Message';
 import MessageInput from './MessageInput';
+import { io, Socket } from 'socket.io-client';
+import { SocketClientEvents, SocketServerEvents } from '@/types/socketevents';
 
 export default function Chat() {
   const supabaseClient = useSupabaseClient();
   const channelId = useChannelIdValue();
-  const {messages} = useStore({channelId: channelId});
+  const { messages } = useStore({channelId: channelId});
   const user = useUser();
-
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
+  const socket: Socket<SocketServerEvents, SocketClientEvents> = io('http://localhost:3000', {path: '/api/socket.io'});
+
+  const sendMessage = (channel_id: number, profile_id: string, content: string) => {
+    socket.emit('messageCreated', {
+      channel_id,
+      content,
+      profile_id
+    });
+  };
 
   useEffect(() => {
-    if (newestMessageRef) newestMessageRef.current?.scrollIntoView({block: 'start',
-      behavior: 'smooth',});
+    if (newestMessageRef) {
+      newestMessageRef.current?.scrollIntoView({
+        block: 'start',
+        behavior: 'smooth'
+      });
+    }
+
+    socket.on('serverBroadcastMessageCreated', (message) => {
+      // TODO: Dump message into chat
+    });
   }, [newestMessageRef]);
 
 
@@ -38,13 +56,17 @@ export default function Chat() {
         <div
           className={`${styles.messageList}  flex flex-col overflow-y-scroll`}
         >
-
-          {messages.map((message: any) => <Message key={message.id} message={message}/>)}
-
+          {
+            messages.map((value: ChatMessage, index: number, array: ChatMessage[]) => {
+              const message = array[array.length - 1 - index];
+              return <Message key={index} message={message}/>;
+            })
+          }
           <div ref={newestMessageRef} className=""></div>
         </div>
 
-        <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user?.id as string, 10)}/>
+        {/* <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user?.id as string, 10)}/> */}
+        <MessageInput onSubmit={async (text: string) => sendMessage(channelId, user?.id!, text)}/>
       </div>
     </>
   );

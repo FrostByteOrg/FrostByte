@@ -265,7 +265,14 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_all_channels_for_user: {
+        Args: {
+          p_id: string
+        }
+        Returns: {
+          channel_id: number
+        }
+      }
     }
     Enums: {
       [_ in never]: never
