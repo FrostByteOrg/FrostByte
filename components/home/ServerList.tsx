@@ -17,7 +17,7 @@ type Server = {
 };
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Channel = {
-  id: string;
+  id: number;
   name: string;
   description: string;
   server_id: string;
@@ -31,7 +31,7 @@ const SERVERS: Server[] = [
     icon: supabaseLogo,
     members: '458',
     onlineMembers: '32',
-    channels: [{ id: '1', name: 'general', description: '', server_id: '1' }],
+    channels: [{ id: 1, name: 'general', description: '', server_id: '1' }],
   },
   {
     id: '53',
@@ -40,9 +40,9 @@ const SERVERS: Server[] = [
     members: '2833',
     onlineMembers: '181',
     channels: [
-      { id: '1', name: 'general', description: '', server_id: '53' },
+      { id: 1, name: 'general', description: '', server_id: '53' },
       {
-        id: '2',
+        id: 2,
         name: 'off-topic',
         description: '',
         server_id: '53',

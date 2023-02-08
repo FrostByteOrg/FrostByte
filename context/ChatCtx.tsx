@@ -7,12 +7,12 @@ import {
 } from 'react';
 
 type ChatCtxValue = {
-  channelId: string;
-  setChannelId: Dispatch<SetStateAction<string>>;
+  channelId: number;
+  setChannelId: Dispatch<SetStateAction<number>>;
 };
 
 export const ChatCtxDefaultVal: ChatCtxValue = {
-  channelId: '',
+  channelId: 0,
   setChannelId: (state) => {},
 };
 

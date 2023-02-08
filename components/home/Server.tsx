@@ -16,7 +16,7 @@ type Server = {
 };
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Channel = {
-  id: string;
+  id: number;
   name: string;
   description: string;
   server_id: string;
@@ -34,7 +34,7 @@ export default function Server({
   const setChannelId = useChannelIdSetter();
   const setMobileView = useMobileViewSetter();
 
-  function joinChannel(e: SyntheticEvent, channelId: string) {
+  function joinChannel(e: SyntheticEvent, channelId: number) {
     e.stopPropagation();
     setChannelId(channelId);
     setMobileView('chat');
