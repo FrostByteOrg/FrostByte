@@ -108,3 +108,20 @@ export async function fetchMessages(
     console.log('error', error);
   }
 }
+
+/**
+ * Insert a new message into the DB
+ * @param {string} message The message text
+ * @param {number} channel_id
+ * @param {string} profile_id The author
+ * @param {string} author_id The author/server user
+ */
+export async function addMessage (message: string, channel_id: number, profile_id: string, author_id: number) {
+  try {
+    const { data } = await supabase.from('messages').insert([{ content: message, channel_id, profile_id, author_id }]).select();
+    return data;
+  } 
+  catch (error) {
+    console.log('error', error);
+  }
+};

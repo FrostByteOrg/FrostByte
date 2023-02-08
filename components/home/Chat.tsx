@@ -2,14 +2,16 @@ import { useChannelIdValue } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { useStore } from '@/lib/Store';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useStore, addMessage } from '@/lib/Store';
 import Message from './Message';
+import MessageInput from './MessageInput';
 
 export default function Chat() {
   const supabaseClient = useSupabaseClient();
   const channelId = useChannelIdValue();
   const {messages} = useStore({channelId: channelId});
+  const user = useUser();
 
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
 
@@ -19,7 +21,7 @@ export default function Chat() {
   }, [newestMessageRef]);
 
 
-  //TODO:FETCH channel info and messages via channel id
+  //TODO: SET AUTHOR_ID (SERVERUSER) WHEN ENTERING A CHANNEL IN A SERVER AND REMOVE HARDCODED 10
 
   return (
     <>
@@ -42,26 +44,7 @@ export default function Chat() {
           <div ref={newestMessageRef} className=""></div>
         </div>
 
-        <input
-          className="w-[90%]
-           px-3 
-           py-2
-           self-start
-           text-base
-           font-normal
-           placeholder:text-white
-           placeholder:opacity-70     
-           rounded-lg
-           transition
-           ease-in-out
-           m-0
-           focus:outline-none
-           bg-grey-700
-           bottom-[90px]
-           fixed
-           "
-          placeholder="Message general"
-        />
+        <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user?.id as string, 10)}/>
       </div>
     </>
   );
