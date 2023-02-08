@@ -17,7 +17,7 @@ export default function RenderMobileView() {
     case 'messages':
       return <MessageList />;
     case 'chat':
-      return <Chat channelId={channelId} />;
+      return <Chat />;
     default:
       return <FriendsList />;
   }

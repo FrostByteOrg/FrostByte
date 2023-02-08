@@ -94,7 +94,7 @@ export default function Server({
   }
 
   return (
-    <div className="pb-4 hover:cursor-pointer">
+    <div className="pb-3 hover:cursor-pointer">
       <div className="border-b-2 border-grey-700 py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center">
         <div className="flex items-center">
           <div className="bg-grey-900 p-2 rounded-xl">

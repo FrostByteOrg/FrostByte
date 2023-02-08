@@ -1,4 +1,4 @@
-export default function ChannelMessageIcon() {
+export default function ChannelMessageIcon({ size = '4' }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +6,7 @@ export default function ChannelMessageIcon() {
       viewBox="0 0 24 24"
       strokeWidth={2}
       stroke="currentColor"
-      className="w-4 h-4"
+      className={`w-${size} h-${size}`}
     >
       <path
         strokeLinecap="round"

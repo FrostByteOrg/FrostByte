@@ -14,13 +14,7 @@ export default function Home() {
   const router = useRouter();
 
   //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
-  //TODO: show server channels, probably skip add new channel and do chat right away since default general exists
-
-  //TODO: setup a global context with a possible reducer for setting the current chat.
-  //this context will be used for both mobile and normal screens
-  //where as the MobileViewCtx is just for mobile
-  //when friends is displayed, then user clicks on a friend, it should open that chat (done via dispatch)
-  //same applies to the servers and messages display state
+  //TODO: fix the positioning of the logout button
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -39,7 +33,7 @@ export default function Home() {
       <ChatCtxProvider>
         <MobileViewProvider>
           <main className={`${styles.main}`}>
-            <div className="bg-grey-800 h-screen">
+            <div className="bg-grey-800 h-screen flex flex-col relative">
               <RenderMobileView />
             </div>
             <div>
