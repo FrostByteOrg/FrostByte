@@ -18,9 +18,11 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
           .select('*')
           .eq('id', serverId)
           .single()
-          .then(cursor => {
+          .then((cursor) => {
             if (cursor.error) {
-              console.error(`Error adding ${user.username} to server ${serverId}: ${cursor.error}`);
+              console.error(
+                `Error adding ${user.username} to server ${serverId}: ${cursor.error}`
+              );
               return;
             }
 
@@ -40,7 +42,8 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
             author_id: message.author_id,
             channel_id: message.channelId,
           })
-          .select(`
+          .select(
+            `
             *,
             server_users (
               nickname
@@ -48,7 +51,8 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
             channels (
               name
             )
-          `)
+          `
+          )
           .single()
           .then((cursor) => {
             if (cursor.error) {
@@ -56,9 +60,19 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
               return;
             }
 
-            io.to(message.channelId.toString()).emit('serverBroadcastsUserSentMessage', cursor.data);
+            io.to(message.channelId.toString()).emit(
+              'serverBroadcastsUserSentMessage',
+              cursor.data
+            );
             // TODO: Sort out the relationship on this, we should only be returning a single channel/server_user object from the query
-            console.log(`[${(cursor.data.server_users! as {nickname: string | null}[])[0].nickname} @ ${(cursor.data.channels as {name: string | null}).name}]: ${cursor.data.content}`);
+            console.log(
+              `[${
+                (cursor.data.server_users! as { nickname: string | null }[])[0]
+                  .nickname
+              } @ ${(cursor.data.channels as { name: string | null }).name}]: ${
+                cursor.data.content
+              }`
+            );
           });
       });
 
@@ -68,12 +82,14 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
           .delete()
           .eq('server_id', serverId)
           .eq('profile_id', user.id)
-          .select(`
+          .select(
+            `
             *,
             servers (
               *
             )
-          `)
+          `
+          )
           .single()
           .then((cursor) => {
             if (cursor.error) {
@@ -81,9 +97,21 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
               return;
             }
 
-            console.log(`User ${user.username} left ${(cursor.data.servers as {created_at: string | null, id: number, name: string}[])[0].name}`);
+            console.log(
+              `User ${user.username} left ${
+                (
+                  cursor.data.servers as {
+                    created_at: string | null;
+                    id: number;
+                    name: string;
+                  }[]
+                )[0].name
+              }`
+            );
             socket.leave(cursor.data.server_id.toString());
-            socket.to(cursor.data.server_id.toString()).emit('serverBroadcastsUserLeave', user, cursor.data.servers);
+            socket
+              .to(cursor.data.server_id.toString())
+              .emit('serverBroadcastsUserLeave', user, cursor.data.servers);
           });
       });
 
@@ -118,6 +146,38 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
 
         socket.emit('serverBroadcastsUserDisconnected', userId);
       });
+
+      // Socket Events for handling webrtc signaling
+
+      //Signal event triggered to let others know you're ready to stream
+      socket.on('ready', (channelId) => {
+        socket.broadcast.to(channelId).emit('ready');
+        //TODO: expand this from 1 : 1
+      });
+
+      /*
+      ICE is an exchange protocol, the READY user sends this to the user accepting offer
+      its where the connection exchange finds a good route
+      */
+      socket.on('ice', (candidate: RTCIceCandidate, channelId: string) => {
+        console.log(candidate);
+        socket.broadcast.to(channelId).emit('ice', candidate);
+      });
+
+      //Offer from user who is ready to stream sent to peer
+      socket.on('connection-offer', (userOffer, channelId) => {
+        socket.broadcast.to(channelId).emit('offer', userOffer);
+      });
+
+      //Event emitted when peer accepts connection-offer
+      socket.on('answer', (answer, channelId) => {
+        socket.broadcast.to(channelId).emit('answer', answer);
+      });
+
+      //Event to emit when connection closes when the stream shuts off
+      socket.on('close-connection', (channelId) => {
+        socket.broadcast.to(channelId).emit('close-connection');
+      });
     });
   }
 };
@@ -126,6 +186,6 @@ export default socketIoHandler;
 
 export const config = {
   api: {
-    bodyParser: false
-  }
+    bodyParser: false,
+  },
 };
