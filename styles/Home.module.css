@@ -7,9 +7,9 @@
 @media (max-width: 940px) {
   .bottomNav {
     display: grid;
-      grid-template-columns:
-        repeat(3, minmax(16px, 1fr)) repeat(6, minmax(0, 128px))
-        repeat(3, minmax(16px, 1fr));
+    grid-template-columns:
+      repeat(3, minmax(16px, 1fr)) repeat(6, minmax(0, 128px))
+      repeat(3, minmax(16px, 1fr));
+    min-height: 64px;
   }
 }
-

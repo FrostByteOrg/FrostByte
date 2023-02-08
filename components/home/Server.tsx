@@ -42,8 +42,8 @@ export default function Server({
 
   if (expand) {
     return (
-      <div className="relative">
-        <div className="border-b-2  hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
+      <div className="relative ">
+        <div className="border-b-2   hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div className="bg-grey-900 p-2 rounded-xl">
               <Image

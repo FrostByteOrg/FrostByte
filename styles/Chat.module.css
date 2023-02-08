@@ -1,0 +1,15 @@
+@media (min-height: 600px) {
+  .messageList {
+    /* min-height: 20px; */
+    /* overflow-y: scroll; */
+    height: 100%;
+  }
+}
+
+@media (max-height: 680px) {
+  .messageList {
+    /* min-height: 20px; */
+    /* overflow-y: scroll; */
+    height: 90%;
+  }
+}
