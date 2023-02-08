@@ -14,21 +14,21 @@ export interface Database {
           channel_id: number
           created_at: string | null
           description: string | null
-          name: string | null
+          name: string
           server_id: number
         }
         Insert: {
           channel_id?: number
           created_at?: string | null
           description?: string | null
-          name?: string | null
+          name: string
           server_id: number
         }
         Update: {
           channel_id?: number
           created_at?: string | null
           description?: string | null
-          name?: string | null
+          name?: string
           server_id?: number
         }
       }
@@ -93,6 +93,7 @@ export interface Database {
           id: number
           is_edited: boolean
           is_pinned: boolean
+          profile_id: string
           sent_time: string
         }
         Insert: {
@@ -103,6 +104,7 @@ export interface Database {
           id?: number
           is_edited?: boolean
           is_pinned?: boolean
+          profile_id: string
           sent_time?: string
         }
         Update: {
@@ -113,13 +115,14 @@ export interface Database {
           id?: number
           is_edited?: boolean
           is_pinned?: boolean
+          profile_id?: string
           sent_time?: string
         }
       }
       profiles: {
         Row: {
           avatar_url: string | null
-          email: string | null
+          email: string
           full_name: string | null
           id: string
           updated_at: string | null
@@ -128,7 +131,7 @@ export interface Database {
         }
         Insert: {
           avatar_url?: string | null
-          email?: string | null
+          email: string
           full_name?: string | null
           id: string
           updated_at?: string | null
@@ -137,7 +140,7 @@ export interface Database {
         }
         Update: {
           avatar_url?: string | null
-          email?: string | null
+          email?: string
           full_name?: string | null
           id?: string
           updated_at?: string | null
@@ -248,7 +251,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: number
-          name?: string
+          name: string
         }
         Update: {
           created_at?: string | null
@@ -265,6 +268,9 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
       [_ in never]: never
     }
   }

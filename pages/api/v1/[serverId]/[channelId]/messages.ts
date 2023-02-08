@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { isUserInServer } from '@/services/server.service';
-import { getMessagesInChannel } from '@/services/message.service';
+import { getMessagesInChannelWithUser } from '@/services/message.service';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { page, size } = req.query;
 
     // Get messages from this channel
-    const { data: messages, error } = await getMessagesInChannel(
+    const { data: messages, error } = await getMessagesInChannelWithUser(
       channelId,
       parseInt(page as string) || 0,
       parseInt(size as string) || 50

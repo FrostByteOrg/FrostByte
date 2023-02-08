@@ -2,6 +2,7 @@ import { useChannelIdValue } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Author = {
@@ -40,13 +41,25 @@ const MESSAGES: Message[] = [
 ];
 
 export default function Chat() {
+  const supabaseClient = useSupabaseClient();
   const channelId = useChannelIdValue();
 
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
-    if (newestMessageRef) newestMessageRef.current?.scrollIntoView();
+    if (newestMessageRef) newestMessageRef.current?.scrollIntoView({block: 'start',
+      behavior: 'smooth',});
   }, [newestMessageRef]);
+
+  // useEffect(() => {
+  //   //
+  //   async function loadData() {
+  //     const { data } = await supabaseClient.from('test').select('*');
+  //     setData(data);
+  //   }
+  //   // Only run query once user is logged in.
+  //   loadData();
+  // },[]);
 
   //TODO:FETCH channel info and messages via channel id
 

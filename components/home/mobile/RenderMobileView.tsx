@@ -2,7 +2,7 @@ import { useMobileViewValue } from '@/context/MobileViewCtx';
 import Chat from '@/components/home/Chat';
 import FriendsList from '@/components/home/FriendsList';
 import ServerList from '@/components/home/ServerList';
-import MessageList from '@/components/home/MessageList';
+import DMessageList from '@/components/home/DMessageList';
 import { useChannelIdValue } from '@/context/ChatCtx';
 
 export default function RenderMobileView() {
@@ -15,7 +15,7 @@ export default function RenderMobileView() {
     case 'servers':
       return <ServerList />;
     case 'messages':
-      return <MessageList />;
+      return <DMessageList />;
     case 'chat':
       return <Chat />;
     default:
