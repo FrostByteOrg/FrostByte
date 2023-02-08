@@ -4,42 +4,7 @@ import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useStore } from '@/lib/Store';
-
-//NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
-type Author = {
-  id: string;
-  username: string;
-};
-
-//NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
-type Message = {
-  id: string;
-  content: string;
-  author: Author;
-  createdAt: Date;
-};
-
-//NOTE: this is temporary and just for testing
-const MESSAGES: Message[] = [
-  {
-    id: '1',
-    content: 'first msg',
-    author: { id: '1', username: 'weedpolice420' },
-    createdAt: new Date('2023-02-06T03:24:00'),
-  },
-  {
-    id: '2',
-    content: '2nd msg',
-    author: { id: '2', username: 'kingsgambit' },
-    createdAt: new Date('2023-02-06T03:26:00'),
-  },
-  {
-    id: '3',
-    content: 'stop copying my cat',
-    author: { id: '1', username: 'weedpolice420' },
-    createdAt: new Date('2023-02-06T03:37:00'),
-  },
-];
+import Message from './Message';
 
 export default function Chat() {
   const supabaseClient = useSupabaseClient();
@@ -53,15 +18,6 @@ export default function Chat() {
       behavior: 'smooth',});
   }, [newestMessageRef]);
 
-  // useEffect(() => {
-  //   //
-  //   async function loadData() {
-  //     const { data } = await supabaseClient.from('test').select('*');
-  //     setData(data);
-  //   }
-  //   // Only run query once user is logged in.
-  //   loadData();
-  // },[]);
 
   //TODO:FETCH channel info and messages via channel id
 
@@ -80,33 +36,8 @@ export default function Chat() {
         <div
           className={`${styles.messageList}  flex flex-col overflow-y-scroll`}
         >
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">messages</div>
-          <div className="messageList">chiee</div>
+
+          {messages.map((message: any) => <Message key={message.id} message={message}/>)}
 
           <div ref={newestMessageRef} className=""></div>
         </div>

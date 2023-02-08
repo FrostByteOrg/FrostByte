@@ -12,7 +12,7 @@ export default function Message({
   if (isMessageSuccess(message)) {
     return (
       <>
-        <div>{message.profiles.username}</div>
+        <div>{message.profiles.username}: {message.content}</div>
       </>
     );
   }
