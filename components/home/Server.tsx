@@ -74,12 +74,13 @@ export default function Server({
           </div>
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
-          {server.channels.map((channel) => (
+          {server.channels.map((channel, idx) => (
             <div
               className="channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px]  "
               onClick={(e) => joinChannel(e, channel.id)}
-              key={channel.id}
+              key={idx}
             >
+              {/* TODO: change the key back to channel.id */}
               <div>
                 <ChannelMessageIcon />
               </div>

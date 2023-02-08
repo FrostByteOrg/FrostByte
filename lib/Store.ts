@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabaseClient';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getPagination } from './paginationHelper';
+import { MessageWithUsersResponseSuccess } from '@/services/message.service';
 
 export function useStore({ channelId }: { channelId: number }) {
   //TODO:skip the user listener for now, will implement forsure later but for now its not needed
@@ -8,12 +9,68 @@ export function useStore({ channelId }: { channelId: number }) {
   // server channels instead of all like how they do
   //TODO:remove the db functions at the bottom and import them from the services once we refactor
   //to passing the supabase instance in function params
+  //TODO: FIX TYPESSSSS
 
   const [messages, setMessages] = useState([]);
-  const [newMessage, handleNewMessage] = useState(null);
-  const [deletedMessage, handleDeletedMessage] = useState(null);
+  const [newMessage, handleNewMessage] = useState<any>(null);
+  const [deletedMessage, handleDeletedMessage] = useState<any>(null);
+
+  // Load initial data and set up listeners
+  useEffect(() => {
+    // Listen for new and deleted messages
+    const messageListener = supabase
+      .channel('public:messages')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => handleNewMessage(payload.new)
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'messages' },
+        (payload) => handleDeletedMessage(payload.old)
+      )
+      .subscribe();
+    // Cleanup on unmount
+    return () => {
+      supabase.removeChannel(messageListener);
+    };
+  }, []);
+
+  // Update when the route changes
+  useEffect(() => {
+    if (channelId > 0) {
+      //TODO: messages should be typed to getmessagesinchannelwithuser
+      const handleAsync = async () => {
+        await fetchMessages(channelId, (messages: any) => {        
+          setMessages(messages);
+          console.log(messages);
+        });
+      };
+      handleAsync();
+    }
+
+  }, [channelId]);
+
+  // New message received from Postgres
+  useEffect(() => {
+    if (newMessage && newMessage.channel_id == channelId) {
+      setMessages(messages.concat(newMessage));
+    }
+  }, [newMessage, messages, channelId]);
+
+  // Deleted message received from postgres
+  useEffect(() => {
+    if (deletedMessage) setMessages(messages.filter((message: any) => message.id !== deletedMessage.id));
+
+  }, [deletedMessage, messages]);
+
+  return {
+    messages: messages,
+  };
 }
 
+//TODO: add better type checks
 /**
  * Fetch all messages and their profiles
  * @param {number} channelId

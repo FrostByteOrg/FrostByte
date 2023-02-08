@@ -31,7 +31,7 @@ const SERVERS: Server[] = [
     icon: supabaseLogo,
     members: '458',
     onlineMembers: '32',
-    channels: [{ id: 1, name: 'general', description: '', server_id: '1' }],
+    channels: [{ id: 13, name: 'general', description: '', server_id: '1' }],
   },
   {
     id: '53',
@@ -40,9 +40,9 @@ const SERVERS: Server[] = [
     members: '2833',
     onlineMembers: '181',
     channels: [
-      { id: 1, name: 'general', description: '', server_id: '53' },
+      { id: 13, name: 'general', description: '', server_id: '53' },
       {
-        id: 2,
+        id: 13,
         name: 'off-topic',
         description: '',
         server_id: '53',

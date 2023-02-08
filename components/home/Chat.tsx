@@ -3,6 +3,7 @@ import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useStore } from '@/lib/Store';
 
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Author = {
@@ -43,6 +44,7 @@ const MESSAGES: Message[] = [
 export default function Chat() {
   const supabaseClient = useSupabaseClient();
   const channelId = useChannelIdValue();
+  const {messages} = useStore({channelId: channelId});
 
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
 
