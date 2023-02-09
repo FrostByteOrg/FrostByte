@@ -30,16 +30,17 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    if (newestMessageRef) {
-      console.log('test');
+    
+    if (newestMessageRef && messages) {
+      console.log(newestMessageRef);
       newestMessageRef.current?.scrollIntoView({
-        block: 'start',
-        behavior: 'smooth'
+        block: 'end',
+        behavior: 'auto'
       });
     }
     console.log('rerender heartbeat');
     setSocket(io( {path: '/api/socket.io'}));
-  }, [newestMessageRef]);
+  }, [newestMessageRef, messages]);
 
 
   //TODO: SET AUTHOR_ID (SERVERUSER) WHEN ENTERING A CHANNEL IN A SERVER AND REMOVE HARDCODED 10
@@ -57,7 +58,7 @@ export default function Chat() {
       <div className=" border-t-2 mx-5 border-grey-700 "></div>
       <div className="main flex flex-col p-5 bg-grey-800  overflow-clip">
         <div
-          className={`${styles.messageList}  flex flex-col overflow-y-scroll`}
+          className={`${styles.messageList}  flex flex-col overflow-y-scroll `}
         >
           {
             messages && messages.map((value: ChatMessage, index: number, array: ChatMessage[]) => {
