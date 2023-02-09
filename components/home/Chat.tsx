@@ -25,9 +25,6 @@ export default function Chat() {
     }
   }, [newestMessageRef, messages]);
 
-
-  //TODO: SET AUTHOR_ID (SERVERUSER) WHEN ENTERING A CHANNEL IN A SERVER AND REMOVE HARDCODED 10
-
   return (
     <>
       <div className=" px-5 pt-5 mb-3 overflow-visible ">
