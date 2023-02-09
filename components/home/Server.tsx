@@ -1,13 +1,14 @@
 import Image, { StaticImageData } from 'next/image';
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
-import { SyntheticEvent, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { useChannelIdSetter } from '@/context/ChatCtx';
 import { useMobileViewSetter } from '@/context/MobileViewCtx';
+import { getChannelsInServer } from '@/services/channels.service';
 
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Server = {
-  id: string;
+  id: number;
   name: string;
   icon: StaticImageData;
   members: string;
@@ -27,7 +28,7 @@ export default function Server({
   expanded,
 }: {
   server: Server;
-  expanded: string;
+  expanded: number;
 }) {
   const expand = expanded == server.id;
 
@@ -35,7 +36,15 @@ export default function Server({
   const setMobileView = useMobileViewSetter();
 
   //TODO: getChannelsInServer
-  const [channels, setChannels] = useState([]);
+  const [channels, setChannels] = useState<any>([]);
+  console.log(channels);
+  useEffect(() => {
+    const handleAsync = async() => {
+      const { data } = await getChannelsInServer(server.id);
+      setChannels(data);
+    };
+    handleAsync();
+  },[server.id]);
 
   function joinChannel(e: SyntheticEvent, channelId: number) {
     e.stopPropagation();

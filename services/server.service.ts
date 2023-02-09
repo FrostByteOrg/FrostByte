@@ -102,6 +102,7 @@ export async function getServersForUser(user_id: string) {
 type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
 export type GetServersForUserResponseSuccess = GetServersForUserResponse['data'];
 export type GetServersForUserResponseError = GetServersForUserResponse['error'];
+export type ServersForUser = GetServersForUserResponseError | GetServersForUserResponseSuccess;
 
 export async function isUserInServer(user_id: string, server_id: number) {
   const { data, error } = await supabase

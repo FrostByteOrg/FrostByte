@@ -29,14 +29,13 @@ export function useRealtime<T extends IStringIndexable>(
   const [ data, setData ] = useState<T[]>([]);
   const [ handleNewData, setHandleNewData ] = useState<(payload: T) => void>();
   const [ handleDeletedData, setHandleDeletedData ] = useState<(payload: Partial<T>) => void>();
-
   // Load initial data and set up listeners
+
   useEffect(() => {
     const listener = supabase.channel(listen_db);
 
     for (const event of listenEvents) {
       const { type, filter, callback } = event;
-
       // @ts-expect-error I just need this to be dynamic, this type value definition
       // when used with some attention to detail (matching events + callback types
       // will not actually raise an error or be invalid.
@@ -51,7 +50,7 @@ export function useRealtime<T extends IStringIndexable>(
     return () => {
       supabase.removeChannel(listener);
     };
-  }, []);
+  }, [listenEvents, listen_db]);
 }
 
 //TODO: add better type checks

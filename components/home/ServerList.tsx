@@ -8,10 +8,11 @@ import { StaticImageData } from 'next/image';
 import { fetchServers } from '@/lib/Store';
 import { useChannelIdValue } from '@/context/ChatCtx';
 import { useUser } from '@supabase/auth-helpers-react';
+import { ServersForUser } from '@/services/server.service';
 
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Server = {
-  id: string;
+  id: number;
   name: string;
   icon: StaticImageData;
   members: string;
@@ -29,7 +30,7 @@ type Channel = {
 //NOTE: this is temporary and just for testing
 const SERVERS: Server[] = [
   {
-    id: '1',
+    id: 1,
     name: 'Supabase',
     icon: supabaseLogo,
     members: '458',
@@ -37,7 +38,7 @@ const SERVERS: Server[] = [
     channels: [{ id: 13, name: 'general', description: '', server_id: '1' }],
   },
   {
-    id: '53',
+    id: 53,
     name: 'Fireship',
     icon: fireShipLogo,
     members: '2833',
@@ -63,22 +64,24 @@ export default function ServerList() {
 
   const [ addServerhover, setAddServerHover ] = useState(false);
 
-  const [ expanded, setExpanded ] = useState('');
+  const [expanded, setExpanded] = useState(0);
 
   const channelId = useChannelIdValue();
   const user = useUser();
 
   const [ userId, setUserId ] = useState('');
 
-  const { servers } = useStore({channelId: channelId}, userId);
-
+  // const { servers } = useStore<ServersForUser>({channelId: channelId}, userId);
   //TODO: once we have servers, fetch their channels
-  console.log(servers);
-  useEffect(() => {
-    if (user) {
-      setUserId(user.id);
-    }
-  },[user]);
+  // console.log(servers);
+  // useEffect(() => {
+  //   if (user) {
+  //     setUserId(user.id);
+  //   }
+  // },[user]);
+  
+
+  //TODO: add isServer check 
 
   return (
     <div className="main p-4">
@@ -103,7 +106,7 @@ export default function ServerList() {
         <span
           key={server.id}
           onClick={() =>
-            expanded == server.id ? setExpanded('') : setExpanded(server.id)
+            expanded == server.id ? setExpanded(0) : setExpanded(server.id)
           }
         >
           <Server server={server} expanded={expanded} />
