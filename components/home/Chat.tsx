@@ -31,6 +31,7 @@ export default function Chat() {
 
   useEffect(() => {
     if (newestMessageRef) {
+      console.log('test');
       newestMessageRef.current?.scrollIntoView({
         block: 'start',
         behavior: 'smooth'
