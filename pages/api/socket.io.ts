@@ -41,6 +41,8 @@ export default function SocketIOHanler(req: NextApiRequest, res: NextApiResponse
             socket.join(channel.channel_id.toString());
           };
         }
+
+        console.log(`${userId} is now online`);
         socket.emit('serverBroadcastUserConnected', userId);
       });
 

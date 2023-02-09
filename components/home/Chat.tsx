@@ -1,6 +1,6 @@
 import { useChannelIdValue } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useStore, addMessage } from '@/lib/Store';
@@ -15,9 +15,13 @@ export default function Chat() {
   const { messages } = useStore({channelId: channelId});
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
-  const socket: Socket<SocketServerEvents, SocketClientEvents> = io({path: '/api/socket.io'});
+  const [ socket, setSocket ] = useState<Socket<SocketServerEvents, SocketClientEvents>>();
 
   const sendMessage = (channel_id: number, profile_id: string, content: string) => {
+    if (!socket) {
+      return;
+    }
+
     socket.emit('messageCreated', {
       channel_id,
       content,
@@ -32,10 +36,8 @@ export default function Chat() {
         behavior: 'smooth'
       });
     }
-
-    socket.on('serverBroadcastMessageCreated', (message) => {
-      // TODO: Dump message into chat
-    });
+    console.log('rerender heartbeat');
+    setSocket(io( {path: '/api/socket.io'}));
   }, [newestMessageRef]);
 
 
@@ -57,7 +59,7 @@ export default function Chat() {
           className={`${styles.messageList}  flex flex-col overflow-y-scroll`}
         >
           {
-            messages.map((value: ChatMessage, index: number, array: ChatMessage[]) => {
+            messages && messages.map((value: ChatMessage, index: number, array: ChatMessage[]) => {
               const message = array[array.length - 1 - index];
               return <Message key={index} message={message}/>;
             })
