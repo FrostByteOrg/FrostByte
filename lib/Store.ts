@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { getPagination } from './paginationHelper';
-import { MessageWithUsersResponseSuccess } from '@/services/message.service';
+import { MessageWithUsersResponseSuccess, createMessage } from '@/services/message.service';
 
 export function useStore({ channelId }: { channelId: number }) {
   //TODO:skip the user listener for now, will implement forsure later but for now its not needed
@@ -42,7 +42,7 @@ export function useStore({ channelId }: { channelId: number }) {
     if (channelId > 0) {
       //TODO: messages should be typed to getmessagesinchannelwithuser
       const handleAsync = async () => {
-        await fetchMessages(channelId, (messages: any) => {        
+        await fetchMessages(channelId, (messages: any) => {
           setMessages(messages);
           // console.log(messages);
         });
@@ -56,11 +56,11 @@ export function useStore({ channelId }: { channelId: number }) {
   useEffect(() => {
     if (newMessage && newMessage.channel_id == channelId) {
       //TODO: fix this!, make this work, currently newMessage is a message but it does not include the user profile
-      //hence why react cant render the thang, with type checks it will show the errors but currently everything is 
+      //hence why react cant render the thang, with type checks it will show the errors but currently everything is
       //set to any:DDD
       // setMessages([...messages, newMessage]);
       const handleAsync = async () => {
-        await fetchMessages(channelId, (messages: any) => {        
+        await fetchMessages(channelId, (messages: any) => {
           setMessages(messages);
         });
       };
@@ -103,7 +103,7 @@ export async function fetchMessages(
       .range(from, to);
     if (setState) setState(data);
     return data;
-  } 
+  }
   catch (error) {
     console.log('error', error);
   }
@@ -113,15 +113,16 @@ export async function fetchMessages(
  * Insert a new message into the DB
  * @param {string} message The message text
  * @param {number} channel_id
- * @param {string} profile_id The author
- * @param {string} author_id The author/server user
+ * @param {string} profile_id The author profile id
  */
-export async function addMessage (message: string, channel_id: number, profile_id: string, author_id: number) {
-  try {
-    const { data } = await supabase.from('messages').insert([{ content: message, channel_id, profile_id, author_id }]).select();
-    return data;
-  } 
-  catch (error) {
-    console.log('error', error);
+export async function addMessage (content: string, channel_id: number, profile_id: string) {
+  const { data: message, error } = await createMessage({
+    content, channel_id, profile_id
+  });
+
+  if (error) {
+    console.error(error);
   }
+
+  return message;
 };

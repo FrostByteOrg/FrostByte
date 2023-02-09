@@ -6,8 +6,6 @@ import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useStore, addMessage } from '@/lib/Store';
 import Message, { ChatMessage } from './Message';
 import MessageInput from './MessageInput';
-import { io, Socket } from 'socket.io-client';
-import { SocketClientEvents, SocketServerEvents } from '@/types/socketevents';
 
 export default function Chat() {
   const supabaseClient = useSupabaseClient();
@@ -15,22 +13,9 @@ export default function Chat() {
   const { messages } = useStore({channelId: channelId});
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
-  const [ socket, setSocket ] = useState<Socket<SocketServerEvents, SocketClientEvents>>();
-
-  const sendMessage = (channel_id: number, profile_id: string, content: string) => {
-    if (!socket) {
-      return;
-    }
-
-    socket.emit('messageCreated', {
-      channel_id,
-      content,
-      profile_id
-    });
-  };
 
   useEffect(() => {
-    
+
     if (newestMessageRef && messages) {
       console.log(newestMessageRef);
       newestMessageRef.current?.scrollIntoView({
@@ -38,8 +23,6 @@ export default function Chat() {
         behavior: 'auto'
       });
     }
-    console.log('rerender heartbeat');
-    setSocket(io( {path: '/api/socket.io'}));
   }, [newestMessageRef, messages]);
 
 
@@ -69,8 +52,7 @@ export default function Chat() {
           <div ref={newestMessageRef} className=""></div>
         </div>
 
-        {/* <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user?.id as string, 10)}/> */}
-        <MessageInput onSubmit={async (text: string) => sendMessage(channelId, user?.id!, text)}/>
+        <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user?.id as string)}/>
       </div>
     </>
   );
