@@ -1,3 +1,4 @@
+import { IStringIndexable } from '@/lib/Store';
 import { MessagesWithUsersResponseError, MessagesWithUsersResponseSuccess } from '@/services/message.service';
 import { Database } from './database.supabase';
 
@@ -9,4 +10,5 @@ export type User = Database['public']['Tables']['profiles']['Row'];
 // Custom type modifications for client side
 export type UnsavedMessage = Omit<Message, 'id' | 'created_at' | 'sent_time' | 'is_edited' | 'is_pinned' | 'edited_time' | 'author_id'>;
 
-export type ChatMessagesWithUser = MessagesWithUsersResponseError | MessagesWithUsersResponseSuccess;
+// TODO: Split the error and data types here
+export type ChatMessagesWithUser = MessagesWithUsersResponseSuccess | IStringIndexable;

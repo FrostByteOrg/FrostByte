@@ -5,7 +5,7 @@ import supabaseLogo from '@/public/supabaseLogo.png';
 import Server from '@/components/home/Server';
 import fireShipLogo from '@/public/fireShipLogo.png';
 import { StaticImageData } from 'next/image';
-import { fetchServers, useStore } from '@/lib/Store';
+import { fetchServers } from '@/lib/Store';
 import { useChannelIdValue } from '@/context/ChatCtx';
 import { useUser } from '@supabase/auth-helpers-react';
 
@@ -57,20 +57,21 @@ const SERVERS: Server[] = [
 export default function ServerList() {
 
   //TODO: fetch server_users via profile id, select server_id -> fetch channels via this server_id && fetch servers with server_id
-  //This should at minimum return server_id, author_id (serveruser id), server name, channel id, channel name 
+  //This should at minimum return server_id, author_id (serveruser id), server name, channel id, channel name
 
   //TODO: Display default page (when user belongs to and has no servers)
 
-  const [addServerhover, setAddServerHover] = useState(false);
+  const [ addServerhover, setAddServerHover ] = useState(false);
 
-  const [expanded, setExpanded] = useState('');
+  const [ expanded, setExpanded ] = useState('');
 
   const channelId = useChannelIdValue();
   const user = useUser();
 
-  const [userId, setUserId] = useState('');
+  const [ userId, setUserId ] = useState('');
 
   const { servers } = useStore({channelId: channelId}, userId);
+
   //TODO: once we have servers, fetch their channels
   console.log(servers);
   useEffect(() => {

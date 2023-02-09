@@ -34,15 +34,12 @@ export async function getMessagesInChannelWithUser(
 type Profiles = Database['public']['Tables']['profiles']['Row'];
 type MessagesWithUsersResponse = Awaited<ReturnType<typeof getMessagesInChannelWithUser>>;
 export type MessagesWithUsersResponseSuccess = MessagesWithUsersResponse['data'] & {
-  profiles: Profiles[]
+  profiles: Profiles
   }
 export type MessagesWithUsersResponseError = MessagesWithUsersResponse['error']
 
 
-export async function getMessageWithUser(
-  messageId: number
-) {
-
+export async function getMessageWithUser(messageId: number) {
   return await supabase
     .from('messages')
     .select('*, profiles(\*)')
