@@ -37,7 +37,7 @@ export default function Server({
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<any>([]);
-  console.log(channels);
+  // console.log(channels);
   useEffect(() => {
     const handleAsync = async() => {
       const { data } = await getChannelsInServer(server.id);

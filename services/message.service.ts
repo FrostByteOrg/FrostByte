@@ -27,7 +27,7 @@ export async function getMessagesInChannelWithUser(
     .from('messages')
     .select('*, profiles(\*)')
     .eq('channel_id', channelId)
-    .order('sent_time', { ascending: false })
+    .order('sent_time', { ascending: true })
     .range(from, to);
 }
 

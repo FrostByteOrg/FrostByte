@@ -13,6 +13,10 @@ export default function Chat() {
   const channelId = useChannelIdValue();
   const [ messages, setMessages ] = useState<ChatMessagesWithUser[]>([]);
 
+
+  const user = useUser();
+  const newestMessageRef = useRef<null | HTMLDivElement>(null);
+
   useRealtime<MessageType>(
     'public:messages',
     [
@@ -20,22 +24,18 @@ export default function Chat() {
         type: 'postgres_changes',
         filter: { event: 'INSERT', schema: 'public', table: 'messages' },
         callback: async (payload) => {
-          console.table(payload);
+
           const { data, error } = await getMessageWithUser((payload.new as MessageType).id);
 
           if (error) {
             console.error(error);
             return;
           }
-
           setMessages(messages.concat(data));
         }
       }
     ]
   );
-
-  const user = useUser();
-  const newestMessageRef = useRef<null | HTMLDivElement>(null);
 
   // Update when the channel changes
   useEffect(() => {
@@ -83,8 +83,8 @@ export default function Chat() {
         >
           {
             messages && messages.map((value, index: number, array) => {
-              const message = array[array.length - 1 - index];
-              return <Message key={index} message={message}/>;
+              // const message = array[array.length - 1 - index];
+              return <Message key={index} message={value}/>;
             })
           }
           <div ref={newestMessageRef} className=""></div>
