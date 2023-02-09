@@ -35,7 +35,7 @@ type Profiles = Database['public']['Tables']['profiles']['Row'];
 type MessagesWithUsersResponse = Awaited<ReturnType<typeof getMessagesInChannelWithUser>>;
 export type MessagesWithUsersResponseSuccess = MessagesWithUsersResponse['data'] & {
   profiles: Profiles
-  }
+}
 export type MessagesWithUsersResponseError = MessagesWithUsersResponse['error']
 
 

@@ -1,17 +1,9 @@
-import {
-  MessageWithUsersResponseSuccess,
-  MessageWithUsersResponseError,
-} from '@/services/message.service';
 import UserIcon from '../icons/UserIcon';
 import moment from 'moment';
+import { ChatMessageWithUser } from '@/types/dbtypes';
 
-export default function Message({
-  message,
-}: {
-  message: any;
-}) {
-  // if message is of type MessagesWithUsersResponseSuccess
-  const pastDate = moment(message.sent_time).format('M/D/YYYY h:mm A');
+export default function Message({ message }: { message: any }) {
+  const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
   const todayDate = moment(message.sent_time).format('h:mm A');
   const displayTime =
     moment(moment(message.sent_time)).isSame(moment(), 'day') &&
@@ -23,9 +15,7 @@ export default function Message({
   return (
     <>
       <div className="h-10 px-2 p-4 flex">
-        <div className="bg-grey-900 rounded-full mr-3">
-          <UserIcon />
-        </div>
+        <UserIcon user={message.profiles}/>
         <div className="flex flex-col">
           <div className="flex items-center">
             <div className="text-xl font-semibold tracking-wider mr-2">
@@ -41,21 +31,3 @@ export default function Message({
     </>
   );
 }
-
-function isMessageSuccess(
-  message:
-    | MessageWithUsersResponseSuccess
-    | MessageWithUsersResponseError
-    | null
-): message is MessageWithUsersResponseSuccess {
-  return (
-    (message as MessageWithUsersResponseSuccess).author_id !== undefined &&
-    (message as MessageWithUsersResponseSuccess) !== null &&
-    (message as MessageWithUsersResponseSuccess).author_id !== null &&
-    message !== null
-  );
-}
-
-export type ChatMessage =
-  | MessageWithUsersResponseSuccess
-  | MessageWithUsersResponseError;

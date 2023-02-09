@@ -5,13 +5,13 @@ import styles from '@/styles/Chat.module.css';
 import { useUser } from '@supabase/auth-helpers-react';
 import { useRealtime, addMessage } from '@/lib/Store';
 import MessageInput from './MessageInput';
-import type { ChatMessagesWithUser, Message as MessageType } from '@/types/dbtypes';
+import type { ChatMessageWithUser, Message as MessageType } from '@/types/dbtypes';
 import { getMessagesInChannelWithUser, getMessageWithUser } from '@/services/message.service';
 import Message  from '@/components/home/Message';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
-  const [ messages, setMessages ] = useState<ChatMessagesWithUser[]>([]);
+  const [ messages, setMessages ] = useState<ChatMessageWithUser[]>([]);
 
 
   const user = useUser();
