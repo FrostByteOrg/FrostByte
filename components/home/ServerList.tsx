@@ -87,7 +87,6 @@ export default function ServerList() {
   );
 
   //TODO: once we have servers, fetch their channels
-  console.log(servers);
   useEffect(() => {
     if (user) {
       setUserId(user.id);
@@ -132,9 +131,9 @@ export default function ServerList() {
       {/* TODO: fix idx -> server.id */}
       { servers && servers.map((server, idx) => {
         {/* @ts-expect-error This is valid */}
-        return <span key={server.id} onClick={() => {
+        return <span key={server.server_id} onClick={() => {
           //  @ts-expect-error This is valid 
-          return  expanded == server.id ? setExpanded(0) : setExpanded(server.id);
+          return  expanded == server.server_id ? setExpanded(0) : setExpanded(server.server_id);
         }
         }
         >

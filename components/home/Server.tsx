@@ -13,27 +13,28 @@ export default function Server({
   server,
   expanded,
 }: {
-  server: ServersForUser;
+  server: any;
   expanded: number;
 }) {
-  // @ts-expect-error This is valid
-  const expand = expanded == server.id;
+
+  const expand = expanded == server.server_id;
 
   const setChannelId = useChannelIdSetter();
   const setMobileView = useMobileViewSetter();
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<any>([]);
-  // console.log(channels);
+
   useEffect(() => {
     const handleAsync = async() => {
-      // @ts-expect-error This is valid
-      const { data } = await getChannelsInServer(server.id);
-      setChannels(data);
+      if (server) {
+        const { data } = await getChannelsInServer(server.server_id);
+        setChannels(data);
+      }
     };
     handleAsync();
-  // @ts-expect-error This is valid
-  },[server.id]);
+
+  },[server]);
 
   function joinChannel(e: SyntheticEvent, channelId: number) {
     e.stopPropagation();
@@ -56,7 +57,7 @@ export default function Server({
             </div>
             <div className="ml-3">
               <div className="text-lg tracking-wide font-bold">
-                {server.name}
+                {server.servers.name}
               </div>
               <div className="text-xs tracking-wide text-grey-300 flex">
                 <div className="flex items-center">
@@ -75,11 +76,11 @@ export default function Server({
           </div>
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
-          {server.channels.map((channel, idx) => (
+          {channels.map((channel: any, idx: number) => (
             <div
               className={`channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px] ${idx === 0 ? 'mt-2' : ''}`}  
-              onClick={(e) => joinChannel(e, channel.id)}
-              key={idx}
+              onClick={(e) => joinChannel(e, channel.channel_id)}
+              key={channel.channel_id}
             >
               {/* TODO: change the key back to channel.id */}
               <div className='w-4'>
