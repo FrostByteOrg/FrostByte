@@ -8,7 +8,7 @@ import moment from 'moment';
 export default function Message({
   message,
 }: {
-  message: MessageWithUsersResponseSuccess | MessageWithUsersResponseError;
+  message: any;
 }) {
   // if message is of type MessagesWithUsersResponseSuccess
   if (isMessageSuccess(message)) {

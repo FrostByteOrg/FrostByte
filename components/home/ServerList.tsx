@@ -52,7 +52,9 @@ const SERVERS: Server[] = [
 ];
 
 export default function ServerList() {
-  //TODO: Extract and create single server component with props for clicked (boolean, when true, server is expanded and channels are shown)
+
+  //TODO: fetch server_users via profile id, select server_id -> fetch channels via this server_id && fetch servers with server_id
+  //This should at minimum return server_id, author_id (serveruser id), server name, channel id, channel name 
 
   //TODO: Display default page (when user belongs to and has no servers)
 

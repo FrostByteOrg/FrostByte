@@ -1,12 +1,11 @@
 import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { getPagination } from './paginationHelper';
-import { MessageWithUsersResponseSuccess, createMessage } from '@/services/message.service';
+import { MessageWithUsersResponseSuccess, MessagesWithUsersResponseSuccess, createMessage } from '@/services/message.service';
+import { getServersForUser } from '@/services/server.service';
 
-export function useStore({ channelId }: { channelId: number }) {
+export function useStore<T>({ channelId }: { channelId: number }, profileId = null ) {
   //TODO:skip the user listener for now, will implement forsure later but for now its not needed
-  //TODO:skip the channels listener, we wont wanna do it how they do since we need to be more specific and fetch
-  // server channels instead of all like how they do
   //TODO:remove the db functions at the bottom and import them from the services once we refactor
   //to passing the supabase instance in function params
   //TODO: FIX TYPESSSSS
@@ -14,6 +13,12 @@ export function useStore({ channelId }: { channelId: number }) {
   const [messages, setMessages] = useState<any>([]);
   const [newMessage, handleNewMessage] = useState<any>(null);
   const [deletedMessage, handleDeletedMessage] = useState<any>(null);
+
+  // if (T == Messages)
+
+  const [servers, setServers] = useState<any>([]);
+  const [newServer, handleNewServer] = useState<any>(null);
+  const [deletedServer, handleDeleteServer] = useState<any>(null);
 
   // Load initial data and set up listeners
   useEffect(() => {
@@ -31,20 +36,36 @@ export function useStore({ channelId }: { channelId: number }) {
         (payload) => handleDeletedMessage(payload.old)
       )
       .subscribe();
+
+    const serverListener = supabase
+      .channel('public:servers')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'servers' },
+        (payload) => handleNewServer(payload.new)
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'servers' },
+        (payload) => handleDeleteServer(payload.old)
+      )
+      .subscribe();
+
     // Cleanup on unmount
     return () => {
       supabase.removeChannel(messageListener);
+      supabase.removeChannel(serverListener);
     };
   }, []);
 
-  // Update when the route changes
+  // Update when the channel changes
   useEffect(() => {
     if (channelId > 0) {
       //TODO: messages should be typed to getmessagesinchannelwithuser
       const handleAsync = async () => {
         await fetchMessages(channelId, (messages: any) => {
           setMessages(messages);
-          // console.log(messages);
+
         });
       };
       handleAsync();
@@ -70,14 +91,35 @@ export function useStore({ channelId }: { channelId: number }) {
     }
   }, [newMessage, messages, channelId]);
 
+  useEffect(() => {
+    if (newServer) {
+      setServers([...servers, newServer]);
+      handleNewServer(null);
+    }
+  }, [newServer, servers]);
+
+  useEffect(() => {
+    if (deletedServer) setServers(servers.filter((servers: any) => servers.id !== deletedServer.id));
+    handleDeleteServer(null);
+
+  }, [deletedServer, servers]);
+
   // Deleted message received from postgres
   useEffect(() => {
     if (deletedMessage) setMessages(messages.filter((message: any) => message.id !== deletedMessage.id));
+    handleDeletedMessage(null);
 
   }, [deletedMessage, messages]);
 
+  if (profileId) {
+    return {
+      messages: messages as T,
+      servers: servers
+    };
+  }
+
   return {
-    messages: messages,
+    messages: messages as T,
   };
 }
 
@@ -126,3 +168,26 @@ export async function addMessage (content: string, channel_id: number, profile_i
 
   return message;
 };
+
+
+/**
+ * Fetch all servers for a given user
+ * @param {string} profileId
+ * @param {function} setState Optionally pass in a hook or callback to set the state
+ */
+export async function fetchServers(
+  profileId: string,
+  setState: Function,
+) {
+  if (profileId) {
+    try {
+      const { data } = await getServersForUser(profileId);
+      if (setState) setState(data);
+      return data;
+    } 
+    catch (error) {
+      console.log('error', error);
+    }
+  }
+  return null;
+}

@@ -49,7 +49,7 @@ export default function Server({
               <Image
                 className="w-5"
                 src={server.icon}
-                alt="Supabase"
+                alt="Server icon"
                 priority
               />
             </div>
@@ -76,13 +76,13 @@ export default function Server({
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
           {server.channels.map((channel, idx) => (
             <div
-              className="channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px]  "
+              className={`channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px] ${idx === 0 ? 'mt-2' : ''}`}  
               onClick={(e) => joinChannel(e, channel.id)}
               key={idx}
             >
               {/* TODO: change the key back to channel.id */}
-              <div>
-                <ChannelMessageIcon />
+              <div className='w-4'>
+                <ChannelMessageIcon size='' />
               </div>
               <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[90px] overflow-hidden hover:overflow-visible">
                 {channel.name}
