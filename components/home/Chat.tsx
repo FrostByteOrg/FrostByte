@@ -77,9 +77,9 @@ export default function Chat() {
         </div>
       </div>
       <div className=" border-t-2 mx-5 border-grey-700 "></div>
-      <div className="main flex flex-col p-5 bg-grey-800  overflow-clip">
+      <div className="main flex flex-col p-5 bg-grey-800 overflow-clip min-h-0">
         <div
-          className={`${styles.messageList}  flex flex-col overflow-y-scroll `}
+          className={`${styles.messageList} flex flex-col overflow-y-scroll`}
         >
           {
             messages && messages.map((value, index: number, array) => {
