@@ -149,6 +149,23 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
 
       // Socket Events for handling webrtc signaling
 
+      socket.on("join", (channelId) => {
+        const { rooms } = io.sockets.adapter;
+        const channel = rooms.get(channelId)
+
+        if(channel === undefined) {
+          socket.join(channelId)
+          socket.emit('created')
+        }
+        else if(channel.size === 1){
+          socket.join(channelId)
+          socket.emit("joined")
+        }
+        else {
+          socket.emit("full")
+        }
+      })
+
       //Signal event triggered to let others know you're ready to stream
       socket.on('ready', (channelId) => {
         socket.broadcast.to(channelId).emit('ready');
@@ -159,13 +176,13 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
       ICE is an exchange protocol, the READY user sends this to the user accepting offer
       its where the connection exchange finds a good route
       */
-      socket.on('ice', (candidate: RTCIceCandidate, channelId: string) => {
+      socket.on('ice-candidate', (candidate: RTCIceCandidate, channelId: string) => {
         console.log(candidate);
-        socket.broadcast.to(channelId).emit('ice', candidate);
+        socket.broadcast.to(channelId).emit('ice-candidate', candidate);
       });
 
       //Offer from user who is ready to stream sent to peer
-      socket.on('connection-offer', (userOffer, channelId) => {
+      socket.on('offer', (userOffer, channelId) => {
         socket.broadcast.to(channelId).emit('offer', userOffer);
       });
 
@@ -175,8 +192,9 @@ const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       //Event to emit when connection closes when the stream shuts off
-      socket.on('close-connection', (channelId) => {
-        socket.broadcast.to(channelId).emit('close-connection');
+      socket.on('leave', (channelId) => {
+        socket.leave(channelId)
+        socket.broadcast.to(channelId).emit('leave');
       });
     });
   }
