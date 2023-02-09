@@ -52,7 +52,7 @@ export default function Chat() {
           <div ref={newestMessageRef} className=""></div>
         </div>
 
-        <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user?.id as string)}/>
+        <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user!.id)}/>
       </div>
     </>
   );
