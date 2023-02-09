@@ -48,6 +48,7 @@ export default function Chat() {
         }
 
         if (data) {
+          data.reverse();
           setMessages(data);
         }
 
