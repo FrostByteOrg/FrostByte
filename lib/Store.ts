@@ -1,16 +1,11 @@
 import { supabase } from '@/lib/supabaseClient';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { getPagination } from './paginationHelper';
-import { MessageWithUsersResponseSuccess, MessagesWithUsersResponseSuccess, createMessage } from '@/services/message.service';
+import { createMessage } from '@/services/message.service';
 import { getServersForUser } from '@/services/server.service';
-import { RealtimeChannel } from '@supabase/realtime-js';
-import { Message } from '@/types/dbtypes';
-import { RealtimePostgresChangesPayload, REALTIME_LISTEN_TYPES, REALTIME_PRESENCE_LISTEN_EVENTS } from '@supabase/supabase-js';
+import { IStringIndexable } from '@/types/dbtypes';
+import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { Database } from '@/types/database.supabase';
-
-export interface IStringIndexable {
-  [key: string]: any
-}
 
 export type RealtimeListenerEvent<T extends IStringIndexable> = {
   type: 'postgres_changes',
@@ -26,10 +21,6 @@ export function useRealtime<T extends IStringIndexable>(
   listen_db: string,
   listenEvents: RealtimeListenerEvent<T>[]
 ) {
-  const [ data, setData ] = useState<T[]>([]);
-  const [ handleNewData, setHandleNewData ] = useState<(payload: T) => void>();
-  const [ handleDeletedData, setHandleDeletedData ] = useState<(payload: Partial<T>) => void>();
-
   // Load initial data and set up listeners
   useEffect(() => {
     const listener = supabase.channel(listen_db);
