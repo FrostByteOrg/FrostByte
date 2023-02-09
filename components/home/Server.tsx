@@ -5,31 +5,18 @@ import { SyntheticEvent, useEffect, useState } from 'react';
 import { useChannelIdSetter } from '@/context/ChatCtx';
 import { useMobileViewSetter } from '@/context/MobileViewCtx';
 import { getChannelsInServer } from '@/services/channels.service';
+import { ServersForUser } from '@/types/dbtypes';
 
-//NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
-type Server = {
-  id: number;
-  name: string;
-  icon: StaticImageData;
-  members: string;
-  onlineMembers: string;
-  channels: Channel[];
-};
-//NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
-type Channel = {
-  id: number;
-  name: string;
-  description: string;
-  server_id: string;
-};
+
 
 export default function Server({
   server,
   expanded,
 }: {
-  server: Server;
+  server: ServersForUser;
   expanded: number;
 }) {
+  // @ts-expect-error This is valid
   const expand = expanded == server.id;
 
   const setChannelId = useChannelIdSetter();
@@ -40,10 +27,12 @@ export default function Server({
   // console.log(channels);
   useEffect(() => {
     const handleAsync = async() => {
+      // @ts-expect-error This is valid
       const { data } = await getChannelsInServer(server.id);
       setChannels(data);
     };
     handleAsync();
+  // @ts-expect-error This is valid
   },[server.id]);
 
   function joinChannel(e: SyntheticEvent, channelId: number) {

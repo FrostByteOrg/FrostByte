@@ -5,20 +5,13 @@ import supabaseLogo from '@/public/supabaseLogo.png';
 import Server from '@/components/home/Server';
 import fireShipLogo from '@/public/fireShipLogo.png';
 import { StaticImageData } from 'next/image';
-import { fetchServers } from '@/lib/Store';
+import type { Server as ServerType, ServerUser } from  '@/types/dbtypes';
 import { useChannelIdValue } from '@/context/ChatCtx';
 import { useUser } from '@supabase/auth-helpers-react';
-import { ServersForUser } from '@/services/server.service';
+import { ServersForUser } from '@/types/dbtypes';
+import { getServer, getServerForUser, getServersForUser } from '@/services/server.service';
+import { useRealtime } from '@/lib/Store';
 
-//NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
-type Server = {
-  id: number;
-  name: string;
-  icon: StaticImageData;
-  members: string;
-  onlineMembers: string;
-  channels: Channel[];
-};
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Channel = {
   id: number;
@@ -27,33 +20,33 @@ type Channel = {
   server_id: string;
 };
 
-//NOTE: this is temporary and just for testing
-const SERVERS: Server[] = [
-  {
-    id: 1,
-    name: 'Supabase',
-    icon: supabaseLogo,
-    members: '458',
-    onlineMembers: '32',
-    channels: [{ id: 13, name: 'general', description: '', server_id: '1' }],
-  },
-  {
-    id: 53,
-    name: 'Fireship',
-    icon: fireShipLogo,
-    members: '2833',
-    onlineMembers: '181',
-    channels: [
-      { id: 13, name: 'general', description: '', server_id: '53' },
-      {
-        id: 13,
-        name: 'off-topic',
-        description: '',
-        server_id: '53',
-      },
-    ],
-  },
-];
+// //NOTE: this is temporary and just for testing
+// const SERVERS: Server[] = [
+//   {
+//     id: 1,
+//     name: 'Supabase',
+//     icon: supabaseLogo,
+//     members: '458',
+//     onlineMembers: '32',
+//     channels: [{ id: 13, name: 'general', description: '', server_id: '1' }],
+//   },
+//   {
+//     id: 53,
+//     name: 'Fireship',
+//     icon: fireShipLogo,
+//     members: '2833',
+//     onlineMembers: '181',
+//     channels: [
+//       { id: 13, name: 'general', description: '', server_id: '53' },
+//       {
+//         id: 13,
+//         name: 'off-topic',
+//         description: '',
+//         server_id: '53',
+//       },
+//     ],
+//   },
+// ];
 
 export default function ServerList() {
 
@@ -71,14 +64,48 @@ export default function ServerList() {
 
   const [ userId, setUserId ] = useState('');
 
-  // const { servers } = useStore<ServersForUser>({channelId: channelId}, userId);
+  const [ servers, setServers ] = useState<ServersForUser[]>([]);
+
+  useRealtime<ServerUser>(
+    'public:server_users',
+    [
+      {
+        type: 'postgres_changes',
+        filter: { event: 'INSERT', schema: 'public', table: 'server_users' },
+        callback: async (payload) => {
+
+          const { data, error } = await getServerForUser((payload.new as ServerUser).id);
+
+          if (error) {
+            console.error(error);
+            return;
+          }
+          setServers(servers.concat(data));
+        }
+      }
+    ]
+  );
+
   //TODO: once we have servers, fetch their channels
-  // console.log(servers);
-  // useEffect(() => {
-  //   if (user) {
-  //     setUserId(user.id);
-  //   }
-  // },[user]);
+  console.log(servers);
+  useEffect(() => {
+    if (user) {
+      setUserId(user.id);
+
+      const handleAsync = async () => {
+        const { data, error } = await getServersForUser(user.id);
+
+        if (error) {
+          console.error(error);
+        }
+
+        if (data) {
+          setServers(data);
+        }
+      };
+      handleAsync();
+    }
+  }, [user]);
   
 
   //TODO: add isServer check 
@@ -102,16 +129,19 @@ export default function ServerList() {
           placeholder="Search"
         ></input>
       </div>
-      {SERVERS.map((server) => (
-        <span
-          key={server.id}
-          onClick={() =>
-            expanded == server.id ? setExpanded(0) : setExpanded(server.id)
-          }
+      {/* TODO: fix idx -> server.id */}
+      { servers && servers.map((server, idx) => {
+        {/* @ts-expect-error This is valid */}
+        return <span key={server.id} onClick={() => {
+          //  @ts-expect-error This is valid 
+          return  expanded == server.id ? setExpanded(0) : setExpanded(server.id);
+        }
+        }
         >
           <Server server={server} expanded={expanded} />
-        </span>
-      ))}
+        </span>;
+      })}
     </div>
   );
 }
+

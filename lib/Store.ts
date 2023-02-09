@@ -49,7 +49,6 @@ export function useRealtime<T extends IStringIndexable>(
 /**
  * Fetch all messages and their profiles
  * @param {number} channelId
- * @param {function} setState Optionally pass in a hook or callback to set the state
  */
 export async function fetchMessages(
   channelId: number,
@@ -92,26 +91,3 @@ export async function addMessage (content: string, channel_id: number, profile_i
 
   return message;
 };
-
-
-/**
- * Fetch all servers for a given user
- * @param {string} profileId
- * @param {function} setState Optionally pass in a hook or callback to set the state
- */
-export async function fetchServers(
-  profileId: string,
-  setState: Function,
-) {
-  if (profileId) {
-    try {
-      const { data } = await getServersForUser(profileId);
-      if (setState) setState(data);
-      return data;
-    }
-    catch (error) {
-      console.log('error', error);
-    }
-  }
-  return null;
-}
