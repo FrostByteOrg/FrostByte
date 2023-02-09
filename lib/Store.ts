@@ -4,7 +4,7 @@ import { getPagination } from './paginationHelper';
 import { MessageWithUsersResponseSuccess, MessagesWithUsersResponseSuccess, createMessage } from '@/services/message.service';
 import { getServersForUser } from '@/services/server.service';
 
-export function useStore<T>({ channelId }: { channelId: number }, profileId = null ) {
+export function useStore<T>({ channelId }: { channelId: number }, profileId = '' ) {
   //TODO:skip the user listener for now, will implement forsure later but for now its not needed
   //TODO:remove the db functions at the bottom and import them from the services once we refactor
   //to passing the supabase instance in function params
@@ -65,7 +65,6 @@ export function useStore<T>({ channelId }: { channelId: number }, profileId = nu
       const handleAsync = async () => {
         await fetchMessages(channelId, (messages: any) => {
           setMessages(messages);
-
         });
       };
       handleAsync();
@@ -104,6 +103,17 @@ export function useStore<T>({ channelId }: { channelId: number }, profileId = nu
 
   }, [deletedServer, servers]);
 
+  useEffect(() => {
+    if (profileId !== '') {
+      const handleAsync = async () => {
+        await fetchServers(profileId, (servers: any) => {
+          setServers(servers);
+        });
+      };
+      handleAsync();
+    }
+  },[profileId]);
+
   // Deleted message received from postgres
   useEffect(() => {
     if (deletedMessage) setMessages(messages.filter((message: any) => message.id !== deletedMessage.id));
@@ -111,7 +121,7 @@ export function useStore<T>({ channelId }: { channelId: number }, profileId = nu
 
   }, [deletedMessage, messages]);
 
-  if (profileId) {
+  if (profileId !== '') {
     return {
       messages: messages as T,
       servers: servers

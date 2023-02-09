@@ -1,7 +1,7 @@
 import Image, { StaticImageData } from 'next/image';
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
-import { SyntheticEvent } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { useChannelIdSetter } from '@/context/ChatCtx';
 import { useMobileViewSetter } from '@/context/MobileViewCtx';
 
@@ -33,6 +33,9 @@ export default function Server({
 
   const setChannelId = useChannelIdSetter();
   const setMobileView = useMobileViewSetter();
+
+  //TODO: getChannelsInServer
+  const [channels, setChannels] = useState([]);
 
   function joinChannel(e: SyntheticEvent, channelId: number) {
     e.stopPropagation();

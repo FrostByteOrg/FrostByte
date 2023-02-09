@@ -1,10 +1,13 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import supabaseLogo from '@/public/supabaseLogo.png';
 import Server from '@/components/home/Server';
 import fireShipLogo from '@/public/fireShipLogo.png';
 import { StaticImageData } from 'next/image';
+import { fetchServers, useStore } from '@/lib/Store';
+import { useChannelIdValue } from '@/context/ChatCtx';
+import { useUser } from '@supabase/auth-helpers-react';
 
 //NOTE: this is a temp type just for testing...to be removed or possibly extracted to the types dir under client
 type Server = {
@@ -61,6 +64,20 @@ export default function ServerList() {
   const [addServerhover, setAddServerHover] = useState(false);
 
   const [expanded, setExpanded] = useState('');
+
+  const channelId = useChannelIdValue();
+  const user = useUser();
+
+  const [userId, setUserId] = useState('');
+
+  const { servers } = useStore({channelId: channelId}, userId);
+  //TODO: once we have servers, fetch their channels
+  console.log(servers);
+  useEffect(() => {
+    if (user) {
+      setUserId(user.id);
+    }
+  },[user]);
 
   return (
     <div className="main p-4">
