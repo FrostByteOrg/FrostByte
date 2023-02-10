@@ -24,14 +24,16 @@ export default function Chat() {
         type: 'postgres_changes',
         filter: { event: 'INSERT', schema: 'public', table: 'messages' },
         callback: async (payload) => {
-
           const { data, error } = await getMessageWithUser((payload.new as MessageType).id);
 
           if (error) {
             console.error(error);
             return;
           }
-          setMessages(messages.concat(data));
+
+          if (data.channel_id === channelId) {
+            setMessages(messages.concat(data));
+          }
         }
       }
     ]
