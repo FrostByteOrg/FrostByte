@@ -1,4 +1,16 @@
-export default function ServersIcon({hovered = false}) {
+import { Server } from '@/types/dbtypes';
+
+export default function ServersIcon({server, hovered = false} : {server : Server, hovered: boolean}) {
+
+  if (server && server.image_url) {
+    return (
+      <img
+        src={server.image_url}
+        alt={`${server.name}`}
+        className='w-6 h-6  rounded-full'
+      />
+    );
+  }
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 

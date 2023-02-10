@@ -49,8 +49,7 @@ export default function Server({
         <div className="border-b-2   hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div className="bg-grey-900 p-2 rounded-xl">
-              {server.servers.icon ? <Image className="w-5" src={server.servers.icon} alt="Supabase" priority /> : <ServersIcon/>}
-
+              <ServersIcon server={server.servers} hovered={false}  />
             </div>
             <div className="ml-3">
               <div className="text-lg tracking-wide font-bold">
@@ -98,8 +97,7 @@ export default function Server({
       <div className="border-b-2 border-grey-700 py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center">
         <div className="flex items-center">
           <div className="bg-grey-900 p-2 rounded-xl">
-            {server.servers.icon ? <Image className="w-5" src={server.servers.icon} alt="Supabase" priority /> : <ServersIcon/>}
-            
+            <ServersIcon hovered={false} server={server.servers}/>        
           </div>
           <div className="ml-3">
             <div className="text-lg tracking-wide font-bold">{server.servers.name}</div>

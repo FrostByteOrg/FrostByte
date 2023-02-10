@@ -245,18 +245,21 @@ export interface Database {
           created_at: string | null
           description: string | null
           id: number
+          image_url: string | null
           name: string
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: number
+          image_url?: string | null
           name: string
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: number
+          image_url?: string | null
           name?: string
         }
       }
@@ -271,7 +274,7 @@ export interface Database {
         }
         Returns: {
           channel_id: number
-        }
+        }[]
       }
     }
     Enums: {
