@@ -128,18 +128,16 @@ export default function ServerList() {
           placeholder="Search"
         ></input>
       </div>
-      <div className='overflow-scroll'>
-        {/* TODO: fix idx -> server.id */}
-        { servers && servers.map((server, idx) => {
-          {/* @ts-expect-error This is valid */}
-          return <span key={server.server_id} onClick={() => {
-            //  @ts-expect-error This is valid
-            return  expanded == server.server_id ? setExpanded(0) : setExpanded(server.server_id);
-          }} >
-            <Server server={server} expanded={expanded} />
-          </span>;
-        })}
-      </div>
+      {/* TODO: fix idx -> server.id */}
+      { servers && servers.map((server, idx) => {
+        {/* @ts-expect-error This is valid */}
+        return <span key={server.server_id} onClick={() => {
+          //  @ts-expect-error This is valid
+          return  expanded == server.server_id ? setExpanded(0) : setExpanded(server.server_id);
+        }} >
+          <Server server={server} expanded={expanded} />
+        </span>;
+      })}
     </div>
   );
 }

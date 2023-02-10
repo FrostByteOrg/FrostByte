@@ -32,7 +32,11 @@ export default function Message({ message }: { message: any }) {
               {displayTime}{' '}
             </div>
           </div>
-          <div className="font-light tracking-wide"><ReactMarkdown components={{img: renderImage}} remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown></div>
+          <div className="font-light tracking-wide">
+            <ReactMarkdown components={{img: renderImage}} remarkPlugins={[remarkGfm]}>
+              {message.content}
+            </ReactMarkdown>
+          </div>
         </div>
       </div>
     </>
