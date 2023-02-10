@@ -6,6 +6,7 @@ import { useChannelIdSetter } from '@/context/ChatCtx';
 import { useMobileViewSetter } from '@/context/MobileViewCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import { ServersForUser } from '@/types/dbtypes';
+import ServersIcon from '../icons/ServersIcon';
 
 
 
@@ -48,12 +49,8 @@ export default function Server({
         <div className="border-b-2   hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div className="bg-grey-900 p-2 rounded-xl">
-              <Image
-                className="w-5"
-                src={server.icon}
-                alt="Server icon"
-                priority
-              />
+              {server.servers.icon ? <Image className="w-5" src={server.servers.icon} alt="Supabase" priority /> : <ServersIcon/>}
+
             </div>
             <div className="ml-3">
               <div className="text-lg tracking-wide font-bold">
@@ -101,10 +98,11 @@ export default function Server({
       <div className="border-b-2 border-grey-700 py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center">
         <div className="flex items-center">
           <div className="bg-grey-900 p-2 rounded-xl">
-            <Image className="w-5" src={server.icon} alt="Supabase" priority />
+            {server.servers.icon ? <Image className="w-5" src={server.servers.icon} alt="Supabase" priority /> : <ServersIcon/>}
+            
           </div>
           <div className="ml-3">
-            <div className="text-lg tracking-wide font-bold">{server.name}</div>
+            <div className="text-lg tracking-wide font-bold">{server.servers.name}</div>
             <div className="text-xs tracking-wide text-grey-300 flex">
               <div className="flex items-center">
                 <span className="p-1 bg-green-300 rounded-full mr-1"></span>
