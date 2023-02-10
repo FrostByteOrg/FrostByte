@@ -1,4 +1,6 @@
+import path from 'path';
 import { useEffect, useRef } from 'react';
+import { io } from 'socket.io-client';
 
 const useSocket = () => {
   const socketCreated = useRef(false);
@@ -6,7 +8,7 @@ const useSocket = () => {
   useEffect(() => {
     if (!socketCreated.current) {
       const socketIntializer = async () => {
-        await fetch('/pages/api/socketio');
+        io({ path: '/api/socketio' })
       };
       try {
         socketIntializer();
@@ -15,7 +17,7 @@ const useSocket = () => {
         console.log(error);
       }
     }
-  });
+  }, []);
 };
 
 export default useSocket

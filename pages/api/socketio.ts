@@ -1,203 +1,75 @@
 import { Server } from 'socket.io';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabaseClient';
 
-const socketIoHandler = (req: NextApiRequest, res: NextApiResponse) => {
-  // TODO: See about these null issues. How often are they occurring and how fixable is this
-  // @ts-expect-error temp for testing purposes. SEE: TODO above
-  if (!res.socket.server.io) {
-    console.log('Starting socket.io');
+const socketIoHandler = (req: any, res: any) => {
 
-    // @ts-expect-error Like the above expect, based on TODO
+  if (res.socket.server.io) {
+    console.log('Socket is attached');
+  } 
+    console.log('Mounting the socket')
     const io = new Server(res.socket.server);
+    res.socket.server.io = io;
 
-    io.on('connection', (socket) => {
-      socket.on('userJoined', (user, serverId) => {
-        supabase
-          .from('servers')
-          .select('*')
-          .eq('id', serverId)
-          .single()
-          .then((cursor) => {
-            if (cursor.error) {
-              console.error(
-                `Error adding ${user.username} to server ${serverId}: ${cursor.error}`
-              );
-              return;
-            }
 
-            console.log(`User ${user.username} joined ${cursor.data.name}`);
-            // TODO: Build out a System channel/default channel to announce user joins. Discord defaults this to #general
-            // socket.join(channel.id.toString());
-            // socket.to(channel.id.toString()).emit('serverBroadcastsUserJoin', user, channel);
-          });
-      });
+  io.on('connection', (socket) => {
+    console.log(`Someone connected to ${socket.id}`);
 
-      socket.on('userSendsMessage', (message) => {
-        supabase
-          .from('messages')
-          .insert({
-            content: message.content,
-            sent_time: message.timeSent,
-            author_id: message.author_id,
-            channel_id: message.channelId,
-          })
-          .select(
-            `
-            *,
-            server_users (
-              nickname
-            ),
-            channels (
-              name
-            )
-          `
-          )
-          .single()
-          .then((cursor) => {
-            if (cursor.error) {
-              console.error(cursor.error);
-              return;
-            }
+    socket.on('join', (channelId) => {
+      const { rooms } = io.sockets.adapter;
+      const channel = rooms.get(channelId);
 
-            io.to(message.channelId.toString()).emit(
-              'serverBroadcastsUserSentMessage',
-              cursor.data
-            );
-            // TODO: Sort out the relationship on this, we should only be returning a single channel/server_user object from the query
-            console.log(
-              `[${
-                (cursor.data.server_users! as { nickname: string | null }[])[0]
-                  .nickname
-              } @ ${(cursor.data.channels as { name: string | null }).name}]: ${
-                cursor.data.content
-              }`
-            );
-          });
-      });
+      if (channel === undefined) {
+        socket.join(channelId);
+        console.log('I created the thing');
+        socket.emit('created');
+      } else if (channel.size === 1) {
+        socket.join(channelId);
+        console.log('I joined the thing');
+        socket.emit('joined');
+      } else {
+        console.log('its fuckin packed in there!');
+        socket.emit('full');
+      }
+    });
 
-      socket.on('userLeft', (user, serverId) => {
-        supabase
-          .from('server_users')
-          .delete()
-          .eq('server_id', serverId)
-          .eq('profile_id', user.id)
-          .select(
-            `
-            *,
-            servers (
-              *
-            )
-          `
-          )
-          .single()
-          .then((cursor) => {
-            if (cursor.error) {
-              console.error(cursor.error);
-              return;
-            }
+    //Signal event triggered to let others know you're ready to stream
+    socket.on('ready', (channelId) => {
+      console.log('Ready to transmit');
+      socket.broadcast.to(channelId).emit('ready');
+      //TODO: expand this from 1 : 1
+    });
 
-            console.log(
-              `User ${user.username} left ${
-                (
-                  cursor.data.servers as {
-                    created_at: string | null;
-                    id: number;
-                    name: string;
-                  }[]
-                )[0].name
-              }`
-            );
-            socket.leave(cursor.data.server_id.toString());
-            socket
-              .to(cursor.data.server_id.toString())
-              .emit('serverBroadcastsUserLeave', user, cursor.data.servers);
-          });
-      });
-
-      socket.on('userConnected', (userId) => {
-        supabase
-          .from('profiles')
-          .select('username')
-          .then((cursor) => {
-            if (cursor.error) {
-              console.error(cursor.error);
-              return;
-            }
-
-            console.log(`User ${cursor} is online.`);
-          });
-
-        socket.emit('serverBroadcastsUserConnected', userId);
-      });
-
-      socket.on('userDisconnected', (userId) => {
-        supabase
-          .from('profiles')
-          .select('username')
-          .then((cursor) => {
-            if (cursor.error) {
-              console.error(cursor.error);
-              return;
-            }
-
-            console.log(`User ${cursor} is offline.`);
-          });
-
-        socket.emit('serverBroadcastsUserDisconnected', userId);
-      });
-
-      // Socket Events for handling webrtc signaling
-
-      socket.on("join", (channelId) => {
-        const { rooms } = io.sockets.adapter;
-        const channel = rooms.get(channelId)
-
-        if(channel === undefined) {
-          socket.join(channelId)
-          socket.emit('created')
-        }
-        else if(channel.size === 1){
-          socket.join(channelId)
-          socket.emit("joined")
-        }
-        else {
-          socket.emit("full")
-        }
-      })
-
-      //Signal event triggered to let others know you're ready to stream
-      socket.on('ready', (channelId) => {
-        socket.broadcast.to(channelId).emit('ready');
-        //TODO: expand this from 1 : 1
-      });
-
-      /*
+    /*
       ICE is an exchange protocol, the READY user sends this to the user accepting offer
       its where the connection exchange finds a good route
       */
-      socket.on('ice-candidate', (candidate: RTCIceCandidate, channelId: string) => {
+    socket.on(
+      'ice-candidate',
+      (candidate: RTCIceCandidate, channelId: string) => {
         console.log(candidate);
         socket.broadcast.to(channelId).emit('ice-candidate', candidate);
-      });
+      }
+    );
 
-      //Offer from user who is ready to stream sent to peer
-      socket.on('offer', (userOffer, channelId) => {
-        socket.broadcast.to(channelId).emit('offer', userOffer);
-      });
-
-      //Event emitted when peer accepts connection-offer
-      socket.on('answer', (answer, channelId) => {
-        socket.broadcast.to(channelId).emit('answer', answer);
-      });
-
-      //Event to emit when connection closes when the stream shuts off
-      socket.on('leave', (channelId) => {
-        socket.leave(channelId)
-        socket.broadcast.to(channelId).emit('leave');
-      });
+    //Offer from user who is ready to stream sent to peer
+    socket.on('offer', (userOffer, channelId) => {
+      console.log('i have an offer you wont refuse!');
+      socket.broadcast.to(channelId).emit('offer', userOffer);
     });
-  }
+
+    //Event emitted when peer accepts connection-offer
+    socket.on('answer', (answer, channelId) => {
+      console.log('I might');
+      socket.broadcast.to(channelId).emit('answer', answer);
+    });
+
+    //Event to emit when connection closes when the stream shuts off
+    socket.on('leave', (channelId) => {
+      console.log('PEACE BITCHESSSS');
+      socket.leave(channelId);
+      socket.broadcast.to(channelId).emit('leave');
+    });
+  });
+  res.end()
 };
 
 export default socketIoHandler;

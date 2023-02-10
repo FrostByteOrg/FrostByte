@@ -14,10 +14,10 @@ export default function Home() {
   const supabase = useSupabaseClient();
   const router = useRouter();
 
-  const [room, setRoom] = useState('');
+  const [channelId, setRoom] = useState('');
 
   const joinStreamChannel = () => {
-    router.push(`/channel/${room || Math.random().toString(12).slice(2)}`);
+    router.push(`/channel/${channelId || Math.random().toString(12).slice(2)}`);
   };
 
   const handleLogout = async () => {
@@ -97,7 +97,7 @@ export default function Home() {
           <div className='ml-10'>
             <input
               onChange={(e) => setRoom(e.target.value)}
-              value={room}
+              value={channelId}
               className='m-2'
             />
             {!user ? (
