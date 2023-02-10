@@ -91,3 +91,40 @@ export async function deleteServer(user_id: string, server_id: number) {
 type DeleteServerResponse = Awaited<ReturnType<typeof deleteServer>>;
 export type DeleteServerResponseSuccess = DeleteServerResponse['data'];
 export type DeleteServerResponseError = DeleteServerResponse['error'];
+
+export async function getServersForUser(user_id: string) {
+  return await supabase
+    .from('server_users')
+    .select('server_id, servers ( * )')
+    .eq('profile_id', user_id);
+}
+
+type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
+export type GetServersForUserResponseSuccess = GetServersForUserResponse['data'];
+export type GetServersForUserResponseError = GetServersForUserResponse['error'];
+
+export async function getServerForUser(serverUser_id: number) {
+  return await supabase
+    .from('server_users')
+    .select('server_id, servers ( * )')
+    .eq('id', serverUser_id)
+    .single();
+};
+
+type GetServerForUserResponse = Awaited<ReturnType<typeof getServerForUser>>;
+export type GetServerForUserResponseSuccess = GetServerForUserResponse['data'];
+
+export async function isUserInServer(user_id: string, server_id: number) {
+  const { data, error } = await supabase
+    .from('server_users')
+    .select('*')
+    .eq('profile_id', user_id)
+    .eq('server_id', server_id)
+    .single();
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data: data !== null, error: null };
+}

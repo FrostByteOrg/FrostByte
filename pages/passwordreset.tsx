@@ -18,7 +18,7 @@ export default function Passwordreset() {
         >
           <div
             className={`
-           ${styles.rightSide}
+           ${styles.passwordReset}
            col-start-5 
            col-end-9 
            row-start-2 
@@ -53,7 +53,7 @@ export default function Passwordreset() {
       >
         <div
           className={`
-         ${styles.mainContainer}
+         ${styles.passwordReset}
          col-start-5 
          col-end-9 
          row-start-2 

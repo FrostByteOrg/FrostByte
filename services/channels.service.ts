@@ -65,9 +65,15 @@ export async function updateChannel(channelId: number, name: string, description
       description: description,
     })
     .eq('id', channelId)
+    .select()
     .single();
 }
 
 type UpdateChannelResponse = Awaited<ReturnType<typeof updateChannel>>;
 export type UpdateChannelResponseSuccess = UpdateChannelResponse['data'];
 export type UpdateChannelResponseError = UpdateChannelResponse['error'];
+
+export async function getAllChannelsForUser(userId: string) {
+  return await supabase
+    .rpc('get_all_channels_for_user', { p_id: userId });
+}

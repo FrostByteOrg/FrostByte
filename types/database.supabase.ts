@@ -14,21 +14,21 @@ export interface Database {
           channel_id: number
           created_at: string | null
           description: string | null
-          name: string | null
+          name: string
           server_id: number
         }
         Insert: {
           channel_id?: number
           created_at?: string | null
           description?: string | null
-          name?: string | null
+          name: string
           server_id: number
         }
         Update: {
           channel_id?: number
           created_at?: string | null
           description?: string | null
-          name?: string | null
+          name?: string
           server_id?: number
         }
       }
@@ -93,6 +93,7 @@ export interface Database {
           id: number
           is_edited: boolean
           is_pinned: boolean
+          profile_id: string
           sent_time: string
         }
         Insert: {
@@ -103,6 +104,7 @@ export interface Database {
           id?: number
           is_edited?: boolean
           is_pinned?: boolean
+          profile_id: string
           sent_time?: string
         }
         Update: {
@@ -113,35 +115,36 @@ export interface Database {
           id?: number
           is_edited?: boolean
           is_pinned?: boolean
+          profile_id?: string
           sent_time?: string
         }
       }
       profiles: {
         Row: {
           avatar_url: string | null
-          email: string | null
+          email: string
           full_name: string | null
           id: string
           updated_at: string | null
-          username: string | null
+          username: string
           website: string | null
         }
         Insert: {
           avatar_url?: string | null
-          email?: string | null
+          email: string
           full_name?: string | null
           id: string
           updated_at?: string | null
-          username?: string | null
+          username: string
           website?: string | null
         }
         Update: {
           avatar_url?: string | null
-          email?: string | null
+          email?: string
           full_name?: string | null
           id?: string
           updated_at?: string | null
-          username?: string | null
+          username?: string
           website?: string | null
         }
       }
@@ -242,18 +245,21 @@ export interface Database {
           created_at: string | null
           description: string | null
           id: number
+          image_url: string | null
           name: string
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: number
-          name?: string
+          image_url?: string | null
+          name: string
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: number
+          image_url?: string | null
           name?: string
         }
       }
@@ -262,9 +268,19 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_all_channels_for_user: {
+        Args: {
+          p_id: string
+        }
+        Returns: {
+          channel_id: number
+        }[]
+      }
     }
     Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
       [_ in never]: never
     }
   }
