@@ -15,7 +15,7 @@ export default function Message({ message }: { message: any }) {
 
   return (
     <>
-      <div className="h-10 px-2 p-4 flex">
+      <div className="h-9 px-2 p-4 flex">
         <UserIcon user={message.profiles}/>
         <div className="flex flex-col">
           <div className="flex items-center">
