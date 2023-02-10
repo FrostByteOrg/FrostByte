@@ -50,23 +50,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // NOTE: We make an assumption that the uses remaining can never be 0 as an invite is deleted from the table
       // As soon as it is our of uses. Therefore the following condition serves as a nullcheck ONLY
       if (invite.uses_remaining) {
+        // Update the uses remaining
+        // If this server invite will run out of uses here, we'll silently expire it
         if (invite.uses_remaining - 1 === 0) {
           await supabase
             .from('server_invites')
             .delete()
             .eq('id', invite.id);
-
-          return res.status(410).send({ error: 'Invite link expired.'});
         }
 
-        // Update the uses remaining
-        else {
-          await supabase
-            .from('server_invites')
-            .update({ uses_remaining: invite.uses_remaining - 1 })
-            .eq('id', invite.id);
-        }
+        await supabase
+          .from('server_invites')
+          .update({ uses_remaining: invite.uses_remaining - 1 })
+          .eq('id', invite.id);
       }
+
 
       // Add the user to the server
       await supabase
