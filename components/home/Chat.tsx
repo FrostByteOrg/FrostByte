@@ -84,8 +84,8 @@ export default function Chat() {
         >
           {
             messages && messages.map((value, index: number, array) => {
-              // const message = array[array.length - 1 - index];
-              return <Message key={index} message={value}/>;
+              // @ts-expect-error This is actually valid, TypeScript just considers this an array internally for some reason
+              return <Message key={value.id} message={value}/>;
             })
           }
           <div ref={newestMessageRef} className=""></div>

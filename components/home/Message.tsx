@@ -1,6 +1,7 @@
 import UserIcon from '../icons/UserIcon';
 import moment from 'moment';
 import { ChatMessageWithUser } from '@/types/dbtypes';
+import ReactMarkdown from 'react-markdown';
 
 export default function Message({ message }: { message: any }) {
   const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
@@ -25,7 +26,7 @@ export default function Message({ message }: { message: any }) {
               {displayTime}{' '}
             </div>
           </div>
-          <div className="font-light tracking-wide">{message.content}</div>
+          <div className="font-light tracking-wide"><ReactMarkdown>{message.content}</ReactMarkdown></div>
         </div>
       </div>
     </>
