@@ -2,6 +2,12 @@ import UserIcon from '../icons/UserIcon';
 import moment from 'moment';
 import { ChatMessageWithUser } from '@/types/dbtypes';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+
+function renderImage(props: any) {
+  return <img {...props} style={{maxWidth: '50vw'}}/>;
+}
 
 export default function Message({ message }: { message: any }) {
   const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
@@ -15,7 +21,7 @@ export default function Message({ message }: { message: any }) {
 
   return (
     <>
-      <div className="h-9 px-2 p-4 flex">
+      <div className="px-2 p-4 flex">
         <UserIcon user={message.profiles}/>
         <div className="flex flex-col">
           <div className="flex items-center">
@@ -26,7 +32,7 @@ export default function Message({ message }: { message: any }) {
               {displayTime}{' '}
             </div>
           </div>
-          <div className="font-light tracking-wide"><ReactMarkdown>{message.content}</ReactMarkdown></div>
+          <div className="font-light tracking-wide"><ReactMarkdown components={{img: renderImage}} remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown></div>
         </div>
       </div>
     </>

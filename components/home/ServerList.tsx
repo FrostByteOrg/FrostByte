@@ -105,12 +105,12 @@ export default function ServerList() {
       handleAsync();
     }
   }, [user]);
-  
 
-  //TODO: add isServer check 
+
+  //TODO: add isServer check
 
   return (
-    <div className="main p-4">
+    <div className="main p-4 min-h-0">
       <div className="flex pb-3 items-center border-b-2 border-grey-700">
         <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
         <div
@@ -128,19 +128,18 @@ export default function ServerList() {
           placeholder="Search"
         ></input>
       </div>
-      {/* TODO: fix idx -> server.id */}
-      { servers && servers.map((server, idx) => {
-        {/* @ts-expect-error This is valid */}
-        return <span key={server.server_id} onClick={() => {
-          //  @ts-expect-error This is valid 
-          return  expanded == server.server_id ? setExpanded(0) : setExpanded(server.server_id);
-        }
-        }
-        >
-          <Server server={server} expanded={expanded} />
-        </span>;
-      })}
+      <div className='overflow-scroll'>
+        {/* TODO: fix idx -> server.id */}
+        { servers && servers.map((server, idx) => {
+          {/* @ts-expect-error This is valid */}
+          return <span key={server.server_id} onClick={() => {
+            //  @ts-expect-error This is valid
+            return  expanded == server.server_id ? setExpanded(0) : setExpanded(server.server_id);
+          }} >
+            <Server server={server} expanded={expanded} />
+          </span>;
+        })}
+      </div>
     </div>
   );
 }
-
