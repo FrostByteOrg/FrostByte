@@ -42,6 +42,25 @@ export default function Server({
     setChannelId(channelId);
     setMobileView('chat');
   }
+  //NOTE: REMOVE THESE
+  function renderHardcodedOnline(serverId: any) {
+    if (serverId == 30) {
+      return '87';
+    } 
+    else if (serverId == 31) {
+      return '245';
+    }
+    return '';
+  }
+  function renderHardcodedMembers(serverId: any) {
+    if (serverId == 30) {
+      return '539';
+    } 
+    else if (serverId == 31) {
+      return '2381';
+    }
+    return '';
+  }
 
   if (expand) {
     return (
@@ -58,11 +77,11 @@ export default function Server({
               <div className="text-xs tracking-wide text-grey-300 flex">
                 <div className="flex items-center">
                   <span className="p-1 bg-green-300 rounded-full mr-1"></span>
-                  <span>{server.onlineMembers} Online</span>
+                  <span>{renderHardcodedOnline(server.servers.id)} Online</span>
                 </div>
                 <div className="flex items-center ml-2">
                   <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
-                  <span>{server.members} Members</span>
+                  <span>{renderHardcodedMembers(server.servers.id)} Members</span>
                 </div>
               </div>
             </div>
@@ -104,11 +123,11 @@ export default function Server({
             <div className="text-xs tracking-wide text-grey-300 flex">
               <div className="flex items-center">
                 <span className="p-1 bg-green-300 rounded-full mr-1"></span>
-                <span>{server.onlineMembers} Online</span>
+                <span>{renderHardcodedOnline(server.servers.id)} Online</span>
               </div>
               <div className="flex items-center ml-2">
                 <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
-                <span>{server.members} Members</span>
+                <span>{renderHardcodedMembers(server.servers.id)} Members</span>
               </div>
             </div>
           </div>
