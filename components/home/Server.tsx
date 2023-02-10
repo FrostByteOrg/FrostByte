@@ -45,21 +45,21 @@ export default function Server({
   //NOTE: REMOVE THESE
   function renderHardcodedOnline(serverId: any) {
     if (serverId == 30) {
-      return '87';
+      return '3';
     } 
     else if (serverId == 31) {
-      return '245';
+      return '3';
     }
-    return '';
+    return '1';
   }
   function renderHardcodedMembers(serverId: any) {
     if (serverId == 30) {
-      return '539';
+      return '3';
     } 
     else if (serverId == 31) {
-      return '2381';
+      return '3';
     }
-    return '';
+    return '1';
   }
 
   if (expand) {
