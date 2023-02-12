@@ -30,8 +30,10 @@ export default function PasswordReset({
 
 
   const onSubmit = async (formData: CreatePasswordInputRecovery) => {
+    let url = `${window.location.origin}/passwordreset`;
+
     const { data, error } = await supabase.auth.resetPasswordForEmail(formData.email, {
-      redirectTo: 'http://localhost:3000/passwordreset',
+      redirectTo: url,
     });
 
     if (error) {
@@ -56,7 +58,7 @@ export default function PasswordReset({
         Enter the Email that belongs to your account:
       </label>
       <div className="relative mt-3">
-        
+
         <div className={`${errors.email ? styles.iconError : styles.icon} `}>
           <EmailIcon/>
         </div>
@@ -77,17 +79,17 @@ export default function PasswordReset({
         <button
           className={`
            ${styles.button}
-           bg-frost-600 
+           bg-frost-600
            hover:bg-frost-700
            disabled:bg-grey-600
            active:shadow-sm
            active:bg-frost-800
-           font-bold 
-           py-2 px-4 
-           w-full 
-           rounded-2xl 
-           tracking-widest 
-           text-frost-100 
+           font-bold
+           py-2 px-4
+           w-full
+           rounded-2xl
+           tracking-widest
+           text-frost-100
            text-2xl
           `}
           type="submit"
