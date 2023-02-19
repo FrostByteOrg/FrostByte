@@ -129,4 +129,5 @@ a {
 /* Overrides for libraries */
 .hljs {
   border-radius: 0.5rem;
+  max-width: 95%;
 }
