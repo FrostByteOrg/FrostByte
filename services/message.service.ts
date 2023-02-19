@@ -54,7 +54,7 @@ export type MessageWithUsersResponseSuccess = MessageWithUsersResponse['data'] &
 export type MessageWithUsersResponseError = MessageWithUsersResponse['error']
 
 export async function createMessage(message: UnsavedMessage) {
-  const { content, profile_id, channel_id } = message;
+  const { profile_id, channel_id } = message;
 
   // Fetch the server_id for channel_id
   const { data: server_channel, error: serverChannelError } = await supabase
@@ -81,6 +81,23 @@ export async function createMessage(message: UnsavedMessage) {
     console.log(`Error fetching server_user for author_id (profile_id: ${profile_id} | server_id: ${server_channel?.server_id})))`);
     console.error(serverUserError);
   }
+
+  // Finally with all that info, we may process messages to apply any formatting here
+  let content = message.content;
+
+  // Here, we isolate image urls (png/jpg/jpeg/gif/svg/webp)
+  const imageRegex = /(?<!\!\[[\w\s\-_]+\]\()https?:\/\/.*\.(?:png|jpe?g|gif|svg|webp)(?:\?.*)?(?!\))/gi;
+  const imageUrls = message.content.match(imageRegex);
+  if (imageUrls) {
+    imageUrls.forEach((url: string) => {
+      content = message.content.replace(
+        url,
+        `![image](${url})`
+      );
+    });
+  }
+
+  console.log(message.content);
 
   return await supabase
     .from('messages')
