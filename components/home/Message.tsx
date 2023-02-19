@@ -1,10 +1,8 @@
 import UserIcon from '../icons/UserIcon';
 import moment from 'moment';
-import { ChatMessageWithUser } from '@/types/dbtypes';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-
-
+import rehypeHighlight from 'rehype-highlight';
 function renderImage(props: any) {
   return <img {...props} style={{maxWidth: '50vw'}}/>;
 }
@@ -33,7 +31,11 @@ export default function Message({ message }: { message: any }) {
             </div>
           </div>
           <div className="font-light tracking-wide">
-            <ReactMarkdown components={{img: renderImage}} remarkPlugins={[remarkGfm]}>
+            <ReactMarkdown
+              components={{ img: renderImage }}
+              rehypePlugins={[[rehypeHighlight, { detect: false, ignoreMissing: true}]]}
+              remarkPlugins={[remarkGfm]}
+            >
               {message.content}
             </ReactMarkdown>
           </div>
