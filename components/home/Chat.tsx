@@ -65,17 +65,16 @@ export default function Chat() {
         type: 'postgres_changes',
         filter: { event: 'DELETE', schema: 'public', table: 'messages' },
         callback: async (payload) => {
-          const { data, error } = await getMessageWithUser((payload.old as MessageType).id);
-
-          if (error) {
-            console.error(error);
+          if (!payload.old) {
+            console.error('No old message found');
             return;
           }
 
-          if (data.channel_id === channelId) {
+          // @ts-expect-error payload.old is a MessageType, not a ChatMessageWithUser
+          if (!payload.old.channel_id || payload.old.channel_id === channelId) {
             setMessages(messages.filter((message) => {
               // @ts-expect-error message here is a ChatMessageWithUser, note NOT an array
-              return message.id !== data.id;
+              return message.id !== payload.old.id;
             }));
           }
         }

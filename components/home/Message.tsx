@@ -29,7 +29,7 @@ export default function Message({ message, collapse_user }: { message: any, coll
             </div>
             <div className="text-xs tracking-wider text-grey-300 mt-1">
               {displayTime}{' '}
-              { message.is_edited && <span className="text-frost-300">(edited)</span>}
+              { message.is_edited && <span className="text-gray-400">(edited)</span>}
             </div>
           </div>
         </div> }
@@ -59,7 +59,7 @@ export default function Message({ message, collapse_user }: { message: any, coll
           >
             {message.content}
           </ReactMarkdown>
-          { (collapse_user && message.is_edited) && <span className="text-frost-300">(edited)</span>}
+          { (collapse_user && message.is_edited) && <span className="text-gray-400">(edited)</span>}
         </div>
       </div>
     </>
