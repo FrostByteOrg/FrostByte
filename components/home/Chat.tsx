@@ -86,6 +86,14 @@ export default function Chat() {
         >
           {
             messages && messages.map((value, index: number, array) => {
+              // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
+              const previousMessage: ChatMessageWithUser | null = index > 0 ? array[index - 1] : null;
+
+              if (previousMessage && previousMessage.profiles.id === value.profiles.id) {
+                // @ts-expect-error This is actually valid, TypeScript just considers this an array internally for some reason
+                return <Message key={value.id} message={value} collapse_user={true}/>;
+              }
+
               // @ts-expect-error This is actually valid, TypeScript just considers this an array internally for some reason
               return <Message key={value.id} message={value}/>;
             })
