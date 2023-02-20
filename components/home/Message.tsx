@@ -3,6 +3,8 @@ import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 export default function Message({ message }: { message: any }) {
   const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
@@ -41,8 +43,14 @@ export default function Message({ message }: { message: any }) {
                 h3: (props) => (<h3 className="text-lg font-bold" {...props}></h3>),
                 h4: (props) => (<h4 className="text-base font-bold" {...props}></h4>),
               }}
-              rehypePlugins={[[rehypeHighlight, { detect: false, ignoreMissing: true}]]}
-              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[
+                [ rehypeHighlight, { detect: false, ignoreMissing: true} ],
+                [ rehypeKatex, { strict: false, output: 'mathml' } ]
+              ]}
+              remarkPlugins={[
+                [ remarkGfm, { singleTilde: false } ],
+                [ remarkMath ]
+              ]}
             >
               {message.content}
             </ReactMarkdown>
