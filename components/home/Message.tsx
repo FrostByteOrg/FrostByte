@@ -33,7 +33,7 @@ export default function Message({ message, collapse_user }: { message: any, coll
             </div>
           </div>
         </div> }
-        <div className="font-light tracking-wide ml-8 -mt-2">
+        <div className="font-light tracking-wide ml-8 -mt-2 hover:bg-gray-700 rounded-lg p-1 transition-colors">
           <ReactMarkdown
             components={{
               ul: ({ children }) => (<ul className="list-disc ml-6">{children}</ul>),
@@ -59,6 +59,7 @@ export default function Message({ message, collapse_user }: { message: any, coll
           >
             {message.content}
           </ReactMarkdown>
+          { (collapse_user && message.is_edited) && <span className="text-frost-300">(edited)</span>}
         </div>
       </div>
     </>

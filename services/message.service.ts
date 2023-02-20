@@ -1,3 +1,4 @@
+import { markdownifyImageUrls } from '@/lib/messageHelpers';
 import { getPagination } from '@/lib/paginationHelper';
 import { supabase } from '@/lib/supabaseClient';
 import { Database } from '@/types/database.supabase';
@@ -83,21 +84,7 @@ export async function createMessage(message: UnsavedMessage) {
   }
 
   // Finally with all that info, we may process messages to apply any formatting here
-  let content = message.content;
-
-  // Here, we isolate image urls (png/jpg/jpeg/gif/svg/webp)
-  const imageRegex = /(?<!\!\[[\w\s\-_]+\]\()https?:\/\/.*\.(?:png|jpe?g|gif|svg|webp)(?:\?.*)?(?!\))/gi;
-  const imageUrls = message.content.match(imageRegex);
-  if (imageUrls) {
-    imageUrls.forEach((url: string) => {
-      content = message.content.replace(
-        url,
-        `![image](${url})`
-      );
-    });
-  }
-
-  console.log(message.content);
+  let content = markdownifyImageUrls(message.content);
 
   return await supabase
     .from('messages')
@@ -108,5 +95,23 @@ export async function createMessage(message: UnsavedMessage) {
       author_id: server_user?.id!
     })
     .select('*')
+    .single();
+}
+
+export async function deleteMessage(messageId: number) {
+  return await supabase
+    .from('messages')
+    .delete().eq('id', messageId)
+    .single();
+}
+
+export async function editMessage(messageId: number, content: string) {
+  // process anything necessary here
+  content = markdownifyImageUrls(content);
+
+  return await supabase
+    .from('messages')
+    .update({ content })
+    .eq('id', messageId)
     .single();
 }
