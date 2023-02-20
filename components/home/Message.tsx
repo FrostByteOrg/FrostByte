@@ -47,13 +47,20 @@ export default function Message({ message, collapse_user }: { message: any, coll
               h4: (props) => (<h4 className="text-base font-bold" {...props}></h4>),
               h5: (props) => (<h5 className="text-sm font-bold" {...props}></h5>),
               h6: (props) => (<h6 className="text-xs font-bold" {...props}></h6>),
+              table: (props) => (<table className="table-auto" {...props}></table>),
+              thead: (props) => (<thead className="bg-gray-800" {...props}></thead>),
+              tbody: (props) => (<tbody className="bg-gray-700" {...props}></tbody>),
+              tr: (props) => (<tr className="border-b border-gray-600" {...props}></tr>),
+              th: (props) => (<th className="px-4 py-2" {...props}></th>),
+              td: (props) => (<td className="px-4 py-2" {...props}></td>),
+              blockquote: (props) => (<blockquote className="border-l-4 border-gray-600 pl-4" {...props}></blockquote>),
             }}
             rehypePlugins={[
               [ rehypeHighlight, { detect: false, ignoreMissing: true} ],
               [ rehypeKatex, { strict: false, output: 'mathml' } ]
             ]}
             remarkPlugins={[
-              [ remarkGfm, { singleTilde: false } ],
+              [ remarkGfm, { singleTilde: false, tableCellPadding: false, tablePipeAlign: false } ],
               [ remarkMath ]
             ]}
           >
