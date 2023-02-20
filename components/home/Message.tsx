@@ -33,7 +33,8 @@ export default function Message({ message }: { message: any }) {
               components={{
                 ul: ({ children }) => (<ul className="list-disc ml-6">{children}</ul>),
                 ol: ({ children }) => (<ol className="list-decimal ml-6">{children}</ol>),
-                img: (props) => (<img className="w-1/2" {...props}></img>),
+                // TODO: Add support for providing alt text for images
+                img: (props) => (<img className="w-1/2" alt="Attachment" {...props}></img>),
                 a: (props) => (<a className="text-frost-300" {...props}></a>),
                 h1: (props) => (<h1 className="text-2xl font-bold" {...props}></h1>),
                 h2: (props) => (<h2 className="text-xl font-bold" {...props}></h2>),
