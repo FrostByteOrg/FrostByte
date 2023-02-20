@@ -42,6 +42,8 @@ export default function Message({ message }: { message: any }) {
                 h2: (props) => (<h2 className="text-xl font-bold" {...props}></h2>),
                 h3: (props) => (<h3 className="text-lg font-bold" {...props}></h3>),
                 h4: (props) => (<h4 className="text-base font-bold" {...props}></h4>),
+                h5: (props) => (<h5 className="text-sm font-bold" {...props}></h5>),
+                h6: (props) => (<h6 className="text-xs font-bold" {...props}></h6>),
               }}
               rehypePlugins={[
                 [ rehypeHighlight, { detect: false, ignoreMissing: true} ],
