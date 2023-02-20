@@ -25,6 +25,7 @@ export default function Message({ message }: { message: any }) {
             </div>
             <div className="text-xs tracking-wider text-grey-300 mt-1">
               {displayTime}{' '}
+              { message.is_edited && <span className="text-frost-300">(edited)</span>}
             </div>
           </div>
           <div className="font-light tracking-wide">
