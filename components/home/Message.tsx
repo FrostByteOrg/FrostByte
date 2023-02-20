@@ -3,9 +3,6 @@ import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-function renderImage(props: any) {
-  return <img {...props} style={{maxWidth: '50vw'}}/>;
-}
 
 export default function Message({ message }: { message: any }) {
   const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
@@ -21,7 +18,7 @@ export default function Message({ message }: { message: any }) {
     <>
       <div className="px-2 p-4 flex">
         <UserIcon user={message.profiles}/>
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full">
           <div className="flex items-center">
             <div className="text-xl font-semibold tracking-wider mr-2">
               {message.profiles.username}
@@ -32,7 +29,16 @@ export default function Message({ message }: { message: any }) {
           </div>
           <div className="font-light tracking-wide">
             <ReactMarkdown
-              components={{ img: renderImage }}
+              components={{
+                ul: ({ children }) => (<ul className="list-disc ml-6">{children}</ul>),
+                ol: ({ children }) => (<ol className="list-decimal ml-6">{children}</ol>),
+                img: (props) => (<img className="w-1/2" {...props}></img>),
+                a: (props) => (<a className="text-frost-300" {...props}></a>),
+                h1: (props) => (<h1 className="text-2xl font-bold" {...props}></h1>),
+                h2: (props) => (<h2 className="text-xl font-bold" {...props}></h2>),
+                h3: (props) => (<h3 className="text-lg font-bold" {...props}></h3>),
+                h4: (props) => (<h4 className="text-base font-bold" {...props}></h4>),
+              }}
               rehypePlugins={[[rehypeHighlight, { detect: false, ignoreMissing: true}]]}
               remarkPlugins={[remarkGfm]}
             >
