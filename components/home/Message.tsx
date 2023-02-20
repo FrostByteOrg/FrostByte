@@ -6,7 +6,8 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
-export default function Message({ message }: { message: any }) {
+// NOTE: Any here because of the way Supabase has incorrectly typed the message object as an array when it is in fact, not.
+export default function Message({ message, collapse_user }: { message: any, collapse_user: boolean }) {
   const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
   const todayDate = moment(message.sent_time).format('h:mm A');
   const displayTime =
@@ -15,6 +16,7 @@ export default function Message({ message }: { message: any }) {
     moment(moment(message.sent_time)).isSame(moment(), 'month')
       ? `Today at ${todayDate}`
       : pastDate;
+
 
   return (
     <>
@@ -36,7 +38,7 @@ export default function Message({ message }: { message: any }) {
                 ul: ({ children }) => (<ul className="list-disc ml-6">{children}</ul>),
                 ol: ({ children }) => (<ol className="list-decimal ml-6">{children}</ol>),
                 // TODO: Add support for providing alt text for images
-                img: (props) => (<img className="w-1/2" alt="Attachment" {...props}></img>),
+                img: (props) => (<img className="max-w-4xl" alt="Attachment" {...props}></img>),
                 a: (props) => (<a className="text-frost-300" {...props}></a>),
                 h1: (props) => (<h1 className="text-2xl font-bold" {...props}></h1>),
                 h2: (props) => (<h2 className="text-xl font-bold" {...props}></h2>),
