@@ -131,3 +131,7 @@ a {
   border-radius: 0.5rem;
   max-width: 95%;
 }
+
+.task-list-item {
+  list-style: none;
+}
