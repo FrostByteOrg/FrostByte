@@ -8,7 +8,7 @@ export default function MessageInput({ onSubmit }: {onSubmit: Function}){
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       // Double newlines are required for markdown to render
-      onSubmit(messageText.replace('\n', '\n\n'));
+      onSubmit(messageText);
       setMessageText('');
     }
   };
