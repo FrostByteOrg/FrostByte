@@ -4,6 +4,7 @@ const socketIoHandler = (req: any, res: any) => {
 
   if (res.socket.server.io) {
     console.log('Socket is attached');
+    res.end()
   } 
     console.log('Mounting the socket')
     const io = new Server(res.socket.server);

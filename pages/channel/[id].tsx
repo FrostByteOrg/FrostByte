@@ -196,8 +196,8 @@ export default function Channel() {
 
   return (
     <div>
-      <video autoPlay ref={userVideoRef} />
-      <video autoPlay ref={peerVideoRef} />
+      <video  ref={userVideoRef} />
+      <video  ref={peerVideoRef} />
       <button onClick={cameraControl} type='button'>
         {camera ? 'Stop' : 'Start'}
       </button>
