@@ -1,4 +1,4 @@
-import { markdownifyImageUrls } from '@/lib/messageHelpers';
+import { sanitizeMessage } from '@/lib/messageHelpers';
 import { getPagination } from '@/lib/paginationHelper';
 import { supabase } from '@/lib/supabaseClient';
 import { Database } from '@/types/database.supabase';
@@ -84,7 +84,7 @@ export async function createMessage(message: UnsavedMessage) {
   }
 
   // Finally with all that info, we may process messages to apply any formatting here
-  let content = markdownifyImageUrls(message.content);
+  let content = sanitizeMessage(message.content);
 
   return await supabase
     .from('messages')
@@ -107,7 +107,7 @@ export async function deleteMessage(messageId: number) {
 
 export async function editMessage(messageId: number, content: string) {
   // process anything necessary here
-  content = markdownifyImageUrls(content);
+  content = sanitizeMessage(content);
 
   return await supabase
     .from('messages')

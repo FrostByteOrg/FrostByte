@@ -13,3 +13,15 @@ export function markdownifyImageUrls(content: string): string {
 
   return content;
 }
+
+export function stripMarkdownFootnotes(content: string): string {
+  const footnoteRegex = /\[\^[\w\s\-_]+\]:?\s/gi;
+  return content.replace(footnoteRegex, '');
+}
+
+export function sanitizeMessage(content: string): string {
+  content = markdownifyImageUrls(content);
+  content = stripMarkdownFootnotes(content);
+
+  return content;
+}
