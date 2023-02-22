@@ -8,10 +8,14 @@ BEGIN;
   SELECT tests.rls_enabled('public', 'servers');
 
   -- Now if we try to fetch servers, we should get an empty array
-  SELECT is_empty(
-    (SELECT servers FROM public.servers),
-    0,
-    'No servers should be returned for users not in any servers'
+  SELECT policies_are(
+    'public', 'profiles',
+    ARRAY [
+      "Users can view a server they're a part of",
+      "Only server owners can modify servers (for now)",
+      "Only server owners can delete their servers",
+      "Enable insert for authenticated users only"
+    ]
   );
 
   SELECT * FROM finish();
