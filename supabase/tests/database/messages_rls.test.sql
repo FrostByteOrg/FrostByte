@@ -2,21 +2,17 @@ BEGIN;
   SELECT plan(1);
 
   SELECT tests.create_supabase_user('test_member');
-  SELECT tests.authenticate_as('test_user');
+  SELECT tests.authenticate_as('test_member');
 
-  -- Ensure RLS is enabled for servers
-  SELECT tests.rls_enabled('public', 'servers');
+  insert into servers (name, description) values ('test', 'test');
 
-  -- Now if we try to fetch servers, we should get an empty array
-  SELECT policies_are(
-    'public', 'profiles',
-    ARRAY [
-      "Users can view a server they're a part of",
-      "Only server owners can modify servers (for now)",
-      "Only server owners can delete their servers",
-      "Enable insert for authenticated users only"
-    ]
-  );
+  select tests.clear_authentication();
+
+  SELECT
+    is_empty(
+      $$ select * from servers $$,
+      'Anonymous users cannot see servers',
+    );
 
   SELECT * FROM finish();
 
