@@ -2,18 +2,17 @@ import { useChannelIdValue } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
-import { useUser } from '@supabase/auth-helpers-react';
-import { useRealtime, addMessage } from '@/lib/Store';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageInput from './MessageInput';
 import type { ChatMessageWithUser, Message as MessageType } from '@/types/dbtypes';
-import { getMessagesInChannelWithUser, getMessageWithUser } from '@/services/message.service';
+import { createMessage, getMessagesInChannelWithUser, getMessageWithUser } from '@/services/message.service';
 import Message  from '@/components/home/Message';
+import { useRealtime } from 'hooks/useRealtime';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
   const [ messages, setMessages ] = useState<ChatMessageWithUser[]>([]);
-
-
+  const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
 
@@ -24,7 +23,10 @@ export default function Chat() {
         type: 'postgres_changes',
         filter: { event: 'INSERT', schema: 'public', table: 'messages' },
         callback: async (payload) => {
-          const { data, error } = await getMessageWithUser((payload.new as MessageType).id);
+          const { data, error } = await getMessageWithUser(
+            supabase,
+            (payload.new as MessageType).id
+          );
 
           if (error) {
             console.error(error);
@@ -43,7 +45,10 @@ export default function Chat() {
   useEffect(() => {
     if (channelId) {
       const handleAsync = async () => {
-        const { data, error } = await getMessagesInChannelWithUser(channelId);
+        const { data, error } = await getMessagesInChannelWithUser(
+          supabase,
+          channelId
+        );
 
         if (error) {
           console.error(error);
@@ -57,7 +62,7 @@ export default function Chat() {
       };
       handleAsync();
     }
-  }, [channelId]);
+  }, [channelId, supabase]);
 
   useEffect(() => {
     if (newestMessageRef && messages) {
@@ -93,7 +98,17 @@ export default function Chat() {
           <div ref={newestMessageRef} className=""></div>
         </div>
 
-        <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user!.id)}/>
+        <MessageInput
+          onSubmit={async (content: string) => {
+            createMessage(
+              supabase,
+              {
+                content,
+                channel_id: channelId,
+                profile_id: user!.id}
+            );
+          }}
+        />
       </div>
     </>
   );

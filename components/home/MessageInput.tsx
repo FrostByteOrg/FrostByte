@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, SyntheticEvent, useState } from 'react';
+import { KeyboardEvent, useState } from 'react';
 
 export default function MessageInput({ onSubmit }: {onSubmit: Function}){
   const [messageText, setMessageText] = useState('');
@@ -15,13 +15,13 @@ export default function MessageInput({ onSubmit }: {onSubmit: Function}){
     <>
       <input
         className="w-[90%]
-        px-3 
+        px-3
         py-2
         self-start
         text-base
         font-normal
         placeholder:text-white
-        placeholder:opacity-70     
+        placeholder:opacity-70
         rounded-lg
         transition
         ease-in-out

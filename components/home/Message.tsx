@@ -1,6 +1,5 @@
 import UserIcon from '../icons/UserIcon';
 import moment from 'moment';
-import { ChatMessageWithUser } from '@/types/dbtypes';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
