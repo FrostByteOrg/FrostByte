@@ -37,6 +37,52 @@ export default function Chat() {
             setMessages(messages.concat(data));
           }
         }
+      },
+      {
+        type: 'postgres_changes',
+        filter: { event: 'UPDATE', schema: 'public', table: 'messages' },
+        callback: async (payload) => {
+          const { data, error } = await getMessageWithUser(
+            supabase,
+            (payload.new as MessageType).id
+          );
+
+          if (error) {
+            console.error(error);
+            return;
+          }
+
+          if (data.channel_id === channelId) {
+            setMessages(messages.map((message) => {
+              // Once we hit a message that matches the id, we can return the updated message instead of the old one
+              // @ts-expect-error message here is a ChatMessageWithUser, note NOT an array
+              if (message.id === data.id) {
+                return data;
+              }
+
+              // Otherwise fallback to the old one
+              return message;
+            }));
+          }
+        }
+      },
+      {
+        type: 'postgres_changes',
+        filter: { event: 'DELETE', schema: 'public', table: 'messages' },
+        callback: async (payload) => {
+          if (!payload.old) {
+            console.error('No old message found');
+            return;
+          }
+
+          // @ts-expect-error payload.old is a MessageType, not a ChatMessageWithUser
+          if (!payload.old.channel_id || payload.old.channel_id === channelId) {
+            setMessages(messages.filter((message) => {
+              // @ts-expect-error message here is a ChatMessageWithUser, note NOT an array
+              return message.id !== payload.old.id;
+            }));
+          }
+        }
       }
     ]
   );
@@ -91,8 +137,13 @@ export default function Chat() {
         >
           {
             messages && messages.map((value, index: number, array) => {
-              // @ts-expect-error This is actually valid, TypeScript just considers this an array internally for some reason
-              return <Message key={value.id} message={value}/>;
+              // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
+              const previousMessage: ChatMessageWithUser | null = index > 0 ? array[index - 1] : null;
+
+              if (previousMessage && previousMessage.profiles.id === value.profiles.id) {
+                // @ts-expect-error This is actually valid, TypeScript just considers this an array internally for some reason
+                return <Message key={value.id} message={value} collapse_user={true}/>;
+              }
             })
           }
           <div ref={newestMessageRef} className=""></div>
