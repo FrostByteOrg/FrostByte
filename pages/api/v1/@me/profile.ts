@@ -19,7 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (method === 'GET') {
     // Fetch user profile
-    const { data: profile, error } = await getProfile(user.id);
+    const { data: profile, error } = await getProfile(
+      supabaseServerClient,
+      user.id
+    );
 
     // No profile, return not found error
     if (!profile) {
@@ -33,6 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // PUT request
   else if (method === 'PUT') {
     const { data: profile, error } = await updateUserProfile(
+      supabaseServerClient,
       user.id,
       req.body.full_name,
       req.body.avatar_url || null,

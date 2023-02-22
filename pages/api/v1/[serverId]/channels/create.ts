@@ -1,4 +1,5 @@
 import { createChannel } from '@/services/channels.service';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -15,9 +16,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).send({ error: 'Invalid server ID' });
   }
 
+  const supabaseServerClient = createServerSupabaseClient({ req, res });
+
   // NOTE: All operations after this point require appropriate authorization
   if (method === 'POST') {
     const { data: channel, error } = await createChannel(
+      supabaseServerClient,
       serverId,
       req.body.name,
       req.body.description || null

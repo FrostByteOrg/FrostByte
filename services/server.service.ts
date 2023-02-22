@@ -1,6 +1,7 @@
+import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-export async function createServer(supabase: SupabaseClient, owner_id: string, name: string, description: string | null) {
+export async function createServer(supabase: SupabaseClient<Database>, owner_id: string, name: string, description: string | null) {
   // Validate server name is present
   if (!name) {
     return { data: null, error: 'Server name is required' };
@@ -33,7 +34,7 @@ type CreateServerResponse = Awaited<ReturnType<typeof createServer>>;
 export type CreateServerResponseSuccess = CreateServerResponse['data'];
 export type CreateServerResponseError = CreateServerResponse['error'];
 
-export async function getServers(supabase: SupabaseClient) {
+export async function getServers(supabase: SupabaseClient<Database>) {
   return await supabase.from('servers').select('*');
 }
 
@@ -41,7 +42,7 @@ type GetServersResponse = Awaited<ReturnType<typeof getServers>>;
 export type GetServersResponseSuccess = GetServersResponse['data'];
 export type GetServersResponseError = GetServersResponse['error'];
 
-export async function getServer(supabase: SupabaseClient, id: number) {
+export async function getServer(supabase: SupabaseClient<Database>, id: number) {
   return await supabase.from('servers').select('*').eq('id', id);
 }
 
@@ -49,7 +50,7 @@ type GetServerResponse = Awaited<ReturnType<typeof getServer>>;
 export type GetServerResponseSuccess = GetServerResponse['data'];
 export type GetServerResponseError = GetServerResponse['error'];
 
-export async function updateServer(supabase: SupabaseClient, id: number, name: string, description: string | null) {
+export async function updateServer(supabase: SupabaseClient<Database>, id: number, name: string, description: string | null) {
   return await supabase
     .from('servers')
     .update({ name, description })
@@ -62,7 +63,7 @@ type UpdateServerResponse = Awaited<ReturnType<typeof updateServer>>;
 export type UpdateServerResponseSuccess = UpdateServerResponse['data'];
 export type UpdateServerResponseError = UpdateServerResponse['error'];
 
-export async function deleteServer(supabase: SupabaseClient, user_id: string, server_id: number) {
+export async function deleteServer(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
   // NOTE: only the owner should be able to delete a server
   const { data: serverUser, error } = await supabase
     .from('server_users')
@@ -91,7 +92,7 @@ type DeleteServerResponse = Awaited<ReturnType<typeof deleteServer>>;
 export type DeleteServerResponseSuccess = DeleteServerResponse['data'];
 export type DeleteServerResponseError = DeleteServerResponse['error'];
 
-export async function getServersForUser(supabase: SupabaseClient, user_id: string) {
+export async function getServersForUser(supabase: SupabaseClient<Database>, user_id: string) {
   return await supabase
     .from('server_users')
     .select('server_id, servers ( * )')
@@ -102,7 +103,7 @@ type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
 export type GetServersForUserResponseSuccess = GetServersForUserResponse['data'];
 export type GetServersForUserResponseError = GetServersForUserResponse['error'];
 
-export async function getServerForUser(supabase: SupabaseClient, serverUser_id: number) {
+export async function getServerForUser(supabase: SupabaseClient<Database>, serverUser_id: number) {
   return await supabase
     .from('server_users')
     .select('server_id, servers ( * )')
@@ -113,7 +114,7 @@ export async function getServerForUser(supabase: SupabaseClient, serverUser_id: 
 type GetServerForUserResponse = Awaited<ReturnType<typeof getServerForUser>>;
 export type GetServerForUserResponseSuccess = GetServerForUserResponse['data'];
 
-export async function isUserInServer(supabase: SupabaseClient, user_id: string, server_id: number) {
+export async function isUserInServer(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
   const { data, error } = await supabase
     .from('server_users')
     .select('*')

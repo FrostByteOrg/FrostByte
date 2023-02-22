@@ -1,4 +1,5 @@
 import { deleteChannel, getChannelById, updateChannel } from '@/services/channels.service';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -19,8 +20,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).send({ error: 'Invalid server ID' });
   }
 
+  const supabaseServerClient = createServerSupabaseClient({ req, res });
+
   if (method === 'GET') {
-    const { data: channel, error } = await getChannelById(channelId);
+    const { data: channel, error } = await getChannelById(
+      supabaseServerClient,
+      channelId
+    );
 
     if (error) {
       return res.status(400).send({ error });
@@ -32,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Update Channel
   else if (method === 'PUT') {
     const { data: channel, error } = await updateChannel(
+      supabaseServerClient,
       channelId,
       req.body.name,
       req.body.description || null
@@ -45,7 +52,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   else if (method === 'DELETE') {
-    const { data: channel, error } = await deleteChannel(channelId);
+    const { data: channel, error } = await deleteChannel(
+      supabaseServerClient,
+      channelId
+    );
 
     if (error) {
       return res.status(400).send({ error });

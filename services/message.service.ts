@@ -3,7 +3,7 @@ import { Database } from '@/types/database.supabase';
 import { UnsavedMessage } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-export async function getMessagesInChannel(supabase: SupabaseClient, channelId: number, page: number = 0, pageSize: number = 50) {
+export async function getMessagesInChannel(supabase: SupabaseClient<Database>, channelId: number, page: number = 0, pageSize: number = 50) {
   // Paginate
   const { from, to } = getPagination(page, pageSize);
 
@@ -16,7 +16,7 @@ export async function getMessagesInChannel(supabase: SupabaseClient, channelId: 
 }
 
 export async function getMessagesInChannelWithUser(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   channelId: number,
   page: number = 0,
   pageSize: number = 50
@@ -40,7 +40,7 @@ export type MessagesWithUsersResponseSuccess = MessagesWithUsersResponse['data']
 export type MessagesWithUsersResponseError = MessagesWithUsersResponse['error']
 
 
-export async function getMessageWithUser(supabase: SupabaseClient, messageId: number) {
+export async function getMessageWithUser(supabase: SupabaseClient<Database>, messageId: number) {
   return await supabase
     .from('messages')
     .select('*, profiles(\*)')
@@ -54,7 +54,7 @@ export type MessageWithUsersResponseSuccess = MessageWithUsersResponse['data'] &
 }
 export type MessageWithUsersResponseError = MessageWithUsersResponse['error']
 
-export async function createMessage(supabase: SupabaseClient, message: UnsavedMessage) {
+export async function createMessage(supabase: SupabaseClient<Database>, message: UnsavedMessage) {
   const { content, profile_id, channel_id } = message;
 
   // Fetch the server_id for channel_id

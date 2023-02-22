@@ -4,6 +4,7 @@ import {
   ProfilesResponseError,
   ProfilesResponseSuccess,
 } from '@/services/profile.service';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,12 +13,13 @@ export default async function handler(
   const { method } = req;
 
   if (method === 'GET') {
+    const supabaseServerClient = createServerSupabaseClient({ req, res });
+
     try {
-      const {
-        data: profiles,
-        error,
-      }: { data: ProfilesResponseSuccess; error: ProfilesResponseError } =
-        await getProfiles();
+      const { data: profiles, error }: {
+        data: ProfilesResponseSuccess;
+        error: ProfilesResponseError
+      } = await getProfiles(supabaseServerClient);
 
       if (error) res.status(409).json({ error });
 

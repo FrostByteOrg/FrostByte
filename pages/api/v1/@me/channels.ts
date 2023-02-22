@@ -15,7 +15,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).send(userError);
   }
 
-  const { data, error } = await getAllChannelsForUser(user.id);
+  const { data, error } = await getAllChannelsForUser(
+    supabaseServerClient,
+    user.id
+  );
 
   if (error) {
     res.status(500).json({ error: error.message });
