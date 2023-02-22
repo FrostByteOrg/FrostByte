@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import remarkBreaks from 'remark-breaks';
 
 // NOTE: Any here because of the way Supabase has incorrectly typed the message object as an array when it is in fact, not.
 export default function Message({ message, collapse_user }: { message: any, collapse_user: boolean }) {
@@ -61,7 +62,8 @@ export default function Message({ message, collapse_user }: { message: any, coll
             ]}
             remarkPlugins={[
               [ remarkGfm, { singleTilde: false, tableCellPadding: false, tablePipeAlign: false } ],
-              [ remarkMath ]
+              [ remarkMath ],
+              [ remarkBreaks ]
             ]}
           >
             {message.content}
