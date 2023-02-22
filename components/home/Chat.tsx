@@ -144,7 +144,6 @@ export default function Chat() {
           }
           <div ref={newestMessageRef} className=""></div>
         </div>
-        <Tooltip id="link-id" />
         <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user!.id)}/>
       </div>
     </>
