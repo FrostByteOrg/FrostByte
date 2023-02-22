@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Database } from '@/types/database.supabase';
 import { useState } from 'react';
 import 'highlight.js/styles/nord.css';
+import 'react-tooltip/dist/react-tooltip.css';
 
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 

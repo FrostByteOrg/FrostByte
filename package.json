@@ -32,6 +32,7 @@
     "react-hook-form": "^7.42.1",
     "react-markdown": "^8.0.5",
     "react-toastify": "^9.1.1",
+    "react-tooltip": "^5.8.1",
     "rehype-highlight": "^6.0.0",
     "rehype-katex": "^6.0.2",
     "remark-breaks": "^3.0.2",

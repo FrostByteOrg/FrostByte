@@ -8,6 +8,7 @@ import MessageInput from './MessageInput';
 import type { ChatMessageWithUser, Message as MessageType } from '@/types/dbtypes';
 import { getMessagesInChannelWithUser, getMessageWithUser } from '@/services/message.service';
 import Message  from '@/components/home/Message';
+import { Tooltip } from 'react-tooltip';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
@@ -143,7 +144,7 @@ export default function Chat() {
           }
           <div ref={newestMessageRef} className=""></div>
         </div>
-
+        <Tooltip id="link-id" />
         <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user!.id)}/>
       </div>
     </>

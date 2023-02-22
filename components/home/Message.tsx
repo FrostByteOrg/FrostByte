@@ -6,6 +6,7 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
+import { Tooltip } from 'react-tooltip';
 
 // NOTE: Any here because of the way Supabase has incorrectly typed the message object as an array when it is in fact, not.
 export default function Message({ message, collapse_user }: { message: any, collapse_user: boolean }) {
@@ -41,7 +42,18 @@ export default function Message({ message, collapse_user }: { message: any, coll
               ol: ({ children }) => (<ol className="list-decimal ml-6">{children}</ol>),
               // TODO: Add support for providing alt text for images
               img: (props) => (<img className="max-w-4xl" alt="Attachment" {...props}></img>),
-              a: (props) => (<a className="text-frost-300" {...props}></a>),
+              a: (props) => (
+                <>
+                  <a
+                    data-tooltip-id="link-id"
+                    data-tooltip-place="top"
+                    data-tooltip-content={`${props.href}`}
+                    className="text-frost-300" {...props}
+                  >
+                    {props.children}
+                  </a>
+                </>
+              ),
               h1: (props) => (<h1 className="text-2xl font-bold" {...props}></h1>),
               h2: (props) => (<h2 className="text-xl font-bold" {...props}></h2>),
               h3: (props) => (<h3 className="text-lg font-bold" {...props}></h3>),
