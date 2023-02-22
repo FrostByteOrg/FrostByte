@@ -7,12 +7,12 @@ export default function UserIcon({ user }: { user: User }) {
       <img
         src={user.avatar_url}
         alt={`${user.username}'s avatar`}
-        className='w-7 h-7 mr-2 rounded-full'
+        className='flex-none w-7 h-7 mr-2 rounded-full'
       />
     );
   }
   return (
-    <div className="bg-grey-900 rounded-full mr-3 h-7">
+    <div className="flex-none bg-grey-900 rounded-full mr-3 h-7">
       <svg
         xmlns='http://www.w3.org/2000/svg'
         fill='none'

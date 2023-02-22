@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Make sure the user is not already in the server
-      const { data: serverUsers, error: serverUsersError } = await supabase
+      const { data: serverUsers } = await supabase
         .from('server_users')
         .select('id')
         .eq('server_id', invite.server_id)
