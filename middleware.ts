@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 import { Database } from '@/types/database.supabase';
 
 export async function middleware(req: NextRequest) {
+  console.log(req.url);
   // We need to create a response and hand it to the supabase client to be able to modify the response headers.
   const res = NextResponse.next();
   // Forward req if User tries to reset password, authorization will happen on the client
@@ -41,5 +42,14 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!favicon.ico|_next).*)','/api/:path*'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 };
