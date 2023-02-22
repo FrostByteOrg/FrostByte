@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const supabaseServerClient = createServerSupabaseClient<Database>({ req, res });
 
   if (method === 'GET') {
-    const { data: server, error } = await getServer(serverId);
+    const { data: server, error } = await getServer(supabaseServerClient, serverId);
 
     if (error) {
       return res.status(400).send({ error });
@@ -32,6 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   else if (method === 'PUT') {
     const { data: server, error } = await updateServer(
+      supabaseServerClient,
       serverId,
       req.body.name,
       req.body.description || null
@@ -49,6 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (user) {
       const { data: server, error } = await deleteServer(
+        supabaseServerClient,
         user.id,
         serverId
       );

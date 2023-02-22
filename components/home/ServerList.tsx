@@ -52,6 +52,7 @@ export default function ServerList() {
             console.error(error);
             return;
           }
+
           setServers(servers.concat(data));
         }
       }
@@ -105,6 +106,7 @@ export default function ServerList() {
       </div>
       {/* TODO: fix idx -> server.id */}
       { servers && servers.map((server, idx) => {
+        console.table(server);
         {/* @ts-expect-error This is valid */}
         return <span key={server.server_id} onClick={() => {
           //  @ts-expect-error This is valid

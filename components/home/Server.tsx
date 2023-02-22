@@ -7,16 +7,7 @@ import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
-
-
-export default function Server({
-  server,
-  expanded,
-}: {
-  server: any;
-  expanded: number;
-}) {
-
+export default function Server({ server, expanded }: { server: any, expanded: number }) {
   const expand = expanded == server.server_id;
   const supabase = useSupabaseClient();
   const setChannelId = useChannelIdSetter();
