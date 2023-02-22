@@ -1,6 +1,6 @@
-import { supabase } from '@/lib/supabaseClient';
+import { SupabaseClient } from '@supabase/supabase-js';
 
-export async function getChannelById(channelId: number) {
+export async function getChannelById(supabase: SupabaseClient, channelId: number) {
   return await supabase
     .from('channels')
     .select('*')
@@ -12,7 +12,7 @@ type ChannelByIdResponse = Awaited<ReturnType<typeof getChannelById>>;
 export type ChannelByIdResponseSuccess = ChannelByIdResponse['data'];
 export type ChannelByIdResponseError = ChannelByIdResponse['error'];
 
-export async function getChannelsInServer(serverId: number) {
+export async function getChannelsInServer(supabase: SupabaseClient, serverId: number) {
   return await supabase
     .from('channels')
     .select('*')
@@ -23,7 +23,7 @@ type ChannelsInServerResponse = Awaited<ReturnType<typeof getChannelsInServer>>;
 export type ChannelsInServerResponseSuccess = ChannelsInServerResponse['data'];
 export type ChannelsInServerResponseError = ChannelsInServerResponse['error'];
 
-export async function createChannel(serverId: number, name: string, desciption: string | null = null) {
+export async function createChannel(supabase: SupabaseClient, serverId: number, name: string, desciption: string | null = null) {
   // Validate channel name is present
   if (!name) {
     return { data: null, error: 'Channel name is required' };
@@ -44,7 +44,7 @@ type CreateChannelResponse = Awaited<ReturnType<typeof createChannel>>;
 export type CreateChannelResponseSuccess = CreateChannelResponse['data'];
 export type CreateChannelResponseError = CreateChannelResponse['error'];
 
-export async function deleteChannel(channelId: number) {
+export async function deleteChannel(supabase: SupabaseClient, channelId: number) {
   // NOTE: Supabase has been set up to cascade delete all messages in a channel when the channel is deleted
   return await supabase
     .from('channels')
@@ -57,7 +57,7 @@ type DeleteChannelResponse = Awaited<ReturnType<typeof deleteChannel>>;
 export type DeleteChannelResponseSuccess = DeleteChannelResponse['data'];
 export type DeleteChannelResponseError = DeleteChannelResponse['error'];
 
-export async function updateChannel(channelId: number, name: string, description: string | null) {
+export async function updateChannel(supabase: SupabaseClient, channelId: number, name: string, description: string | null) {
   return await supabase
     .from('channels')
     .update({
@@ -73,7 +73,7 @@ type UpdateChannelResponse = Awaited<ReturnType<typeof updateChannel>>;
 export type UpdateChannelResponseSuccess = UpdateChannelResponse['data'];
 export type UpdateChannelResponseError = UpdateChannelResponse['error'];
 
-export async function getAllChannelsForUser(userId: string) {
+export async function getAllChannelsForUser(supabase: SupabaseClient, userId: string) {
   return await supabase
     .rpc('get_all_channels_for_user', { p_id: userId });
 }
