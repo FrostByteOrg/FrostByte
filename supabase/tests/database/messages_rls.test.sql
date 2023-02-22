@@ -1,12 +1,19 @@
-begin;
-select plan(1);
+BEGIN;
+  SELECT plan(4);
 
-SELECT has_column(
-    'auth',
-    'users',
-    'id',
-    'id should exist'
-);
+  SELECT tests.create_supabase_user('test_member');
+  SELECT tests.authenticate_as('test_user');
 
-select * from finish();
-rollback;
+  -- Ensure RLS is enabled for servers
+  SELECT tests.rls_enabled('public', 'servers');
+
+  -- Now if we try to fetch servers, we should get an empty array
+  SELECT tests.assert_array_length(
+    (SELECT servers FROM public.servers),
+    0,
+    'No servers should be returned'
+  );
+
+  SELECT * FROM finish();
+
+ROLLBACK;

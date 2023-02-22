@@ -9,7 +9,7 @@ jobs:
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       PROJECT_ID: ${{ secrets.PROJECT_ID }}
-      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      SUPABASE_DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v3
