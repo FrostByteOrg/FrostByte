@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Make sure the user is not already in the server
-      const { data: serverUsers, error: serverUsersError } = await isUserInServer(
+      const { data: serverUsers } = await isUserInServer(
         supabaseServerClient,
         user!.id,
         invite!.server_id

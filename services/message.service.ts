@@ -1,3 +1,4 @@
+import { sanitizeMessage } from '@/lib/messageHelpers';
 import { getPagination } from '@/lib/paginationHelper';
 import { Database } from '@/types/database.supabase';
 import { UnsavedMessage } from '@/types/dbtypes';
@@ -55,7 +56,7 @@ export type MessageWithUsersResponseSuccess = MessageWithUsersResponse['data'] &
 export type MessageWithUsersResponseError = MessageWithUsersResponse['error']
 
 export async function createMessage(supabase: SupabaseClient<Database>, message: UnsavedMessage) {
-  const { content, profile_id, channel_id } = message;
+  const { profile_id, channel_id } = message;
 
   // Fetch the server_id for channel_id
   const { data: server_channel, error: serverChannelError } = await supabase
@@ -83,6 +84,9 @@ export async function createMessage(supabase: SupabaseClient<Database>, message:
     console.error(serverUserError);
   }
 
+  // Finally with all that info, we may process messages to apply any formatting here
+  let content = sanitizeMessage(message.content);
+
   return await supabase
     .from('messages')
     .insert({
@@ -92,5 +96,23 @@ export async function createMessage(supabase: SupabaseClient<Database>, message:
       author_id: server_user?.id!
     })
     .select('*')
+    .single();
+}
+
+export async function deleteMessage(supabase: SupabaseClient<Database>, messageId: number) {
+  return await supabase
+    .from('messages')
+    .delete().eq('id', messageId)
+    .single();
+}
+
+export async function editMessage(supabase: SupabaseClient<Database>, messageId: number, content: string) {
+  // process anything necessary here
+  content = sanitizeMessage(content);
+
+  return await supabase
+    .from('messages')
+    .update({ content, is_edited: true })
+    .eq('id', messageId)
     .single();
 }

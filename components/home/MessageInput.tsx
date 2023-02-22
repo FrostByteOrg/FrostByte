@@ -3,9 +3,11 @@ import { KeyboardEvent, useState } from 'react';
 export default function MessageInput({ onSubmit }: {onSubmit: Function}){
   const [messageText, setMessageText] = useState('');
 
-  const submitOnEnter = (event: KeyboardEvent<HTMLInputElement>) => {
-    // Watch for enter key
-    if (event.key === 'Enter') {
+  const submitOnEnter = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    // Watch for enter key (exclude shift + enter)
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      // Double newlines are required for markdown to render
       onSubmit(messageText);
       setMessageText('');
     }
@@ -13,7 +15,7 @@ export default function MessageInput({ onSubmit }: {onSubmit: Function}){
 
   return (
     <>
-      <input
+      <textarea
         className="w-[90%]
         px-3
         py-2
