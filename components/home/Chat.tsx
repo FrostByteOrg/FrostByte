@@ -1,43 +1,48 @@
-import { useChannelIdValue } from '@/context/ChatCtx';
+import { useChannelIdValue, useChatNameValue } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { useUser } from '@supabase/auth-helpers-react';
 import { useRealtime, addMessage } from '@/lib/Store';
 import MessageInput from './MessageInput';
-import type { ChatMessageWithUser, Message as MessageType } from '@/types/dbtypes';
-import { getMessagesInChannelWithUser, getMessageWithUser } from '@/services/message.service';
-import Message  from '@/components/home/Message';
+import type {
+  ChatMessageWithUser,
+  Message as MessageType,
+} from '@/types/dbtypes';
+import {
+  getMessagesInChannelWithUser,
+  getMessageWithUser,
+} from '@/services/message.service';
+import Message from '@/components/home/Message';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
-  const [ messages, setMessages ] = useState<ChatMessageWithUser[]>([]);
-
+  const chatName = useChatNameValue();
+  const [messages, setMessages] = useState<ChatMessageWithUser[]>([]);
 
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
 
-  useRealtime<MessageType>(
-    'public:messages',
-    [
-      {
-        type: 'postgres_changes',
-        filter: { event: 'INSERT', schema: 'public', table: 'messages' },
-        callback: async (payload) => {
-          const { data, error } = await getMessageWithUser((payload.new as MessageType).id);
+  useRealtime<MessageType>('public:messages', [
+    {
+      type: 'postgres_changes',
+      filter: { event: 'INSERT', schema: 'public', table: 'messages' },
+      callback: async (payload) => {
+        const { data, error } = await getMessageWithUser(
+          (payload.new as MessageType).id
+        );
 
-          if (error) {
-            console.error(error);
-            return;
-          }
-
-          if (data.channel_id === channelId) {
-            setMessages(messages.concat(data));
-          }
+        if (error) {
+          console.error(error);
+          return;
         }
-      }
-    ]
-  );
+
+        if (data.channel_id === channelId) {
+          setMessages(messages.concat(data));
+        }
+      },
+    },
+  ]);
 
   // Update when the channel changes
   useEffect(() => {
@@ -53,7 +58,6 @@ export default function Chat() {
           data.reverse();
           setMessages(data);
         }
-
       };
       handleAsync();
     }
@@ -63,10 +67,9 @@ export default function Chat() {
     if (newestMessageRef && messages) {
       newestMessageRef.current?.scrollIntoView({
         block: 'end',
-        behavior: 'auto'
+        behavior: 'auto',
       });
     }
-
   }, [newestMessageRef, messages]);
 
   return (
@@ -76,7 +79,7 @@ export default function Chat() {
           <div className="mr-2">
             <ChannelMessageIcon size="5" />
           </div>
-          <h1 className=" text-3xl font-semibold tracking-wide">general</h1>
+          <h1 className=" text-3xl font-semibold tracking-wide">{chatName}</h1>
         </div>
       </div>
       <div className=" border-t-2 mx-5 border-grey-700 "></div>
@@ -84,16 +87,19 @@ export default function Chat() {
         <div
           className={`${styles.messageList} flex flex-col overflow-y-scroll`}
         >
-          {
-            messages && messages.map((value, index: number, array) => {
+          {messages &&
+            messages.map((value, index: number, array) => {
               // @ts-expect-error This is actually valid, TypeScript just considers this an array internally for some reason
-              return <Message key={value.id} message={value}/>;
-            })
-          }
+              return <Message key={value.id} message={value} />;
+            })}
           <div ref={newestMessageRef} className=""></div>
         </div>
 
-        <MessageInput onSubmit={async (text: string) => addMessage(text, channelId, user!.id)}/>
+        <MessageInput
+          onSubmit={async (text: string) =>
+            addMessage(text, channelId, user!.id)
+          }
+        />
       </div>
     </>
   );

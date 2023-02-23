@@ -1,7 +1,13 @@
 import { supabase } from '@/lib/supabaseClient';
+import { Database } from '@/types/database.supabase';
+import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { deleteChannel, getChannelsInServer } from './channels.service';
 
-export async function createServer(owner_id: string, name: string, description: string | null) {
+export async function createServer(
+  owner_id: string,
+  name: string,
+  description: string | null
+) {
   // Validate server name is present
   if (!name) {
     return { data: null, error: 'Server name is required' };
@@ -18,9 +24,11 @@ export async function createServer(owner_id: string, name: string, description: 
   }
 
   // Let's add the owner to the server
-  await supabase
-    .from('server_users')
-    .insert({ profile_id: owner_id, server_id: dbResp.data.id, is_owner: true });
+  await supabase.from('server_users').insert({
+    profile_id: owner_id,
+    server_id: dbResp.data.id,
+    is_owner: true,
+  });
 
   // Now that we have a server, we need to create a default channel for it
   await supabase
@@ -50,7 +58,11 @@ type GetServerResponse = Awaited<ReturnType<typeof getServer>>;
 export type GetServerResponseSuccess = GetServerResponse['data'];
 export type GetServerResponseError = GetServerResponse['error'];
 
-export async function updateServer(id: number, name: string, description: string | null) {
+export async function updateServer(
+  id: number,
+  name: string,
+  description: string | null
+) {
   return await supabase
     .from('servers')
     .update({ name, description })
@@ -74,13 +86,18 @@ export async function deleteServer(user_id: string, server_id: number) {
 
   if (error) {
     // We mask this error and log it out
-    console.log(`[WARNING]: Row missing in server-users for user ${user_id} and server ${server_id}`);
+    console.log(
+      `[WARNING]: Row missing in server-users for user ${user_id} and server ${server_id}`
+    );
     console.error(error);
     return { data: null, error: { message: 'Unauthorized.' } };
   }
 
   if (!serverUser.is_owner) {
-    return { data: null, error: { message: 'Only the owner can delete a server' } };
+    return {
+      data: null,
+      error: { message: 'Only the owner can delete a server' },
+    };
   }
 
   // NOTE: Supabase has been set up to cascade delete all items related to a server (roles/invites/channels/messages)
@@ -92,15 +109,19 @@ type DeleteServerResponse = Awaited<ReturnType<typeof deleteServer>>;
 export type DeleteServerResponseSuccess = DeleteServerResponse['data'];
 export type DeleteServerResponseError = DeleteServerResponse['error'];
 
-export async function getServersForUser(user_id: string) {
-  return await supabase
+export async function getServersForUser(
+  supa: SupabaseClient<Database>,
+  user_id: string
+) {
+  return await supa
     .from('server_users')
     .select('server_id, servers ( * )')
     .eq('profile_id', user_id);
 }
 
 type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
-export type GetServersForUserResponseSuccess = GetServersForUserResponse['data'];
+export type GetServersForUserResponseSuccess =
+  GetServersForUserResponse['data'];
 export type GetServersForUserResponseError = GetServersForUserResponse['error'];
 
 export async function getServerForUser(serverUser_id: number) {
@@ -109,7 +130,7 @@ export async function getServerForUser(serverUser_id: number) {
     .select('server_id, servers ( * )')
     .eq('id', serverUser_id)
     .single();
-};
+}
 
 type GetServerForUserResponse = Awaited<ReturnType<typeof getServerForUser>>;
 export type GetServerForUserResponseSuccess = GetServerForUserResponse['data'];

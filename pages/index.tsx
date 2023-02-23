@@ -3,8 +3,8 @@ import Image from 'next/image';
 import styles from '@/styles/Home.module.css';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
-import BottomNav from '@/components/home/mobile/BottomNav';
-import { MobileViewProvider } from '@/context/MobileViewCtx';
+import NavBar from '@/components/home/NavBar';
+import { SideBarOptionProvider } from '@/context/SideBarOptionCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
 import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { ChatCtxProvider } from '@/context/ChatCtx';
@@ -32,7 +32,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ChatCtxProvider>
-        <MobileViewProvider>
+        <SideBarOptionProvider>
           <div className={`${styles.isMobileView}`}>
             <main
               className={`${styles.main} flex flex-col h-full overflow-hidden `}
@@ -57,7 +57,7 @@ export default function Home() {
               <div
                 className={`${styles.bottomNav} bg-grey-950  w-full flex  fixed bottom-[0px]  `}
               >
-                <BottomNav />
+                <NavBar type="bottom" />
               </div>
             </main>
           </div>
@@ -78,7 +78,7 @@ export default function Home() {
               )}
             </main>
           </div>
-        </MobileViewProvider>
+        </SideBarOptionProvider>
       </ChatCtxProvider>
     </>
   );
