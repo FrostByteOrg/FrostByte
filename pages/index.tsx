@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import BottomNav from '@/components/home/mobile/BottomNav';
 import { MobileViewProvider } from '@/context/MobileViewCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
+import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { ChatCtxProvider } from '@/context/ChatCtx';
 
 export default function Home() {
@@ -32,32 +33,51 @@ export default function Home() {
       </Head>
       <ChatCtxProvider>
         <MobileViewProvider>
-          <main
-            className={`${styles.main} flex flex-col h-full overflow-hidden `}
-          >
-            <div className="topside h-screen bg-grey-800">
-              <div className="bg-grey-800  flex flex-col relative h-[85%]">
-                <RenderMobileView />
-              </div>
-              <div>
-                {!user ? (
-                  ''
-                ) : (
-                  <button
-                    className=" bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                )}
-              </div>
-            </div>
-            <div
-              className={`${styles.bottomNav} bg-grey-950  w-full flex  fixed bottom-[0px]  `}
+          <div className={`${styles.isMobileView}`}>
+            <main
+              className={`${styles.main} flex flex-col h-full overflow-hidden `}
             >
-              <BottomNav />
-            </div>
-          </main>
+              <div className="topside h-screen bg-grey-800">
+                <div className="bg-grey-800  flex flex-col relative h-[85%]">
+                  <RenderMobileView />
+                </div>
+                <div>
+                  {!user ? (
+                    ''
+                  ) : (
+                    <button
+                      className=" bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div
+                className={`${styles.bottomNav} bg-grey-950  w-full flex  fixed bottom-[0px]  `}
+              >
+                <BottomNav />
+              </div>
+            </main>
+          </div>
+          <div className={`${styles.isDesktopView}`}>
+            <main
+              className={`${styles.main} flex flex-col h-screen overflow-hidden bg-grey-800`}
+            >
+              <RenderDesktopView />
+              {!user ? (
+                ''
+              ) : (
+                <button
+                  className=" bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              )}
+            </main>
+          </div>
         </MobileViewProvider>
       </ChatCtxProvider>
     </>
