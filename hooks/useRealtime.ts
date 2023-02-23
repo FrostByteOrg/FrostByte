@@ -1,11 +1,8 @@
-import { supabase } from '@/lib/supabaseClient';
 import { useEffect } from 'react';
-import { getPagination } from './paginationHelper';
-import { createMessage } from '@/services/message.service';
-import { getServersForUser } from '@/services/server.service';
 import { IStringIndexable } from '@/types/dbtypes';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { Database } from '@/types/database.supabase';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export type RealtimeListenerEvent<T extends IStringIndexable> = {
   type: 'postgres_changes',
@@ -22,6 +19,7 @@ export function useRealtime<T extends IStringIndexable>(
   listenEvents: RealtimeListenerEvent<T>[]
 ) {
   // Load initial data and set up listeners
+  const supabase = useSupabaseClient();
 
   useEffect(() => {
     const listener = supabase.channel(listen_db);
@@ -42,52 +40,5 @@ export function useRealtime<T extends IStringIndexable>(
     return () => {
       supabase.removeChannel(listener);
     };
-  }, [listenEvents, listen_db]);
+  }, [listenEvents, listen_db, supabase]);
 }
-
-//TODO: add better type checks
-/**
- * Fetch all messages and their profiles
- * @param {number} channelId
- */
-export async function fetchMessages(
-  channelId: number,
-  // setState: Function,
-  page: number = 0,
-  pageSize: number = 50
-) {
-  const { from, to } = getPagination(page, pageSize);
-  try {
-    return await supabase
-      .from('messages')
-      .select('*, profiles(*)')
-      .eq('channel_id', channelId)
-      .order('sent_time', { ascending: false })
-      .range(from, to);
-
-    // if (setState) setState(data);
-
-  }
-  catch (error) {
-    console.log('error', error);
-    return { data: null, error };
-  }
-}
-
-/**
- * Insert a new message into the DB
- * @param {string} message The message text
- * @param {number} channel_id
- * @param {string} profile_id The author profile id
- */
-export async function addMessage (content: string, channel_id: number, profile_id: string) {
-  const { data: message, error } = await createMessage({
-    content, channel_id, profile_id
-  });
-
-  if (error) {
-    console.error(error);
-  }
-
-  return message;
-};

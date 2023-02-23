@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, SyntheticEvent, useRef, useState } from 'react';
+import { KeyboardEvent, useState } from 'react';
 
 export default function MessageInput({ onSubmit }: {onSubmit: Function}){
   const [messageText, setMessageText] = useState('');

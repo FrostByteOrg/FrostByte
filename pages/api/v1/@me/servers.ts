@@ -19,7 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Now we can fetch the user's servers
-    const { data: servers, error: serversError } = await getServersForUser(user.id);
+    const { data: servers, error: serversError } = await getServersForUser(
+      supabaseServerClient,
+      user.id
+    );
 
     // No servers, return empty array
     if (!servers) {
