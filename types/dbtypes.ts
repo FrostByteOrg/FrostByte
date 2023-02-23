@@ -6,6 +6,7 @@ export type Message = Database['public']['Tables']['messages']['Row'];
 export type Channel = Database['public']['Tables']['channels']['Row'];
 export type Server = Database['public']['Tables']['servers']['Row'];
 export type User = Database['public']['Tables']['profiles']['Row'];
+export type Invite = Database['public']['Tables']['server_invites']['Row'];
 export type ServerUser = Database['public']['Tables']['server_users']['Row'];
 
 // Custom type modifications for client side

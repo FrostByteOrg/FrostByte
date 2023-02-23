@@ -1,7 +1,8 @@
-import { supabase } from '@/lib/supabaseClient';
-import { getInviteByCode } from '@/services/invites.service';
+import { decrementInviteUses, deleteInvite, getInviteByCode } from '@/services/invites.service';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { isUserInServer } from '@/services/server.service';
+import { addUserToServer } from '@/services/profile.service';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -11,7 +12,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // TODO: Remove this try catch block and use the error handling supplied by supabase
     try {
-      const { data: invite, error } = await getInviteByCode(req.query.inviteCode as string);
+      const { data: invite, error } = await getInviteByCode(
+        supabaseServerClient,
+        req.query.inviteCode as string
+      );
 
       // No invite, do nothing
       if (error) {
@@ -26,12 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Make sure the user is not already in the server
-      const { data: serverUsers, error: serverUsersError } = await supabase
-        .from('server_users')
-        .select('id')
-        .eq('server_id', invite.server_id)
-        .eq('profile_id', user!.id)
-        .single();
+      const { data: serverUsers } = await isUserInServer(
+        supabaseServerClient,
+        user!.id,
+        invite!.server_id
+      );
 
       if (serverUsers) {
         return res.status(400).send({ error: 'User is already in the server' });
@@ -39,11 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Validate times. If invite is expired, we should remove the invite from the database
       if (invite.expires_at && new Date(invite.expires_at) < new Date()) {
-        await supabase
-          .from('server_invites')
-          .delete()
-          .eq('id', invite.id);
-
+        await deleteInvite(supabaseServerClient, invite.id);
         return res.status(410).send({ error: 'Invite link expired.' });
       }
 
@@ -53,26 +52,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Update the uses remaining
         // If this server invite will run out of uses here, we'll silently expire it
         if (invite.uses_remaining - 1 === 0) {
-          await supabase
-            .from('server_invites')
-            .delete()
-            .eq('id', invite.id);
+          deleteInvite(supabaseServerClient, invite.id);
         }
 
-        await supabase
-          .from('server_invites')
-          .update({ uses_remaining: invite.uses_remaining - 1 })
-          .eq('id', invite.id);
+        else {
+          decrementInviteUses(supabaseServerClient, invite);
+        }
       }
 
-
       // Add the user to the server
-      await supabase
-        .from('server_users')
-        .insert({
-          server_id: invite.server_id,
-          profile_id: user!.id,
-        });
+      await addUserToServer(
+        supabaseServerClient,
+        user!.id,
+        invite!.server_id
+      );
 
       return res.status(200).send({ message: 'Joined successfully' });
     }

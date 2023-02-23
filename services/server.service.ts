@@ -1,9 +1,8 @@
-import { supabase } from '@/lib/supabaseClient';
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { deleteChannel, getChannelsInServer } from './channels.service';
 
 export async function createServer(
+  supabase: SupabaseClient<Database>,
   owner_id: string,
   name: string,
   description: string | null
@@ -42,7 +41,7 @@ type CreateServerResponse = Awaited<ReturnType<typeof createServer>>;
 export type CreateServerResponseSuccess = CreateServerResponse['data'];
 export type CreateServerResponseError = CreateServerResponse['error'];
 
-export async function getServers() {
+export async function getServers(supabase: SupabaseClient<Database>) {
   return await supabase.from('servers').select('*');
 }
 
@@ -50,7 +49,10 @@ type GetServersResponse = Awaited<ReturnType<typeof getServers>>;
 export type GetServersResponseSuccess = GetServersResponse['data'];
 export type GetServersResponseError = GetServersResponse['error'];
 
-export async function getServer(id: number) {
+export async function getServer(
+  supabase: SupabaseClient<Database>,
+  id: number
+) {
   return await supabase.from('servers').select('*').eq('id', id);
 }
 
@@ -59,6 +61,7 @@ export type GetServerResponseSuccess = GetServerResponse['data'];
 export type GetServerResponseError = GetServerResponse['error'];
 
 export async function updateServer(
+  supabase: SupabaseClient<Database>,
   id: number,
   name: string,
   description: string | null
@@ -75,7 +78,11 @@ type UpdateServerResponse = Awaited<ReturnType<typeof updateServer>>;
 export type UpdateServerResponseSuccess = UpdateServerResponse['data'];
 export type UpdateServerResponseError = UpdateServerResponse['error'];
 
-export async function deleteServer(user_id: string, server_id: number) {
+export async function deleteServer(
+  supabase: SupabaseClient<Database>,
+  user_id: string,
+  server_id: number
+) {
   // NOTE: only the owner should be able to delete a server
   const { data: serverUser, error } = await supabase
     .from('server_users')
@@ -110,10 +117,10 @@ export type DeleteServerResponseSuccess = DeleteServerResponse['data'];
 export type DeleteServerResponseError = DeleteServerResponse['error'];
 
 export async function getServersForUser(
-  supa: SupabaseClient<Database>,
+  supabase: SupabaseClient<Database>,
   user_id: string
 ) {
-  return await supa
+  return await supabase
     .from('server_users')
     .select('server_id, servers ( * )')
     .eq('profile_id', user_id);
@@ -124,7 +131,10 @@ export type GetServersForUserResponseSuccess =
   GetServersForUserResponse['data'];
 export type GetServersForUserResponseError = GetServersForUserResponse['error'];
 
-export async function getServerForUser(serverUser_id: number) {
+export async function getServerForUser(
+  supabase: SupabaseClient<Database>,
+  serverUser_id: number
+) {
   return await supabase
     .from('server_users')
     .select('server_id, servers ( * )')
@@ -135,7 +145,11 @@ export async function getServerForUser(serverUser_id: number) {
 type GetServerForUserResponse = Awaited<ReturnType<typeof getServerForUser>>;
 export type GetServerForUserResponseSuccess = GetServerForUserResponse['data'];
 
-export async function isUserInServer(user_id: string, server_id: number) {
+export async function isUserInServer(
+  supabase: SupabaseClient<Database>,
+  user_id: string,
+  server_id: number
+) {
   const { data, error } = await supabase
     .from('server_users')
     .select('*')

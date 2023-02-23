@@ -1,11 +1,10 @@
-import Image, { StaticImageData } from 'next/image';
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useChannelIdSetter, useChatNameSetter } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
-import { ServersForUser } from '@/types/dbtypes';
 import ServersIcon from '../icons/ServersIcon';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export default function Server({
   server,
@@ -15,7 +14,7 @@ export default function Server({
   expanded: number;
 }) {
   const expand = expanded == server.server_id;
-
+  const supabase = useSupabaseClient();
   const setChannelId = useChannelIdSetter();
   const setChatName = useChatNameSetter();
 
@@ -25,19 +24,19 @@ export default function Server({
   useEffect(() => {
     const handleAsync = async () => {
       if (server) {
-        const { data } = await getChannelsInServer(server.server_id);
+        const { data } = await getChannelsInServer(supabase, server.server_id);
         setChannels(data);
       }
     };
     handleAsync();
-  }, [server]);
+  }, [server, supabase]);
 
   function joinChannel(e: SyntheticEvent, channelId: number, name: string) {
     e.stopPropagation();
     setChatName(name);
     setChannelId(channelId);
   }
-  //NOTE: REMOVE THESE
+  //TODO: REMOVE THESE
   function renderHardcodedOnline(serverId: any) {
     if (serverId == 30) {
       return '3';

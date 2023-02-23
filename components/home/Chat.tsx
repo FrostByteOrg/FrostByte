@@ -2,24 +2,25 @@ import { useChannelIdValue, useChatNameValue } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
-import { useUser } from '@supabase/auth-helpers-react';
-import { useRealtime, addMessage } from '@/lib/Store';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageInput from './MessageInput';
 import type {
   ChatMessageWithUser,
   Message as MessageType,
 } from '@/types/dbtypes';
 import {
+  createMessage,
   getMessagesInChannelWithUser,
   getMessageWithUser,
 } from '@/services/message.service';
 import Message from '@/components/home/Message';
+import { useRealtime } from 'hooks/useRealtime';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
   const chatName = useChatNameValue();
   const [messages, setMessages] = useState<ChatMessageWithUser[]>([]);
-
+  const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
 
@@ -29,6 +30,7 @@ export default function Chat() {
       filter: { event: 'INSERT', schema: 'public', table: 'messages' },
       callback: async (payload) => {
         const { data, error } = await getMessageWithUser(
+          supabase,
           (payload.new as MessageType).id
         );
 
@@ -42,13 +44,66 @@ export default function Chat() {
         }
       },
     },
+    {
+      type: 'postgres_changes',
+      filter: { event: 'UPDATE', schema: 'public', table: 'messages' },
+      callback: async (payload) => {
+        const { data, error } = await getMessageWithUser(
+          supabase,
+          (payload.new as MessageType).id
+        );
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+
+        if (data.channel_id === channelId) {
+          setMessages(
+            messages.map((message) => {
+              // Once we hit a message that matches the id, we can return the updated message instead of the old one
+              // @ts-expect-error message here is a ChatMessageWithUser, note NOT an array
+              if (message.id === data.id) {
+                return data;
+              }
+
+              // Otherwise fallback to the old one
+              return message;
+            })
+          );
+        }
+      },
+    },
+    {
+      type: 'postgres_changes',
+      filter: { event: 'DELETE', schema: 'public', table: 'messages' },
+      callback: async (payload) => {
+        if (!payload.old) {
+          console.error('No old message found');
+          return;
+        }
+
+        // @ts-expect-error payload.old is a MessageType, not a ChatMessageWithUser
+        if (!payload.old.channel_id || payload.old.channel_id === channelId) {
+          setMessages(
+            messages.filter((message) => {
+              // @ts-expect-error message here is a ChatMessageWithUser, note NOT an array
+              return message.id !== payload.old.id;
+            })
+          );
+        }
+      },
+    },
   ]);
 
   // Update when the channel changes
   useEffect(() => {
     if (channelId) {
       const handleAsync = async () => {
-        const { data, error } = await getMessagesInChannelWithUser(channelId);
+        const { data, error } = await getMessagesInChannelWithUser(
+          supabase,
+          channelId
+        );
 
         if (error) {
           console.error(error);
@@ -61,7 +116,7 @@ export default function Chat() {
       };
       handleAsync();
     }
-  }, [channelId]);
+  }, [channelId, supabase]);
 
   useEffect(() => {
     if (newestMessageRef && messages) {
@@ -89,16 +144,33 @@ export default function Chat() {
         >
           {messages &&
             messages.map((value, index: number, array) => {
+              // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
+              const previousMessage: ChatMessageWithUser | null =
+                index > 0 ? array[index - 1] : null;
+
               // @ts-expect-error This is actually valid, TypeScript just considers this an array internally for some reason
-              return <Message key={value.id} message={value} />;
+              return (
+                <Message
+                  key={value.id}
+                  message={value}
+                  collapse_user={
+                    previousMessage &&
+                    previousMessage.profiles.id === value.profiles.id
+                  }
+                />
+              );
             })}
           <div ref={newestMessageRef} className=""></div>
         </div>
 
         <MessageInput
-          onSubmit={async (text: string) =>
-            addMessage(text, channelId, user!.id)
-          }
+          onSubmit={async (content: string) => {
+            createMessage(supabase, {
+              content,
+              channel_id: channelId,
+              profile_id: user!.id,
+            });
+          }}
         />
       </div>
     </>

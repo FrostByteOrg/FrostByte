@@ -125,3 +125,13 @@ a {
   border: 0.25em solid #354045;
   border-radius: 100vw;
 }
+
+/* Overrides for libraries */
+.hljs {
+  border-radius: 0.5rem;
+  max-width: 95%;
+}
+
+.task-list-item {
+  list-style: none;
+}

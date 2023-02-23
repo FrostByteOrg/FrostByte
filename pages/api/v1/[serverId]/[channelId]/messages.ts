@@ -27,7 +27,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: userError });
     }
 
-    const { data: userInServer } = await isUserInServer(user.id, serverId);
+    const { data: userInServer } = await isUserInServer(
+      supabaseServerClient,
+      user.id,
+      serverId
+    );
 
     if (!userInServer) {
       return res.status(401).json({ error: 'Unauthorized.' });
@@ -37,6 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Get messages from this channel
     const { data: messages, error } = await getMessagesInChannelWithUser(
+      supabaseServerClient,
       channelId,
       parseInt(page as string) || 0,
       parseInt(size as string) || 50

@@ -1,4 +1,5 @@
 import { createInvite } from '@/services/invites.service';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -14,8 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).send({ error: 'Invalid server ID' });
   }
 
+  const supabaseServerClient = createServerSupabaseClient({ req, res });
+
   if (method === 'POST') {
     const { data: invite, error } = await createInvite(
+      supabaseServerClient,
       serverId,
       req.body.expiresAt,
       req.body.numUses,
