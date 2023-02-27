@@ -176,22 +176,28 @@ export interface Database {
       }
       server_roles: {
         Row: {
+          color: string | null
           created_at: string | null
           id: number
+          is_system: boolean
           name: string
           permissions: number
           server_id: number
         }
         Insert: {
+          color?: string | null
           created_at?: string | null
-          id: number
+          id?: number
+          is_system?: boolean
           name?: string
-          permissions: number
+          permissions?: number
           server_id: number
         }
         Update: {
+          color?: string | null
           created_at?: string | null
           id?: number
+          is_system?: boolean
           name?: string
           permissions?: number
           server_id?: number
@@ -275,6 +281,26 @@ export interface Database {
         Returns: {
           channel_id: number
         }[]
+      }
+      get_owner_id_of_server_from_message: {
+        Args: {
+          m_id: number
+        }
+        Returns: string
+      }
+      get_permission_flags_for_server_user: {
+        Args: {
+          s_id: number
+          p_id: string
+        }
+        Returns: number
+      }
+      is_user_in_server: {
+        Args: {
+          p_id: string
+          s_id: number
+        }
+        Returns: boolean
       }
     }
     Enums: {
