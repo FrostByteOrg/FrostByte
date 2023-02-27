@@ -11,30 +11,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       req,
       res,
     });
-    
-    const {
-      data: { user }, error: userError
-    } = await supabaseServerClient.auth.getUser();
 
-    if (user) {
-      const { data: server, error } = await createServer(
-        user.id,
-        req.body.name,
-        req.body.description || null
-      );
-  
-      if (error) {
-        return res.status(400).send({ error });
-      }
+    const { data: server, error } = await createServer(
+      supabaseServerClient,
+      req.body.name,
+      req.body.description || null
+    );
 
-      return res.status(200).send(server);
+    if (error) {
+      return res.status(400).send({ error });
     }
 
-    if (userError) {
-      return res.status(400).send({ userError });
-    }
-
-    return res.status(400).json({ message: 'Invalid request' });
+    return res.status(200).send(server);
   }
 
   else {

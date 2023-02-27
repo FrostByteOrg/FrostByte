@@ -1,7 +1,11 @@
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-export async function createServer(supabase: SupabaseClient<Database>, owner_id: string, name: string, description: string | null) {
+export async function createServer(
+  supabase: SupabaseClient<Database>,
+  name: string,
+  description: string | null
+) {
   // Validate server name is present
   if (!name) {
     return { data: null, error: 'Server name is required' };
@@ -12,20 +16,6 @@ export async function createServer(supabase: SupabaseClient<Database>, owner_id:
     .insert({ name, description })
     .select()
     .single();
-
-  if (dbResp.error) {
-    return dbResp;
-  }
-
-  // Let's add the owner to the server
-  await supabase
-    .from('server_users')
-    .insert({ profile_id: owner_id, server_id: dbResp.data.id, is_owner: true });
-
-  // Now that we have a server, we need to create a default channel for it
-  await supabase
-    .from('channels')
-    .insert({ name: 'general', server_id: dbResp.data.id });
 
   return dbResp;
 }
