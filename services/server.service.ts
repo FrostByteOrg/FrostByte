@@ -142,3 +142,55 @@ export async function getUserPermissions(supabase: SupabaseClient<Database>, use
       { s_id: server_id, p_id: user_id }
     );
 }
+
+type GetUserPermissionsResponse = Awaited<ReturnType<typeof getUserPermissions>>;
+export type GetUserPermissionsResponseSuccess = GetUserPermissionsResponse['data'];
+export type GetUserPermissionsResponseError = GetUserPermissionsResponse['error'];
+
+export async function getServerRoles(supabase: SupabaseClient<Database>, server_id: number) {
+  return await supabase
+    .from('server_roles')
+    .select('*')
+    .eq('server_id', server_id);
+}
+
+type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
+export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
+export type GetServerRolesResponseError = GetServerRolesResponse['error'];
+
+export async function banUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number, reason?: string) {
+  return await supabase
+    .from('server_bans')
+    .insert({ profile_id: user_id, server_id, reason })
+    .select()
+    .single();
+}
+
+type BanUserResponse = Awaited<ReturnType<typeof banUser>>;
+export type BanUserResponseSuccess = BanUserResponse['data'];
+export type BanUserResponseError = BanUserResponse['error'];
+
+export async function unbanUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
+  return await supabase
+    .from('server_bans')
+    .delete()
+    .eq('profile_id', user_id)
+    .eq('server_id', server_id);
+}
+
+type UnbanUserResponse = Awaited<ReturnType<typeof unbanUser>>;
+export type UnbanUserResponseSuccess = UnbanUserResponse['data'];
+export type UnbanUserResponseError = UnbanUserResponse['error'];
+
+export async function kickUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
+  return await supabase
+    .from('server_users')
+    .delete()
+    .eq('profile_id', user_id)
+    .eq('server_id', server_id)
+    .select();
+}
+
+type KickUserResponse = Awaited<ReturnType<typeof kickUser>>;
+export type KickUserResponseSuccess = KickUserResponse['data'];
+export type KickUserResponseError = KickUserResponse['error'];
