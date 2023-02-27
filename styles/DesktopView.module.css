@@ -1,4 +1,5 @@
 .container {
   display: grid;
-  grid-template-columns: 76px repeat(2, 128px) repeat(9, minmax(0, 128px));
+  /* TODO: dedicate 1-3 columns for the right bar (user info) */
+  grid-template-columns: 76px repeat(2, 128px) repeat(9, minmax(0, 1fr));
 }

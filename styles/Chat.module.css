@@ -27,3 +27,9 @@
 .chatHeader {
   /* max-height: 3vh; */
 }
+
+@media (max-width: 940px) {
+  .messageInput {
+    /* max-height: 8vh; */
+  }
+}

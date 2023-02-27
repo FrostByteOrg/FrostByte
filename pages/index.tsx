@@ -36,8 +36,8 @@ export default function Home() {
             <main
               className={`${styles.main} flex flex-col h-full overflow-hidden `}
             >
-              <div className=" h-screen bg-grey-800">
-                <div className="bg-grey-800 flex flex-col relative h-[85%]">
+              <div className=" bg-grey-800">
+                <div className="bg-grey-800 flex flex-col ">
                   <RenderMobileView />
                 </div>
                 <div>
@@ -54,7 +54,7 @@ export default function Home() {
                 </div>
               </div>
               <div
-                className={`${styles.bottomNav} bg-grey-950  w-full flex  fixed bottom-[0px]  `}
+                className={`${styles.bottomNav} bg-grey-950 w-full flex fixed bottom-[0px]   `}
               >
                 <NavBar type="bottom" />
               </div>

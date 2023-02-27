@@ -18,7 +18,7 @@ export default function MessageInput({ onSubmit }: { onSubmit: Function }) {
     <div className={`${styles.messageInput} mt-5`}>
       <textarea
         className={`
-        w-[90%]
+        w-full
         px-3
         py-2
         self-start
