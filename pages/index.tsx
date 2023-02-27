@@ -36,8 +36,8 @@ export default function Home() {
             <main
               className={`${styles.main} flex flex-col h-full overflow-hidden `}
             >
-              <div className="topside h-screen bg-grey-800">
-                <div className="bg-grey-800  flex flex-col relative h-[85%]">
+              <div className=" h-screen bg-grey-800">
+                <div className="bg-grey-800 flex flex-col relative h-[85%]">
                   <RenderMobileView />
                 </div>
                 <div>
@@ -60,10 +60,8 @@ export default function Home() {
               </div>
             </main>
           </div>
-          <div className={`${styles.isDesktopView}`}>
-            <main
-              className={`${styles.main} flex flex-col h-screen overflow-hidden bg-grey-800`}
-            >
+          <div className={`${styles.isDesktopView} `}>
+            <main className={`${styles.main} bg-grey-800 `}>
               <RenderDesktopView />
               {!user ? (
                 ''

@@ -69,7 +69,7 @@ export default function ServerList() {
   //TODO: add isServer check
 
   return (
-    <div className="main p-4 min-h-0">
+    <div className=" p-4 min-h-0">
       <div className="flex pb-3 items-center border-b-2 border-grey-700">
         <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
         <div
@@ -90,7 +90,7 @@ export default function ServerList() {
       {/* TODO: fix idx -> server.id */}
       {servers &&
         servers.map((server, idx) => {
-          console.table(server);
+          // console.table(server);
           {
             /* @ts-expect-error This is valid */
           }

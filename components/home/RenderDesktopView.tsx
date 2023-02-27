@@ -15,17 +15,21 @@ export default function RenderDesktopView() {
   const [sideBarView, mainView] = renderContent(sideBarOption, channelId);
 
   return (
-    <div className={`${styles.container} h-full`}>
-      <div className="col-start-1 col-end-2 bg-grey-950 flex-col justify-center">
+    <div className={`${styles.container} `}>
+      <div className="col-start-1 col-end-2 bg-grey-950 flex-col justify-center h-screen">
         <NavBar type="vertical" />
       </div>
-      <div className="col-start-2 col-end-4 bg-grey-900">{sideBarView}</div>
-      <div className="col-start-4 col-end-13 ">{mainView}</div>
+      <div className="col-start-2 col-end-4 flex-col bg-grey-900 ">
+        {sideBarView}
+      </div>
+      <div className="col-start-4 col-end-13 flex flex-col justify-between">
+        {mainView}
+      </div>
     </div>
   );
 }
 
-function renderContent(
+export function renderContent(
   sideBarOption: 'friends' | 'servers' | 'messages',
   channelId: number
 ) {

@@ -1,4 +1,4 @@
-@media (min-height: 600px) {
+/* @media (min-height: 600px) {
   .messageList {
 
     height: 100%;
@@ -10,4 +10,20 @@
 
     height: 90%;
   }
+} */
+.messageList {
+  overflow-y: scroll;
+}
+
+.messagesParent {
+  max-height: 92vh;
+}
+
+.messageInput {
+  /* min-height: 10vh; */
+  /* max-height: 8vh; */
+}
+
+.chatHeader {
+  /* max-height: 3vh; */
 }
