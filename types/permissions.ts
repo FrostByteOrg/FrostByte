@@ -59,3 +59,29 @@ export enum ServerPermissions {
    */
   CREATE_INVITES = 1 << 8,
 }
+
+export enum ChannelPermissions {
+  /**
+   * 0
+   * No permissions.
+   */
+  NONE = 0,
+
+  /**
+   * 1
+   * Manage messages, allowing the user to delete other user's messages and pin messages.
+   */
+  MANAGE_MESSAGES = 1 << 0,
+
+  /**
+   * 2
+   * User can send messages in the channel.
+   */
+  SEND_MESSAGES = 1 << 1,
+
+  /**
+   * 4
+   * User can read messages in the channel.
+   */
+  READ_MESSAGES = 1 << 0,
+}
