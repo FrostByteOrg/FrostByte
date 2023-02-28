@@ -1,35 +1,7 @@
-/* @media (min-height: 600px) {
-  .messageList {
-
-    height: 100%;
-  }
-}
-
-@media (max-height: 680px) {
-  .messageList {
-
-    height: 90%;
-  }
-} */
 .messageList {
   overflow-y: scroll;
 }
 
 .messagesParent {
   max-height: 92vh;
-}
-
-.messageInput {
-  /* min-height: 10vh; */
-  /* max-height: 8vh; */
-}
-
-.chatHeader {
-  /* max-height: 3vh; */
-}
-
-@media (max-width: 940px) {
-  .messageInput {
-    /* max-height: 8vh; */
-  }
 }

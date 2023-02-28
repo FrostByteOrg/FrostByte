@@ -1,0 +1,13 @@
+@media (max-width: 940px) {
+  .serverIcon {
+    --tw-bg-opacity: 1;
+    background-color: rgb(53 64 69 / var(--tw-bg-opacity));
+  }
+}
+
+@media (min-width: 940px) {
+  .serverIcon {
+    --tw-bg-opacity: 1;
+    background-color: rgb(47 59 64 / var(--tw-bg-opacity));
+  }
+}

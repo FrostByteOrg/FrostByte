@@ -5,6 +5,7 @@ import { useChannelIdSetter, useChatNameSetter } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import styles from '@/styles/Servers.module.css';
 
 export default function Server({
   server,
@@ -111,7 +112,7 @@ export default function Server({
     <div className="pb-3 hover:cursor-pointer">
       <div className="border-b-2 border-grey-700 py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center">
         <div className="flex items-center">
-          <div className="bg-grey-900 p-2 rounded-xl">
+          <div className={`${styles.serverIcon}  p-2 rounded-xl`}>
             <ServersIcon hovered={false} server={server.servers} />
           </div>
           <div className="ml-3">
