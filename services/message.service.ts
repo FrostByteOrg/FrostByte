@@ -112,7 +112,7 @@ export async function editMessage(supabase: SupabaseClient<Database>, messageId:
 
   return await supabase
     .from('messages')
-    .update({ content, is_edited: true })
+    .update({ content })
     .eq('id', messageId)
     .single();
 }
