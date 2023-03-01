@@ -3,11 +3,26 @@
     --tw-bg-opacity: 1;
     background-color: rgb(53 64 69 / var(--tw-bg-opacity));
   }
+
+  .flexDirection {
+    display: flex;
+  }
+
+  .membersSpacing {
+    margin-left: 8px;
+  }
 }
 
 @media (min-width: 940px) {
   .serverIcon {
     --tw-bg-opacity: 1;
     background-color: rgb(47 59 64 / var(--tw-bg-opacity));
+  }
+  .flexDirection {
+    display: flex;
+    flex-direction: column;
+  }
+  .membersSpacing {
+    margin-left: 0;
   }
 }

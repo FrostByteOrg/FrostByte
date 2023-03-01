@@ -1,17 +1,14 @@
 import UserIcon from '../icons/UserIcon';
 import moment from 'moment';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
-import remarkBreaks from 'remark-breaks';
 import { Tooltip } from 'react-tooltip';
 import { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import TrashIcon from '@/components/icons/TrashIcon';
 import EditIcon from '@/components/icons/EditIcon';
-import { editMessage } from '@/services/message.service';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { editMessage, deleteMessage } from '@/services/message.service';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import MessageContent from './MessageContent';
+import styles from '@/styles/Chat.module.css';
+import DeleteMsgModal from '@/components/home/DeleteMsgModal';
 
 // NOTE: Any here because of the way Supabase has incorrectly typed the message object as an array when it is in fact, not.
 export default function Message({
@@ -31,6 +28,7 @@ export default function Message({
       : pastDate;
 
   const supabase = useSupabaseClient();
+  const user = useUser();
 
   const [showOptions, setShowOptions] = useState<'show' | 'hide'>('hide');
   const [messageOptions, setMessageOptions] = useState<
@@ -51,8 +49,10 @@ export default function Message({
     }
 
     if (e.key === 'Enter') {
-      console.log(message.id, chatMessage.current?.value);
-      if (chatMessage.current?.value !== '')
+      if (
+        chatMessage.current?.value !== '' &&
+        chatMessage.current?.value !== message.content
+      )
         editMessage(supabase, message.id, chatMessage.current?.value as string);
 
       setMessageOptions(null);
@@ -79,9 +79,20 @@ export default function Message({
           </div>
         )}
 
+        {/* TODO: figure out how to close modal on blur (cant use onBlur on the dialog cuz it takes up the entire screen meaning you can never focus off of it) */}
+
+        <DeleteMsgModal
+          message={message}
+          displayTime={displayTime}
+          showModal={messageOptions == 'delete' ? true : false}
+          setMessageOptions={setMessageOptions}
+        />
+
         <div
           className="font-light tracking-wide ml-8 -mt-2 hover:bg-grey-900 rounded-lg p-1 transition-colors break-all relative flex items-center"
-          onMouseEnter={() => setShowOptions('show')}
+          onMouseEnter={() => {
+            if (user && user.id == message.profiles.id) setShowOptions('show');
+          }}
           onMouseLeave={() => setShowOptions('hide')}
         >
           <div
@@ -110,7 +121,10 @@ export default function Message({
                 escape to{' '}
                 <span
                   className="text-frost-400 hover:cursor-pointer hover:underline"
-                  onClick={() => setMessageOptions(null)}
+                  onClick={() => {
+                    setMessageOptions(null);
+                    setShowOptions('hide');
+                  }}
                 >
                   cancel
                 </span>{' '}
@@ -118,7 +132,10 @@ export default function Message({
                 <span
                   className="text-frost-400 hover:cursor-pointer hover:underline"
                   onClick={() => {
-                    if (chatMessage.current?.value !== '')
+                    if (
+                      chatMessage.current?.value !== '' &&
+                      chatMessage.current?.value !== message.content
+                    )
                       editMessage(
                         supabase,
                         message.id,
@@ -132,89 +149,7 @@ export default function Message({
               </span>
             </span>
           ) : (
-            <ReactMarkdown
-              components={{
-                ul: ({ children }) => (
-                  <ul className="list-disc ml-6">{children}</ul>
-                ),
-                ol: ({ children }) => (
-                  <ol className="list-decimal ml-6">{children}</ol>
-                ),
-                // TODO: Add support for providing alt text for images
-                img: (props) => (
-                  <img className="max-w-4xl" alt="Attachment" {...props}></img>
-                ),
-                a: (props) => (
-                  <>
-                    <a
-                      data-tooltip-id="link-id"
-                      data-tooltip-place="top"
-                      data-tooltip-content={`${props.href}`}
-                      className="text-frost-300"
-                      {...props}
-                    >
-                      {props.children}
-                    </a>
-                  </>
-                ),
-                h1: (props) => (
-                  <h1 className="text-2xl font-bold" {...props}></h1>
-                ),
-                h2: (props) => (
-                  <h2 className="text-xl font-bold" {...props}></h2>
-                ),
-                h3: (props) => (
-                  <h3 className="text-lg font-bold" {...props}></h3>
-                ),
-                h4: (props) => (
-                  <h4 className="text-base font-bold" {...props}></h4>
-                ),
-                h5: (props) => (
-                  <h5 className="text-sm font-bold" {...props}></h5>
-                ),
-                h6: (props) => (
-                  <h6 className="text-xs font-bold" {...props}></h6>
-                ),
-                table: (props) => (
-                  <table className="table-auto" {...props}></table>
-                ),
-                thead: (props) => (
-                  <thead className="bg-grey-800" {...props}></thead>
-                ),
-                tbody: (props) => (
-                  <tbody className="bg-grey-700" {...props}></tbody>
-                ),
-                tr: (props) => (
-                  <tr className="border-b border-grey-600" {...props}></tr>
-                ),
-                th: (props) => <th className="px-4 py-2" {...props}></th>,
-                td: (props) => <td className="px-4 py-2" {...props}></td>,
-                blockquote: (props) => (
-                  <blockquote
-                    className="border-l-4 border-grey-600 pl-4"
-                    {...props}
-                  ></blockquote>
-                ),
-              }}
-              rehypePlugins={[
-                [rehypeHighlight, { detect: false, ignoreMissing: true }],
-                [rehypeKatex, { strict: false, output: 'mathml' }],
-              ]}
-              remarkPlugins={[
-                [
-                  remarkGfm,
-                  {
-                    singleTilde: false,
-                    tableCellPadding: false,
-                    tablePipeAlign: false,
-                  },
-                ],
-                [remarkMath],
-                [remarkBreaks],
-              ]}
-            >
-              {message.content}
-            </ReactMarkdown>
+            <MessageContent messageContent={message.content} />
           )}
 
           {collapse_user && message.is_edited && (

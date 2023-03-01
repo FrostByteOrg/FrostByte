@@ -67,12 +67,16 @@ export default function Server({
               <div className="text-lg tracking-wide font-bold">
                 {server.servers.name}
               </div>
-              <div className="text-xs tracking-wide text-grey-300 flex">
+              <div
+                className={`text-xs tracking-wide text-grey-300  ${styles.flexDirection}`}
+              >
                 <div className="flex items-center">
                   <span className="p-1 bg-green-300 rounded-full mr-1"></span>
                   <span>{renderHardcodedOnline(server.servers.id)} Online</span>
                 </div>
-                <div className="flex items-center ml-2">
+                <div
+                  className={`flex items-center ml-2 ${styles.membersSpacing}`}
+                >
                   <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
                   <span>
                     {renderHardcodedMembers(server.servers.id)} Members
@@ -119,12 +123,16 @@ export default function Server({
             <div className="text-lg tracking-wide font-bold">
               {server.servers.name}
             </div>
-            <div className="text-xs tracking-wide text-grey-300 flex">
+            <div
+              className={`text-xs tracking-wide text-grey-300  ${styles.flexDirection}`}
+            >
               <div className="flex items-center">
-                <span className="p-1 bg-green-300 rounded-full mr-1"></span>
+                <span className="p-1 bg-green-300 rounded-full mr-1 "></span>
                 <span>{renderHardcodedOnline(server.servers.id)} Online</span>
               </div>
-              <div className="flex items-center ml-2">
+              <div
+                className={`flex items-center ml-2 ${styles.membersSpacing}`}
+              >
                 <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
                 <span>{renderHardcodedMembers(server.servers.id)} Members</span>
               </div>

@@ -144,7 +144,7 @@ export default function Chat() {
         className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 `}
       >
         {/* overflow-y-scroll */}
-        <div className={`${styles.messageList} flex grow flex-col  `}>
+        <div className={`${styles.messageList} flex grow flex-col `}>
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
