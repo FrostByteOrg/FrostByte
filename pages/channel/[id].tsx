@@ -16,9 +16,8 @@ let socket;
 export default function Channel() {
   useSocket();
 
-
-
   const [camera, setCamera] = useState(true);
+  const [mic, setMic] = useState(true);
 
   const router = useRouter();
 
@@ -87,9 +86,10 @@ export default function Channel() {
           userVideoRef.current!.play();
         };
         socketRef.current?.emit('ready', channelId);
-      }).catch((err) => {
-        console.log('error', err)
       })
+      .catch((err) => {
+        console.log('error', err);
+      });
   };
 
   const initateCall = () => {
@@ -182,6 +182,11 @@ export default function Channel() {
     setCamera((prev: any) => !prev);
   };
 
+  const micControl = () => {
+    toggleMediaStream('mic', mic);
+    setMic((prev: any) => !prev);
+  };
+
   const leaveRoom = () => {
     socketRef.current!.emit('leave', channelId);
 
@@ -196,10 +201,13 @@ export default function Channel() {
 
   return (
     <div>
-      <video  ref={userVideoRef} />
-      <video  ref={peerVideoRef} />
+      <video ref={userVideoRef} />
+      <video ref={peerVideoRef} />
       <button onClick={cameraControl} type='button'>
-        {camera ? 'Stop' : 'Start'}
+        {camera ? 'StopCamera' : 'StartCamera'}
+      </button>
+      <button onClick={micControl} type='button'>
+        {mic ? 'StopMic' : 'StartMic'}
       </button>
       <button onClick={leaveRoom} type='button'>
         Leave
