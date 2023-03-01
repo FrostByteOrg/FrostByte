@@ -1,7 +1,11 @@
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-export async function createServer(supabase: SupabaseClient<Database>, owner_id: string, name: string, description: string | null) {
+export async function createServer(
+  supabase: SupabaseClient<Database>,
+  name: string,
+  description: string | null
+) {
   // Validate server name is present
   if (!name) {
     return { data: null, error: 'Server name is required' };
@@ -12,20 +16,6 @@ export async function createServer(supabase: SupabaseClient<Database>, owner_id:
     .insert({ name, description })
     .select()
     .single();
-
-  if (dbResp.error) {
-    return dbResp;
-  }
-
-  // Let's add the owner to the server
-  await supabase
-    .from('server_users')
-    .insert({ profile_id: owner_id, server_id: dbResp.data.id, is_owner: true });
-
-  // Now that we have a server, we need to create a default channel for it
-  await supabase
-    .from('channels')
-    .insert({ name: 'general', server_id: dbResp.data.id });
 
   return dbResp;
 }
@@ -128,3 +118,79 @@ export async function isUserInServer(supabase: SupabaseClient<Database>, user_id
 
   return { data: data !== null, error: null };
 }
+
+type IsUserInServerResponse = Awaited<ReturnType<typeof isUserInServer>>;
+export type IsUserInServerResponseSuccess = IsUserInServerResponse['data'];
+export type IsUserInServerResponseError = IsUserInServerResponse['error'];
+
+export async function createRole(supabase: SupabaseClient<Database>, server_id: number, name: string, color: string) {
+  return await supabase
+    .from('roles')
+    .insert({ name, color, server_id })
+    .select()
+    .single();
+}
+
+type CreateRoleResponse = Awaited<ReturnType<typeof createRole>>;
+export type CreateRoleResponseSuccess = CreateRoleResponse['data'];
+export type CreateRoleResponseError = CreateRoleResponse['error'];
+
+export async function getUserPermissions(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
+  return await supabase
+    .rpc(
+      'get_permission_flags_for_server_user',
+      { s_id: server_id, p_id: user_id }
+    );
+}
+
+type GetUserPermissionsResponse = Awaited<ReturnType<typeof getUserPermissions>>;
+export type GetUserPermissionsResponseSuccess = GetUserPermissionsResponse['data'];
+export type GetUserPermissionsResponseError = GetUserPermissionsResponse['error'];
+
+export async function getServerRoles(supabase: SupabaseClient<Database>, server_id: number) {
+  return await supabase
+    .from('server_roles')
+    .select('*')
+    .eq('server_id', server_id);
+}
+
+type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
+export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
+export type GetServerRolesResponseError = GetServerRolesResponse['error'];
+
+export async function banUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number, reason?: string) {
+  return await supabase
+    .from('server_bans')
+    .insert({ profile_id: user_id, server_id, reason })
+    .select()
+    .single();
+}
+
+type BanUserResponse = Awaited<ReturnType<typeof banUser>>;
+export type BanUserResponseSuccess = BanUserResponse['data'];
+export type BanUserResponseError = BanUserResponse['error'];
+
+export async function unbanUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
+  return await supabase
+    .from('server_bans')
+    .delete()
+    .eq('profile_id', user_id)
+    .eq('server_id', server_id);
+}
+
+type UnbanUserResponse = Awaited<ReturnType<typeof unbanUser>>;
+export type UnbanUserResponseSuccess = UnbanUserResponse['data'];
+export type UnbanUserResponseError = UnbanUserResponse['error'];
+
+export async function kickUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
+  return await supabase
+    .from('server_users')
+    .delete()
+    .eq('profile_id', user_id)
+    .eq('server_id', server_id)
+    .select();
+}
+
+type KickUserResponse = Awaited<ReturnType<typeof kickUser>>;
+export type KickUserResponseSuccess = KickUserResponse['data'];
+export type KickUserResponseError = KickUserResponse['error'];
