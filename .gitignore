@@ -8,6 +8,7 @@ package-lock.json
 
 # testing
 /coverage
+*.http
 
 # next.js
 /.next/

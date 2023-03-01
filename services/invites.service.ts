@@ -58,6 +58,7 @@ export async function createInvite(
 
   // If the urlId is null, we need to generate a random uuid for one
   if (!urlId) {
+    // TODO: Move this to postgres
     urlId = uuidv4();
   }
 
