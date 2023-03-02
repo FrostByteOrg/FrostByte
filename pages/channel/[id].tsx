@@ -1,16 +1,9 @@
+import { useUser } from '@supabase/auth-helpers-react';
+import useSocket from 'hooks/useSocket';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 
-import useSocket from '../../hooks/useSocket';
-
-const ICE_SERVERS = {
-  iceServers: [
-    {
-      urls: 'stun:openrealy.metered.ca:80',
-    },
-  ],
-};
 let socket;
 
 export default function Channel() {
@@ -19,46 +12,67 @@ export default function Channel() {
   const [camera, setCamera] = useState(true);
   const [mic, setMic] = useState(true);
 
+  const ICE_SERVERS = {
+    iceServers: [
+      {
+        urls: 'stun:openrelay.metered.ca:80',
+      },
+    ],
+  };
+
+  const socketRef = useRef<Socket>();
   const router = useRouter();
 
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
 
   const rtcConnectionRef = useRef<RTCPeerConnection | null>(null);
-  const socketRef = useRef<Socket>();
+
   const userStreamRef = useRef<MediaStream>();
+
   const hostRef = useRef(false);
 
-  const { id: channelId } = router.query;
+  const { id: room } = router.query;
+
+  const user = useUser();
+
+  // const socketConnect = async () => {
+  //   await fetch('/api/socketio');
+
+  //   socket = io();
+  //   console.log(socket);
+
+  //   socket.on('connect', () => {
+  //     console.log('Connection established');
+  //   });
+  // };
 
   useEffect(() => {
-    console.log('hello world');
     socketRef.current = io();
 
-    socketRef.current.emit('join', channelId);
-
-    socketRef.current.on('created', handleRoomCreated);
-
+    socketRef.current.emit('join-room', { room, user });
+    socketRef.current.on('room-created', handleRoomCreated);
     socketRef.current.on('joined', handleRoomJoined);
-
-    socketRef.current.on('ready', initateCall);
-
+    socketRef.current.on('ready', initiateCall);
     socketRef.current.on('leave', leaveRoom);
-
-    socketRef.current.on('connection-offer', handleReceivedOffer);
+    socketRef.current.on('full', () => {
+      window.location.href = '/';
+    });
+    socketRef.current.on('offer', handleOffer);
     socketRef.current.on('answer', handleAnswer);
-    socketRef.current.on('ice', handleNewIceCandidateMsg);
+    socketRef.current.on('ice-candidate', handlerIceCandidateMsg);
 
     return () => {
-      socketRef.current?.disconnect();
+      socketRef.current!.disconnect();
     };
-  }, [channelId]);
+  }, [room]);
 
   const handleRoomCreated = async () => {
     hostRef.current = true;
+
     await navigator.mediaDevices
       .getUserMedia({
-        audio: true,
+        audio: { echoCancellation: true },
         video: { width: 250, height: 250 },
       })
       .then((stream) => {
@@ -85,44 +99,46 @@ export default function Channel() {
         userVideoRef.current!.onloadedmetadata = () => {
           userVideoRef.current!.play();
         };
-        socketRef.current?.emit('ready', channelId);
+        socketRef.current?.emit('ready', room);
       })
       .catch((err) => {
         console.log('error', err);
       });
   };
 
-  const initateCall = () => {
-    if (hostRef.current) {
-      rtcConnectionRef.current = createPeerConnection();
-      rtcConnectionRef.current.addTrack(
-        userStreamRef!.current!.getTracks()[0],
-        userStreamRef!.current!
-      );
-      rtcConnectionRef.current.addTrack(
-        userStreamRef!.current!.getTracks()[1],
-        userStreamRef.current!
-      );
-      rtcConnectionRef.current
-        .createOffer()
-        .then((offer: any) => {
-          rtcConnectionRef.current!.setLocalDescription(offer);
-          socketRef.current!.emit('offer', offer, channelId);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
-
   const createPeerConnection = () => {
     const connection = new RTCPeerConnection(ICE_SERVERS);
+
     connection.onicecandidate = handleICECandidateEvent;
+
     connection.ontrack = handleTrackEvent;
     return connection;
   };
 
-  const handleReceivedOffer = (offer: any) => {
+  const initiateCall = () => {
+    if (hostRef.current) {
+      rtcConnectionRef.current = createPeerConnection();
+      rtcConnectionRef.current.addTrack(
+        userStreamRef.current!.getTracks()[0],
+        userStreamRef!.current!
+      );
+      rtcConnectionRef.current.addTrack(
+        userStreamRef.current!.getTracks()[1],
+        userStreamRef!.current!
+      );
+      rtcConnectionRef.current
+        .createOffer()
+        .then((offer: any) => {
+          rtcConnectionRef!.current!.setLocalDescription(offer);
+          socketRef!.current!.emit('offer', offer, room);
+        })
+        .catch((error: Error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const handleOffer = (offer: any) => {
     if (!hostRef.current) {
       rtcConnectionRef.current = createPeerConnection();
       rtcConnectionRef.current.addTrack(
@@ -134,14 +150,15 @@ export default function Channel() {
         userStreamRef.current!
       );
       rtcConnectionRef.current.setRemoteDescription(offer);
+
       rtcConnectionRef.current
         .createAnswer()
-        .then((answer: any) => {
+        .then((answer) => {
           rtcConnectionRef.current!.setLocalDescription(answer);
-          socketRef.current!.emit('answer', answer, channelId);
+          socketRef.current!.emit('answer', answer, room);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          console.log(error);
         });
     }
   };
@@ -149,24 +166,25 @@ export default function Channel() {
   const handleAnswer = (answer: any) => {
     rtcConnectionRef
       .current!.setRemoteDescription(answer)
-      .catch((err: Error) => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   const handleICECandidateEvent = (e: any) => {
     if (e.candidate) {
-      socketRef.current!.emit('ice-candidate', e.candidate, channelId);
+      socketRef.current!.emit('ice-candidate', e.candidate, room);
     }
   };
 
-  const handleNewIceCandidateMsg = (incoming: any) => {
+  const handlerIceCandidateMsg = (incoming: any) => {
+    // We cast the incoming candidate to RTCIceCandidate
     const candidate = new RTCIceCandidate(incoming);
     rtcConnectionRef
       .current!.addIceCandidate(candidate)
-      .catch((e: Error) => console.log(e));
+      .catch((e) => console.log(e));
   };
 
-  const handleTrackEvent = (e: any) => {
-    peerVideoRef.current!.srcObject = e.streams[0];
+  const handleTrackEvent = (event: any) => {
+    peerVideoRef.current!.srcObject = event.streams[0];
   };
 
   const toggleMediaStream = (type: any, state: any) => {
@@ -188,7 +206,14 @@ export default function Channel() {
   };
 
   const leaveRoom = () => {
-    socketRef.current!.emit('leave', channelId);
+    socketRef.current!.emit('leave', room);
+
+    if (userVideoRef.current!.srcObject) {
+      userStreamRef.current!.getTracks().forEach((track: any) => track.stop());
+    }
+    if (peerVideoRef.current!.srcObject) {
+      userStreamRef.current!.getTracks().forEach((track: any) => track.stop()); 
+    }
 
     if (rtcConnectionRef.current) {
       rtcConnectionRef.current.ontrack = null;
@@ -198,19 +223,18 @@ export default function Channel() {
     }
     router.push('/');
   };
-
   return (
     <div>
       <video ref={userVideoRef} />
       <video ref={peerVideoRef} />
-      <button onClick={cameraControl} type='button'>
-        {camera ? 'StopCamera' : 'StartCamera'}
+      <button onClick={micControl} type="button">
+        {mic? 'Mute Mic' : 'UnMute Mic'}
       </button>
-      <button onClick={micControl} type='button'>
-        {mic ? 'StopMic' : 'StartMic'}
-      </button>
-      <button onClick={leaveRoom} type='button'>
+      <button onClick={leaveRoom} type="button">
         Leave
+      </button>
+      <button onClick={cameraControl} type="button">
+        {camera ? 'Stop Camera' : 'Start Camera'}
       </button>
     </div>
   );

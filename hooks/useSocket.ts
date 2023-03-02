@@ -8,7 +8,7 @@ const useSocket = () => {
   useEffect(() => {
     if (!socketCreated.current) {
       const socketIntializer = async () => {
-        io({ path: '/api/socketio' })
+        await fetch('/api/socketio');
       };
       try {
         socketIntializer();
@@ -17,7 +17,11 @@ const useSocket = () => {
         console.log(error);
       }
     }
+
+    return () => {
+      socketCreated.current = false;
+    };
   }, []);
 };
 
-export default useSocket
+export default useSocket;

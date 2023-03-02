@@ -1,79 +1,70 @@
+import { supabase } from '@/lib/supabaseClient';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { Server } from 'socket.io';
 
-const socketIoHandler = (req: any, res: any) => {
-
+export default async function socketIoHandler(
+  req: NextApiRequest,
+  res: NextApiResponse | any
+) {
   if (res.socket.server.io) {
-    console.log('Socket is attached');
-    res.end()
-  } 
-    console.log('Mounting the socket')
-    const io = new Server(res.socket.server);
-    res.socket.server.io = io;
+    console.log('Socket is already attached');
+    res.end();
+    return;
+  }
+  console.log('Mounting the socket');
+  const io = new Server(res.socket.server);
 
+  res.socket.server.io = io;
 
-  io.on('connection', (socket) => {
-    console.log(`Someone connected to ${socket.id}`);
+  io.on('connect', (socket) => {
+    console.log(`Someone connected to ${socket.id}}`);
 
-    socket.on('join', (channelId) => {
+    socket.on('join-room', ({ room, user }) => {
       const { rooms } = io.sockets.adapter;
-      const channel = rooms.get(channelId);
+      const thisRoom = rooms.get(room);
 
-      if (channel === undefined) {
-        socket.join(channelId);
-        console.log('I created the thing');
-        socket.emit('created');
-      } else if (channel.size === 1) {
-        socket.join(channelId);
-        console.log('I joined the thing');
+      console.log(`${user.id} in room ${room}`);
+
+      if (thisRoom === undefined) {
+        socket.join(room);
+        socket.emit('room-created');
+        console.log('first');
+      } else if (thisRoom.size === 1) {
+        socket.join(room);
         socket.emit('joined');
+        console.log('second');
       } else {
-        console.log('its fuckin packed in there!');
         socket.emit('full');
+        console.log('too many');
       }
+
+      io.to(room).emit('newUserJoin', user.id);
     });
 
-    //Signal event triggered to let others know you're ready to stream
-    socket.on('ready', (channelId) => {
-      console.log('Ready to transmit');
-      socket.broadcast.to(channelId).emit('ready');
-      //TODO: expand this from 1 : 1
+    socket.on('ready', (room) => {
+      socket.broadcast.to(room).emit('ready');
     });
 
-    /*
-      ICE is an exchange protocol, the READY user sends this to the user accepting offer
-      its where the connection exchange finds a good route
-      */
-    socket.on(
-      'ice-candidate',
-      (candidate: RTCIceCandidate, channelId: string) => {
-        console.log(candidate);
-        socket.broadcast.to(channelId).emit('ice-candidate', candidate);
-      }
-    );
-
-    //Offer from user who is ready to stream sent to peer
-    socket.on('offer', (userOffer, channelId) => {
-      console.log('i have an offer you wont refuse!');
-      socket.broadcast.to(channelId).emit('offer', userOffer);
+    socket.on('ice-candidate', (candidate: RTCIceCandidate, room: string) => {
+      console.log(candidate);
+      socket.broadcast.to(room).emit('ice-candidate', candidate);
     });
 
-    //Event emitted when peer accepts connection-offer
-    socket.on('answer', (answer, channelId) => {
-      console.log('I might');
-      socket.broadcast.to(channelId).emit('answer', answer);
+    socket.on('offer', (offer, room) => {
+      socket.broadcast.to(room).emit('offer', offer);
     });
 
-    //Event to emit when connection closes when the stream shuts off
-    socket.on('leave', (channelId) => {
-      console.log('PEACE BITCHESSSS');
-      socket.leave(channelId);
-      socket.broadcast.to(channelId).emit('leave');
+    socket.on('answer', (answer, room) => {
+      socket.broadcast.to(room).emit('answer', answer);
+    });
+
+    socket.on('leave', (room) => {
+      socket.leave(room);
+      socket.broadcast.to(room).emit('leave');
     });
   });
-  res.end()
-};
-
-export default socketIoHandler;
+  res.end();
+}
 
 export const config = {
   api: {
