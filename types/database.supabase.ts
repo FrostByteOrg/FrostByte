@@ -346,9 +346,9 @@ export interface Database {
           channel_id: number
         }[]
       }
-      get_channel_permissions_for_channel_from_message: {
+      get_channel_permission_flags: {
         Args: {
-          m_id: number
+          c_id: number
         }
         Returns: number
       }
