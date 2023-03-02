@@ -372,6 +372,13 @@ export interface Database {
         }
         Returns: number
       }
+      get_roles_for_user_in_server: {
+        Args: {
+          p_id: string
+          s_id: number
+        }
+        Returns: undefined
+      }
       get_server_id_of_message: {
         Args: {
           m_id: number

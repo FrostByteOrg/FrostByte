@@ -159,6 +159,15 @@ type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
 export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
 export type GetServerRolesResponseError = GetServerRolesResponse['error'];
 
+export async function getRolesForUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
+  return await supabase
+    .rpc('get_roles_for_user_in_server', { p_id: user_id, s_id: server_id });
+}
+
+type GetRolesForUserResponse = Awaited<ReturnType<typeof getRolesForUser>>;
+export type GetRolesForUserResponseSuccess = GetRolesForUserResponse['data'];
+export type GetRolesForUserResponseError = GetRolesForUserResponse['error'];
+
 export async function banUser(
   supabase: SupabaseClient<Database>,
   user_id: string,
@@ -218,3 +227,7 @@ export async function getCurrentUserServerPermissions(
     p_id: (await supabase.auth.getUser()).data.user?.id!,
   });
 }
+
+type GetCurrentUserServerPermissionsResponse = Awaited<ReturnType<typeof getCurrentUserServerPermissions>>;
+export type GetCurrentUserServerPermissionsResponseSuccess = GetCurrentUserServerPermissionsResponse['data'];
+export type GetCurrentUserServerPermissionsResponseError = GetCurrentUserServerPermissionsResponse['error'];
