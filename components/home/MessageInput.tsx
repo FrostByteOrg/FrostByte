@@ -1,6 +1,7 @@
 import { KeyboardEvent, useState } from 'react';
+import styles from '@/styles/Chat.module.css';
 
-export default function MessageInput({ onSubmit }: {onSubmit: Function}){
+export default function MessageInput({ onSubmit }: { onSubmit: Function }) {
   const [messageText, setMessageText] = useState('');
 
   const submitOnEnter = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -14,9 +15,10 @@ export default function MessageInput({ onSubmit }: {onSubmit: Function}){
   };
 
   return (
-    <>
+    <div className={`${styles.messageInput} mt-5`}>
       <textarea
-        className="w-[90%]
+        className={`
+        w-full
         px-3
         py-2
         self-start
@@ -30,14 +32,12 @@ export default function MessageInput({ onSubmit }: {onSubmit: Function}){
         m-0
         focus:outline-none
         bg-grey-700
-        bottom-[90px]
-        fixed
-        "
+      `}
         placeholder="Message general"
         value={messageText}
         onChange={(e) => setMessageText(e.target.value)}
         onKeyDown={(e) => submitOnEnter(e)}
       />
-    </>
+    </div>
   );
 }

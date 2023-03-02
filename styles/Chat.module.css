@@ -1,13 +1,7 @@
-@media (min-height: 600px) {
-  .messageList {
-
-    height: 100%;
-  }
+.messageList {
+  overflow-y: scroll;
 }
 
-@media (max-height: 680px) {
-  .messageList {
-
-    height: 90%;
-  }
+.messagesParent {
+  max-height: 92vh;
 }
