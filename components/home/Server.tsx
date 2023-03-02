@@ -6,6 +6,7 @@ import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
+import Marquee from 'react-fast-marquee';
 
 export default function Server({
   server,
@@ -18,6 +19,8 @@ export default function Server({
   const supabase = useSupabaseClient();
   const setChannelId = useChannelIdSetter();
   const setChatName = useChatNameSetter();
+
+  const [isChannelHovered, setIsChannelHovered] = useState(false);
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<any>([]);
@@ -41,8 +44,7 @@ export default function Server({
   function renderHardcodedOnline(serverId: any) {
     if (serverId == 30) {
       return '3';
-    }
-    else if (serverId == 31) {
+    } else if (serverId == 31) {
       return '3';
     }
     return '1';
@@ -50,8 +52,7 @@ export default function Server({
   function renderHardcodedMembers(serverId: any) {
     if (serverId == 30) {
       return '3';
-    }
-    else if (serverId == 31) {
+    } else if (serverId == 31) {
       return '3';
     }
     return '1';
@@ -100,12 +101,31 @@ export default function Server({
               onClick={(e) => joinChannel(e, channel.channel_id, channel.name)}
               key={channel.channel_id}
             >
-              {/* TODO: change the key back to channel.id */}
               <div className="w-4">
                 <ChannelMessageIcon size="" />
               </div>
-              <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[90px] overflow-hidden hover:overflow-visible">
-                {channel.name}
+
+              <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">
+                {channel.name.length > 10 ? (
+                  <span
+                    onMouseEnter={() => setIsChannelHovered(true)}
+                    onMouseLeave={() => setIsChannelHovered(false)}
+                  >
+                    {isChannelHovered ? (
+                      <Marquee
+                        play={isChannelHovered}
+                        direction={'left'}
+                        gradient={false}
+                      >
+                        {`${channel.name}\u00A0`}
+                      </Marquee>
+                    ) : (
+                      `${channel.name.slice(0, 9)}.......`
+                    )}
+                  </span>
+                ) : (
+                  channel.name
+                )}
               </div>
             </div>
           ))}
