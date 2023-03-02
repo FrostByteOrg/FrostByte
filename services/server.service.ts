@@ -1,4 +1,5 @@
 import { Database } from '@/types/database.supabase';
+import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export async function createServer(
@@ -66,30 +67,7 @@ export async function deleteServer(
   user_id: string,
   server_id: number
 ) {
-  // NOTE: only the owner should be able to delete a server
-  const { data: serverUser, error } = await supabase
-    .from('server_users')
-    .select('*')
-    .eq('profile_id', user_id)
-    .eq('server_id', server_id)
-    .single();
-
-  if (error) {
-    // We mask this error and log it out
-    console.log(
-      `[WARNING]: Row missing in server-users for user ${user_id} and server ${server_id}`
-    );
-    console.error(error);
-    return { data: null, error: { message: 'Unauthorized.' } };
-  }
-
-  if (!serverUser.is_owner) {
-    return {
-      data: null,
-      error: { message: 'Only the owner can delete a server' },
-    };
-  }
-
+  // NOTE: only the owner should be able to delete a server. This is enforced by RLS
   // NOTE: Supabase has been set up to cascade delete all items related to a server (roles/invites/channels/messages)
   // So we can delete the server itself
   return await supabase.from('servers').delete().eq('id', server_id);
@@ -155,11 +133,13 @@ export async function createRole(
   supabase: SupabaseClient<Database>,
   server_id: number,
   name: string,
+  position: number,
+  permissions: ServerPermissions,
   color: string
 ) {
   return await supabase
     .from('roles')
-    .insert({ name, color, server_id })
+    .insert({ name, color, server_id, position, permissions })
     .select()
     .single();
 }
@@ -167,25 +147,6 @@ export async function createRole(
 type CreateRoleResponse = Awaited<ReturnType<typeof createRole>>;
 export type CreateRoleResponseSuccess = CreateRoleResponse['data'];
 export type CreateRoleResponseError = CreateRoleResponse['error'];
-
-export async function getUserPermissions(
-  supabase: SupabaseClient<Database>,
-  user_id: string,
-  server_id: number
-) {
-  return await supabase.rpc('get_permission_flags_for_server_user', {
-    s_id: server_id,
-    p_id: user_id,
-  });
-}
-
-type GetUserPermissionsResponse = Awaited<
-  ReturnType<typeof getUserPermissions>
->;
-export type GetUserPermissionsResponseSuccess =
-  GetUserPermissionsResponse['data'];
-export type GetUserPermissionsResponseError =
-  GetUserPermissionsResponse['error'];
 
 export async function getServerRoles(
   supabase: SupabaseClient<Database>,
@@ -200,6 +161,15 @@ export async function getServerRoles(
 type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
 export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
 export type GetServerRolesResponseError = GetServerRolesResponse['error'];
+
+export async function getRolesForUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
+  return await supabase
+    .rpc('get_roles_for_user_in_server', { p_id: user_id, s_id: server_id });
+}
+
+type GetRolesForUserResponse = Awaited<ReturnType<typeof getRolesForUser>>;
+export type GetRolesForUserResponseSuccess = GetRolesForUserResponse['data'];
+export type GetRolesForUserResponseError = GetRolesForUserResponse['error'];
 
 export async function banUser(
   supabase: SupabaseClient<Database>,
@@ -250,3 +220,17 @@ export async function kickUser(
 type KickUserResponse = Awaited<ReturnType<typeof kickUser>>;
 export type KickUserResponseSuccess = KickUserResponse['data'];
 export type KickUserResponseError = KickUserResponse['error'];
+
+export async function getCurrentUserServerPermissions(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  return await supabase.rpc('get_permission_flags_for_server_user', {
+    s_id: server_id,
+    p_id: (await supabase.auth.getUser()).data.user?.id!,
+  });
+}
+
+type GetCurrentUserServerPermissionsResponse = Awaited<ReturnType<typeof getCurrentUserServerPermissions>>;
+export type GetCurrentUserServerPermissionsResponseSuccess = GetCurrentUserServerPermissionsResponse['data'];
+export type GetCurrentUserServerPermissionsResponseError = GetCurrentUserServerPermissionsResponse['error'];

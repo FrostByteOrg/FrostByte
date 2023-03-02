@@ -78,3 +78,16 @@ export async function getAllChannelsForUser(supabase: SupabaseClient<Database>, 
   return await supabase
     .rpc('get_all_channels_for_user', { p_id: userId });
 }
+
+type AllChannelsForUserResponse = Awaited<ReturnType<typeof getAllChannelsForUser>>;
+export type AllChannelsForUserResponseSuccess = AllChannelsForUserResponse['data'];
+export type AllChannelsForUserResponseError = AllChannelsForUserResponse['error'];
+
+export async function getCurrentUserChannelPermissions(supabase: SupabaseClient<Database>, channelId: number) {
+  return await supabase
+    .rpc('get_channel_permission_flags', { c_id: channelId });
+}
+
+type CurrentUserChannelPermissionsResponse = Awaited<ReturnType<typeof getCurrentUserChannelPermissions>>;
+export type CurrentUserChannelPermissionsResponseSuccess = CurrentUserChannelPermissionsResponse['data'];
+export type CurrentUserChannelPermissionsResponseError = CurrentUserChannelPermissionsResponse['error'];

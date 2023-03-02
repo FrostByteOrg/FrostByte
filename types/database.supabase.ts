@@ -346,9 +346,9 @@ export interface Database {
           channel_id: number
         }[]
       }
-      get_channel_permissions_for_channel_from_message: {
+      get_channel_permission_flags: {
         Args: {
-          m_id: number
+          c_id: number
         }
         Returns: number
       }
@@ -371,6 +371,13 @@ export interface Database {
           p_id: string
         }
         Returns: number
+      }
+      get_roles_for_user_in_server: {
+        Args: {
+          p_id: string
+          s_id: number
+        }
+        Returns: undefined
       }
       get_server_id_of_message: {
         Args: {
