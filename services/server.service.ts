@@ -1,4 +1,5 @@
 import { Database } from '@/types/database.supabase';
+import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export async function createServer(
@@ -132,11 +133,13 @@ export async function createRole(
   supabase: SupabaseClient<Database>,
   server_id: number,
   name: string,
+  position: number,
+  permissions: ServerPermissions,
   color: string
 ) {
   return await supabase
     .from('roles')
-    .insert({ name, color, server_id })
+    .insert({ name, color, server_id, position, permissions })
     .select()
     .single();
 }
