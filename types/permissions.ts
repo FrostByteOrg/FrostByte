@@ -83,5 +83,5 @@ export enum ChannelPermissions {
    * 4
    * User can read messages in the channel.
    */
-  READ_MESSAGES = 1 << 0,
+  READ_MESSAGES = 1 << 2,
 }
