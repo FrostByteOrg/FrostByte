@@ -57,7 +57,7 @@ export type MessageWithUsersResponseError = MessageWithUsersResponse['error']
 
 export async function createMessage(supabase: SupabaseClient<Database>, message: UnsavedMessage) {
   const { profile_id, channel_id } = message;
-  const content = sanitizeMessage(message.content);
+  const content = sanitizeMessage(message.content.trim());
 
   return await supabase
     .rpc('createmessage', { content, p_id: profile_id, c_id: channel_id });
