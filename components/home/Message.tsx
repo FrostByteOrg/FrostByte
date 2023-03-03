@@ -61,7 +61,7 @@ export default function Message({
 
   return (
     <>
-      <div className="px-2 pt-4 pb-4 flex flex-col">
+      <div className="px-2 pt-1 pb-1 flex flex-col">
         {!collapse_user && (
           <div className="flex-grow flex flex-row">
             <UserIcon user={message.profiles} />
@@ -89,7 +89,7 @@ export default function Message({
         />
 
         <div
-          className="font-light tracking-wide ml-8 -mt-2 hover:bg-grey-900 rounded-lg p-1 transition-colors break-all relative flex items-center"
+          className="font-light tracking-wide ml-8 -mt-2 hover:bg-grey-900 rounded-lg p-1 transition-colors break-all relative flex flex-col items-start"
           onMouseEnter={() => {
             if (user && user.id == message.profiles.id) setShowOptions('show');
           }}

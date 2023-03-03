@@ -45,7 +45,8 @@ export default function Server({
   function renderHardcodedOnline(serverId: any) {
     if (serverId == 30) {
       return '3';
-    } else if (serverId == 31) {
+    }
+    else if (serverId == 31) {
       return '3';
     }
     return '1';
@@ -53,7 +54,8 @@ export default function Server({
   function renderHardcodedMembers(serverId: any) {
     if (serverId == 30) {
       return '3';
-    } else if (serverId == 31) {
+    }
+    else if (serverId == 31) {
       return '3';
     }
     return '1';
