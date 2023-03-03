@@ -120,7 +120,7 @@ export default function Server({
                         {`${channel.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
                       </Marquee>
                     ) : (
-                      `${channel.name.slice(0, 9)}.......`
+                      `${channel.name.slice(0, 9)}...`
                     )}
                   </span>
                 ) : (
