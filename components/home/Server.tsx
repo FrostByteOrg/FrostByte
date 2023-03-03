@@ -21,6 +21,7 @@ export default function Server({
   const setChatName = useChatNameSetter();
 
   const [isChannelHovered, setIsChannelHovered] = useState(false);
+  const [isServerHovered, setIsServerHovered] = useState(false);
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<any>([]);
@@ -67,8 +68,27 @@ export default function Server({
               <ServersIcon server={server.servers} hovered={false} />
             </div>
             <div className="ml-3">
-              <div className="text-lg tracking-wide font-bold">
-                {server.servers.name}
+              <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
+                {server.servers.name.length > 10 ? (
+                  <span
+                    onMouseEnter={() => setIsServerHovered(true)}
+                    onMouseLeave={() => setIsServerHovered(false)}
+                  >
+                    {isServerHovered ? (
+                      <Marquee
+                        play={isServerHovered}
+                        direction={'left'}
+                        gradient={false}
+                      >
+                        {`${server.servers.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
+                      </Marquee>
+                    ) : (
+                      `${server.servers.name.slice(0, 11)}...`
+                    )}
+                  </span>
+                ) : (
+                  server.servers.name
+                )}
               </div>
               <div
                 className={`text-xs tracking-wide text-grey-300  ${styles.flexDirection}`}
@@ -142,8 +162,27 @@ export default function Server({
             <ServersIcon hovered={false} server={server.servers} />
           </div>
           <div className="ml-3">
-            <div className="text-lg tracking-wide font-bold">
-              {server.servers.name}
+            <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
+              {server.servers.name.length > 10 ? (
+                <span
+                  onMouseEnter={() => setIsServerHovered(true)}
+                  onMouseLeave={() => setIsServerHovered(false)}
+                >
+                  {isServerHovered ? (
+                    <Marquee
+                      play={isServerHovered}
+                      direction={'left'}
+                      gradient={false}
+                    >
+                      {`${server.servers.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
+                    </Marquee>
+                  ) : (
+                    `${server.servers.name.slice(0, 11)}...`
+                  )}
+                </span>
+              ) : (
+                server.servers.name
+              )}
             </div>
             <div
               className={`text-xs tracking-wide text-grey-300  ${styles.flexDirection}`}
