@@ -33,13 +33,10 @@ export default function Home() {
       <ChatCtxProvider>
         <SideBarOptionProvider>
           <div className={`${styles.isMobileView}`}>
-            <main
-              className={`${styles.main} flex flex-col h-full overflow-hidden `}
-            >
+            <main className={`${styles.main}  `}>
               <div className=" bg-grey-800">
-                <div className="bg-grey-800 flex flex-col ">
-                  <RenderMobileView />
-                </div>
+                <RenderMobileView />
+
                 <div>
                   {!user ? (
                     ''
@@ -52,11 +49,6 @@ export default function Home() {
                     </button>
                   )}
                 </div>
-              </div>
-              <div
-                className={`${styles.bottomNav} bg-grey-950 w-full flex fixed bottom-[0px]   `}
-              >
-                <NavBar type="bottom" />
               </div>
             </main>
           </div>

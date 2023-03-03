@@ -15,7 +15,7 @@ export default function MessageInput({ onSubmit }: { onSubmit: Function }) {
   };
 
   return (
-    <div className={`${styles.messageInput} mt-5`}>
+    <div className={`${styles.messageInput} mt-1 p-3`}>
       <textarea
         className={`
         w-full

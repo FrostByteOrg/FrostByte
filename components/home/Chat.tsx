@@ -129,7 +129,6 @@ export default function Chat() {
 
   return (
     <>
-      {/* overflow-visible */}
       <div className={`${styles.chatHeader} px-5 pt-5 mb-3`}>
         <div className="flex items-center  ">
           <div className="mr-2">
@@ -138,13 +137,12 @@ export default function Chat() {
           <h1 className=" text-3xl font-semibold tracking-wide">{chatName}</h1>
         </div>
       </div>
-      <div className=" border-t-2 mx-5 border-grey-700  "></div>
-      {/* overflow-clip min-h-0 */}
+      <div className="border-t-2 mx-5 border-grey-700 flex "></div>
+
       <div
-        className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 `}
+        className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-scroll`}
       >
-        {/* overflow-y-scroll */}
-        <div className={`${styles.messageList} flex grow flex-col `}>
+        <div className={`${styles.messageList} flex flex-col `}>
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
@@ -165,17 +163,16 @@ export default function Chat() {
             })}
           <div ref={newestMessageRef} className=""></div>
         </div>
-
-        <MessageInput
-          onSubmit={async (content: string) => {
-            createMessage(supabase, {
-              content,
-              channel_id: channelId,
-              profile_id: user!.id,
-            });
-          }}
-        />
       </div>
+      <MessageInput
+        onSubmit={async (content: string) => {
+          createMessage(supabase, {
+            content,
+            channel_id: channelId,
+            profile_id: user!.id,
+          });
+        }}
+      />
     </>
   );
 }
