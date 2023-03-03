@@ -91,3 +91,27 @@ export async function getCurrentUserChannelPermissions(supabase: SupabaseClient<
 type CurrentUserChannelPermissionsResponse = Awaited<ReturnType<typeof getCurrentUserChannelPermissions>>;
 export type CurrentUserChannelPermissionsResponseSuccess = CurrentUserChannelPermissionsResponse['data'];
 export type CurrentUserChannelPermissionsResponseError = CurrentUserChannelPermissionsResponse['error'];
+
+export async function getMediaChannelsForServer(supabase: SupabaseClient<Database>, serverId: number) {
+  return await supabase
+    .from('channels')
+    .select('*')
+    .eq('server_id', serverId)
+    .eq('is_media', true);
+}
+
+type MediaChannelsForServerResponse = Awaited<ReturnType<typeof getMediaChannelsForServer>>;
+export type MediaChannelsForServerResponseSuccess = MediaChannelsForServerResponse['data'];
+export type MediaChannelsForServerResponseError = MediaChannelsForServerResponse['error'];
+
+export async function getTextChannelsForServer(supabase: SupabaseClient<Database>, serverId: number) {
+  return await supabase
+    .from('channels')
+    .select('*')
+    .eq('server_id', serverId)
+    .eq('is_media', false);
+}
+
+type TextChannelsForServerResponse = Awaited<ReturnType<typeof getTextChannelsForServer>>;
+export type TextChannelsForServerResponseSuccess = TextChannelsForServerResponse['data'];
+export type TextChannelsForServerResponseError = TextChannelsForServerResponse['error'];
