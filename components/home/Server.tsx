@@ -117,7 +117,7 @@ export default function Server({
                         direction={'left'}
                         gradient={false}
                       >
-                        {`${channel.name}\u00A0`}
+                        {`${channel.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
                       </Marquee>
                     ) : (
                       `${channel.name.slice(0, 9)}.......`
