@@ -14,11 +14,11 @@ import DeleteMsgModal from '@/components/home/DeleteMsgModal';
 export default function Message({
   message,
   collapse_user,
-  deletePerms = false,
+  hasDeletePerms = false,
 }: {
   message: any;
   collapse_user: boolean;
-  deletePerms?: boolean;
+  hasDeletePerms?: boolean;
 }) {
   const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
   const todayDate = moment(message.sent_time).format('h:mm A');
@@ -93,7 +93,7 @@ export default function Message({
         <div
           className="font-light tracking-wide ml-8 -mt-2 hover:bg-grey-900 rounded-lg p-1 transition-colors break-all relative flex flex-col items-start"
           onMouseEnter={() => {
-            if ((user && user.id == message.profiles.id) || deletePerms)
+            if ((user && user.id == message.profiles.id) || hasDeletePerms)
               setShowOptions('show');
           }}
           onMouseLeave={() => setShowOptions('hide')}
