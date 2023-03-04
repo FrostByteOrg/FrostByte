@@ -15,6 +15,8 @@ import {
 } from '@/services/message.service';
 import Message from '@/components/home/Message';
 import { useRealtime } from 'hooks/useRealtime';
+import { getCurrentUserChannelPermissions } from '@/services/channels.service';
+import { ChannelPermissions } from '@/types/permissions';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
@@ -23,6 +25,10 @@ export default function Chat() {
   const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
+
+  const [userPerms, setUserPerms] = useState<any>(null);
+
+  console.log(userPerms & ChannelPermissions.SEND_MESSAGES);
 
   useRealtime<MessageType>('public:messages', [
     {
@@ -116,6 +122,18 @@ export default function Chat() {
       };
       handleAsync();
     }
+    async function getPerms() {
+      const { data, error } = await getCurrentUserChannelPermissions(
+        supabase,
+        channelId
+      );
+
+      if (error) {
+        console.log(error);
+      }
+      setUserPerms(data);
+    }
+    getPerms();
   }, [channelId, supabase]);
 
   useEffect(() => {
@@ -164,6 +182,7 @@ export default function Chat() {
           <div ref={newestMessageRef} className=""></div>
         </div>
       </div>
+      <div className="flex grow"></div>
       <MessageInput
         onSubmit={async (content: string) => {
           createMessage(supabase, {
@@ -172,6 +191,7 @@ export default function Chat() {
             profile_id: user!.id,
           });
         }}
+        disabled={(userPerms & ChannelPermissions.SEND_MESSAGES) == 0}
       />
     </>
   );
