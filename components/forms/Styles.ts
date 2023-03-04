@@ -28,5 +28,5 @@ transition
 ease-in-out
 m-0
 focus:outline-none
-bg-grey-900
+bg-grey-950
 flex-1`;

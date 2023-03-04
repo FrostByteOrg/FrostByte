@@ -6,6 +6,7 @@ import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
+import Marquee from 'react-fast-marquee';
 
 export default function Server({
   server,
@@ -18,6 +19,9 @@ export default function Server({
   const supabase = useSupabaseClient();
   const setChannelId = useChannelIdSetter();
   const setChatName = useChatNameSetter();
+
+  const [isChannelHovered, setIsChannelHovered] = useState(false);
+  const [isServerHovered, setIsServerHovered] = useState(false);
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<any>([]);
@@ -66,8 +70,27 @@ export default function Server({
               <ServersIcon server={server.servers} hovered={false} />
             </div>
             <div className="ml-3">
-              <div className="text-lg tracking-wide font-bold">
-                {server.servers.name}
+              <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
+                {server.servers.name.length > 10 ? (
+                  <span
+                    onMouseEnter={() => setIsServerHovered(true)}
+                    onMouseLeave={() => setIsServerHovered(false)}
+                  >
+                    {isServerHovered ? (
+                      <Marquee
+                        play={isServerHovered}
+                        direction={'left'}
+                        gradient={false}
+                      >
+                        {`${server.servers.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
+                      </Marquee>
+                    ) : (
+                      `${server.servers.name.slice(0, 11)}...`
+                    )}
+                  </span>
+                ) : (
+                  server.servers.name
+                )}
               </div>
               <div
                 className={`text-xs tracking-wide text-grey-300  ${styles.flexDirection}`}
@@ -100,12 +123,31 @@ export default function Server({
               onClick={(e) => joinChannel(e, channel.channel_id, channel.name)}
               key={channel.channel_id}
             >
-              {/* TODO: change the key back to channel.id */}
               <div className="w-4">
                 <ChannelMessageIcon size="" />
               </div>
-              <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[90px] overflow-hidden hover:overflow-visible">
-                {channel.name}
+
+              <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">
+                {channel.name.length > 10 ? (
+                  <span
+                    onMouseEnter={() => setIsChannelHovered(true)}
+                    onMouseLeave={() => setIsChannelHovered(false)}
+                  >
+                    {isChannelHovered ? (
+                      <Marquee
+                        play={isChannelHovered}
+                        direction={'left'}
+                        gradient={false}
+                      >
+                        {`${channel.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
+                      </Marquee>
+                    ) : (
+                      `${channel.name.slice(0, 9)}...`
+                    )}
+                  </span>
+                ) : (
+                  channel.name
+                )}
               </div>
             </div>
           ))}
@@ -122,8 +164,27 @@ export default function Server({
             <ServersIcon hovered={false} server={server.servers} />
           </div>
           <div className="ml-3">
-            <div className="text-lg tracking-wide font-bold">
-              {server.servers.name}
+            <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
+              {server.servers.name.length > 10 ? (
+                <span
+                  onMouseEnter={() => setIsServerHovered(true)}
+                  onMouseLeave={() => setIsServerHovered(false)}
+                >
+                  {isServerHovered ? (
+                    <Marquee
+                      play={isServerHovered}
+                      direction={'left'}
+                      gradient={false}
+                    >
+                      {`${server.servers.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
+                    </Marquee>
+                  ) : (
+                    `${server.servers.name.slice(0, 11)}...`
+                  )}
+                </span>
+              ) : (
+                server.servers.name
+              )}
             </div>
             <div
               className={`text-xs tracking-wide text-grey-300  ${styles.flexDirection}`}

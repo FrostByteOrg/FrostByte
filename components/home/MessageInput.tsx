@@ -1,7 +1,13 @@
 import { KeyboardEvent, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
 
-export default function MessageInput({ onSubmit }: { onSubmit: Function }) {
+export default function MessageInput({
+  onSubmit,
+  disabled = false,
+}: {
+  onSubmit: Function;
+  disabled?: boolean;
+}) {
   const [messageText, setMessageText] = useState('');
 
   const submitOnEnter = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -15,7 +21,7 @@ export default function MessageInput({ onSubmit }: { onSubmit: Function }) {
   };
 
   return (
-    <div className={`${styles.messageInput} mt-5`}>
+    <div className={`${styles.messageInput} mt-1 p-3`}>
       <textarea
         className={`
         w-full
@@ -32,9 +38,16 @@ export default function MessageInput({ onSubmit }: { onSubmit: Function }) {
         m-0
         focus:outline-none
         bg-grey-700
+        disabled:opacity-70
+
       `}
+        disabled={disabled}
         placeholder="Message general"
-        value={messageText}
+        value={
+          disabled
+            ? 'You do not have permission to message in this channel'
+            : messageText
+        }
         onChange={(e) => setMessageText(e.target.value)}
         onKeyDown={(e) => submitOnEnter(e)}
       />

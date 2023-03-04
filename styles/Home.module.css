@@ -2,14 +2,6 @@
   .bottomNav {
     display: none;
   }
-
-  .isMobileView {
-    display: none;
-  }
-
-  .isDesktopView {
-    display: block;
-  }
 }
 
 @media (max-width: 940px) {
@@ -18,14 +10,7 @@
     grid-template-columns:
       repeat(3, minmax(16px, 1fr)) repeat(6, minmax(0, 128px))
       repeat(3, minmax(16px, 1fr));
-    min-height: 64px;
-  }
 
-  .isMobileView {
-    display: block;
-  }
-
-  .isDesktopView {
-    display: none;
+    height: 64px;
   }
 }
