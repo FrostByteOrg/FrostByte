@@ -7,12 +7,17 @@ import { SideBarOptionProvider } from '@/context/SideBarOptionCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
 import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { ChatCtxProvider } from '@/context/ChatCtx';
+import { useMediaQuery } from 'react-responsive';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  const checkMobile = useMediaQuery({ query: '(max-width: 940px)' });
   //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
   //TODO: fix the positioning of the logout button
 
@@ -21,6 +26,10 @@ export default function Home() {
     if (error) console.log(error);
     router.push('/login');
   };
+
+  useEffect(() => {
+    setIsMobile(checkMobile);
+  }, [checkMobile]);
 
   return (
     <>
@@ -32,9 +41,9 @@ export default function Home() {
       </Head>
       <ChatCtxProvider>
         <SideBarOptionProvider>
-          <div className={`${styles.isMobileView}`}>
-            <main className={`${styles.main}  `}>
-              <div className=" bg-grey-800">
+          {isMobile ? (
+            <div>
+              <div className={'bg-grey-800'}>
                 <RenderMobileView />
 
                 <div>
@@ -42,7 +51,7 @@ export default function Home() {
                     ''
                   ) : (
                     <button
-                      className=" bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                      className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
                       onClick={handleLogout}
                     >
                       Logout
@@ -50,31 +59,28 @@ export default function Home() {
                   )}
                 </div>
               </div>
-            </main>
-          </div>
-          <div className={`${styles.isDesktopView} `}>
-            <main className={`${styles.main} bg-grey-800 `}>
-              <RenderDesktopView />
-              {!user ? (
-                ''
-              ) : (
-                <button
-                  className=" bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              )}
-            </main>
-          </div>
+            </div>
+          ) : (
+            <div>
+              <div className={'bg-grey-800 '}>
+                <RenderDesktopView />
+                <div>
+                  {!user ? (
+                    ''
+                  ) : (
+                    <button
+                      className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </SideBarOptionProvider>
       </ChatCtxProvider>
     </>
   );
-}
-
-{
-  /* <div
-              className={`${styles.bottomNav} bg-grey-950 fixed bottom-[0px] w-full h-8 flex`}
-            ></div> */
 }
