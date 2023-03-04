@@ -9,7 +9,7 @@ export default function MessageInput({
   disabled?: boolean;
 }) {
   const [messageText, setMessageText] = useState('');
-  console.log(disabled);
+
   const submitOnEnter = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     // Watch for enter key (exclude shift + enter)
     if (event.key === 'Enter' && !event.shiftKey) {

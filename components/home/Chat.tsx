@@ -28,8 +28,6 @@ export default function Chat() {
 
   const [userPerms, setUserPerms] = useState<any>(null);
 
-  console.log(userPerms & ChannelPermissions.SEND_MESSAGES);
-
   useRealtime<MessageType>('public:messages', [
     {
       type: 'postgres_changes',
@@ -128,9 +126,8 @@ export default function Chat() {
         channelId
       );
 
-      if (error) {
-        console.log(error);
-      }
+      if (error) console.log(error);
+
       setUserPerms(data);
     }
     getPerms();
@@ -175,6 +172,9 @@ export default function Chat() {
                   collapse_user={
                     previousMessage &&
                     previousMessage.profiles.id === value.profiles.id
+                  }
+                  deletePerms={
+                    (userPerms & ChannelPermissions.MANAGE_MESSAGES) !== 0
                   }
                 />
               );

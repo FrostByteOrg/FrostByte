@@ -14,9 +14,11 @@ import DeleteMsgModal from '@/components/home/DeleteMsgModal';
 export default function Message({
   message,
   collapse_user,
+  deletePerms = false,
 }: {
   message: any;
   collapse_user: boolean;
+  deletePerms?: boolean;
 }) {
   const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
   const todayDate = moment(message.sent_time).format('h:mm A');
@@ -91,7 +93,8 @@ export default function Message({
         <div
           className="font-light tracking-wide ml-8 -mt-2 hover:bg-grey-900 rounded-lg p-1 transition-colors break-all relative flex flex-col items-start"
           onMouseEnter={() => {
-            if (user && user.id == message.profiles.id) setShowOptions('show');
+            if ((user && user.id == message.profiles.id) || deletePerms)
+              setShowOptions('show');
           }}
           onMouseLeave={() => setShowOptions('hide')}
         >
@@ -100,9 +103,14 @@ export default function Message({
               showOptions == 'hide' ? 'hidden' : ''
             } absolute left-[90%] bottom-4 bg-grey-925 px-2 py-1 rounded-lg z-10 flex `}
           >
-            <span onClick={() => setMessageOptions('edit')}>
-              <EditIcon styles="mr-1 hover:bg-grey-600 rounded-lg hover:cursor-pointer" />
-            </span>
+            {user && user.id == message.profiles.id ? (
+              <span onClick={() => setMessageOptions('edit')}>
+                <EditIcon styles="mr-1 hover:bg-grey-600 rounded-lg hover:cursor-pointer" />
+              </span>
+            ) : (
+              ''
+            )}
+
             <span onClick={() => setMessageOptions('delete')}>
               <TrashIcon styles="hover:bg-grey-600 rounded-lg hover:cursor-pointer" />
             </span>
