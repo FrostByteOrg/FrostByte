@@ -28,6 +28,20 @@ export default function Chat() {
 
   const [userPerms, setUserPerms] = useState<any>(null);
 
+  const updateUserPerms = async () => {
+    const { data, error } = await getCurrentUserChannelPermissions(
+      supabase,
+      channelId
+    );
+
+    if (error) {
+      console.log(error);
+    }
+
+    setUserPerms(data);
+  };
+
+  // TODO: Move the type argument to the callback instead
   useRealtime<MessageType>('public:messages', [
     {
       type: 'postgres_changes',
@@ -97,6 +111,16 @@ export default function Chat() {
           );
         }
       },
+    },
+    {
+      type: 'postgres_changes',
+      filter: { event: '*', schema: 'public', table: 'channel_permissions'},
+      callback: async (payload) => {
+        // @ts-expect-error payload.old is a ChannelPermissions, not a ChatMessageWithUser
+        if (payload.old && !payload.old.channel_id || payload.old.channel_id === channelId) {
+          updateUserPerms();
+        }
+      }
     },
   ]);
 
