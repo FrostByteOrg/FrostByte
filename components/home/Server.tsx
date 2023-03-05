@@ -11,9 +11,11 @@ import Marquee from 'react-fast-marquee';
 export default function Server({
   server,
   expanded,
+  isLast = false,
 }: {
   server: any;
   expanded: number;
+  isLast?: boolean;
 }) {
   const expand = expanded == server.server_id;
   const supabase = useSupabaseClient();
@@ -45,8 +47,7 @@ export default function Server({
   function renderHardcodedOnline(serverId: any) {
     if (serverId == 30) {
       return '3';
-    }
-    else if (serverId == 31) {
+    } else if (serverId == 31) {
       return '3';
     }
     return '1';
@@ -54,8 +55,7 @@ export default function Server({
   function renderHardcodedMembers(serverId: any) {
     if (serverId == 30) {
       return '3';
-    }
-    else if (serverId == 31) {
+    } else if (serverId == 31) {
       return '3';
     }
     return '1';
@@ -64,7 +64,7 @@ export default function Server({
   if (expand) {
     return (
       <div className="relative ">
-        <div className="border-b-2   hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
+        <div className="border-b-2 hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div className="bg-grey-900 p-2 rounded-xl">
               <ServersIcon server={server.servers} hovered={false} />
@@ -158,7 +158,11 @@ export default function Server({
 
   return (
     <div className="pb-3 hover:cursor-pointer">
-      <div className="border-b-2 border-grey-700 py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center">
+      <div
+        className={`${
+          !isLast ? 'border-b-2 border-grey-700' : ''
+        }   py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center`}
+      >
         <div className="flex items-center">
           <div className={`${styles.serverIcon}  p-2 rounded-xl`}>
             <ServersIcon hovered={false} server={server.servers} />

@@ -107,8 +107,7 @@ export default function ServerList() {
       </div>
       {/* TODO: fix idx -> server.id */}
       {servers &&
-        servers.map((server, idx) => {
-          // console.table(server);
+        servers.map((server, idx, serverList) => {
           {
             /* @ts-expect-error This is valid */
           }
@@ -122,7 +121,11 @@ export default function ServerList() {
                   : setExpanded(server.server_id);
               }}
             >
-              <Server server={server} expanded={expanded} />
+              <Server
+                server={server}
+                expanded={expanded}
+                isLast={idx == serverList.length - 1}
+              />
             </span>
           );
         })}

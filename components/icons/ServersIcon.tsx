@@ -8,8 +8,8 @@ export default function ServersIcon({
 }: {
   server: Server | null;
   hovered: boolean;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 }) {
   if (server && server.image_url) {
     return (
