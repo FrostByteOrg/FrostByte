@@ -24,7 +24,7 @@ export default function Register({
     formState: { errors, isSubmitting },
   } = useForm<CreateUserInput>({
     resolver: zodResolver(createUserSchema),
-    mode: 'onChange'
+    mode: 'onChange',
   });
 
   const onSubmit = async (formData: CreateUserInput) => {
@@ -55,11 +55,11 @@ export default function Register({
     >
       <div className="relative">
         <div className={`${errors.username ? styles.iconError : styles.icon} `}>
-          <UsernameIcon/>
+          <UsernameIcon />
         </div>
         <input
           type="text"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Enter Username"
           {...register('username')}
         ></input>
@@ -71,11 +71,11 @@ export default function Register({
       </div>
       <div className={`${errors.username ? 'mt-2' : 'mt-6'}  relative`}>
         <div className={`${errors.email ? styles.iconError : styles.icon} `}>
-          <EmailIcon/>
+          <EmailIcon />
         </div>
         <input
           type="email"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Enter Email"
           {...register('email')}
         ></input>
@@ -88,11 +88,11 @@ export default function Register({
 
       <div className={`${errors.email ? 'mt-2' : 'mt-6'}  relative`}>
         <div className={`${errors.password ? styles.iconError : styles.icon} `}>
-          <PasswordIcon/>
+          <PasswordIcon />
         </div>
         <input
           type="password"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Enter password"
           {...register('password')}
         ></input>
@@ -109,11 +109,11 @@ export default function Register({
             errors.passwordConfirmation ? styles.iconError : styles.icon
           } `}
         >
-          <PasswordIcon/>
+          <PasswordIcon />
         </div>
         <input
           type="password"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Confirm password"
           {...register('passwordConfirmation')}
         ></input>
