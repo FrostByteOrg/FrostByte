@@ -8,6 +8,7 @@ import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { ServersForUser } from '@/types/dbtypes';
 import { getServerForUser, getServersForUser } from '@/services/server.service';
 import { useRealtime } from 'hooks/useRealtime';
+import styles from '@/styles/Servers.module.css';
 
 export default function ServerList() {
   //TODO: fetch server_users via profile id, select server_id -> fetch channels via this server_id && fetch servers with server_id
@@ -68,16 +69,33 @@ export default function ServerList() {
 
   //TODO: add isServer check
 
+  //TODO: add tooltip on hover that displays "Add Server"
+  //TODO: onClick, display add server modal, create server input will be name and image
+
   return (
     <div className=" p-4 min-h-0">
       <div className="flex pb-3 items-center border-b-2 border-grey-700">
         <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
-        <div
-          className="pt-2 ml-3 hover:cursor-pointer"
-          onMouseEnter={() => setAddServerHover(true)}
-          onMouseLeave={() => setAddServerHover(false)}
-        >
-          <AddServerIcon hovered={addServerhover} />
+        <div className="pt-2 ml-3  relative">
+          <span
+            className="hover:cursor-pointer"
+            onMouseEnter={() => setAddServerHover(true)}
+            onMouseLeave={() => setAddServerHover(false)}
+          >
+            <AddServerIcon hovered={addServerhover} />
+          </span>
+          {addServerhover ? (
+            <div className="absolute w-10 top-2 left-7 flex">
+              <div
+                className={`${styles.arrow} absolute -left-2 top-[6px]`}
+              ></div>
+              <div className=" bg-grey-950 rounded-lg py-1 px-2">
+                Add a Server
+              </div>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
       </div>
       <div className="pt-4 pb-4">
