@@ -1,6 +1,6 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Server from '@/components/home/Server';
 import type { Server as ServerType, ServerUser } from '@/types/dbtypes';
 import { useChannelIdValue } from '@/context/ChatCtx';
@@ -9,6 +9,7 @@ import { ServersForUser } from '@/types/dbtypes';
 import { getServerForUser, getServersForUser } from '@/services/server.service';
 import { useRealtime } from 'hooks/useRealtime';
 import styles from '@/styles/Servers.module.css';
+import AddServerModal from '@/components/home/AddServerModal';
 
 export default function ServerList() {
   //TODO: fetch server_users via profile id, select server_id -> fetch channels via this server_id && fetch servers with server_id
@@ -17,6 +18,7 @@ export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
   const [addServerhover, setAddServerHover] = useState(false);
+  const [showAddServer, setShowAddServer] = useState(false);
   const supabase = useSupabaseClient();
   const [expanded, setExpanded] = useState(0);
 
@@ -69,11 +71,14 @@ export default function ServerList() {
 
   //TODO: add isServer check
 
-  //TODO: add tooltip on hover that displays "Add Server"
   //TODO: onClick, display add server modal, create server input will be name and image
 
   return (
     <div className=" p-4 min-h-0">
+      <AddServerModal
+        showModal={showAddServer}
+        setShowModal={setShowAddServer}
+      />
       <div className="flex pb-3 items-center border-b-2 border-grey-700">
         <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
         <div className="pt-2 ml-3  relative">
@@ -81,6 +86,9 @@ export default function ServerList() {
             className="hover:cursor-pointer"
             onMouseEnter={() => setAddServerHover(true)}
             onMouseLeave={() => setAddServerHover(false)}
+            onClick={() => {
+              setShowAddServer(true);
+            }}
           >
             <AddServerIcon hovered={addServerhover} />
           </span>
