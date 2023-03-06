@@ -29,6 +29,8 @@ export default function ServerList() {
 
   const [servers, setServers] = useState<ServersForUser[]>([]);
 
+  //TODO: realtime for delete server_users and update, delete servers
+
   useRealtime<ServerUser>('public:server_users', [
     {
       type: 'postgres_changes',
