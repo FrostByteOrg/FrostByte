@@ -1,13 +1,13 @@
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { SyntheticEvent, useEffect, useState } from 'react';
-import { useChannelIdSetter, useChatNameSetter } from '@/context/ChatCtx';
+import { useChannelIdSetter, useChatNameSetter, useOnlinePresenceRef } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import Marquee from 'react-fast-marquee';
-import { getServerMemberCount } from '@/services/server.service';
+import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
 
 export default function Server({
   server,
@@ -22,6 +22,7 @@ export default function Server({
   const setChatName = useChatNameSetter();
   const [ memberCount, setMemberCount ] = useState(0);
   const [ onlineCount, setOnlineCount ] = useState(0);
+  const onlinePresenceChannel = useOnlinePresenceRef();
 
   const [isChannelHovered, setIsChannelHovered] = useState(false);
   const [isServerHovered, setIsServerHovered] = useState(false);
@@ -36,7 +37,23 @@ export default function Server({
         setChannels(data);
       }
 
+      // Total Members
       setMemberCount(await getServerMemberCount(supabase, server.server_id));
+
+      // Now we need to get the online count
+      const { data: onlineData, error } = await getUsersInServer(supabase, server.server_id);
+
+      let onlineUsers = 0;
+      if (!error) {
+        for (const profile of onlineData) {
+          // @ts-expect-error PostgrestResponseSuccess<Profile> incorrectly assumes that the data is an array of arrays
+          if (onlinePresenceChannel!.presenceState()[profile.id] !== undefined) {
+            onlineUsers++;
+          }
+        }
+        setOnlineCount(onlineUsers);
+      }
+
     };
     handleAsync();
   }, [server, supabase]);
@@ -45,16 +62,6 @@ export default function Server({
     e.stopPropagation();
     setChatName(name);
     setChannelId(channelId);
-  }
-  //TODO: REMOVE THESE
-  function renderHardcodedOnline(serverId: any) {
-    if (serverId == 30) {
-      return '3';
-    }
-    else if (serverId == 31) {
-      return '3';
-    }
-    return '1';
   }
 
   if (expand) {
@@ -93,7 +100,7 @@ export default function Server({
               >
                 <div className="flex items-center">
                   <span className="p-1 bg-green-300 rounded-full mr-1"></span>
-                  <span>{renderHardcodedOnline(server.servers.id)} Online</span>
+                  <span>{onlineCount} Online</span>
                 </div>
                 <div
                   className={`flex items-center ml-2 ${styles.membersSpacing}`}
@@ -187,7 +194,7 @@ export default function Server({
             >
               <div className="flex items-center">
                 <span className="p-1 bg-green-300 rounded-full mr-1 "></span>
-                <span>{renderHardcodedOnline(server.servers.id)} Online</span>
+                <span>{onlineCount} Online</span>
               </div>
               <div
                 className={`flex items-center ml-2 ${styles.membersSpacing}`}

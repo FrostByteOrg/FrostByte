@@ -253,3 +253,10 @@ export async function getServerMemberCount(
 }
 
 type GetServerMemberCountResponse = Awaited<ReturnType<typeof getServerMemberCount>>;
+
+export async function getUsersInServer(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  return await supabase.rpc('get_users_in_server', { s_id: server_id });
+}
