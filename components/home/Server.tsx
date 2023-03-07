@@ -7,6 +7,7 @@ import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import Marquee from 'react-fast-marquee';
+import { getServerMemberCount } from '@/services/server.service';
 
 export default function Server({
   server,
@@ -19,6 +20,8 @@ export default function Server({
   const supabase = useSupabaseClient();
   const setChannelId = useChannelIdSetter();
   const setChatName = useChatNameSetter();
+  const [ memberCount, setMemberCount ] = useState(0);
+  const [ onlineCount, setOnlineCount ] = useState(0);
 
   const [isChannelHovered, setIsChannelHovered] = useState(false);
   const [isServerHovered, setIsServerHovered] = useState(false);
@@ -32,6 +35,8 @@ export default function Server({
         const { data } = await getChannelsInServer(supabase, server.server_id);
         setChannels(data);
       }
+
+      setMemberCount(await getServerMemberCount(supabase, server.server_id));
     };
     handleAsync();
   }, [server, supabase]);
@@ -104,7 +109,7 @@ export default function Server({
                 >
                   <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
                   <span>
-                    {renderHardcodedMembers(server.servers.id)} Members
+                    {memberCount} Member{memberCount !== 1 ? 's' : ''}
                   </span>
                 </div>
               </div>
@@ -197,7 +202,7 @@ export default function Server({
                 className={`flex items-center ml-2 ${styles.membersSpacing}`}
               >
                 <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
-                <span>{renderHardcodedMembers(server.servers.id)} Members</span>
+                <span>{memberCount} Member{memberCount !== 1 ? 's' : ''}</span>
               </div>
             </div>
           </div>
