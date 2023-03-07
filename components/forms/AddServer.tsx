@@ -17,13 +17,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 export default function AddServer({
   serverImage,
   setServerImage,
-  showModal,
   register,
   errors,
+  serverError,
 }: {
   serverImage: File | null;
   setServerImage: Dispatch<SetStateAction<File | null>>;
-  showModal: boolean;
   register: UseFormRegister<{
     name: string;
   }>;
@@ -32,6 +31,7 @@ export default function AddServer({
       name: string;
     }>
   >;
+  serverError: string;
 }) {
   const imageRef = useRef<HTMLInputElement | null>(null);
 
@@ -46,6 +46,13 @@ export default function AddServer({
 
   return (
     <form className="flex flex-col w-12 my-4 mx-6">
+      {serverError ? (
+        <span className="my-2 text-red-700 text-sm font-bold">
+          {serverError}
+        </span>
+      ) : (
+        ''
+      )}
       <div
         className={`${
           serverImage

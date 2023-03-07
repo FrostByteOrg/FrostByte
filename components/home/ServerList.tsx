@@ -73,8 +73,6 @@ export default function ServerList() {
 
   //TODO: add isServer check
 
-  //TODO: onClick, display add server modal, create server input will be name and image
-
   return (
     <div className=" p-4 min-h-0">
       <AddServerModal

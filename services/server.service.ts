@@ -5,7 +5,7 @@ import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 export async function createServer(
   supabase: SupabaseClient<Database>,
   name: string,
-  description: string | null
+  description?: string | null
 ) {
   // Validate server name is present
   if (!name) {
@@ -162,9 +162,15 @@ type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
 export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
 export type GetServerRolesResponseError = GetServerRolesResponse['error'];
 
-export async function getRolesForUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
-  return await supabase
-    .rpc('get_roles_for_user_in_server', { p_id: user_id, s_id: server_id });
+export async function getRolesForUser(
+  supabase: SupabaseClient<Database>,
+  user_id: string,
+  server_id: number
+) {
+  return await supabase.rpc('get_roles_for_user_in_server', {
+    p_id: user_id,
+    s_id: server_id,
+  });
 }
 
 type GetRolesForUserResponse = Awaited<ReturnType<typeof getRolesForUser>>;
@@ -231,6 +237,30 @@ export async function getCurrentUserServerPermissions(
   });
 }
 
-type GetCurrentUserServerPermissionsResponse = Awaited<ReturnType<typeof getCurrentUserServerPermissions>>;
-export type GetCurrentUserServerPermissionsResponseSuccess = GetCurrentUserServerPermissionsResponse['data'];
-export type GetCurrentUserServerPermissionsResponseError = GetCurrentUserServerPermissionsResponse['error'];
+type GetCurrentUserServerPermissionsResponse = Awaited<
+  ReturnType<typeof getCurrentUserServerPermissions>
+>;
+export type GetCurrentUserServerPermissionsResponseSuccess =
+  GetCurrentUserServerPermissionsResponse['data'];
+export type GetCurrentUserServerPermissionsResponseError =
+  GetCurrentUserServerPermissionsResponse['error'];
+
+export async function addServerIcon(
+  supabase: SupabaseClient<Database>,
+  filePath: string,
+  image: any,
+  server_id: number
+) {
+  const { data, error } = await supabase.storage
+    .from('servericons')
+    .upload(filePath, image, { upsert: true });
+
+  const publicURL = supabase.storage.from('servericons').getPublicUrl(filePath);
+
+  return await supabase
+    .from('servers')
+    .update({ image_url: publicURL.data.publicUrl })
+    .eq('id', server_id)
+    .select()
+    .single();
+}

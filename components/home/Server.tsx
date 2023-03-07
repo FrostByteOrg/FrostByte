@@ -66,7 +66,7 @@ export default function Server({
       <div className="relative ">
         <div className="border-b-2 hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
-            <div className="bg-grey-900 p-2 rounded-xl">
+            <div className="bg-grey-900 p-[6px] rounded-xl">
               <ServersIcon server={server.servers} hovered={false} />
             </div>
             <div className="ml-3">
@@ -164,7 +164,7 @@ export default function Server({
         }   py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center`}
       >
         <div className="flex items-center">
-          <div className={`${styles.serverIcon}  p-2 rounded-xl`}>
+          <div className={`${styles.serverIcon}  p-[6px] rounded-xl`}>
             <ServersIcon hovered={false} server={server.servers} />
           </div>
           <div className="ml-3">

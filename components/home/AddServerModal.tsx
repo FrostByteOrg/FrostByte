@@ -4,7 +4,13 @@ import { CreateServerInput, createServerSchema } from '@/types/client/server';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { createServer } from '@/services/server.service';
+import {
+  createServer,
+  addServerIcon,
+  getServer,
+} from '@/services/server.service';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { PostgrestError } from '@supabase/supabase-js';
 
 export default function AddServerModal({
   showModal,
@@ -15,35 +21,65 @@ export default function AddServerModal({
 }) {
   const addServerRef = useRef<HTMLDialogElement>(null);
   const [serverImage, setServerImage] = useState<File | null>(null);
+  const [serverError, setServerError] = useState<string>('');
+
+  const supabase = useSupabaseClient();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<CreateServerInput>({
     resolver: zodResolver(createServerSchema),
     mode: 'onSubmit',
   });
 
   const onSubmit = async (formData: CreateServerInput) => {
-    // const { data, error } = await supabase.auth.signInWithPassword({
-    //   email: formData.email,
-    //   password: formData.password,
-    // });
-    // if (error) {
-    //   setServerError(error.message);
-    //   setTimeout(() => {
-    //     setServerError(null);
-    //   }, 7000);
-    // }
-    // if (data && !error) {
-    //   router.push('/');
-    // }
+    const { data, error } = await createServer(supabase, formData.name);
 
-    addServerRef.current?.close();
-    reset();
-    setShowModal(false);
+    if (error) {
+      if ((error as PostgrestError).message) {
+        setServerError((error as PostgrestError).message);
+      } else {
+        setServerError(error as string);
+      }
+
+      setTimeout(() => {
+        setServerError('');
+      }, 7000);
+      return;
+    }
+
+    const fileExt = serverImage?.name.split('.').pop();
+    const fileName = `${data?.id}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    if (serverImage) {
+      const { data: updatedServer, error: serverImgError } =
+        await addServerIcon(supabase, filePath, serverImage, data!.id);
+
+      if (serverImgError) {
+        if ((serverImgError as PostgrestError).message) {
+          setServerError((serverImgError as PostgrestError).message);
+        } else {
+          setServerError(error as string);
+        }
+
+        setTimeout(() => {
+          setServerError('');
+        }, 7000);
+        return;
+      }
+
+      addServerRef.current?.close();
+      reset();
+      setShowModal(false);
+    } else {
+      addServerRef.current?.close();
+      reset();
+      setShowModal(false);
+    }
   };
 
   return (
@@ -78,9 +114,9 @@ export default function AddServerModal({
       <AddServer
         serverImage={serverImage}
         setServerImage={setServerImage}
-        showModal={showModal}
         register={register}
         errors={errors}
+        serverError={serverError}
       />
     </Modal>
   );
