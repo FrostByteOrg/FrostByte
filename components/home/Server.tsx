@@ -56,7 +56,7 @@ export default function Server({
 
     };
     handleAsync();
-  }, [server, supabase]);
+  }, [server, supabase, onlinePresenceChannel]);
 
   function joinChannel(e: SyntheticEvent, channelId: number, name: string) {
     e.stopPropagation();
