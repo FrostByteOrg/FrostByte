@@ -79,5 +79,5 @@ export function useChatNameSetter() {
 
 export function useOnlinePresenceRef() {
   const { onlinePresenceRef } = useContext(ChatCtx);
-  return onlinePresenceRef;
+  return onlinePresenceRef!;
 }

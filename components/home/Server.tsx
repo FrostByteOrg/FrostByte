@@ -47,7 +47,7 @@ export default function Server({
       if (!error) {
         for (const profile of onlineData) {
           // @ts-expect-error PostgrestResponseSuccess<Profile> incorrectly assumes that the data is an array of arrays
-          if (onlinePresenceChannel!.presenceState()[profile.id] !== undefined) {
+          if (onlinePresenceChannel.presenceState()[profile.id] !== undefined) {
             onlineUsers++;
           }
         }
