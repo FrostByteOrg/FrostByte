@@ -30,6 +30,7 @@ export default function ServerList() {
   const [servers, setServers] = useState<ServersForUser[]>([]);
 
   //TODO: realtime for delete server_users and update, delete servers
+  //TODO: CASCADE DELETE SERVER ICONS FROM BUCKETS WHEN SERVER GETS DELETED
 
   useRealtime<ServerUser>('public:server_users', [
     {
@@ -41,6 +42,24 @@ export default function ServerList() {
           (payload.new as ServerUser).id
         );
 
+        if (error) {
+          console.error(error);
+          return;
+        }
+
+        setServers(servers.concat(data));
+      },
+    },
+    {
+      type: 'postgres_changes',
+      filter: { event: 'UPDATE', schema: 'public', table: 'servers' },
+      callback: async (payload) => {
+        const { data, error } = await getServerForUser(
+          supabase,
+          (payload.new as ServerUser).id
+        );
+        //TODO: NOT WORKING
+        console.log('hellloo');
         if (error) {
           console.error(error);
           return;
