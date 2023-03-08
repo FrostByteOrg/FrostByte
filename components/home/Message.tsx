@@ -64,12 +64,12 @@ export default function Message({
       <div className="px-2 pt-1 pb-1 flex flex-col">
         {!collapse_user && (
           <div className="flex-grow flex flex-row">
-            <Tooltip id="miniprofile" className='z-20 !w-12' clickable>
-              <MiniProfile user={message.profiles} nickname={message.server_users.nickname} />
+            <Tooltip id={message.profiles.id} className='z-20 !w-12' clickable noArrow>
+              <MiniProfile userId={message.profiles.id} messageId={message.id} />
             </Tooltip>
-            <UserIcon user={message.profiles} data-tooltip-id='miniprofile'/>
+            <UserIcon user={message.profiles} />
             <div className="flex-grow flex items-center">
-              <div className="text-xl font-semibold tracking-wider mr-2" data-tooltip-id='miniprofile'>
+              <div className="text-xl font-semibold tracking-wider mr-2" data-tooltip-id={message.profiles.id}>
                 {message.server_users.nickname || message.profiles.username}
               </div>
               <div className="text-xs tracking-wider text-grey-300 mt-1">

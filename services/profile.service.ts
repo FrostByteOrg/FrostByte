@@ -62,3 +62,16 @@ export async function addUserToServer(
 type AddUserToServerResponse = Awaited<ReturnType<typeof addUserToServer>>;
 export type AddUserToServerResponseSuccess = AddUserToServerResponse['data'];
 export type AddUserToServerResponseError = AddUserToServerResponse['error'];
+
+export async function getUserProfileAndServerUserProps(supabase: SupabaseClient<Database>, userId: string, serverId: number) {
+  return await supabase
+    .from('profiles')
+    .select('*, server_users(*)')
+    .eq('id', userId)
+    .eq('server_users.server_id', serverId)
+    .single();
+}
+
+type GetUserProfileAndServerUserPropsResponse = Awaited<ReturnType<typeof getUserProfileAndServerUserProps>>;
+export type GetUserProfileAndServerUserPropsResponseSuccess = GetUserProfileAndServerUserPropsResponse['data'];
+export type GetUserProfileAndServerUserPropsResponseError = GetUserProfileAndServerUserPropsResponse['error'];

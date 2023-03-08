@@ -260,3 +260,18 @@ export async function getUsersInServer(
 ) {
   return await supabase.rpc('get_users_in_server', { s_id: server_id });
 }
+
+type GetUsersInServerResponse = Awaited<ReturnType<typeof getUsersInServer>>;
+export type GetUsersInServerResponseSuccess = GetUsersInServerResponse['data'];
+export type GetUsersInServerResponseError = GetUsersInServerResponse['error'];
+
+export async function getServerIdFromMessageId(
+  supabase: SupabaseClient<Database>,
+  message_id: number
+) {
+  return await supabase
+    .rpc('get_server_id_of_message', { m_id: message_id }).single();
+}
+
+type GetServerIdFromMessageIdResponse = Awaited<ReturnType<typeof getServerIdFromMessageId>>;
+export type GetServerIdFromMessageIdResponseSuccess = GetServerIdFromMessageIdResponse['data'];
