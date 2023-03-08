@@ -234,3 +234,29 @@ export async function getCurrentUserServerPermissions(
 type GetCurrentUserServerPermissionsResponse = Awaited<ReturnType<typeof getCurrentUserServerPermissions>>;
 export type GetCurrentUserServerPermissionsResponseSuccess = GetCurrentUserServerPermissionsResponse['data'];
 export type GetCurrentUserServerPermissionsResponseError = GetCurrentUserServerPermissionsResponse['error'];
+
+export async function getServerMemberCount(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  const { data: server_users, error } = await supabase
+    .from('server_users')
+    .select('*')
+    .eq('server_id', server_id);
+
+  if (error) {
+    console.error(error);
+    return 0;
+  }
+
+  return server_users.length;
+}
+
+type GetServerMemberCountResponse = Awaited<ReturnType<typeof getServerMemberCount>>;
+
+export async function getUsersInServer(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  return await supabase.rpc('get_users_in_server', { s_id: server_id });
+}
