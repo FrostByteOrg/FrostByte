@@ -11,11 +11,8 @@ export type ServerUser = Database['public']['Tables']['server_users']['Row'];
 
 // Custom type modifications for client side
 export type UnsavedMessage = Omit<Message, 'id' | 'created_at' | 'sent_time' | 'is_edited' | 'is_pinned' | 'edited_time' | 'author_id'>;
-
-export type ChatMessageWithUser = MessagesWithUsersResponseSuccess | IStringIndexable;
-
+export type ChatMessageWithUser = MessagesWithUsersResponseSuccess & {server_users: { nickname: string }} | IStringIndexable;
 export type ServersForUser =  GetServersForUserResponseSuccess | IStringIndexable;
-
 export type ServerForUser = GetServerForUserResponseSuccess | IStringIndexable;
 
 export interface IStringIndexable {

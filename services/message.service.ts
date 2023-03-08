@@ -27,7 +27,7 @@ export async function getMessagesInChannelWithUser(
 
   return await supabase
     .from('messages')
-    .select('*, profiles(\*)')
+    .select('*, profiles(\*), server_users(nickname)')
     .eq('channel_id', channelId)
     .order('sent_time', { ascending: false })
     .range(from, to);
@@ -44,7 +44,7 @@ export type MessagesWithUsersResponseError = MessagesWithUsersResponse['error']
 export async function getMessageWithUser(supabase: SupabaseClient<Database>, messageId: number) {
   return await supabase
     .from('messages')
-    .select('*, profiles(\*)')
+    .select('*, profiles(\*), server_users(nickname)')
     .eq('id', messageId)
     .single();
 }

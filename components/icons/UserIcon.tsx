@@ -1,8 +1,7 @@
 import { User } from '@/types/dbtypes';
-import Image from 'next/image';
 import { PresenceIndicator } from '../home/PresenceIndicator';
 
-export default function UserIcon({ user }: { user: User }) {
+export default function UserIcon({ user, className }: { user: User, className?: string }) {
 
   return (
     <div>
@@ -11,17 +10,17 @@ export default function UserIcon({ user }: { user: User }) {
           <img
             src={user.avatar_url!}
             alt={`${user.username}'s avatar`}
-            className='flex-none w-7 h-7 mr-2 rounded-full'
+            className={`flex-none w-7 h-7 mr-2 rounded-full ${className}`}
           />
         ) : (
-          <div className="flex-none bg-grey-900 rounded-full mr-3 h-7">
+          <div className={`flex-none bg-grey-900 rounded-full mr-3 h-7 ${className}`}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
               viewBox='0 0 24 24'
               strokeWidth={1.5}
               stroke='currentColor'
-              className='w-7 h-7 p-2 '
+              className={`w-7 p-2 ${className}`}
             >
               <path
                 strokeLinecap='round'

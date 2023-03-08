@@ -4,11 +4,11 @@ import { Tooltip } from 'react-tooltip';
 import { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import TrashIcon from '@/components/icons/TrashIcon';
 import EditIcon from '@/components/icons/EditIcon';
-import { editMessage, deleteMessage } from '@/services/message.service';
+import { editMessage } from '@/services/message.service';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageContent from './MessageContent';
-import styles from '@/styles/Chat.module.css';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
+import { MiniProfile } from '../forms/MiniProfile';
 
 // NOTE: Any here because of the way Supabase has incorrectly typed the message object as an array when it is in fact, not.
 export default function Message({
@@ -33,9 +33,7 @@ export default function Message({
   const user = useUser();
 
   const [showOptions, setShowOptions] = useState<'show' | 'hide'>('hide');
-  const [messageOptions, setMessageOptions] = useState<
-    null | 'delete' | 'edit'
-  >(null);
+  const [messageOptions, setMessageOptions] = useState<null | 'delete' | 'edit'>(null);
 
   const chatMessage = useRef<HTMLInputElement>(null);
 
@@ -66,10 +64,13 @@ export default function Message({
       <div className="px-2 pt-1 pb-1 flex flex-col">
         {!collapse_user && (
           <div className="flex-grow flex flex-row">
-            <UserIcon user={message.profiles} />
+            <Tooltip id="miniprofile" className='z-20 !w-12' clickable>
+              <MiniProfile user={message.profiles} nickname={message.server_users.nickname} />
+            </Tooltip>
+            <UserIcon user={message.profiles} data-tooltip-id='miniprofile'/>
             <div className="flex-grow flex items-center">
-              <div className="text-xl font-semibold tracking-wider mr-2">
-                {message.profiles.username}
+              <div className="text-xl font-semibold tracking-wider mr-2" data-tooltip-id='miniprofile'>
+                {message.server_users.nickname || message.profiles.username}
               </div>
               <div className="text-xs tracking-wider text-grey-300 mt-1">
                 {displayTime}{' '}
