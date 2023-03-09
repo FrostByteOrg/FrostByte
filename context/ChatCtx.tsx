@@ -14,6 +14,7 @@ type ChatCtxValue = {
   chatName: string;
   setChatName: Dispatch<SetStateAction<string>>;
   onlinePresenceRef: RealtimeChannel | null;
+  serverlistRealtimeRef: RealtimeChannel | null;
 };
 
 export const ChatCtxDefaultVal: ChatCtxValue = {
@@ -21,7 +22,8 @@ export const ChatCtxDefaultVal: ChatCtxValue = {
   setChannelId: (state) => {},
   chatName: '',
   setChatName: (state) => {},
-  onlinePresenceRef: null
+  onlinePresenceRef: null,
+  serverlistRealtimeRef: null,
 };
 
 export const ChatCtx = createContext(ChatCtxDefaultVal);
@@ -40,6 +42,10 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
+  const serverlistRealtimeRef = supabase
+    .channel('serverlist-listener')
+    .subscribe();
+
   onlinePresenceRef.subscribe(async (status) => {
     if (status === 'SUBSCRIBED') {
       const status = await onlinePresenceRef.track({
@@ -50,7 +56,7 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ChatCtx.Provider
-      value={{ channelId, setChannelId, chatName, setChatName, onlinePresenceRef }}
+      value={{ channelId, setChannelId, chatName, setChatName, onlinePresenceRef, serverlistRealtimeRef }}
     >
       {children}
     </ChatCtx.Provider>
@@ -80,4 +86,9 @@ export function useChatNameSetter() {
 export function useOnlinePresenceRef() {
   const { onlinePresenceRef } = useContext(ChatCtx);
   return onlinePresenceRef!;
+}
+
+export function useServerlistRealtimeRef() {
+  const { serverlistRealtimeRef } = useContext(ChatCtx);
+  return serverlistRealtimeRef!;
 }
