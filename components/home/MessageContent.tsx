@@ -5,11 +5,7 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
-export default function MessageContent({
-  messageContent,
-}: {
-  messageContent: any;
-}) {
+export default function MessageContent({ messageContent }: { messageContent: string }) {
   return (
     <ReactMarkdown
       components={{

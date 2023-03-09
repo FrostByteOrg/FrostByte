@@ -8,15 +8,10 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import Marquee from 'react-fast-marquee';
 import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
+import { Channel, Server as ServerType } from '@/types/dbtypes';
 
-export default function Server({
-  server,
-  expanded,
-}: {
-  server: any;
-  expanded: number;
-}) {
-  const expand = expanded == server.server_id;
+export default function Server({ server, expanded }: { server: ServerType, expanded: number }) {
+  const expand = expanded == server.id;
   const supabase = useSupabaseClient();
   const setChannelId = useChannelIdSetter();
   const setChatName = useChatNameSetter();
@@ -28,25 +23,24 @@ export default function Server({
   const [isServerHovered, setIsServerHovered] = useState(false);
 
   //TODO: getChannelsInServer
-  const [channels, setChannels] = useState<any>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
 
   useEffect(() => {
     const handleAsync = async () => {
       if (server) {
-        const { data } = await getChannelsInServer(supabase, server.server_id);
-        setChannels(data);
+        const { data } = await getChannelsInServer(supabase, server.id);
+        setChannels(data!);
       }
 
       // Total Members
-      setMemberCount(await getServerMemberCount(supabase, server.server_id));
+      setMemberCount(await getServerMemberCount(supabase, server.id));
 
       // Now we need to get the online count
-      const { data: onlineData, error } = await getUsersInServer(supabase, server.server_id);
+      const { data: onlineData, error } = await getUsersInServer(supabase, server.id);
 
       let onlineUsers = 0;
       if (!error) {
         for (const profile of onlineData) {
-          // @ts-expect-error PostgrestResponseSuccess<Profile> incorrectly assumes that the data is an array of arrays
           if (onlinePresenceChannel.presenceState()[profile.id] !== undefined) {
             onlineUsers++;
           }
@@ -70,11 +64,11 @@ export default function Server({
         <div className="border-b-2   hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div className="bg-grey-900 p-2 rounded-xl">
-              <ServersIcon server={server.servers} hovered={false} />
+              <ServersIcon server={server} hovered={false} />
             </div>
             <div className="ml-3">
               <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
-                {server.servers.name.length > 10 ? (
+                {server.name.length > 10 ? (
                   <span
                     onMouseEnter={() => setIsServerHovered(true)}
                     onMouseLeave={() => setIsServerHovered(false)}
@@ -85,14 +79,14 @@ export default function Server({
                         direction={'left'}
                         gradient={false}
                       >
-                        {`${server.servers.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
+                        {`${server.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
                       </Marquee>
                     ) : (
-                      `${server.servers.name.slice(0, 11)}...`
+                      `${server.name.slice(0, 11)}...`
                     )}
                   </span>
                 ) : (
-                  server.servers.name
+                  server.name
                 )}
               </div>
               <div
@@ -118,7 +112,7 @@ export default function Server({
           </div>
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
-          {channels.map((channel: any, idx: number) => (
+          {channels.map((channel: Channel, idx: number) => (
             <div
               className={`channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px] ${
                 idx === 0 ? 'mt-2' : ''
@@ -164,11 +158,11 @@ export default function Server({
       <div className="border-b-2 border-grey-700 py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center">
         <div className="flex items-center">
           <div className={`${styles.serverIcon}  p-2 rounded-xl`}>
-            <ServersIcon hovered={false} server={server.servers} />
+            <ServersIcon hovered={false} server={server} />
           </div>
           <div className="ml-3">
             <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
-              {server.servers.name.length > 10 ? (
+              {server.name.length > 10 ? (
                 <span
                   onMouseEnter={() => setIsServerHovered(true)}
                   onMouseLeave={() => setIsServerHovered(false)}
@@ -179,14 +173,14 @@ export default function Server({
                       direction={'left'}
                       gradient={false}
                     >
-                      {`${server.servers.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
+                      {`${server.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
                     </Marquee>
                   ) : (
-                    `${server.servers.name.slice(0, 11)}...`
+                    `${server.name.slice(0, 11)}...`
                   )}
                 </span>
               ) : (
-                server.servers.name
+                server.name
               )}
             </div>
             <div

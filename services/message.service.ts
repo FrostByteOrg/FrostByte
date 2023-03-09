@@ -1,7 +1,7 @@
 import { sanitizeMessage } from '@/lib/messageHelpers';
 import { getPagination } from '@/lib/paginationHelper';
 import { Database } from '@/types/database.supabase';
-import { UnsavedMessage } from '@/types/dbtypes';
+import { ChatMessageWithUser, UnsavedMessage } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export async function getMessagesInChannel(supabase: SupabaseClient<Database>, channelId: number, page: number = 0, pageSize: number = 50) {
@@ -30,14 +30,15 @@ export async function getMessagesInChannelWithUser(
     .select('*, profiles(\*), server_users(nickname)')
     .eq('channel_id', channelId)
     .order('sent_time', { ascending: false })
-    .range(from, to);
+    .range(from, to)
+    .returns<ChatMessageWithUser>();
 }
 
 type Profiles = Database['public']['Tables']['profiles']['Row'];
 type MessagesWithUsersResponse = Awaited<ReturnType<typeof getMessagesInChannelWithUser>>;
-export type MessagesWithUsersResponseSuccess = MessagesWithUsersResponse['data'] & {
-  profiles: Profiles
-}
+// export type MessagesWithUsersResponseSuccess = MessagesWithUsersResponse['data'] & {
+//   profiles: Profiles
+// }
 export type MessagesWithUsersResponseError = MessagesWithUsersResponse['error']
 
 

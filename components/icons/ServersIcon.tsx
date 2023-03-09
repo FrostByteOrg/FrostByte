@@ -6,10 +6,10 @@ export default function ServersIcon({
   width = 6,
   height = 6,
 }: {
-  server: Server | null;
+  server: Server;
   hovered: boolean;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 }) {
   if (server && server.image_url) {
     return (

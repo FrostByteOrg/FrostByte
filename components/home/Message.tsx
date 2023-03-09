@@ -9,14 +9,14 @@ import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageContent from './MessageContent';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
 import { MiniProfile } from '../forms/MiniProfile';
+import { ChatMessageWithUser } from '@/types/dbtypes';
 
-// NOTE: Any here because of the way Supabase has incorrectly typed the message object as an array when it is in fact, not.
 export default function Message({
   message,
   collapse_user,
   hasDeletePerms = false,
 }: {
-  message: any;
+  message: ChatMessageWithUser;
   collapse_user: boolean;
   hasDeletePerms?: boolean;
 }) {
