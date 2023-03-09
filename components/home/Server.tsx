@@ -20,9 +20,11 @@ import { Channel, Server as ServerType } from '@/types/dbtypes';
 export default function Server({
   server,
   expanded,
+  isLast = false,
 }: {
   server: ServerType;
   expanded: number;
+  isLast?: boolean;
 }) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
