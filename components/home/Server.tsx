@@ -10,13 +10,7 @@ import Marquee from 'react-fast-marquee';
 import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 
-export default function Server({
-  server,
-  expanded,
-}: {
-  server: ServerType;
-  expanded: number;
-}) {
+export default function Server({ server, expanded }: { server: ServerType, expanded: number }) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
   const setChannelId = useChannelIdSetter();
