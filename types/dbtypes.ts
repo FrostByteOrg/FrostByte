@@ -1,4 +1,3 @@
-import { GetServerForUserResponseSuccess } from '@/services/server.service';
 import { Database } from './database.supabase';
 
 export type Message = Database['public']['Tables']['messages']['Row'];
