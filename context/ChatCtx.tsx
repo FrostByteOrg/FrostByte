@@ -1,3 +1,5 @@
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import {
   createContext,
   SetStateAction,
@@ -11,6 +13,7 @@ type ChatCtxValue = {
   setChannelId: Dispatch<SetStateAction<number>>;
   chatName: string;
   setChatName: Dispatch<SetStateAction<string>>;
+  onlinePresenceRef: RealtimeChannel | null;
 };
 
 export const ChatCtxDefaultVal: ChatCtxValue = {
@@ -18,18 +21,36 @@ export const ChatCtxDefaultVal: ChatCtxValue = {
   setChannelId: (state) => {},
   chatName: '',
   setChatName: (state) => {},
+  onlinePresenceRef: null
 };
 
 export const ChatCtx = createContext(ChatCtxDefaultVal);
 
 export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
+  const supabase = useSupabaseClient();
+  const user = useUser();
   const [channelId, setChannelId] = useState(ChatCtxDefaultVal.channelId);
-
   const [chatName, setChatName] = useState(ChatCtxDefaultVal.chatName);
+
+  const onlinePresenceRef = supabase.channel('online-users', {
+    config: {
+      presence: {
+        key: user?.id,
+      },
+    },
+  });
+
+  onlinePresenceRef.subscribe(async (status) => {
+    if (status === 'SUBSCRIBED') {
+      const status = await onlinePresenceRef.track({
+        online_at: new Date().toISOString()
+      });
+    }
+  });
 
   return (
     <ChatCtx.Provider
-      value={{ channelId, setChannelId, chatName, setChatName }}
+      value={{ channelId, setChannelId, chatName, setChatName, onlinePresenceRef }}
     >
       {children}
     </ChatCtx.Provider>
@@ -54,4 +75,9 @@ export function useChatNameValue() {
 export function useChatNameSetter() {
   const { setChatName } = useContext(ChatCtx);
   return setChatName;
+}
+
+export function useOnlinePresenceRef() {
+  const { onlinePresenceRef } = useContext(ChatCtx);
+  return onlinePresenceRef!;
 }

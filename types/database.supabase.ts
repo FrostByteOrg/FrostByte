@@ -37,6 +37,7 @@ export interface Database {
           channel_id: number
           created_at: string | null
           description: string | null
+          is_media: boolean
           name: string
           server_id: number
         }
@@ -44,6 +45,7 @@ export interface Database {
           channel_id?: number
           created_at?: string | null
           description?: string | null
+          is_media?: boolean
           name: string
           server_id: number
         }
@@ -51,6 +53,7 @@ export interface Database {
           channel_id?: number
           created_at?: string | null
           description?: string | null
+          is_media?: boolean
           name?: string
           server_id?: number
         }
@@ -208,7 +211,7 @@ export interface Database {
           expires_at?: string | null
           id?: number
           server_id: number
-          url_id: string
+          url_id?: string
           uses_remaining?: number | null
         }
         Update: {
@@ -315,6 +318,29 @@ export interface Database {
           name?: string
         }
       }
+      user_plugins: {
+        Row: {
+          id: number
+          is_enabled: boolean
+          profile_id: string
+          settings_data: Json
+          source_url: string
+        }
+        Insert: {
+          id?: number
+          is_enabled?: boolean
+          profile_id: string
+          settings_data?: Json
+          source_url: string
+        }
+        Update: {
+          id?: number
+          is_enabled?: boolean
+          profile_id?: string
+          settings_data?: Json
+          source_url?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -384,6 +410,30 @@ export interface Database {
           m_id: number
         }
         Returns: number
+      }
+      get_servers_for_user: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string | null
+          description: string | null
+          id: number
+          image_url: string | null
+          name: string
+        }[]
+      }
+      get_users_in_server: {
+        Args: {
+          s_id: number
+        }
+        Returns: {
+          avatar_url: string | null
+          email: string
+          full_name: string | null
+          id: string
+          updated_at: string | null
+          username: string
+          website: string | null
+        }[]
       }
       is_user_in_server: {
         Args: {
