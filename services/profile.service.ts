@@ -1,4 +1,5 @@
 import { Database } from '@/types/database.supabase';
+import { ServerUserProfile } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export async function getProfiles(supabase: SupabaseClient<Database>) {
@@ -69,6 +70,7 @@ export async function getUserProfileAndServerUserProps(supabase: SupabaseClient<
     .select('*, server_users(*)')
     .eq('id', userId)
     .eq('server_users.server_id', serverId)
+    .returns<ServerUserProfile>()
     .single();
 }
 

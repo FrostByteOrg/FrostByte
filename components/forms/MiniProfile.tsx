@@ -1,5 +1,6 @@
 import { getUserProfileAndServerUserProps, GetUserProfileAndServerUserPropsResponseSuccess } from '@/services/profile.service';
 import { getServerIdFromMessageId } from '@/services/server.service';
+import { ServerUserProfile } from '@/types/dbtypes';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { memo, useEffect, useState } from 'react';
 import UserIcon from '../icons/UserIcon';
@@ -8,7 +9,7 @@ import { SearchBar } from './Styles';
 // TODO: Once DMs are implemented, this component will need to be updated to handle DMs as well.
 function WrappedComponent({ userId, messageId }: { userId: string, messageId: number }) {
   const supabase = useSupabaseClient();
-  const [user, setUser] = useState<GetUserProfileAndServerUserPropsResponseSuccess>(null);
+  const [user, setUser] = useState<ServerUserProfile | null>(null);
 
   useEffect(() => {
     async function handleAsync() {
