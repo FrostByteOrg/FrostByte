@@ -87,26 +87,22 @@ export default function ServerList() {
           placeholder="Search"
         ></input>
       </div>
-      {/* TODO: fix idx -> server.id */}
       {servers &&
-        servers.map((server, idx) => {
-          // console.table(server);
-          {
-            /* @ts-expect-error This is valid */
+        servers.map((server) => {
+          if (server) {
+            return (
+              <span
+                key={server.server_id}
+                onClick={() => {
+                  return expanded == server.server_id
+                    ? setExpanded(0)
+                    : setExpanded(server.server_id);
+                }}
+              >
+                <Server server={server.servers} expanded={expanded} />
+              </span>
+            );
           }
-          return (
-            <span
-              key={server.server_id}
-              onClick={() => {
-                //  @ts-expect-error This is valid
-                return expanded == server.server_id
-                  ? setExpanded(0)
-                  : setExpanded(server.server_id);
-              }}
-            >
-              <Server server={server} expanded={expanded} />
-            </span>
-          );
         })}
     </div>
   );

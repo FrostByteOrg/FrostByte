@@ -1,4 +1,5 @@
 import { Database } from '@/types/database.supabase';
+import { Channel } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export async function getChannelById(supabase: SupabaseClient<Database>, channelId: number) {
@@ -17,7 +18,8 @@ export async function getChannelsInServer(supabase: SupabaseClient<Database>, se
   return await supabase
     .from('channels')
     .select('*')
-    .eq('server_id', serverId);
+    .eq('server_id', serverId)
+    .returns<Channel>();
 }
 
 type ChannelsInServerResponse = Awaited<ReturnType<typeof getChannelsInServer>>;

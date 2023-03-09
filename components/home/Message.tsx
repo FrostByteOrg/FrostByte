@@ -7,16 +7,15 @@ import EditIcon from '@/components/icons/EditIcon';
 import { editMessage, deleteMessage } from '@/services/message.service';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageContent from './MessageContent';
-import styles from '@/styles/Chat.module.css';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
+import { ChatMessageWithUser } from '@/types/dbtypes';
 
-// NOTE: Any here because of the way Supabase has incorrectly typed the message object as an array when it is in fact, not.
 export default function Message({
   message,
   collapse_user,
   hasDeletePerms = false,
 }: {
-  message: any;
+  message: ChatMessageWithUser;
   collapse_user: boolean;
   hasDeletePerms?: boolean;
 }) {

@@ -1,4 +1,5 @@
 import { Database } from '@/types/database.supabase';
+import { User } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -88,8 +89,7 @@ export async function getServersForUser(
 }
 
 type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
-export type GetServersForUserResponseSuccess =
-  GetServersForUserResponse['data'];
+export type GetServersForUserResponseSuccess = GetServersForUserResponse['data'];
 export type GetServersForUserResponseError = GetServersForUserResponse['error'];
 
 export async function getServerForUser(
@@ -258,5 +258,7 @@ export async function getUsersInServer(
   supabase: SupabaseClient<Database>,
   server_id: number
 ) {
-  return await supabase.rpc('get_users_in_server', { s_id: server_id });
+  return await supabase
+    .rpc('get_users_in_server', { s_id: server_id })
+    .returns<User>();
 }

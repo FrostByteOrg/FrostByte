@@ -85,16 +85,14 @@ export default function Chat() {
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
-              const previousMessage: ChatMessageWithUser | null =
-                index > 0 ? array[index - 1] : null;
+              const previousMessage: ChatMessageWithUser | null = index > 0 ? array[index - 1] : null;
 
-              // @ts-expect-error This is actually valid, TypeScript just considers this an array internally for some reason
               return (
                 <Message
                   key={value.id}
                   message={value}
                   collapse_user={
-                    previousMessage &&
+                    !!previousMessage &&
                     previousMessage.profiles.id === value.profiles.id
                   }
                   hasDeletePerms={
@@ -146,7 +144,7 @@ function useRealTimeChat(
         }
 
         if (data.channel_id === channelId) {
-          setMessages(messages.concat(data));
+          setMessages(messages.concat(data as ChatMessageWithUser));
         }
       },
     },
@@ -168,9 +166,8 @@ function useRealTimeChat(
           setMessages(
             messages.map((message) => {
               // Once we hit a message that matches the id, we can return the updated message instead of the old one
-              // @ts-expect-error message here is a ChatMessageWithUser, note NOT an array
               if (message.id === data.id) {
-                return data;
+                return data as ChatMessageWithUser;
               }
 
               // Otherwise fallback to the old one
@@ -189,11 +186,11 @@ function useRealTimeChat(
           return;
         }
 
-        // @ts-expect-error payload.old is a MessageType, not a ChatMessageWithUser
+        // @ts-expect-error payload.old is a ChannelPermissions, not a ChatMessageWithUser
         if (!payload.old.channel_id || payload.old.channel_id === channelId) {
           setMessages(
             messages.filter((message) => {
-              // @ts-expect-error message here is a ChatMessageWithUser, note NOT an array
+              // @ts-expect-error payload.old is a ChannelPermissions, not a ChatMessageWithUser
               return message.id !== payload.old.id;
             })
           );
@@ -205,10 +202,7 @@ function useRealTimeChat(
       filter: { event: '*', schema: 'public', table: 'channel_permissions' },
       callback: async (payload) => {
         // @ts-expect-error payload.old is a ChannelPermissions, not a ChatMessageWithUser
-        if (
-          (payload.old && !payload.old.channel_id) ||
-          payload.old.channel_id === channelId
-        ) {
+        if ((payload.old && !payload.old.channel_id) || payload.old.channel_id === channelId) {
           updateUserPerms(supabase, channelId, setUserPerms);
         }
       },
