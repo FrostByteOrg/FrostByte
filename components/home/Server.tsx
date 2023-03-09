@@ -8,13 +8,13 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import Marquee from 'react-fast-marquee';
 import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
-import { Channel, Server } from '@/types/dbtypes';
+import { Channel, Server as ServerType } from '@/types/dbtypes';
 
 export default function Server({
   server,
   expanded,
 }: {
-  server: Server;
+  server: ServerType;
   expanded: number;
 }) {
   const expand = expanded == server.id;
