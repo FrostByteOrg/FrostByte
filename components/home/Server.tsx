@@ -16,7 +16,6 @@ export default function Server({ server, expanded }: { server: ServerType, expan
   const supabase = useSupabaseClient();
   const setChannelId = useChannelIdSetter();
   const setChatName = useChatNameSetter();
-  const [isServerHovered, setIsServerHovered] = useState(false);
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
