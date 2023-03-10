@@ -16,7 +16,7 @@ export default function ServersIcon({
       <img
         src={server.image_url}
         alt={`${server.name}`}
-        className="w-6 h-6  rounded-full"
+        className={`w-${width} h-${height}  rounded-full`}
       />
     );
   }

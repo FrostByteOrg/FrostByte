@@ -1,9 +1,34 @@
+import { AnchorHTMLAttributes } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+import { InviteEmbed } from './InviteEmbed';
+
+function CustomAnchorTag(props: AnchorHTMLAttributes<HTMLAnchorElement>) {
+  // If the link is to our domain, let's see if it's a server invite
+  if (props.href?.startsWith(window.location.href) && props.href?.includes('/invite/')) {
+    const inviteCode = props.href.split('/invite/')[1];
+    return (
+      <InviteEmbed invite_code={inviteCode} />
+    );
+  }
+
+  return (
+    <a
+      data-tooltip-id="link-id"
+      data-tooltip-place="top"
+      data-tooltip-content={`${props.href}`}
+      target="_blank"
+      className="text-frost-300"
+      {...props}
+    >
+      {props.children}
+    </a>
+  );
+}
 
 export default function MessageContent({ messageContent }: { messageContent: string }) {
   return (
@@ -15,19 +40,7 @@ export default function MessageContent({ messageContent }: { messageContent: str
         img: (props) => (
           <img className="max-w-4xl" alt="Attachment" {...props}></img>
         ),
-        a: (props) => (
-          <>
-            <a
-              data-tooltip-id="link-id"
-              data-tooltip-place="top"
-              data-tooltip-content={`${props.href}`}
-              className="text-frost-300"
-              {...props}
-            >
-              {props.children}
-            </a>
-          </>
-        ),
+        a: CustomAnchorTag,
         h1: (props) => <h1 className="text-2xl font-bold" {...props}></h1>,
         h2: (props) => <h2 className="text-xl font-bold" {...props}></h2>,
         h3: (props) => <h3 className="text-lg font-bold" {...props}></h3>,
