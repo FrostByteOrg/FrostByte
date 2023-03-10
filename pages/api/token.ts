@@ -44,7 +44,8 @@ export default async function tokenHandle(
     console.log(token);
 
     res.status(200).json({ identity, accessToken: token });
-  } catch (e) {
+  } 
+  catch (e) {
     res.statusMessage = (e as Error).message;
     res.status(500).end();
   }
