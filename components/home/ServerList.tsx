@@ -3,7 +3,7 @@ import { SearchBar } from '@/components/forms/Styles';
 import { useEffect, useRef, useState } from 'react';
 import Server from '@/components/home/Server';
 import type { ServerUser } from '@/types/dbtypes';
-import { useServerlistRealtimeRef } from '@/context/ChatCtx';
+import { useServers } from '@/context/ChatCtx';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { ServersForUser } from '@/types/dbtypes';
 import { getServerForUser, getServersForUser } from '@/services/server.service';
@@ -18,49 +18,10 @@ export default function ServerList() {
 
   const [addServerhover, setAddServerHover] = useState(false);
   const [showAddServer, setShowAddServer] = useState(false);
-  const supabase = useSupabaseClient();
   const [expanded, setExpanded] = useState(0);
-  const user = useUser();
-  const realtimeRef = useServerlistRealtimeRef();
-  const [servers, setServers] = useState<ServersForUser[]>([]);
 
-  useEffect(() => {
-    if (user) {
-      const handleAsync = async () => {
-        const { data, error } = await getServersForUser(supabase, user.id);
+  const servers = useServers();
 
-        if (error) {
-          console.error(error);
-        }
-
-        if (data) {
-          setServers(data as ServersForUser[]);
-        }
-      };
-
-      handleAsync();
-    }
-  }, [user, supabase]);
-
-  useEffect(() => {
-    realtimeRef.on<ServerUser>(
-      'postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'server_users' },
-      async (payload) => {
-        const { data, error } = await getServerForUser(
-          supabase,
-          (payload.new as ServerUser).id
-        );
-
-        if (error) {
-          console.error(error);
-          return;
-        }
-
-        setServers(servers.concat(data as ServersForUser));
-      }
-    );
-  }, [supabase, servers, realtimeRef]);
   //TODO: add isServer check
 
   return (

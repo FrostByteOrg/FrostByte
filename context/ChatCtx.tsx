@@ -1,3 +1,5 @@
+import { getServersForUser } from '@/services/server.service';
+import { ServersForUser } from '@/types/dbtypes';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import {
@@ -6,6 +8,7 @@ import {
   useContext,
   useState,
   Dispatch,
+  useEffect,
 } from 'react';
 
 type ChatCtxValue = {
@@ -14,7 +17,8 @@ type ChatCtxValue = {
   chatName: string;
   setChatName: Dispatch<SetStateAction<string>>;
   onlinePresenceRef: RealtimeChannel | null;
-  serverlistRealtimeRef: RealtimeChannel | null;
+  servers: ServersForUser[] | [];
+  setServers: Dispatch<SetStateAction<ServersForUser[]>>;
 };
 
 export const ChatCtxDefaultVal: ChatCtxValue = {
@@ -23,7 +27,8 @@ export const ChatCtxDefaultVal: ChatCtxValue = {
   chatName: '',
   setChatName: (state) => {},
   onlinePresenceRef: null,
-  serverlistRealtimeRef: null,
+  servers: [],
+  setServers: (state) => {},
 };
 
 export const ChatCtx = createContext(ChatCtxDefaultVal);
@@ -33,6 +38,9 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
   const user = useUser();
   const [channelId, setChannelId] = useState(ChatCtxDefaultVal.channelId);
   const [chatName, setChatName] = useState(ChatCtxDefaultVal.chatName);
+  const [servers, setServers] = useState<ServersForUser[]>(
+    ChatCtxDefaultVal.servers
+  );
 
   const onlinePresenceRef = supabase.channel('online-users', {
     config: {
@@ -42,21 +50,43 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  const serverlistRealtimeRef = supabase
-    .channel('serverlist-listener')
-    .subscribe();
-
   onlinePresenceRef.subscribe(async (status) => {
     if (status === 'SUBSCRIBED') {
       const status = await onlinePresenceRef.track({
-        online_at: new Date().toISOString()
+        online_at: new Date().toISOString(),
       });
     }
   });
 
+  useEffect(() => {
+    if (user) {
+      const handleAsync = async () => {
+        const { data, error } = await getServersForUser(supabase, user.id);
+
+        if (error) {
+          console.error(error);
+        }
+
+        if (data) {
+          setServers(data as ServersForUser[]);
+        }
+      };
+
+      handleAsync();
+    }
+  }, [user, supabase]);
+
   return (
     <ChatCtx.Provider
-      value={{ channelId, setChannelId, chatName, setChatName, onlinePresenceRef, serverlistRealtimeRef }}
+      value={{
+        channelId,
+        setChannelId,
+        chatName,
+        setChatName,
+        onlinePresenceRef,
+        servers,
+        setServers,
+      }}
     >
       {children}
     </ChatCtx.Provider>
@@ -88,7 +118,12 @@ export function useOnlinePresenceRef() {
   return onlinePresenceRef!;
 }
 
-export function useServerlistRealtimeRef() {
-  const { serverlistRealtimeRef } = useContext(ChatCtx);
-  return serverlistRealtimeRef!;
+export function useServers() {
+  const { servers } = useContext(ChatCtx);
+  return servers;
+}
+
+export function useServersSetter() {
+  const { setServers } = useContext(ChatCtx);
+  return setServers;
 }

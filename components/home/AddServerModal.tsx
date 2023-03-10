@@ -73,10 +73,12 @@ export default function AddServerModal({
       }
 
       addServerRef.current?.close();
+      setServerImage(null);
       reset();
       setShowModal(false);
     } else {
       addServerRef.current?.close();
+      setServerImage(null);
       reset();
       setShowModal(false);
     }
@@ -87,6 +89,11 @@ export default function AddServerModal({
       modalRef={addServerRef}
       showModal={showModal}
       title={'Create a new Server'}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          handleSubmit(onSubmit)();
+        }
+      }}
       buttons={
         <>
           <div

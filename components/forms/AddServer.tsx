@@ -45,7 +45,10 @@ export default function AddServer({
   const previewImage = serverImage ? URL.createObjectURL(serverImage) : '';
 
   return (
-    <form className="flex flex-col w-12 my-4 mx-6">
+    <form
+      className="flex flex-col w-12 my-4 mx-6"
+      onSubmit={(e) => e.preventDefault()}
+    >
       {serverError ? (
         <span className="my-2 text-red-700 text-sm font-bold">
           {serverError}
