@@ -6,6 +6,9 @@ import { Source_Sans_3 } from '@next/font/google';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Database } from '@/types/database.supabase';
+import { useState } from 'react';
+import 'highlight.js/styles/nord.css';
+import 'react-tooltip/dist/react-tooltip.css';
 
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
@@ -16,11 +19,11 @@ function App({
   initialSession: Session;
 }>) {
 
-  const supabase = createBrowserSupabaseClient<Database>();
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient<Database>());
 
   return (
     <SessionContextProvider
-      supabaseClient={supabase}
+      supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
       <ToastContainer  />

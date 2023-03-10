@@ -79,8 +79,8 @@
 
 * {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+  /* padding: 0;
+  margin: 0; */
 }
 
 html,
@@ -108,4 +108,30 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+::-webkit-scrollbar {
+  width: 1em;
+}
+
+::-webkit-scrollbar-track {
+  background: #354045;
+  border-radius: 100vw;
+  margin-block: 0.5em;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#6a838d, #556a74);
+  border: 0.25em solid #354045;
+  border-radius: 100vw;
+}
+
+/* Overrides for libraries */
+.hljs {
+  border-radius: 0.5rem;
+  max-width: 95%;
+}
+
+.task-list-item {
+  list-style: none;
 }
