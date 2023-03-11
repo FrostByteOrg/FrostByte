@@ -1,12 +1,8 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
-import type { ServerUser } from '@/types/dbtypes';
-import { useServers } from '@/context/ChatCtx';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import { ServersForUser } from '@/types/dbtypes';
-// import { getServerForUser, getServersForUser } from '@/services/server.service';
 import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
 import { useServerStore } from '@/lib/store';

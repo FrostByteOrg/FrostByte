@@ -17,8 +17,6 @@ type ChatCtxValue = {
   chatName: string;
   setChatName: Dispatch<SetStateAction<string>>;
   onlinePresenceRef: RealtimeChannel | null;
-  servers: ServersForUser[] | [];
-  setServers: Dispatch<SetStateAction<ServersForUser[]>>;
 };
 
 export const ChatCtxDefaultVal: ChatCtxValue = {
@@ -27,8 +25,6 @@ export const ChatCtxDefaultVal: ChatCtxValue = {
   chatName: '',
   setChatName: (state) => {},
   onlinePresenceRef: null,
-  servers: [],
-  setServers: (state) => {},
 };
 
 export const ChatCtx = createContext(ChatCtxDefaultVal);
@@ -38,9 +34,6 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
   const user = useUser();
   const [channelId, setChannelId] = useState(ChatCtxDefaultVal.channelId);
   const [chatName, setChatName] = useState(ChatCtxDefaultVal.chatName);
-  const [servers, setServers] = useState<ServersForUser[]>(
-    ChatCtxDefaultVal.servers
-  );
 
   const onlinePresenceRef = supabase.channel('online-users', {
     config: {
@@ -58,24 +51,6 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  useEffect(() => {
-    if (user) {
-      const handleAsync = async () => {
-        const { data, error } = await getServersForUser(supabase, user.id);
-
-        if (error) {
-          console.error(error);
-        }
-
-        if (data) {
-          setServers(data as ServersForUser[]);
-        }
-      };
-
-      handleAsync();
-    }
-  }, [user, supabase]);
-
   return (
     <ChatCtx.Provider
       value={{
@@ -84,8 +59,6 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
         chatName,
         setChatName,
         onlinePresenceRef,
-        servers,
-        setServers,
       }}
     >
       {children}
@@ -116,14 +89,4 @@ export function useChatNameSetter() {
 export function useOnlinePresenceRef() {
   const { onlinePresenceRef } = useContext(ChatCtx);
   return onlinePresenceRef!;
-}
-
-export function useServers() {
-  const { servers } = useContext(ChatCtx);
-  return servers;
-}
-
-export function useServersSetter() {
-  const { setServers } = useContext(ChatCtx);
-  return setServers;
 }

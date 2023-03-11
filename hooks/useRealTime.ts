@@ -16,6 +16,8 @@ export function useRealTime(
 
   const user = useUser();
 
+  //TODO: CASCADE DELETE ICONS, add store for messages, remove context server stuff
+
   useEffect(() => {
     //this condition makes sure that the functions in the store are initialized, realistically it can be any function, I just chose addServer
     if (addServer) {
