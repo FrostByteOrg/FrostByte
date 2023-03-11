@@ -24,18 +24,15 @@ export default function ServerList() {
   const user = useUser();
   const supabase = useSupabaseClient();
 
-  // const servers = useServers();
   const { servers, getServers } = useServerStore();
 
-  if (user) {
-    getServers(supabase, user.id);
-  }
-
-  // useEffect(() => {
-  //   if (user) {
-  //     getServers(supabase, user.id);
-  //   }
-  // }, [user, getServers, supabase]);
+  useEffect(() => {
+    if (getServers) {
+      if (user) {
+        getServers(supabase, user.id);
+      }
+    }
+  }, [getServers, supabase, user]);
 
   //TODO: add isServer check
 

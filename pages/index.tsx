@@ -9,12 +9,14 @@ import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { ChatCtxProvider } from '@/context/ChatCtx';
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
-import { RealTimeProvider } from '@/context/RealTimeCtx';
+import { useRealTime } from '@/hooks/useRealTime';
+import { useServerStore } from '@/lib/store';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
+  useRealTime(useServerStore, supabase);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -41,48 +43,46 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ChatCtxProvider>
-        <RealTimeProvider>
-          <SideBarOptionProvider>
-            {isMobile ? (
-              <div>
-                <div className={'bg-grey-800'}>
-                  <RenderMobileView />
+        <SideBarOptionProvider>
+          {isMobile ? (
+            <div>
+              <div className={'bg-grey-800'}>
+                <RenderMobileView />
 
-                  <div>
-                    {!user ? (
-                      ''
-                    ) : (
-                      <button
-                        className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </button>
-                    )}
-                  </div>
+                <div>
+                  {!user ? (
+                    ''
+                  ) : (
+                    <button
+                      className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  )}
                 </div>
               </div>
-            ) : (
-              <div>
-                <div className={'bg-grey-800 '}>
-                  <RenderDesktopView />
-                  <div>
-                    {!user ? (
-                      ''
-                    ) : (
-                      <button
-                        className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </button>
-                    )}
-                  </div>
+            </div>
+          ) : (
+            <div>
+              <div className={'bg-grey-800 '}>
+                <RenderDesktopView />
+                <div>
+                  {!user ? (
+                    ''
+                  ) : (
+                    <button
+                      className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  )}
                 </div>
               </div>
-            )}
-          </SideBarOptionProvider>
-        </RealTimeProvider>
+            </div>
+          )}
+        </SideBarOptionProvider>
       </ChatCtxProvider>
     </>
   );

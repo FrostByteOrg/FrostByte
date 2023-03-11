@@ -4,7 +4,7 @@ import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { getServerForUser, getServersForUser } from '@/services/server.service';
 
-interface ServerState {
+export interface ServerState {
   servers: ServersForUser[];
   addServer: (supabase: SupabaseClient<Database>, serverUserId: number) => void;
   removeServer: (serverId: number) => void;
