@@ -9,6 +9,7 @@ import { Database } from '@/types/database.supabase';
 import { useState } from 'react';
 import 'highlight.js/styles/nord.css';
 import 'react-tooltip/dist/react-tooltip.css';
+import { ChatCtxProvider } from '@/context/ChatCtx';
 
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
@@ -28,9 +29,11 @@ function App({
       initialSession={pageProps.initialSession}
     >
       <ToastContainer />
-      <main className={sourceSans3.className}>
-        <Component {...pageProps} />
-      </main>
+      <ChatCtxProvider>
+        <main className={sourceSans3.className}>
+          <Component {...pageProps} />
+        </main>
+      </ChatCtxProvider>
     </SessionContextProvider>
   );
 }

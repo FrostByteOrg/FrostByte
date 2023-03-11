@@ -25,40 +25,27 @@ import Message from '@/components/home/Message';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 import { ChannelPermissions } from '@/types/permissions';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
+import { useMessagesStore, useUserPermsStore } from '@/lib/store';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
   const chatName = useChatNameValue();
-  const [messages, setMessages] = useState<ChatMessageWithUser[]>([]);
+
   const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
-  const [userPerms, setUserPerms] = useState<any>(null);
   const realtimeRef = useOnlinePresenceRef();
+  const { messages, getMessages } = useMessagesStore();
+  const { userPerms, getUserPerms } = useUserPermsStore();
 
   // Update when the channel changes
   useEffect(() => {
-    if (channelId) {
-      //TODO: remove this and replace with getMessages <- from store
-      const handleAsync = async () => {
-        const { data, error } = await getMessagesInChannelWithUser(
-          supabase,
-          channelId
-        );
+    if (channelId && getMessages && getUserPerms) {
+      getMessages(supabase, channelId);
 
-        if (error) {
-          console.error(error);
-        }
-
-        if (data) {
-          data.reverse();
-          setMessages(data);
-        }
-      };
-      handleAsync();
-      updateUserPerms(supabase, channelId, setUserPerms);
+      getUserPerms(supabase, channelId);
     }
-  }, [channelId, supabase]);
+  }, [channelId, getMessages, getUserPerms, supabase]);
 
   useEffect(() => {
     if (newestMessageRef && messages) {
@@ -68,107 +55,6 @@ export default function Chat() {
       });
     }
   }, [newestMessageRef, messages]);
-
-  useEffect(() => {
-    const channel = supabase
-      .channel('chat-listener')
-      .on<MessageType>(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `channel_id=eq.${channelId}`,
-        },
-        async (payload) => {
-          console.log('New message event');
-          const { data, error } = await getMessageWithUser(
-            supabase,
-            (payload.new as MessageType).id
-          );
-
-          if (error) {
-            console.error(error);
-            return;
-          }
-
-          setMessages(messages.concat(data as ChatMessageWithUser));
-        }
-      )
-      .on<MessageType>(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'messages',
-          filter: `channel_id=eq.${channelId}`,
-        },
-        async (payload) => {
-          console.log('Message update event');
-          const { data, error } = await getMessageWithUser(
-            supabase,
-            (payload.new as MessageType).id
-          );
-
-          if (error) {
-            console.error(error);
-            return;
-          }
-
-          setMessages(
-            messages.map((message) => {
-              // Once we hit a message that matches the id, we can return the updated message instead of the old one
-              if (message.id === data.id) {
-                return data as ChatMessageWithUser;
-              }
-
-              // Otherwise fallback to the old one
-              return message;
-            })
-          );
-        }
-      )
-      .on<MessageType>(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'messages',
-          filter: `channel_id=eq.${channelId}`,
-        },
-        async (payload) => {
-          console.log('Message delete event');
-          if (!payload.old) {
-            console.error('No old message found');
-            return;
-          }
-
-          setMessages(
-            messages.filter((message) => {
-              return message.id !== payload.old.id;
-            })
-          );
-        }
-      )
-      .on<ChannelPermissionsTableType>(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'channel_permissions',
-          filter: `channel_id=eq.${channelId}`,
-        },
-        async (payload) => {
-          console.log('Channel permissions update event');
-          updateUserPerms(supabase, channelId, setUserPerms);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [channelId, messages, supabase]);
 
   return (
     <>
@@ -222,21 +108,4 @@ export default function Chat() {
       />
     </>
   );
-}
-
-async function updateUserPerms(
-  supabase: SupabaseClient,
-  channelId: number,
-  setUserPerms: Dispatch<any>
-) {
-  const { data, error } = await getCurrentUserChannelPermissions(
-    supabase,
-    channelId
-  );
-
-  if (error) {
-    console.log(error);
-  }
-
-  setUserPerms(data);
 }

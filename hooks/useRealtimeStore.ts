@@ -1,18 +1,29 @@
 import { getServerForUser } from '@/services/server.service';
 import { ServerUser, ServersForUser, Server } from '@/types/dbtypes';
-import { ServerState, useServerStore } from '@/lib/store';
+import { MessagesState, ServerState, UserPermsState } from '@/lib/store';
 import { UseBoundStore } from 'zustand/react';
 import { StoreApi } from 'zustand/vanilla';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
 import { useUser } from '@supabase/auth-helpers-react';
 import { SupabaseClient } from '@supabase/supabase-js';
+import type {
+  ChatMessageWithUser,
+  Message as MessageType,
+} from '@/types/dbtypes';
+import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
 
 export function useRealtimeStore(
+  supabase: SupabaseClient<Database>,
   useServerStore: UseBoundStore<StoreApi<ServerState>>,
-  supabase: SupabaseClient<Database>
+  useMessagesStore: UseBoundStore<StoreApi<MessagesState>>,
+  useUserPermsStore: UseBoundStore<StoreApi<UserPermsState>>,
+  channelId: number
 ) {
   const { addServer, getServers } = useServerStore();
+  const { messages, addMessage, removeMessage, updateMessage, getMessages } =
+    useMessagesStore();
+  const { userPerms, getUserPerms } = useUserPermsStore();
 
   const user = useUser();
 
@@ -66,4 +77,76 @@ export function useRealtimeStore(
     // add return right here!
     // return serverUsersListener.unsubscribe();
   }, [addServer, supabase, user, getServers]);
+
+  useEffect(() => {
+    if (addMessage && getUserPerms) {
+      supabase
+        .channel('chat-listener')
+        .on<MessageType>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `channel_id=eq.${channelId}`,
+          },
+          async (payload) => {
+            console.log('New message event');
+            addMessage(supabase, (payload.new as MessageType).id);
+          }
+        )
+        .on<MessageType>(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'messages',
+            filter: `channel_id=eq.${channelId}`,
+          },
+          async (payload) => {
+            console.log('Message update event');
+            updateMessage(supabase, (payload.new as MessageType).id);
+          }
+        )
+        .on<MessageType>(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'messages',
+            filter: `channel_id=eq.${channelId}`,
+          },
+          async (payload) => {
+            console.log('Message delete event');
+            if (!payload.old) {
+              console.error('No old message found');
+              return;
+            }
+            removeMessage(payload.old.id as number);
+          }
+        )
+        .on<ChannelPermissionsTableType>(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'channel_permissions',
+            filter: `channel_id=eq.${channelId}`,
+          },
+          async (payload) => {
+            console.log('Channel permissions update event');
+            getUserPerms(supabase, channelId);
+          }
+        )
+        .subscribe();
+    }
+  }, [
+    addMessage,
+    channelId,
+    getUserPerms,
+    messages,
+    removeMessage,
+    supabase,
+    updateMessage,
+  ]);
 }
