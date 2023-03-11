@@ -13,6 +13,7 @@ import {
   getMessagesInChannelWithUser,
   getMessageWithUser,
 } from '@/services/message.service';
+import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -131,4 +132,25 @@ export const useMessagesStore = create<MessagesState>()((set) => ({
   },
 }));
 
-//userPerms: any
+export interface UserPermsState {
+  userPerms: any;
+  getUserPerms: (supabase: SupabaseClient<Database>, channelId: number) => void;
+}
+
+export const useUserPermsStore = create<UserPermsState>()((set) => ({
+  userPerms: [],
+  getUserPerms: async (supabase, channelId) => {
+    const { data, error } = await getCurrentUserChannelPermissions(
+      supabase,
+      channelId
+    );
+
+    if (error) {
+      console.log(error);
+    }
+
+    if (data) {
+      set({ userPerms: data }, true);
+    }
+  },
+}));
