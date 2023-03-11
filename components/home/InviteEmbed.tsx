@@ -87,7 +87,6 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
               py-2
               px-4
               rounded-md
-              max-h-6
               flex-shrink-0
               align-middle
               disabled:bg-gray-600
