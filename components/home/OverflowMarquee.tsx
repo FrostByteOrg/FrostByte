@@ -10,14 +10,14 @@ export function OverflowMarquee({ content, maxLength }: { content: string, maxLe
         <span
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className='inline-block overflow-hidden whitespace-nowrap max-w-full -mb-2'
+          className='inline-block max-w-full -mb-2 overflow-hidden whitespace-nowrap'
         >
           {isHovered ? (
             <Marquee
               play={isHovered}
               direction={'left'}
               gradient={false}
-              className='w-full'
+              className='w-full overflow-hidden'
             >
               {`${content}\u00A0\u00A0\u00A0\u00A0`}
             </Marquee>
