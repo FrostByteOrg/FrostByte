@@ -61,8 +61,7 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
             <ServersIcon
               server={invite.servers}
               hovered={false}
-              width={7}
-              height={7}
+              className='w-7 h-7'
             />
           </div>
           <div className="flex flex-col justify-center items-start px-2">

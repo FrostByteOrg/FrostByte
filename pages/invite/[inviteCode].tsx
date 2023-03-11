@@ -51,12 +51,11 @@ export default function InviteSplash() {
               <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden">
                 {!!invite && (
                   <div className="basis-1/4 flex flex-col items-center relative mt-8 space-y-6 !w-1/2">
-                    <div className="flex-shrink-0 bg-zinc-700 p-2 rounded-lg border-solid border-2 border-slate-800/50 ">
+                    <div className="flex-shrink-0 bg-zinc-700 p-4 rounded-lg border-solid border-2 border-slate-800/50">
                       <ServersIcon
                         server={invite.servers}
                         hovered={false}
-                        width={9}
-                        height={9}
+                        className='w-8 h-8'
                       />
                     </div>
                     <div className="h-full flex flex-col justify-center items-center text-8xl font-extrabold">

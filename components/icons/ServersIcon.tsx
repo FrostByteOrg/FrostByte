@@ -5,18 +5,20 @@ export default function ServersIcon({
   hovered = false,
   width = 6,
   height = 6,
+  className = 'w-6 h-6',
 }: {
   server: Server;
   hovered: boolean;
   width?: number;
   height?: number;
+  className?: string;
 }) {
   if (server && server.image_url) {
     return (
       <img
         src={server.image_url}
         alt={`${server.name}`}
-        className={`w-${width} h-${height}  rounded-full`}
+        className={className}
       />
     );
   }
@@ -27,7 +29,7 @@ export default function ServersIcon({
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke={hovered ? '#8aa0a8' : 'currentColor'}
-      className={`w-${width} h-${height}`}
+      className={className}
     >
       <path
         strokeLinecap="round"
