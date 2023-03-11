@@ -18,7 +18,7 @@ export function RealTimeProvider({ children }: { children: React.ReactNode }) {
   const servers = useServers();
   const user = useUser();
 
-  //TODO: DELETE SERVER USERS realtime, add description, CASCADE DELETE images, change the context name, port messages state to the same context
+  //TODO:   CASCADE DELETE images, change the context name, port messages state to the same context
   supabase
     .channel('server_users')
     .on<ServerUser>(
@@ -44,14 +44,16 @@ export function RealTimeProvider({ children }: { children: React.ReactNode }) {
       { event: 'DELETE', schema: 'public', table: 'server_users' },
       async (payload) => {
         console.log('remove user from server');
-        const { data, error } = await getServersForUser(supabase, user!.id);
+        if (user) {
+          const { data, error } = await getServersForUser(supabase, user.id);
 
-        if (error) {
-          console.error(error);
-        }
+          if (error) {
+            console.error(error);
+          }
 
-        if (data) {
-          setServers(data as ServersForUser[]);
+          if (data) {
+            setServers(data as ServersForUser[]);
+          }
         }
       }
     )

@@ -22,6 +22,7 @@ export default function AddServerModal({
   const addServerRef = useRef<HTMLDialogElement>(null);
   const [serverImage, setServerImage] = useState<File | null>(null);
   const [serverError, setServerError] = useState<string>('');
+  const [showDesc, setSetShowDesc] = useState<boolean>(false);
 
   const supabase = useSupabaseClient();
 
@@ -36,7 +37,11 @@ export default function AddServerModal({
   });
 
   const onSubmit = async (formData: CreateServerInput) => {
-    const { data, error } = await createServer(supabase, formData.name);
+    const { data, error } = await createServer(
+      supabase,
+      formData.name,
+      formData.description
+    );
 
     if (error) {
       if ((error as PostgrestError).message) {
@@ -74,11 +79,13 @@ export default function AddServerModal({
 
       addServerRef.current?.close();
       setServerImage(null);
+      setSetShowDesc(false);
       reset();
       setShowModal(false);
     } else {
       addServerRef.current?.close();
       setServerImage(null);
+      setSetShowDesc(false);
       reset();
       setShowModal(false);
     }
@@ -101,6 +108,7 @@ export default function AddServerModal({
             onClick={() => {
               setServerImage(null);
               setShowModal(false);
+              setSetShowDesc(false);
               reset();
               addServerRef.current?.close();
             }}
@@ -124,6 +132,8 @@ export default function AddServerModal({
         register={register}
         errors={errors}
         serverError={serverError}
+        showDesc={showDesc}
+        setShowDesc={setSetShowDesc}
       />
     </Modal>
   );

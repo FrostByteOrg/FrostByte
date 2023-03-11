@@ -6,9 +6,10 @@ import type { ServerUser } from '@/types/dbtypes';
 import { useServers } from '@/context/ChatCtx';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { ServersForUser } from '@/types/dbtypes';
-import { getServerForUser, getServersForUser } from '@/services/server.service';
+// import { getServerForUser, getServersForUser } from '@/services/server.service';
 import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
+import { useServerStore } from '@/lib/store';
 
 export default function ServerList() {
   //TODO: fetch server_users via profile id, select server_id -> fetch channels via this server_id && fetch servers with server_id
@@ -20,7 +21,21 @@ export default function ServerList() {
   const [showAddServer, setShowAddServer] = useState(false);
   const [expanded, setExpanded] = useState(0);
 
-  const servers = useServers();
+  const user = useUser();
+  const supabase = useSupabaseClient();
+
+  // const servers = useServers();
+  const { servers, getServers } = useServerStore();
+
+  if (user) {
+    getServers(supabase, user.id);
+  }
+
+  // useEffect(() => {
+  //   if (user) {
+  //     getServers(supabase, user.id);
+  //   }
+  // }, [user, getServers, supabase]);
 
   //TODO: add isServer check
 

@@ -20,18 +20,24 @@ export default function AddServer({
   register,
   errors,
   serverError,
+  showDesc,
+  setShowDesc,
 }: {
   serverImage: File | null;
   setServerImage: Dispatch<SetStateAction<File | null>>;
   register: UseFormRegister<{
     name: string;
+    description?: string | undefined;
   }>;
   errors: Partial<
     FieldErrorsImpl<{
       name: string;
+      description: string;
     }>
   >;
   serverError: string;
+  showDesc: boolean;
+  setShowDesc: Dispatch<SetStateAction<boolean>>;
 }) {
   const imageRef = useRef<HTMLInputElement | null>(null);
 
@@ -93,13 +99,36 @@ export default function AddServer({
         <input
           className={`${Input('bg-grey-700')} mt-2 ${styles.input}`}
           type="text"
-          placeholder="Enter Server name"
+          placeholder="Enter server name"
           {...register('name')}
         />
         {errors.name && (
           <p className="text-red-700 mt-2 text-sm font-bold">
             {errors.name.message}
           </p>
+        )}
+        {showDesc ? (
+          <div className="mt-4">
+            <div className="font-semibold tracking-wider">Description</div>
+            <input
+              className={`${Input('bg-grey-700')} mt-2 ${styles.input}`}
+              type="text"
+              placeholder="Enter a description"
+              {...register('description')}
+            />
+            {errors.description && (
+              <p className="text-red-700 mt-2 text-sm font-bold">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+        ) : (
+          <div
+            className={`${styles.description} mt-4 text-frost-600 font-bold tracking-wide hover:cursor-pointer hover:text-frost-500 underline underline-offset-2`}
+            onClick={() => setShowDesc(true)}
+          >
+            Add a description{' '}
+          </div>
         )}
       </div>
     </form>
