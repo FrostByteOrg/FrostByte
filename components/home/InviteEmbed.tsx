@@ -1,12 +1,14 @@
 import { getInviteAndServer } from '@/services/invites.service';
+import { addUserToServer } from '@/services/profile.service';
 import { ServerInvite } from '@/types/dbtypes';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import ServersIcon from '../icons/ServersIcon';
 import { OverflowMarquee } from './OverflowMarquee';
 import { ServerMemberStats } from './ServerMemberStats';
 
 export function InviteEmbed({ invite_code }: { invite_code: string }) {
+  const user = useUser();
   const supabase = useSupabaseClient();
   const [invite, setInvite] = useState<ServerInvite | null>(null);
 
@@ -77,7 +79,24 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
               flexStyle="flex flex-row space-x-4 font-semibold items-center justify-center flex-grow"
             />
           </div>
-          <button className="bg-green-700 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md max-h-6 flex-shrink-0 align-middle">
+          <button
+            className="bg-green-700
+              hover:bg-green-600
+              text-white
+              font-semibold
+              py-2
+              px-4
+              rounded-md
+              max-h-6
+              flex-shrink-0
+              align-middle
+              disabled:bg-gray-600
+            "
+            disabled
+            onClick={async () => {
+              await addUserToServer(supabase, invite.servers.id);
+            }}
+          >
             Join
           </button>
         </div>

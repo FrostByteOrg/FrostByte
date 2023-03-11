@@ -12,7 +12,12 @@ function CustomAnchorTag(props: AnchorHTMLAttributes<HTMLAnchorElement>) {
   if (props.href?.startsWith(window.location.href) && props.href?.includes('/invite/')) {
     const inviteCode = props.href.split('/invite/')[1];
     return (
-      <InviteEmbed invite_code={inviteCode} />
+      <>
+        <p className="text-frost-300">
+          {props.children}
+        </p>
+        <InviteEmbed invite_code={inviteCode} />
+      </>
     );
   }
 
