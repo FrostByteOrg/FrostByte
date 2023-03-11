@@ -8,7 +8,7 @@ import { Database } from '@/types/database.supabase';
 import { useUser } from '@supabase/auth-helpers-react';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-export function useRealTime(
+export function useRealtimeStore(
   useServerStore: UseBoundStore<StoreApi<ServerState>>,
   supabase: SupabaseClient<Database>
 ) {
@@ -16,7 +16,7 @@ export function useRealTime(
 
   const user = useUser();
 
-  //TODO: CASCADE DELETE ICONS, add store for messages, remove context server stuff
+  //TODO: CASCADE DELETE ICONS, add store for messages
 
   useEffect(() => {
     //this condition makes sure that the functions in the store are initialized, realistically it can be any function, I just chose addServer

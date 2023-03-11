@@ -1,11 +1,26 @@
-import { useChannelIdValue, useChatNameValue, useOnlinePresenceRef } from '@/context/ChatCtx';
+import {
+  useChannelIdValue,
+  useChatNameValue,
+  useOnlinePresenceRef,
+} from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect, useState, Dispatch, SetStateAction } from 'react';
 import styles from '@/styles/Chat.module.css';
-import { SupabaseClient, useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import {
+  SupabaseClient,
+  useSupabaseClient,
+  useUser,
+} from '@supabase/auth-helpers-react';
 import MessageInput from './MessageInput';
-import type { ChatMessageWithUser, Message as MessageType } from '@/types/dbtypes';
-import { createMessage, getMessagesInChannelWithUser, getMessageWithUser } from '@/services/message.service';
+import type {
+  ChatMessageWithUser,
+  Message as MessageType,
+} from '@/types/dbtypes';
+import {
+  createMessage,
+  getMessagesInChannelWithUser,
+  getMessageWithUser,
+} from '@/services/message.service';
 import Message from '@/components/home/Message';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 import { ChannelPermissions } from '@/types/permissions';
@@ -24,6 +39,7 @@ export default function Chat() {
   // Update when the channel changes
   useEffect(() => {
     if (channelId) {
+      //TODO: remove this and replace with getMessages <- from store
       const handleAsync = async () => {
         const { data, error } = await getMessagesInChannelWithUser(
           supabase,
@@ -54,10 +70,16 @@ export default function Chat() {
   }, [newestMessageRef, messages]);
 
   useEffect(() => {
-    const channel = supabase.channel('chat-listener')
+    const channel = supabase
+      .channel('chat-listener')
       .on<MessageType>(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages', filter: `channel_id=eq.${channelId}` },
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `channel_id=eq.${channelId}`,
+        },
         async (payload) => {
           console.log('New message event');
           const { data, error } = await getMessageWithUser(
@@ -75,7 +97,12 @@ export default function Chat() {
       )
       .on<MessageType>(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'messages', filter: `channel_id=eq.${channelId}` },
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `channel_id=eq.${channelId}`,
+        },
         async (payload) => {
           console.log('Message update event');
           const { data, error } = await getMessageWithUser(
@@ -103,7 +130,12 @@ export default function Chat() {
       )
       .on<MessageType>(
         'postgres_changes',
-        { event: 'DELETE', schema: 'public', table: 'messages', filter: `channel_id=eq.${channelId}` },
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'messages',
+          filter: `channel_id=eq.${channelId}`,
+        },
         async (payload) => {
           console.log('Message delete event');
           if (!payload.old) {
@@ -120,7 +152,12 @@ export default function Chat() {
       )
       .on<ChannelPermissionsTableType>(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'channel_permissions', filter: `channel_id=eq.${channelId}` },
+        {
+          event: '*',
+          schema: 'public',
+          table: 'channel_permissions',
+          filter: `channel_id=eq.${channelId}`,
+        },
         async (payload) => {
           console.log('Channel permissions update event');
           updateUserPerms(supabase, channelId, setUserPerms);
@@ -152,7 +189,8 @@ export default function Chat() {
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
-              const previousMessage: ChatMessageWithUser | null = index > 0 ? array[index - 1] : null;
+              const previousMessage: ChatMessageWithUser | null =
+                index > 0 ? array[index - 1] : null;
 
               return (
                 <Message

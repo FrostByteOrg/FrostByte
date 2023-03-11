@@ -1,8 +1,18 @@
 import { create } from 'zustand';
-import { Server, ServersForUser, ServerUser } from '@/types/dbtypes';
+import {
+  ChatMessageWithUser,
+  Server,
+  ServersForUser,
+  ServerUser,
+} from '@/types/dbtypes';
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { getServerForUser, getServersForUser } from '@/services/server.service';
+import {
+  createMessage,
+  getMessagesInChannelWithUser,
+  getMessageWithUser,
+} from '@/services/message.service';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -47,3 +57,78 @@ export const useServerStore = create<ServerState>()((set) => ({
     }
   },
 }));
+
+export interface MessagesState {
+  messages: ChatMessageWithUser[];
+  addMessage: (supabase: SupabaseClient<Database>, messageId: number) => void;
+  updateMessage: (
+    supabase: SupabaseClient<Database>,
+    messageId: number
+  ) => void;
+  removeMessage: (messageId: number) => void;
+  getMessages: (supabase: SupabaseClient<Database>, channelId: number) => void;
+}
+
+export const useMessagesStore = create<MessagesState>()((set) => ({
+  messages: [],
+  addMessage: async (supabase, messageId) => {
+    const { data, error } = await getMessageWithUser(supabase, messageId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      set((state) => ({
+        messages: [...state.messages, data as ChatMessageWithUser],
+      }));
+    }
+  },
+  updateMessage: async (supabase, messageId) => {
+    const { data, error } = await getMessageWithUser(supabase, messageId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      set((state) => ({
+        messages: state.messages.map((message) => {
+          // Once we hit a message that matches the id, we can return the updated message instead of the old one
+          if (message.id === data.id) {
+            return data as ChatMessageWithUser;
+          }
+
+          // Otherwise fallback to the old one
+          return message;
+        }),
+      }));
+    }
+  },
+  removeMessage: (messageId) => {
+    set((state) => ({
+      messages: state.messages.filter((message) => {
+        return message.id !== messageId;
+      }),
+    }));
+  },
+  getMessages: async (supabase, channelId) => {
+    const { data, error } = await getMessagesInChannelWithUser(
+      supabase,
+      channelId
+    );
+
+    if (error) {
+      console.error(error);
+    }
+
+    if (data) {
+      data.reverse();
+      set({ messages: data as ChatMessageWithUser[] }, true);
+    }
+  },
+}));
+
+//userPerms: any

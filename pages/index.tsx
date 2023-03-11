@@ -9,14 +9,15 @@ import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { ChatCtxProvider } from '@/context/ChatCtx';
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
-import { useRealTime } from '@/hooks/useRealTime';
+import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { useServerStore } from '@/lib/store';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
-  useRealTime(useServerStore, supabase);
+
+  useRealtimeStore(useServerStore, supabase);
 
   const [isMobile, setIsMobile] = useState(false);
 
