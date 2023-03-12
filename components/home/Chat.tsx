@@ -4,17 +4,18 @@ import { useRef, useEffect, useState, Dispatch, SetStateAction } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { SupabaseClient, useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageInput from './MessageInput';
-import type { ChatMessageWithUser, Message as MessageType } from '@/types/dbtypes';
+import type { MessageWithServerProfile, Message as MessageType } from '@/types/dbtypes';
 import { createMessage, getMessagesInChannelWithUser, getMessageWithUser } from '@/services/message.service';
 import Message from '@/components/home/Message';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 import { ChannelPermissions } from '@/types/permissions';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
+import { getMessageWithServerProfile } from '@/services/profile.service';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
   const chatName = useChatNameValue();
-  const [messages, setMessages] = useState<ChatMessageWithUser[]>([]);
+  const [messages, setMessages] = useState<MessageWithServerProfile[]>([]);
   const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
@@ -60,7 +61,7 @@ export default function Chat() {
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `channel_id=eq.${channelId}` },
         async (payload) => {
           console.log('New message event');
-          const { data, error } = await getMessageWithUser(
+          const { data, error } = await getMessageWithServerProfile(
             supabase,
             (payload.new as MessageType).id
           );
@@ -70,7 +71,7 @@ export default function Chat() {
             return;
           }
 
-          setMessages(messages.concat(data as ChatMessageWithUser));
+          setMessages(messages.concat(data as MessageWithServerProfile));
         }
       )
       .on<MessageType>(
@@ -78,7 +79,7 @@ export default function Chat() {
         { event: 'UPDATE', schema: 'public', table: 'messages', filter: `channel_id=eq.${channelId}` },
         async (payload) => {
           console.log('Message update event');
-          const { data, error } = await getMessageWithUser(
+          const { data, error } = await getMessageWithServerProfile(
             supabase,
             (payload.new as MessageType).id
           );
@@ -92,7 +93,7 @@ export default function Chat() {
             messages.map((message) => {
               // Once we hit a message that matches the id, we can return the updated message instead of the old one
               if (message.id === data.id) {
-                return data as ChatMessageWithUser;
+                return data as MessageWithServerProfile;
               }
 
               // Otherwise fallback to the old one
@@ -152,7 +153,7 @@ export default function Chat() {
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
-              const previousMessage: ChatMessageWithUser | null = index > 0 ? array[index - 1] : null;
+              const previousMessage: MessageWithServerProfile | null = index > 0 ? array[index - 1] : null;
 
               return (
                 <Message
@@ -160,7 +161,7 @@ export default function Chat() {
                   message={value}
                   collapse_user={
                     !!previousMessage &&
-                    previousMessage.profiles.id === value.profiles.id
+                    previousMessage.profile_id === value.profile_id
                   }
                   hasDeletePerms={
                     (userPerms & ChannelPermissions.MANAGE_MESSAGES) !== 0
