@@ -4,7 +4,6 @@ import {
   VideoConference,
 } from '@livekit/components-react';
 import { useUser } from '@supabase/auth-helpers-react';
-import { useRouter } from 'next/router';
 
 import {
   Room,
@@ -15,24 +14,21 @@ import {
   Participant,
   VideoPresets,
 } from 'livekit-client';
+import { useChannelIdValue, useChatNameValue } from '@/context/ChatCtx';
+import { supabase } from '@supabase/auth-ui-react/dist/esm/common/theming';
 
-export default function Channel() {
-  const router = useRouter();
-  const params =
-    typeof window !== 'undefined' ? new URLSearchParams(location.search) : null;
+export default function Stream() {
 
-  const userIdentity = useUser();
-  console.log(userIdentity?.email);
-  console.log(userIdentity?.id);
+  const userName = '123';
+  const userID = useUser();
+  console.log(userName);
+  console.log(userID?.id);
+  const channelId = useChatNameValue();
 
-  const { id: roomRoute } = router.query;
-
-  const roomName: string = roomRoute as string;
-
-  const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, roomName, {
+  const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, channelId.toString(), {
     userInfo: {
-      identity: userIdentity?.id,
-      name: userIdentity?.email,
+      identity: userID?.id,
+      name: userName,
     },
   });
 

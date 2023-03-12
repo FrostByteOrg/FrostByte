@@ -15,31 +15,28 @@ export default async function tokenHandle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+
+  const { roomName, identity, name } = req.query;
+
+  if (typeof identity !== 'string') {
+    throw Error('Provide one identity');
+  }
+  if (typeof roomName !== 'string') {
+    throw Error('Provide on Roomname');
+  }
+
+  if (Array.isArray(name)) {
+    throw Error('Provide a name');
+  }
+
+  const grant: VideoGrant = {
+    room: roomName,
+    roomJoin: true,
+    canPublish: true,
+    canSubscribe: true,
+  };
+
   try {
-    const { roomName, identity, name } = req.query;
-
-    console.log(roomName);
-    console.log(identity);
-    console.log(name);
-
-    if (typeof identity !== 'string') {
-      throw Error('Provide one identity');
-    }
-    if (typeof roomName !== 'string') {
-      throw Error('Provide on Roomname');
-    }
-
-    if (Array.isArray(name)) {
-      throw Error('Provide a name');
-    }
-
-    const grant: VideoGrant = {
-      room: roomName,
-      roomJoin: true,
-      canPublish: true,
-      canSubscribe: true,
-    };
-
     const token = createToken({ identity, name }, grant);
     console.log(token);
 
