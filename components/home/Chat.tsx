@@ -161,7 +161,7 @@ export default function Chat() {
                   message={value}
                   collapse_user={
                     !!previousMessage &&
-                    previousMessage.profile_id === value.profile_id
+                    previousMessage.profile.id === value.profile.id
                   }
                   hasDeletePerms={
                     (userPerms & ChannelPermissions.MANAGE_MESSAGES) !== 0

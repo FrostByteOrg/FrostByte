@@ -1,4 +1,4 @@
-import { getUserProfileAndServerUserProps, GetUserProfileAndServerUserPropsResponseSuccess, getServerProfileForUser } from '@/services/profile.service';
+import { getServerProfileForUser } from '@/services/profile.service';
 import { getServerIdFromMessageId } from '@/services/server.service';
 import { ServerUserProfile } from '@/types/dbtypes';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
@@ -32,10 +32,10 @@ function WrappedComponent({ userId, messageId }: { userId: string, messageId: nu
       { user ? (
         <>
           <UserIcon user={user} className='!w-9 !h-9'/>
-          { user.nickname && <h2 className='text-lg'>
-            {user.nickname}
+          { user.server_user.nickname && <h2 className='text-lg'>
+            {user.server_user.nickname}
           </h2> }
-          <h2 className={user.nickname ? 'text-base' : 'text-lg'}>{user.username}</h2>
+          <h2 className={user.server_user.nickname ? 'text-base' : 'text-lg'}>{user.username}</h2>
           <hr/>
           <h2 className='text-sm text-gray-400 text-left w-full'>Roles</h2>
           <div className='flex flex-col w-full items-center space-y-1'>

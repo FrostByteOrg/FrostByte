@@ -11,9 +11,9 @@ export type Role = Database['public']['Tables']['server_roles']['Row'];
 
 // Custom type modifications for client side
 export type UnsavedMessage = Omit<Message, 'id' | 'created_at' | 'sent_time' | 'is_edited' | 'is_pinned' | 'edited_time' | 'author_id'>;
-export type MessageWithServerProfile = Message & { profile_id: string, nickname: string, roles: Role[], profiles: User[] };
+export type MessageWithServerProfile = Omit<Message, 'profile_id' | 'author_id'> & { profile: User, author: ServerUser, roles: Role[], };
 export type ServersForUser =  { server_id: number } & { servers: Server };
-export type ServerUserProfile = User & { nickname: string | null, roles: Role[]; };
+export type ServerUserProfile = User & { server_user: ServerUser, roles: Role[]; };
 
 export interface IStringIndexable {
   [key: string]: any
