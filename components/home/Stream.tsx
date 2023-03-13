@@ -15,7 +15,6 @@ import {
   VideoPresets,
 } from 'livekit-client';
 import { useChannelIdValue, useChatNameValue } from '@/context/ChatCtx';
-import { supabase } from '@supabase/auth-ui-react/dist/esm/common/theming';
 
 export default function Stream() {
 
