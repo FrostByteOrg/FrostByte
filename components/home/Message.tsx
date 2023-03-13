@@ -10,6 +10,7 @@ import MessageContent from './MessageContent';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
 import { MiniProfile } from '../forms/MiniProfile';
 import { MessageWithServerProfile } from '@/types/dbtypes';
+import { MessageHeader } from './MessageHeader';
 
 export default function Message({
   message,
@@ -42,7 +43,7 @@ export default function Message({
       chatMessage.current?.focus();
     }
 
-    const highestRoleWithColor = message.roles.find((role) => role.color !== null)?.color;
+    const highestRoleWithColor = message.roles.find((role) => !!role.color)?.color;
 
     if (highestRoleWithColor) {
       setMessageColor(`#${highestRoleWithColor}`);
@@ -69,30 +70,14 @@ export default function Message({
     <>
       <div className="px-2 pt-1 pb-1 flex flex-col">
         {!collapse_user && (
-          <div className="flex-grow flex flex-row">
-            <Tooltip id={message.profile.id} className='z-20 !w-12' clickable noArrow>
-              <MiniProfile userId={message.profile.id} messageId={message.id} />
-            </Tooltip>
-            <UserIcon user={message.profile} />
-            <div className="flex-grow flex items-center">
-              <div
-                className="text-xl font-semibold tracking-wider mr-2"
-                data-tooltip-id={message.profile.id}
-                style={{
-                  // Check for the first role that has a non-null color and use that
-                  color: messageColor,
-                }}
-              >
-                {message.author.nickname || message.profile.username}
-              </div>
-              <div className="text-xs tracking-wider text-grey-300 mt-1">
-                {displayTime}{' '}
-                {message.is_edited && (
-                  <span className="text-gray-400">(edited)</span>
-                )}
-              </div>
-            </div>
-          </div>
+          <MessageHeader
+            profile={message.profile}
+            server_user={message.author}
+            message_id={message.id}
+            message_color={messageColor}
+            display_time={displayTime}
+            edited={message.is_edited}
+          />
         )}
 
         {/* TODO: figure out how to close modal on blur (cant use onBlur on the dialog cuz it takes up the entire screen meaning you can never focus off of it) */}
