@@ -114,6 +114,8 @@
 .frostCord {
   filter: drop-shadow(0 2px 3px rgba(237, 232, 232, 0.904))
     drop-shadow(0 10px 8px rgba(227, 214, 214, 0.08));
+  font-family: 'BaronNeue', sans-serif;
+  text-transform: uppercase;
 }
 
 .logo {
