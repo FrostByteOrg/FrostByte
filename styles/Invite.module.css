@@ -120,6 +120,12 @@
     drop-shadow(0 10px 8px rgba(227, 214, 214, 0.08));
   font-family: 'BaronNeue', sans-serif;
   text-transform: uppercase;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: url('https://cdn.cgmagonline.com/wp-content/uploads/2017/08/frostpunk-gamescom-2017-preview-trapped-under-ice.jpg');
+  background-size: cover;
+  /* background-position-y: 120%; */
 }
 
 .logo {

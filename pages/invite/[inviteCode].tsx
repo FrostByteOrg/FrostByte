@@ -42,12 +42,12 @@ export default function InviteSplash() {
           className={`${styles.authMD} items-center overflow-auto h-screen w-full `}
         >
           <div
-            className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full  xl:rounded-3xl`}
+            className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full xl:rounded-3xl`}
           >
             <div className="w-full hidden xl:flex xl:flex-col  h-full ">
 
             </div>
-            <div className={`flex flex-col items-center xl:rounded-3xl ${styles.rightSide} w-full overflow-hidden`}>
+            <div className={`flex flex-col items-center xl:rounded-r-3xl ${styles.rightSide} w-full overflow-hidden`}>
               <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden">
                 {!!invite && (
                   <div className="basis-1/4 flex flex-col items-center relative mt-8 space-y-6 !w-1/2">
