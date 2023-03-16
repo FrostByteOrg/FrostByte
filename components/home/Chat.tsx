@@ -181,6 +181,7 @@ export default function Chat() {
           });
         }}
         disabled={!(userPerms & ChannelPermissions.SEND_MESSAGES)}
+        channelName={chatName}
       />
     </>
   );
