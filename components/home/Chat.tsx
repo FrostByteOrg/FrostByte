@@ -10,6 +10,7 @@ import Message from '@/components/home/Message';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 import { ChannelPermissions } from '@/types/permissions';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
+import Stream from '@/components/home/Stream';
 
 export default function Chat() {
   const channelId = useChannelIdValue();
@@ -144,7 +145,9 @@ export default function Chat() {
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
-
+      <div className={''}>
+        <Stream/>
+      </div>
       <div
         className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-scroll`}
       >
