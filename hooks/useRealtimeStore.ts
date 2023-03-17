@@ -12,20 +12,24 @@ import type {
   Message as MessageType,
 } from '@/types/dbtypes';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
+import { useChannelIdValue } from '@/context/ChatCtx';
 
 export function useRealtimeStore(
   supabase: SupabaseClient<Database>,
   useServerStore: UseBoundStore<StoreApi<ServerState>>,
   useMessagesStore: UseBoundStore<StoreApi<MessagesState>>,
-  useUserPermsStore: UseBoundStore<StoreApi<UserPermsState>>,
-  channelId: number
+  useUserPermsStore: UseBoundStore<StoreApi<UserPermsState>>
 ) {
   const { addServer, getServers } = useServerStore();
-  const { messages, addMessage, removeMessage, updateMessage, getMessages } =
+  const { messages, addMessage, removeMessage, updateMessage } =
     useMessagesStore();
-  const { userPerms, getUserPerms } = useUserPermsStore();
+  const { userPerms } = useUserPermsStore();
+
+  const getMessages = useMessagesStore((state) => state.getMessages);
+  const getUserPerms = useUserPermsStore((state) => state.getUserPerms);
 
   const user = useUser();
+  const channelId = useChannelIdValue();
 
   //TODO: CASCADE DELETE ICONS, add store for messages
 
@@ -149,4 +153,12 @@ export function useRealtimeStore(
     supabase,
     updateMessage,
   ]);
+
+  //TODO: mayb make the channel Id global
+  useEffect(() => {
+    if (channelId > 0 && getUserPerms) {
+      getUserPerms(supabase, channelId);
+      getMessages(supabase, channelId);
+    }
+  }, [channelId, getUserPerms, supabase, getMessages]);
 }

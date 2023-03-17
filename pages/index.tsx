@@ -26,8 +26,7 @@ export default function Home() {
     supabase,
     useServerStore,
     useMessagesStore,
-    useUserPermsStore,
-    channelId
+    useUserPermsStore
   );
 
   const [isMobile, setIsMobile] = useState(false);

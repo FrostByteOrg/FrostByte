@@ -4,27 +4,16 @@ import {
   useOnlinePresenceRef,
 } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
-import { useRef, useEffect, useState, Dispatch, SetStateAction } from 'react';
+import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
-import {
-  SupabaseClient,
-  useSupabaseClient,
-  useUser,
-} from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageInput from './MessageInput';
-import type {
-  ChatMessageWithUser,
-  Message as MessageType,
-} from '@/types/dbtypes';
-import {
-  createMessage,
-  getMessagesInChannelWithUser,
-  getMessageWithUser,
-} from '@/services/message.service';
+
+import { createMessage } from '@/services/message.service';
 import Message from '@/components/home/Message';
-import { getCurrentUserChannelPermissions } from '@/services/channels.service';
+
 import { ChannelPermissions } from '@/types/permissions';
-import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
+
 import { useMessagesStore, useUserPermsStore } from '@/lib/store';
 
 export default function Chat() {
@@ -39,13 +28,6 @@ export default function Chat() {
   const { userPerms, getUserPerms } = useUserPermsStore();
 
   // Update when the channel changes
-  useEffect(() => {
-    if (channelId && getMessages && getUserPerms) {
-      getMessages(supabase, channelId);
-
-      getUserPerms(supabase, channelId);
-    }
-  }, [channelId, getMessages, getUserPerms, supabase]);
 
   useEffect(() => {
     if (newestMessageRef && messages) {

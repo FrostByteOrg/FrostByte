@@ -3,6 +3,7 @@ import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import {
   useChannelIdSetter,
+  useChannelIdValue,
   useChatNameSetter,
   useOnlinePresenceRef,
 } from '@/context/ChatCtx';
@@ -16,6 +17,7 @@ import {
   getUsersInServer,
 } from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
+import { useMessagesStore, useUserPermsStore } from '@/lib/store';
 
 export default function Server({
   server,
@@ -36,6 +38,9 @@ export default function Server({
 
   const [isChannelHovered, setIsChannelHovered] = useState(false);
   const [isServerHovered, setIsServerHovered] = useState(false);
+
+  const { messages, getMessages } = useMessagesStore();
+  const { userPerms, getUserPerms } = useUserPermsStore();
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
