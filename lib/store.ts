@@ -14,6 +14,7 @@ import {
   getMessageWithUser,
 } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
+import { getProfile } from '@/services/profile.service';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -132,7 +133,7 @@ const useMessagesStore = create<MessagesState>()((set) => ({
 
     if (data) {
       data.reverse();
-      set({ messages: data as ChatMessageWithUser[] }, true);
+      set({ messages: data as ChatMessageWithUser[] });
     }
   },
 }));
@@ -155,22 +156,10 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
     }
 
     if (data) {
-      set({ userPerms: data }, true);
+      set({ userPerms: data });
     }
   },
 }));
-
-interface BearState {
-  bears: number;
-  increase: (by: number) => void;
-}
-
-const useBearStore = create<BearState>()((set) => ({
-  bears: 0,
-  increase: (by) => set((state) => ({ bears: state.bears + by })),
-}));
-
-export const useIncrease = () => useBearStore((state) => state.increase);
 
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);

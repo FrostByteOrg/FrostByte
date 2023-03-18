@@ -35,9 +35,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const getUserPerms = useGetUserPerms();
 
   const user = useUser();
-  // console.log(channelId);
 
-  //TODO: CASCADE DELETE ICONS, add store for messages
+  //TODO: CASCADE DELETE ICONS
 
   useEffect(() => {
     //this condition makes sure that the functions in the store are initialized, realistically it can be any function, I just chose addServer
@@ -161,9 +160,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   ]);
 
   useEffect(() => {
-    console.log(channelId);
     if (channelId > 0 && getMessages && getUserPerms) {
-      console.log('test');
       getUserPerms(supabase, channelId);
       getMessages(supabase, channelId);
     }

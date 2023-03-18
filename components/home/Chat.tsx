@@ -14,7 +14,13 @@ import Message from '@/components/home/Message';
 
 import { ChannelPermissions } from '@/types/permissions';
 
-import { useChannelId, useMessages, useUserPerms } from '@/lib/store';
+import {
+  useChannelId,
+  useGetMessages,
+  useGetUserPerms,
+  useMessages,
+  useUserPerms,
+} from '@/lib/store';
 
 export default function Chat() {
   const chatName = useChatNameValue();

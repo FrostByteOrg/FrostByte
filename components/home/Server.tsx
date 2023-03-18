@@ -4,7 +4,7 @@ import { SyntheticEvent, useEffect, useState } from 'react';
 import { useChatNameSetter, useOnlinePresenceRef } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import Marquee from 'react-fast-marquee';
 import {
@@ -12,7 +12,7 @@ import {
   getUsersInServer,
 } from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
-import { useChannelId, useSetChannelId, useIncrease } from '@/lib/store';
+import { useChannelId, useSetChannelId } from '@/lib/store';
 
 export default function Server({
   server,
@@ -34,9 +34,6 @@ export default function Server({
   const [isServerHovered, setIsServerHovered] = useState(false);
 
   const setChannelId = useSetChannelId();
-  const channelId = useChannelId();
-  // const bears = useIncrease();
-  // console.log(bears);
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -73,7 +70,6 @@ export default function Server({
   function joinChannel(e: SyntheticEvent, channelId: number, name: string) {
     e.stopPropagation();
     setChatName(name);
-    // console.log(channelId);
     setChannelId(channelId);
   }
 
