@@ -14,7 +14,6 @@ import {
   getMessageWithUser,
 } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
-import { getProfile } from '@/services/profile.service';
 
 export interface ServerState {
   servers: ServersForUser[];
