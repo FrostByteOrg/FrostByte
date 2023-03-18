@@ -16,8 +16,6 @@ export default function Chat() {
   const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
-  const realtimeRef = useOnlinePresenceRef();
-
   const messages = useMessages();
   const channel = useChannel();
   const userPerms = useUserPerms();
