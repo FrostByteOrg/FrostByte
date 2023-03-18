@@ -35,7 +35,7 @@ export default function Server({
 
   const setChannelId = useSetChannelId();
   const channelId = useChannelId();
-  const bears = useIncrease();
+  // const bears = useIncrease();
   // console.log(bears);
 
   //TODO: getChannelsInServer
@@ -73,7 +73,7 @@ export default function Server({
   function joinChannel(e: SyntheticEvent, channelId: number, name: string) {
     e.stopPropagation();
     setChatName(name);
-    console.log(channelId);
+    // console.log(channelId);
     setChannelId(channelId);
   }
 

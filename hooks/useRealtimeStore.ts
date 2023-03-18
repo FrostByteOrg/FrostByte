@@ -35,7 +35,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const getUserPerms = useGetUserPerms();
 
   const user = useUser();
-  console.log(channelId);
+  // console.log(channelId);
 
   //TODO: CASCADE DELETE ICONS, add store for messages
 
@@ -161,8 +161,9 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   ]);
 
   useEffect(() => {
-    // console.log(channelId);
-    if (channelId > 0 && getMessages) {
+    console.log(channelId);
+    if (channelId > 0 && getMessages && getUserPerms) {
+      console.log('test');
       getUserPerms(supabase, channelId);
       getMessages(supabase, channelId);
     }
