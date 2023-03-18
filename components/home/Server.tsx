@@ -1,10 +1,10 @@
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { SyntheticEvent, useEffect, useState } from 'react';
-import { useChatNameSetter, useOnlinePresenceRef } from '@/context/ChatCtx';
+import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import Marquee from 'react-fast-marquee';
 import {
@@ -12,7 +12,7 @@ import {
   getUsersInServer,
 } from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
-import { useChannelId, useSetChannelId } from '@/lib/store';
+import { useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 
 export default function Server({
@@ -26,7 +26,6 @@ export default function Server({
 }) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
-  const setChatName = useChatNameSetter();
   const [memberCount, setMemberCount] = useState(0);
   const [onlineCount, setOnlineCount] = useState(0);
   const onlinePresenceChannel = useOnlinePresenceRef();
@@ -34,7 +33,7 @@ export default function Server({
   const [isChannelHovered, setIsChannelHovered] = useState(false);
   const [isServerHovered, setIsServerHovered] = useState(false);
 
-  const setChannelId = useSetChannelId();
+  const setChannel = useSetChannel();
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -68,10 +67,9 @@ export default function Server({
     handleAsync();
   }, [server, supabase, onlinePresenceChannel]);
 
-  function joinTextChannel(e: SyntheticEvent, channelId: number, name: string) {
+  function joinTextChannel(e: SyntheticEvent, channel: Channel) {
     e.stopPropagation();
-    setChatName(name);
-    setChannelId(channelId);
+    setChannel(channel);
   }
 
   if (expand) {
@@ -137,9 +135,8 @@ export default function Server({
                 if (channel.is_media) {
                   // Entrypoint for media channel
                   return;
-                }
-                else {
-                  joinTextChannel(e, channel.channel_id, channel.name);
+                } else {
+                  joinTextChannel(e, channel);
                 }
               }}
               key={channel.channel_id}

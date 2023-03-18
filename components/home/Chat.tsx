@@ -1,8 +1,4 @@
-import {
-  useChannelIdValue,
-  useChatNameValue,
-  useOnlinePresenceRef,
-} from '@/context/ChatCtx';
+import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
@@ -14,24 +10,18 @@ import Message from '@/components/home/Message';
 
 import { ChannelPermissions } from '@/types/permissions';
 
-import {
-  useChannelId,
-  useGetMessages,
-  useGetUserPerms,
-  useMessages,
-  useUserPerms,
-} from '@/lib/store';
+import { useChannel, useMessages, useUserPerms } from '@/lib/store';
+import { Channel } from '@/types/dbtypes';
+import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
 
 export default function Chat() {
-  const chatName = useChatNameValue();
-
   const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
   const realtimeRef = useOnlinePresenceRef();
 
   const messages = useMessages();
-  const channelId = useChannelId();
+  const channel = useChannel();
   const userPerms = useUserPerms();
 
   useEffect(() => {
@@ -48,9 +38,15 @@ export default function Chat() {
       <div className={`${styles.chatHeader} px-5 pt-5 mb-3`}>
         <div className="flex items-center  ">
           <div className="mr-2">
-            <ChannelMessageIcon size="5" />
+            {channel && channel.is_media ? (
+              <ChannelMediaIcon />
+            ) : (
+              <ChannelMessageIcon size="5" />
+            )}
           </div>
-          <h1 className=" text-3xl font-semibold tracking-wide">{chatName}</h1>
+          <h1 className=" text-3xl font-semibold tracking-wide">
+            {channel ? channel.name : ''}
+          </h1>
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
@@ -87,12 +83,12 @@ export default function Chat() {
         onSubmit={async (content: string) => {
           createMessage(supabase, {
             content,
-            channel_id: channelId,
+            channel_id: (channel as Channel).channel_id,
             profile_id: user!.id,
           });
         }}
         disabled={!(userPerms & ChannelPermissions.SEND_MESSAGES)}
-        channelName={chatName}
+        channelName={(channel as Channel).name}
       />
     </>
   );

@@ -1,5 +1,6 @@
 import { create, createStore, StateCreator } from 'zustand';
 import {
+  Channel,
   ChatMessageWithUser,
   Server,
   ServersForUser,
@@ -160,6 +161,16 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
   },
 }));
 
+export interface ChannelState {
+  channel: Channel | null;
+  setChannel: (channel: Channel | null) => void;
+}
+
+const useChannelStore = create<ChannelState>()((set) => ({
+  channel: null,
+  setChannel: (channel) => set((state) => ({ channel: channel })),
+}));
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -174,9 +185,8 @@ export const useRemoveMessage = () =>
   useMessagesStore((state) => state.removeMessage);
 export const useUpdateMessage = () =>
   useMessagesStore((state) => state.updateMessage);
-export const useChannelId = () => useMessagesStore((state) => state.channelId);
-export const useSetChannelId = () =>
-  useMessagesStore((state) => state.setChannelId);
 export const useGetUserPerms = () =>
   useUserPermsStore((state) => state.getUserPerms);
 export const useUserPerms = () => useUserPermsStore((state) => state.userPerms);
+export const useSetChannel = () => useChannelStore((state) => state.setChannel);
+export const useChannel = () => useChannelStore((state) => state.channel);

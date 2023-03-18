@@ -1,9 +1,8 @@
-import { getServerForUser } from '@/services/server.service';
-import { ServerUser, ServersForUser, Server } from '@/types/dbtypes';
+import { ServerUser, Server } from '@/types/dbtypes';
 import {
   useAddMessage,
   useAddServer,
-  useChannelId,
+  useChannel,
   useGetMessages,
   useGetServers,
   useGetUserPerms,
@@ -15,10 +14,7 @@ import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
 import { useUser } from '@supabase/auth-helpers-react';
 import { SupabaseClient } from '@supabase/supabase-js';
-import type {
-  ChatMessageWithUser,
-  Message as MessageType,
-} from '@/types/dbtypes';
+import type { Message as MessageType } from '@/types/dbtypes';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
 
 export function useRealtimeStore(supabase: SupabaseClient<Database>) {
@@ -29,7 +25,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const addMessage = useAddMessage();
   const removeMessage = useRemoveMessage();
   const updateMessage = useUpdateMessage();
-  const channelId = useChannelId();
+  const channel = useChannel();
 
   const getMessages = useGetMessages();
   const getUserPerms = useGetUserPerms();
@@ -88,7 +84,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   }, [addServer, supabase, user, getServers]);
 
   useEffect(() => {
-    if (addMessage && getUserPerms) {
+    if (addMessage && getUserPerms && channel) {
       supabase
         .channel('chat-listener')
         .on<MessageType>(
@@ -97,7 +93,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             event: 'INSERT',
             schema: 'public',
             table: 'messages',
-            filter: `channel_id=eq.${channelId}`,
+            filter: `channel_id=eq.${channel?.channel_id}`,
           },
           async (payload) => {
             console.log('New message event');
@@ -110,7 +106,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             event: 'UPDATE',
             schema: 'public',
             table: 'messages',
-            filter: `channel_id=eq.${channelId}`,
+            filter: `channel_id=eq.${channel.channel_id}`,
           },
           async (payload) => {
             console.log('Message update event');
@@ -123,7 +119,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             event: 'DELETE',
             schema: 'public',
             table: 'messages',
-            filter: `channel_id=eq.${channelId}`,
+            filter: `channel_id=eq.${channel.channel_id}`,
           },
           async (payload) => {
             console.log('Message delete event');
@@ -140,18 +136,18 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             event: '*',
             schema: 'public',
             table: 'channel_permissions',
-            filter: `channel_id=eq.${channelId}`,
+            filter: `channel_id=eq.${channel.channel_id}`,
           },
           async (payload) => {
             console.log('Channel permissions update event');
-            getUserPerms(supabase, channelId);
+            getUserPerms(supabase, channel.channel_id);
           }
         )
         .subscribe();
     }
   }, [
     addMessage,
-    channelId,
+    channel,
     getUserPerms,
     messages,
     removeMessage,
@@ -160,9 +156,9 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   ]);
 
   useEffect(() => {
-    if (channelId > 0 && getMessages && getUserPerms) {
-      getUserPerms(supabase, channelId);
-      getMessages(supabase, channelId);
+    if (channel && getMessages && getUserPerms) {
+      getUserPerms(supabase, channel.channel_id);
+      getMessages(supabase, channel.channel_id);
     }
-  }, [channelId, getUserPerms, supabase, getMessages]);
+  }, [channel, getUserPerms, supabase, getMessages]);
 }
