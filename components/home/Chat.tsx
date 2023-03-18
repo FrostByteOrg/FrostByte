@@ -1,4 +1,3 @@
-import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';

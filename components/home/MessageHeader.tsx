@@ -1,4 +1,4 @@
-import { ServerUser, User } from '@/types/dbtypes';
+import { Role, ServerUser, User } from '@/types/dbtypes';
 import { Tooltip } from 'react-tooltip';
 import { MiniProfile } from '../forms/MiniProfile';
 import UserIcon from '../icons/UserIcon';
@@ -9,19 +9,21 @@ export function MessageHeader({
   message_id,
   message_color,
   display_time,
-  edited
+  edited,
+  roles
 }: {
   profile: User,
   server_user: ServerUser,
   message_id: number,
   message_color: string,
   display_time: string,
-  edited: boolean
+  edited: boolean,
+  roles: Role[],
 }) {
   return (
     <div className="flex-grow flex flex-row">
       <Tooltip id={profile.id} className='z-20 !w-12' clickable noArrow>
-        <MiniProfile userId={profile.id} messageId={message_id} />
+        <MiniProfile profile={profile} server_user={server_user} roles={roles} />
       </Tooltip>
       <UserIcon user={profile} />
       <div className="flex-grow flex items-center">

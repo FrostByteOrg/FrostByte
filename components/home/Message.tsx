@@ -8,7 +8,6 @@ import { editMessage } from '@/services/message.service';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageContent from './MessageContent';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
-import { MiniProfile } from '../forms/MiniProfile';
 import { MessageWithServerProfile } from '@/types/dbtypes';
 import { MessageHeader } from './MessageHeader';
 
@@ -73,6 +72,7 @@ export default function Message({
           <MessageHeader
             profile={message.profile}
             server_user={message.author}
+            roles={message.roles}
             message_id={message.id}
             message_color={messageColor}
             display_time={displayTime}
