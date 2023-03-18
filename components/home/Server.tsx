@@ -1,26 +1,39 @@
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { SyntheticEvent, useEffect, useState } from 'react';
-import { useChannelIdSetter, useChatNameSetter, useOnlinePresenceRef } from '@/context/ChatCtx';
+import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import Marquee from 'react-fast-marquee';
-import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
+import {
+  getServerMemberCount,
+  getUsersInServer,
+} from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
+import { useSetChannel } from '@/lib/store';
+import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 
-export default function Server({ server, expanded }: { server: ServerType, expanded: number }) {
+export default function Server({
+  server,
+  expanded,
+  isLast = false,
+}: {
+  server: ServerType;
+  expanded: number;
+  isLast?: boolean;
+}) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
-  const setChannelId = useChannelIdSetter();
-  const setChatName = useChatNameSetter();
-  const [ memberCount, setMemberCount ] = useState(0);
-  const [ onlineCount, setOnlineCount ] = useState(0);
+  const [memberCount, setMemberCount] = useState(0);
+  const [onlineCount, setOnlineCount] = useState(0);
   const onlinePresenceChannel = useOnlinePresenceRef();
 
   const [isChannelHovered, setIsChannelHovered] = useState(false);
   const [isServerHovered, setIsServerHovered] = useState(false);
+
+  const setChannel = useSetChannel();
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -36,7 +49,10 @@ export default function Server({ server, expanded }: { server: ServerType, expan
       setMemberCount(await getServerMemberCount(supabase, server.id));
 
       // Now we need to get the online count
-      const { data: onlineData, error } = await getUsersInServer(supabase, server.id);
+      const { data: onlineData, error } = await getUsersInServer(
+        supabase,
+        server.id
+      );
 
       let onlineUsers = 0;
       if (!error) {
@@ -47,23 +63,21 @@ export default function Server({ server, expanded }: { server: ServerType, expan
         }
         setOnlineCount(onlineUsers);
       }
-
     };
     handleAsync();
   }, [server, supabase, onlinePresenceChannel]);
 
-  function joinChannel(e: SyntheticEvent, channelId: number, name: string) {
+  function joinTextChannel(e: SyntheticEvent, channel: Channel) {
     e.stopPropagation();
-    setChatName(name);
-    setChannelId(channelId);
+    setChannel(channel);
   }
 
   if (expand) {
     return (
       <div className="relative ">
-        <div className="border-b-2   hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
+        <div className="border-b-2 hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
-            <div className="bg-grey-900 p-2 rounded-xl">
+            <div className="bg-grey-900 p-[6px] rounded-xl">
               <ServersIcon server={server} hovered={false} />
             </div>
             <div className="ml-3">
@@ -117,11 +131,23 @@ export default function Server({ server, expanded }: { server: ServerType, expan
               className={`channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px] ${
                 idx === 0 ? 'mt-2' : ''
               }`}
-              onClick={(e) => joinChannel(e, channel.channel_id, channel.name)}
+              onClick={(e) => {
+                if (channel.is_media) {
+                  // Entrypoint for media channel
+                  return;
+                }
+                else {
+                  joinTextChannel(e, channel);
+                }
+              }}
               key={channel.channel_id}
             >
               <div className="w-4">
-                <ChannelMessageIcon size="" />
+                {channel.is_media ? (
+                  <ChannelMediaIcon />
+                ) : (
+                  <ChannelMessageIcon />
+                )}
               </div>
 
               <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">
@@ -155,9 +181,13 @@ export default function Server({ server, expanded }: { server: ServerType, expan
 
   return (
     <div className="pb-3 hover:cursor-pointer">
-      <div className="border-b-2 border-grey-700 py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center">
+      <div
+        className={`${
+          !isLast ? 'border-b-2 border-grey-700' : ''
+        }   py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center`}
+      >
         <div className="flex items-center">
-          <div className={`${styles.serverIcon}  p-2 rounded-xl`}>
+          <div className={`${styles.serverIcon}  p-[6px] rounded-xl`}>
             <ServersIcon hovered={false} server={server} />
           </div>
           <div className="ml-3">
@@ -194,7 +224,9 @@ export default function Server({ server, expanded }: { server: ServerType, expan
                 className={`flex items-center ml-2 ${styles.membersSpacing}`}
               >
                 <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
-                <span>{memberCount} Member{memberCount !== 1 ? 's' : ''}</span>
+                <span>
+                  {memberCount} Member{memberCount !== 1 ? 's' : ''}
+                </span>
               </div>
             </div>
           </div>

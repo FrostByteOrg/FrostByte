@@ -3,15 +3,16 @@ import Chat from '@/components/home/Chat';
 import FriendsList from '@/components/home/FriendsList';
 import ServerList from '@/components/home/ServerList';
 import DMessageList from '@/components/home/DMessageList';
-import { useChannelIdValue } from '@/context/ChatCtx';
 import NavBar from '../NavBar';
 import styles from '@/styles/Home.module.css';
+import { useChannel } from '@/lib/store';
 
 export default function RenderMobileView() {
   const sideBarOption = useSideBarOptionValue();
-  const channelId = useChannelIdValue();
 
-  if (channelId > 0) {
+  const channel = useChannel();
+
+  if (channel) {
     return (
       <div className=" flex flex-col h-screen">
         <div className=" grow overflow-y-clip flex flex-col h-full ">

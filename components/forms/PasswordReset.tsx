@@ -1,7 +1,10 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Input } from './Styles';
 import styles from '@/styles/Auth.module.css';
-import { CreatePasswordInputRecovery, createPasswordRecoverySchema } from '@/types/client/passwordRecovery';
+import {
+  CreatePasswordInputRecovery,
+  createPasswordRecoverySchema,
+} from '@/types/client/passwordRecovery';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
@@ -16,7 +19,6 @@ export default function PasswordReset({
   setServerError: Dispatch<SetStateAction<string | null>>;
   setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
 }) {
-
   const supabase = useSupabaseClient<Database>();
 
   const {
@@ -25,16 +27,18 @@ export default function PasswordReset({
     formState: { errors, isSubmitting },
   } = useForm<CreatePasswordInputRecovery>({
     resolver: zodResolver(createPasswordRecoverySchema),
-    mode: 'onChange'
+    mode: 'onChange',
   });
-
 
   const onSubmit = async (formData: CreatePasswordInputRecovery) => {
     let url = `${window.location.origin}/passwordreset`;
 
-    const { data, error } = await supabase.auth.resetPasswordForEmail(formData.email, {
-      redirectTo: url,
-    });
+    const { data, error } = await supabase.auth.resetPasswordForEmail(
+      formData.email,
+      {
+        redirectTo: url,
+      }
+    );
 
     if (error) {
       setServerError(error.message);
@@ -45,26 +49,25 @@ export default function PasswordReset({
     if (data && !error) {
       toast.success(`An email has been sent to ${formData.email}`, {
         position: 'top-center',
-        autoClose: 3000
+        autoClose: 3000,
       });
       setAuthType('login');
     }
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)} >
-      <div className='text-3xl font-bold'>Password Recovery</div>
+    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      <div className="text-3xl font-bold">Password Recovery</div>
       <label htmlFor="email" className="mt-6">
         Enter the Email that belongs to your account:
       </label>
       <div className="relative mt-3">
-
         <div className={`${errors.email ? styles.iconError : styles.icon} `}>
-          <EmailIcon/>
+          <EmailIcon />
         </div>
         <input
           type="email"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Enter Email"
           {...register('email')}
         ></input>

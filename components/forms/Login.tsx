@@ -28,7 +28,7 @@ export default function Login({
     formState: { errors, isSubmitting },
   } = useForm<CreateSessionInput>({
     resolver: zodResolver(createSessionSchema),
-    mode: 'onChange'
+    mode: 'onChange',
   });
 
   const onSubmit = async (formData: CreateSessionInput) => {
@@ -51,11 +51,11 @@ export default function Login({
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
       <div className="relative mt-5">
         <div className={`${errors.email ? styles.iconError : styles.icon} `}>
-          <EmailIcon/>
+          <EmailIcon />
         </div>
         <input
           type="email"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Enter Email"
           {...register('email')}
         ></input>
@@ -68,11 +68,11 @@ export default function Login({
 
       <div className={`${errors.email ? 'mt-2' : 'mt-7'}  relative`}>
         <div className={`${errors.password ? styles.iconError : styles.icon} `}>
-          <PasswordIcon/>
+          <PasswordIcon />
         </div>
         <input
           type="password"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Enter password"
           {...register('password')}
         ></input>

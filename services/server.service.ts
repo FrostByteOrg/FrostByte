@@ -6,7 +6,7 @@ import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 export async function createServer(
   supabase: SupabaseClient<Database>,
   name: string,
-  description: string | null
+  description?: string | null
 ) {
   // Validate server name is present
   if (!name) {
@@ -89,7 +89,8 @@ export async function getServersForUser(
 }
 
 type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
-export type GetServersForUserResponseSuccess = GetServersForUserResponse['data'];
+export type GetServersForUserResponseSuccess =
+  GetServersForUserResponse['data'];
 export type GetServersForUserResponseError = GetServersForUserResponse['error'];
 
 export async function getServerForUser(
@@ -162,9 +163,15 @@ type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
 export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
 export type GetServerRolesResponseError = GetServerRolesResponse['error'];
 
-export async function getRolesForUser(supabase: SupabaseClient<Database>, user_id: string, server_id: number) {
-  return await supabase
-    .rpc('get_roles_for_user_in_server', { p_id: user_id, s_id: server_id });
+export async function getRolesForUser(
+  supabase: SupabaseClient<Database>,
+  user_id: string,
+  server_id: number
+) {
+  return await supabase.rpc('get_roles_for_user_in_server', {
+    p_id: user_id,
+    s_id: server_id,
+  });
 }
 
 type GetRolesForUserResponse = Awaited<ReturnType<typeof getRolesForUser>>;
@@ -231,9 +238,13 @@ export async function getCurrentUserServerPermissions(
   });
 }
 
-type GetCurrentUserServerPermissionsResponse = Awaited<ReturnType<typeof getCurrentUserServerPermissions>>;
-export type GetCurrentUserServerPermissionsResponseSuccess = GetCurrentUserServerPermissionsResponse['data'];
-export type GetCurrentUserServerPermissionsResponseError = GetCurrentUserServerPermissionsResponse['error'];
+type GetCurrentUserServerPermissionsResponse = Awaited<
+  ReturnType<typeof getCurrentUserServerPermissions>
+>;
+export type GetCurrentUserServerPermissionsResponseSuccess =
+  GetCurrentUserServerPermissionsResponse['data'];
+export type GetCurrentUserServerPermissionsResponseError =
+  GetCurrentUserServerPermissionsResponse['error'];
 
 export async function getServerMemberCount(
   supabase: SupabaseClient<Database>,
@@ -252,7 +263,9 @@ export async function getServerMemberCount(
   return server_users.length;
 }
 
-type GetServerMemberCountResponse = Awaited<ReturnType<typeof getServerMemberCount>>;
+type GetServerMemberCountResponse = Awaited<
+  ReturnType<typeof getServerMemberCount>
+>;
 
 export async function getUsersInServer(
   supabase: SupabaseClient<Database>,
@@ -277,3 +290,28 @@ export async function getServerIdFromMessageId(
 
 type GetServerIdFromMessageIdResponse = Awaited<ReturnType<typeof getServerIdFromMessageId>>;
 export type GetServerIdFromMessageIdResponseSuccess = GetServerIdFromMessageIdResponse['data'];
+export type GetServerIdFromMessageIdResponseError = GetServerIdFromMessageIdResponse['error'];
+
+export async function addServerIcon(
+  supabase: SupabaseClient<Database>,
+  filePath: string,
+  image: any,
+  server_id: number
+) {
+  const { data, error } = await supabase.storage
+    .from('servericons')
+    .upload(filePath, image, { upsert: true });
+
+  const publicURL = supabase.storage.from('servericons').getPublicUrl(filePath);
+
+  return await supabase
+    .from('servers')
+    .update({ image_url: publicURL.data.publicUrl })
+    .eq('id', server_id)
+    .select()
+    .single();
+}
+
+type AddServerIconResponse = Awaited<ReturnType<typeof addServerIcon>>;
+export type AddServerIconResponseSuccess = AddServerIconResponse['data'];
+export type AddServerIconResponseError = AddServerIconResponse['error'];
