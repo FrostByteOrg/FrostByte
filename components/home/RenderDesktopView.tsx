@@ -7,9 +7,10 @@ import Chat from '@/components/home/Chat';
 import DMessageList from '@/components/home/DMessageList';
 import ServerList from '@/components/home/ServerList';
 import DefaultTest from '@/components/home/DefaultTest';
+import { useChannelId } from '@/lib/store';
 
 export default function RenderDesktopView() {
-  const channelId = useChannelIdValue();
+  const channelId = useChannelId();
   const sideBarOption = useSideBarOptionValue();
 
   const [sideBarView, mainView] = renderContent(sideBarOption, channelId);

@@ -1,8 +1,16 @@
 import { getServerForUser } from '@/services/server.service';
 import { ServerUser, ServersForUser, Server } from '@/types/dbtypes';
-import { MessagesState, ServerState, UserPermsState } from '@/lib/store';
-import { UseBoundStore } from 'zustand/react';
-import { StoreApi } from 'zustand/vanilla';
+import {
+  useAddMessage,
+  useAddServer,
+  useChannelId,
+  useGetMessages,
+  useGetServers,
+  useGetUserPerms,
+  useMessages,
+  useRemoveMessage,
+  useUpdateMessage,
+} from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
 import { useUser } from '@supabase/auth-helpers-react';
@@ -12,24 +20,22 @@ import type {
   Message as MessageType,
 } from '@/types/dbtypes';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
-import { useChannelIdValue } from '@/context/ChatCtx';
 
-export function useRealtimeStore(
-  supabase: SupabaseClient<Database>,
-  useServerStore: UseBoundStore<StoreApi<ServerState>>,
-  useMessagesStore: UseBoundStore<StoreApi<MessagesState>>,
-  useUserPermsStore: UseBoundStore<StoreApi<UserPermsState>>
-) {
-  const { addServer, getServers } = useServerStore();
-  const { messages, addMessage, removeMessage, updateMessage } =
-    useMessagesStore();
-  const { userPerms } = useUserPermsStore();
+export function useRealtimeStore(supabase: SupabaseClient<Database>) {
+  const addServer = useAddServer();
+  const getServers = useGetServers();
 
-  const getMessages = useMessagesStore((state) => state.getMessages);
-  const getUserPerms = useUserPermsStore((state) => state.getUserPerms);
+  const messages = useMessages();
+  const addMessage = useAddMessage();
+  const removeMessage = useRemoveMessage();
+  const updateMessage = useUpdateMessage();
+  const channelId = useChannelId();
+
+  const getMessages = useGetMessages();
+  const getUserPerms = useGetUserPerms();
 
   const user = useUser();
-  const channelId = useChannelIdValue();
+  console.log(channelId);
 
   //TODO: CASCADE DELETE ICONS, add store for messages
 
@@ -154,9 +160,9 @@ export function useRealtimeStore(
     updateMessage,
   ]);
 
-  //TODO: mayb make the channel Id global
   useEffect(() => {
-    if (channelId > 0 && getUserPerms) {
+    // console.log(channelId);
+    if (channelId > 0 && getMessages) {
       getUserPerms(supabase, channelId);
       getMessages(supabase, channelId);
     }

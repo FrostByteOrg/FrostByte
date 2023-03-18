@@ -10,24 +10,13 @@ import { ChatCtxProvider, useChannelIdValue } from '@/context/ChatCtx';
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
-import {
-  useServerStore,
-  useMessagesStore,
-  useUserPermsStore,
-} from '@/lib/store';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
-  const channelId = useChannelIdValue();
 
-  useRealtimeStore(
-    supabase,
-    useServerStore,
-    useMessagesStore,
-    useUserPermsStore
-  );
+  useRealtimeStore(supabase);
 
   const [isMobile, setIsMobile] = useState(false);
 

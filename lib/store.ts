@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, createStore, StateCreator } from 'zustand';
 import {
   ChatMessageWithUser,
   Server,
@@ -22,7 +22,12 @@ export interface ServerState {
   getServers: (supabase: SupabaseClient<Database>, userId: string) => void;
 }
 
-export const useServerStore = create<ServerState>()((set) => ({
+const useServerStore: StateCreator<
+  ServerState & MessagesState & UserPermsState,
+  [],
+  [],
+  ServerState
+> = (set) => ({
   servers: [],
   addServer: async (supabase, serverUserId) => {
     const { data, error } = await getServerForUser(supabase, serverUserId);
@@ -57,10 +62,12 @@ export const useServerStore = create<ServerState>()((set) => ({
       set({ servers: data as ServersForUser[] }, true);
     }
   },
-}));
+});
 
 export interface MessagesState {
   messages: ChatMessageWithUser[];
+  channelId: number;
+  setChannelId: (channelId: number) => void;
   addMessage: (supabase: SupabaseClient<Database>, messageId: number) => void;
   updateMessage: (
     supabase: SupabaseClient<Database>,
@@ -70,8 +77,15 @@ export interface MessagesState {
   getMessages: (supabase: SupabaseClient<Database>, channelId: number) => void;
 }
 
-export const useMessagesStore = create<MessagesState>()((set) => ({
+const useMessagesStore: StateCreator<
+  MessagesState & ServerState & UserPermsState,
+  [],
+  [],
+  MessagesState
+> = (set) => ({
   messages: [],
+  channelId: 0,
+  setChannelId: (channelId) => set((state) => ({ channelId: channelId }), true),
   addMessage: async (supabase, messageId) => {
     const { data, error } = await getMessageWithUser(supabase, messageId);
 
@@ -130,14 +144,19 @@ export const useMessagesStore = create<MessagesState>()((set) => ({
       set({ messages: data as ChatMessageWithUser[] }, true);
     }
   },
-}));
+});
 
 export interface UserPermsState {
   userPerms: any;
   getUserPerms: (supabase: SupabaseClient<Database>, channelId: number) => void;
 }
 
-export const useUserPermsStore = create<UserPermsState>()((set) => ({
+const useUserPermsStore: StateCreator<
+  ServerState & MessagesState & UserPermsState,
+  [],
+  [],
+  UserPermsState
+> = (set) => ({
   userPerms: [],
   getUserPerms: async (supabase, channelId) => {
     const { data, error } = await getCurrentUserChannelPermissions(
@@ -153,4 +172,38 @@ export const useUserPermsStore = create<UserPermsState>()((set) => ({
       set({ userPerms: data }, true);
     }
   },
+});
+
+const useStore = create<ServerState & MessagesState & UserPermsState>()(
+  (...a) => ({
+    ...useServerStore(...a),
+    ...useMessagesStore(...a),
+    ...useUserPermsStore(...a),
+  })
+);
+
+interface BearState {
+  bears: number;
+  increase: (by: number) => void;
+}
+
+const useBearStore = create<BearState>()((set) => ({
+  bears: 0,
+  increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
+
+export const useIncrease = () => useBearStore((state) => state.increase);
+
+export const useServers = () => useStore((state) => state.servers);
+export const useAddServer = () => useStore((state) => state.addServer);
+export const useRemoveServer = () => useStore((state) => state.removeServer);
+export const useGetServers = () => useStore((state) => state.getServers);
+export const useMessages = () => useStore((state) => state.messages);
+export const useGetMessages = () => useStore((state) => state.getMessages);
+export const useAddMessage = () => useStore((state) => state.addMessage);
+export const useRemoveMessage = () => useStore((state) => state.removeMessage);
+export const useUpdateMessage = () => useStore((state) => state.updateMessage);
+export const useChannelId = () => useStore((state) => state.channelId);
+export const useSetChannelId = () => useStore((state) => state.setChannelId);
+export const useGetUserPerms = () => useStore((state) => state.getUserPerms);
+export const useUserPerms = () => useStore((state) => state.userPerms);

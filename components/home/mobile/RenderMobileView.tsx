@@ -6,10 +6,12 @@ import DMessageList from '@/components/home/DMessageList';
 import { useChannelIdValue } from '@/context/ChatCtx';
 import NavBar from '../NavBar';
 import styles from '@/styles/Home.module.css';
+import { useChannelId } from '@/lib/store';
 
 export default function RenderMobileView() {
   const sideBarOption = useSideBarOptionValue();
-  const channelId = useChannelIdValue();
+
+  const channelId = useChannelId();
 
   if (channelId > 0) {
     return (

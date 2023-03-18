@@ -14,20 +14,19 @@ import Message from '@/components/home/Message';
 
 import { ChannelPermissions } from '@/types/permissions';
 
-import { useMessagesStore, useUserPermsStore } from '@/lib/store';
+import { useChannelId, useMessages, useUserPerms } from '@/lib/store';
 
 export default function Chat() {
-  const channelId = useChannelIdValue();
   const chatName = useChatNameValue();
 
   const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
   const realtimeRef = useOnlinePresenceRef();
-  const { messages, getMessages } = useMessagesStore();
-  const { userPerms, getUserPerms } = useUserPermsStore();
 
-  // Update when the channel changes
+  const messages = useMessages();
+  const channelId = useChannelId();
+  const userPerms = useUserPerms();
 
   useEffect(() => {
     if (newestMessageRef && messages) {

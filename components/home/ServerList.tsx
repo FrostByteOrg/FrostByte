@@ -5,7 +5,7 @@ import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
-import { useServerStore } from '@/lib/store';
+import { useGetServers, useServers } from '@/lib/store';
 
 export default function ServerList() {
   //TODO: fetch server_users via profile id, select server_id -> fetch channels via this server_id && fetch servers with server_id
@@ -20,7 +20,8 @@ export default function ServerList() {
   const user = useUser();
   const supabase = useSupabaseClient();
 
-  const { servers, getServers } = useServerStore();
+  const servers = useServers();
+  const getServers = useGetServers();
 
   useEffect(() => {
     if (getServers) {

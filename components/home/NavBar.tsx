@@ -3,11 +3,12 @@ import FriendsIcon from '@/components/icons/FriendsIcon';
 import ServersIcon from '@/components/icons/ServersIcon';
 import MessagesIcon from '@/components/icons/MessagesIcon';
 import { useState } from 'react';
-import { useChannelIdSetter } from '@/context/ChatCtx';
+import { useSetChannelId } from '@/lib/store';
 
 export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
   const setSideBarOption = useSideBarOptionSetter();
-  const setChannelId = useChannelIdSetter();
+
+  const setChannelId = useSetChannelId();
 
   const [friendsHover, setFriendsHover] = useState(false);
   const [serversHover, setServersHover] = useState(false);
