@@ -11,8 +11,6 @@ import { useChannel, useMessages, useUserPerms } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
 import { ChannelPermissions } from '@/types/permissions';
-import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
-import { getMessageWithServerProfile } from '@/services/profile.service';
 
 export default function Chat() {
   const supabase = useSupabaseClient();
