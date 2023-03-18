@@ -1,4 +1,5 @@
-export const Input = `w-full
+export function Input(bg = 'bg-inherit ') {
+  return `w-full
 py-2 
 pl-6
 self-start
@@ -12,8 +13,9 @@ ease-in-out
 focus:outline-frost-50
 m-0
 focus:outline-none
-bg-inherit 
+${bg} 
 flex-1`;
+}
 
 export const SearchBar = `w-full
 py-2 

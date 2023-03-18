@@ -1,4 +1,3 @@
-import { useChannelIdValue } from '@/context/ChatCtx';
 import styles from '@/styles/DesktopView.module.css';
 import NavBar from '@/components/home/NavBar';
 import { useSideBarOptionValue } from '@/context/SideBarOptionCtx';
@@ -7,12 +6,14 @@ import Chat from '@/components/home/Chat';
 import DMessageList from '@/components/home/DMessageList';
 import ServerList from '@/components/home/ServerList';
 import DefaultTest from '@/components/home/DefaultTest';
+import { useChannel } from '@/lib/store';
+import { Channel } from '@/types/dbtypes';
 
 export default function RenderDesktopView() {
-  const channelId = useChannelIdValue();
+  const channel = useChannel();
   const sideBarOption = useSideBarOptionValue();
 
-  const [sideBarView, mainView] = renderContent(sideBarOption, channelId);
+  const [sideBarView, mainView] = renderContent(sideBarOption, channel);
 
   return (
     <div className={`${styles.container} `}>
@@ -31,17 +32,17 @@ export default function RenderDesktopView() {
 
 export function renderContent(
   sideBarOption: 'friends' | 'servers' | 'messages',
-  channelId: number
+  channel: Channel | null
 ) {
   switch (sideBarOption) {
     case 'friends':
-      if (channelId > 0) return [<FriendsList key={1} />, <Chat key={2} />];
+      if (channel) return [<FriendsList key={1} />, <Chat key={2} />];
       return [<FriendsList key={1} />, <DefaultTest key={2} />];
     case 'servers':
-      if (channelId > 0) return [<ServerList key={1} />, <Chat key={2} />];
+      if (channel) return [<ServerList key={1} />, <Chat key={2} />];
       return [<ServerList key={1} />, <DefaultTest key={2} />];
     case 'messages':
-      if (channelId > 0) return [<DMessageList key={1} />, <Chat key={2} />];
+      if (channel) return [<DMessageList key={1} />, <Chat key={2} />];
       return [<DMessageList key={1} />, <DefaultTest key={2} />];
     default:
       return [<FriendsList key={1} />, <DefaultTest key={2} />];
