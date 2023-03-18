@@ -80,15 +80,16 @@ export default function ServerList() {
               <span
                 key={server.server_id}
                 onClick={() => {
-                  return expanded == server.server_id
-                    ? setExpanded(0)
-                    : setExpanded(server.server_id);
+                  return expanded !== server.server_id
+                    ? setExpanded(server.server_id)
+                    : '';
                 }}
               >
                 <Server
                   server={server.servers}
                   expanded={expanded}
                   isLast={idx == serverList.length - 1}
+                  setExpanded={setExpanded}
                 />
               </span>
             );

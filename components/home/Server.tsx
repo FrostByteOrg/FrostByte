@@ -1,6 +1,12 @@
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
-import { SyntheticEvent, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from 'react';
 import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
@@ -19,10 +25,12 @@ export default function Server({
   server,
   expanded,
   isLast = false,
+  setExpanded,
 }: {
   server: ServerType;
   expanded: number;
   isLast?: boolean;
+  setExpanded: Dispatch<SetStateAction<number>>;
 }) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
@@ -32,6 +40,8 @@ export default function Server({
 
   const [isChannelHovered, setIsChannelHovered] = useState(false);
   const [isServerHovered, setIsServerHovered] = useState(false);
+  const [isSettingsHovered, setIsSettingsHovered] = useState(false);
+  const [isSettingsClicked, setIsSettingsClicked] = useState(false);
 
   const setChannel = useSetChannel();
 
@@ -75,9 +85,12 @@ export default function Server({
   if (expand) {
     return (
       <div className="relative ">
-        <div className="border-b-2 hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
+        <div className="border-b-2 border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
-            <div className="bg-grey-900 p-[6px] rounded-xl">
+            <div
+              className="bg-grey-900 p-[6px] rounded-xl hover:cursor-pointer"
+              onClick={() => setExpanded(0)}
+            >
               <ServersIcon server={server} hovered={false} />
             </div>
             <div className="ml-3">
@@ -121,8 +134,11 @@ export default function Server({
               </div>
             </div>
           </div>
-          <div>
-            <VerticalSettingsIcon />
+          <div
+            onMouseEnter={() => setIsSettingsHovered(true)}
+            onMouseLeave={() => setIsSettingsHovered(false)}
+          >
+            <VerticalSettingsIcon hovered={isSettingsHovered} />
           </div>
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
@@ -135,8 +151,7 @@ export default function Server({
                 if (channel.is_media) {
                   // Entrypoint for media channel
                   return;
-                }
-                else {
+                } else {
                   joinTextChannel(e, channel);
                 }
               }}
@@ -231,9 +246,7 @@ export default function Server({
             </div>
           </div>
         </div>
-        <div>
-          <VerticalSettingsIcon />
-        </div>
+        <div></div>
       </div>
     </div>
   );
