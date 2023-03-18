@@ -9,6 +9,7 @@ import styles from '@/styles/Servers.module.css';
 import Marquee from 'react-fast-marquee';
 import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
+import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 
 export default function Server({ server, expanded }: { server: ServerType, expanded: number }) {
   const expand = expanded == server.id;
@@ -52,7 +53,7 @@ export default function Server({ server, expanded }: { server: ServerType, expan
     handleAsync();
   }, [server, supabase, onlinePresenceChannel]);
 
-  function joinChannel(e: SyntheticEvent, channelId: number, name: string) {
+  function joinTextChannel(e: SyntheticEvent, channelId: number, name: string) {
     e.stopPropagation();
     setChatName(name);
     setChannelId(channelId);
@@ -117,11 +118,20 @@ export default function Server({ server, expanded }: { server: ServerType, expan
               className={`channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px] ${
                 idx === 0 ? 'mt-2' : ''
               }`}
-              onClick={(e) => joinChannel(e, channel.channel_id, channel.name)}
+              onClick={(e) => {
+                if (channel.is_media) {
+                  // Entrypoint for media channel
+                  return;
+                }
+
+                else {
+                  joinTextChannel(e, channel.channel_id, channel.name);
+                }
+              }}
               key={channel.channel_id}
             >
               <div className="w-4">
-                <ChannelMessageIcon size="" />
+                {channel.is_media ? <ChannelMediaIcon/> : <ChannelMessageIcon/>}
               </div>
 
               <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">

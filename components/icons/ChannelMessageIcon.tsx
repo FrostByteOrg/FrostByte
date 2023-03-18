@@ -1,4 +1,4 @@
-export default function ChannelMessageIcon({ size = '4' }) {
+export default function ChannelMessageIcon({ size = '4' }: { size?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

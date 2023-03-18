@@ -19,6 +19,7 @@ export async function getChannelsInServer(supabase: SupabaseClient<Database>, se
     .from('channels')
     .select('*')
     .eq('server_id', serverId)
+    .order('is_media', { ascending: true })
     .returns<Channel>();
 }
 
