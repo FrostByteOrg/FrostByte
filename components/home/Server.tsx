@@ -137,6 +137,7 @@ export default function Server({
           <div
             onMouseEnter={() => setIsSettingsHovered(true)}
             onMouseLeave={() => setIsSettingsHovered(false)}
+            className="hover:cursor-pointer"
           >
             <VerticalSettingsIcon hovered={isSettingsHovered} />
           </div>
