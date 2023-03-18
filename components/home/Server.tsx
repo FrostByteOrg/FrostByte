@@ -137,7 +137,8 @@ export default function Server({
                 if (channel.is_media) {
                   // Entrypoint for media channel
                   return;
-                } else {
+                }
+                else {
                   joinTextChannel(e, channel.channel_id, channel.name);
                 }
               }}
