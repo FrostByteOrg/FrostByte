@@ -74,7 +74,11 @@ export default function ServerList() {
         ></input>
       </div>
       {servers &&
-        servers.map((server, idx, serverList) => {
+        servers.sort(function(a, b) {
+          var textA = a.servers.name.toUpperCase();
+          var textB = b.servers.name.toUpperCase();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        }).map((server, idx, serverList) => {
           if (server) {
             return (
               <span
