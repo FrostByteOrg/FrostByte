@@ -44,27 +44,11 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ChatCtxProvider>
-        <SideBarOptionProvider>
-          <LiveKitRoom
-            video={false}
-            audio={true}
-            screen={false}
-            token={token}
-            serverUrl={process.env.NEXT_PUBLIC_LK_SERVER_URL}
-            connect={tryConnect}
-            onConnected={() => setConnected(true)}
-            onDisconnected={() => {
-              setTryConnect(false);
-              setConnected(false);
-            }}
-          >
-
-          </LiveKitRoom>
-          {isMobile ? (
-            <div>
-              <div className={'bg-grey-800'}>
-                <RenderMobileView />
+      <SideBarOptionProvider>
+        {isMobile ? (
+          <div>
+            <div className={'bg-grey-800'}>
+              <RenderMobileView />
 
               <div>
                 {!user ? (

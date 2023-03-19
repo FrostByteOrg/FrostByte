@@ -11,19 +11,26 @@ import {
 } from '@livekit/components-react';
 import { useUser } from '@supabase/auth-helpers-react';
 
-import { Track, Participant } from 'livekit-client';
-import { useChatNameValue } from '@/context/ChatCtx';
-import { useEffect, useMemo, useState } from 'react';
+import { Track } from 'livekit-client';
+import { useState } from 'react';
+import { useChannel } from '@/lib/store';
 
 export default function Stream() {
 
   const userName = useUser();
   const userID = useUser();
   console.log(userID?.id);
-  const channelId = useChatNameValue();
+  const channel = useChannel();
 
   const [tryConnect, setTryConnect] = useState(true);
   const [connected, setConnected] = useState(true);
+
+  const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, channel.channel_id.toString(), {
+    userInfo: {
+      identity: userID?.id,
+      name: userName?.email
+    },
+  });
 
   return (
     <div className={'bg-gray-800'}>
@@ -37,7 +44,7 @@ export default function Stream() {
           connect={tryConnect}
           onConnected={() => setConnected(true)}
           onDisconnected={() => { 
-            setTryConnect(false);
+            setTryConnect(true);
             setConnected(false);
           }}
           className='flex flex-col w-full' 

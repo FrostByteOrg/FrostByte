@@ -73,19 +73,10 @@ export default function Server({
     setChannel(channel);
   }
 
-  function joinVideoChannel(e: SyntheticEvent, channelId: number, name: string, token: string){
+  function joinVideoChannel(e: SyntheticEvent, channelId: number){
     e.stopPropagation();
-    setChatName(name);
-    setChannelId(channelId);
-    setToken(token);
+    setChannel(channelId);
   }
-
-  const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, channelId.toString(), {
-    userInfo: {
-      identity: userID?.id,
-      name: userName?.email
-    },
-  });
 
   if (expand) {
     return (
@@ -148,7 +139,7 @@ export default function Server({
               }`}
               onClick={(e) => {
                 if (channel.is_media) {
-                  joinVideoChannel(e, channel.channel_id, channel.name, )
+                  return;
                 }
                 else {
                   joinTextChannel(e, channel);
