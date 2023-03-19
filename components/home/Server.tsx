@@ -10,6 +10,7 @@ import Marquee from 'react-fast-marquee';
 import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
+import { useToken } from '@livekit/components-react';
 
 export default function Server({ server, expanded }: { server: ServerType, expanded: number }) {
   const expand = expanded == server.id;
@@ -58,6 +59,20 @@ export default function Server({ server, expanded }: { server: ServerType, expan
     setChatName(name);
     setChannelId(channelId);
   }
+
+  function joinVideoChannel(e: SyntheticEvent, channelId: number, name: string, token: string){
+    e.stopPropagation();
+    setChatName(name);
+    setChannelId(channelId);
+    setToken(token);
+  }
+
+  const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, channelId.toString(), {
+    userInfo: {
+      identity: userID?.id,
+      name: userName?.email
+    },
+  });
 
   if (expand) {
     return (
@@ -120,8 +135,7 @@ export default function Server({ server, expanded }: { server: ServerType, expan
               }`}
               onClick={(e) => {
                 if (channel.is_media) {
-                  // Entrypoint for media channel
-                  return;
+                  joinVideoChannel(e, channel.channel_id, channel.name, )
                 }
 
                 else {

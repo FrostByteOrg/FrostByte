@@ -9,6 +9,7 @@ import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { ChatCtxProvider } from '@/context/ChatCtx';
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
+import { LiveKitRoom } from '@livekit/components-react';
 
 export default function Home() {
   const user = useUser();
@@ -16,6 +17,8 @@ export default function Home() {
   const router = useRouter();
 
   const [isMobile, setIsMobile] = useState(false);
+  const [tryConnect, setTryConnect] =useState(true);
+  const [connected, setConnected] = useState(true);
 
   const checkMobile = useMediaQuery({ query: '(max-width: 940px)' });
   //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
@@ -41,6 +44,21 @@ export default function Home() {
       </Head>
       <ChatCtxProvider>
         <SideBarOptionProvider>
+          <LiveKitRoom
+            video={false}
+            audio={true}
+            screen={false}
+            token={token}
+            serverUrl={process.env.NEXT_PUBLIC_LK_SERVER_URL}
+            connect={tryConnect}
+            onConnected={() => setConnected(true)}
+            onDisconnected={() => {
+              setTryConnect(false);
+              setConnected(false);
+            }}
+          >
+
+          </LiveKitRoom>
           {isMobile ? (
             <div>
               <div className={'bg-grey-800'}>
