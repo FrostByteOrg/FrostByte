@@ -12,20 +12,10 @@ import { OverflowMarquee } from './OverflowMarquee';
 import { useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 
-export default function Server({
-  server,
-  expanded,
-  isLast = false,
-}: {
-  server: ServerType;
-  expanded: number;
-  isLast?: boolean;
-}) {
+export default function Server({ server, expanded, isLast = false }: { server: ServerType, expanded: number, isLast?: boolean }) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
   const setChannel = useSetChannel();
-
-  //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
 
   useEffect(() => {
@@ -80,11 +70,7 @@ export default function Server({
               key={channel.channel_id}
             >
               <div className="w-4">
-                {channel.is_media ? (
-                  <ChannelMediaIcon />
-                ) : (
-                  <ChannelMessageIcon />
-                )}
+                {channel.is_media ? <ChannelMediaIcon />: <ChannelMessageIcon />}
               </div>
 
               <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">
