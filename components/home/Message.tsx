@@ -4,18 +4,19 @@ import { Tooltip } from 'react-tooltip';
 import { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import TrashIcon from '@/components/icons/TrashIcon';
 import EditIcon from '@/components/icons/EditIcon';
-import { editMessage, deleteMessage } from '@/services/message.service';
+import { editMessage } from '@/services/message.service';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageContent from './MessageContent';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
-import { ChatMessageWithUser } from '@/types/dbtypes';
+import { MessageWithServerProfile } from '@/types/dbtypes';
+import { MessageHeader } from './MessageHeader';
 
 export default function Message({
   message,
   collapse_user,
   hasDeletePerms = false,
 }: {
-  message: ChatMessageWithUser;
+  message: MessageWithServerProfile;
   collapse_user: boolean;
   hasDeletePerms?: boolean;
 }) {
@@ -30,11 +31,9 @@ export default function Message({
 
   const supabase = useSupabaseClient();
   const user = useUser();
-
+  const [ messageColor, setMessageColor ] = useState<string>('white');
   const [showOptions, setShowOptions] = useState<'show' | 'hide'>('hide');
-  const [messageOptions, setMessageOptions] = useState<
-    null | 'delete' | 'edit'
-  >(null);
+  const [messageOptions, setMessageOptions] = useState<null | 'delete' | 'edit'>(null);
 
   const chatMessage = useRef<HTMLInputElement>(null);
 
@@ -42,7 +41,13 @@ export default function Message({
     if (messageOptions == 'edit') {
       chatMessage.current?.focus();
     }
-  }, [messageOptions]);
+
+    const highestRoleWithColor = message.roles.find((role) => !!role.color)?.color;
+
+    if (highestRoleWithColor) {
+      setMessageColor(`#${highestRoleWithColor}`);
+    }
+  }, [messageOptions, message.roles]);
 
   function handleKeyPress(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Escape') {
@@ -64,20 +69,15 @@ export default function Message({
     <>
       <div className="px-2 pt-1 pb-1 flex flex-col">
         {!collapse_user && (
-          <div className="flex-grow flex flex-row">
-            <UserIcon user={message.profiles} />
-            <div className="flex-grow flex items-center">
-              <div className="text-xl font-semibold tracking-wider mr-2">
-                {message.profiles.username}
-              </div>
-              <div className="text-xs tracking-wider text-grey-300 mt-1">
-                {displayTime}{' '}
-                {message.is_edited && (
-                  <span className="text-gray-400">(edited)</span>
-                )}
-              </div>
-            </div>
-          </div>
+          <MessageHeader
+            profile={message.profile}
+            server_user={message.author}
+            roles={message.roles}
+            message_id={message.id}
+            message_color={messageColor}
+            display_time={displayTime}
+            edited={message.is_edited}
+          />
         )}
 
         {/* TODO: figure out how to close modal on blur (cant use onBlur on the dialog cuz it takes up the entire screen meaning you can never focus off of it) */}
@@ -92,7 +92,7 @@ export default function Message({
         <div
           className="font-light tracking-wide ml-8 -mt-2 hover:bg-grey-900 rounded-lg p-1 transition-colors break-all relative flex flex-col items-start"
           onMouseEnter={() => {
-            if ((user && user.id == message.profiles.id) || hasDeletePerms)
+            if ((user && user.id == message.profile.id) || hasDeletePerms)
               setShowOptions('show');
           }}
           onMouseLeave={() => setShowOptions('hide')}
@@ -102,7 +102,7 @@ export default function Message({
               showOptions == 'hide' ? 'hidden' : ''
             } absolute left-[90%] bottom-4 bg-grey-925 px-2 py-1 rounded-lg z-10 flex `}
           >
-            {user && user.id == message.profiles.id ? (
+            {user && user.id == message.profile.id ? (
               <span onClick={() => setMessageOptions('edit')}>
                 <EditIcon styles="mr-1 hover:bg-grey-600 rounded-lg hover:cursor-pointer" />
               </span>

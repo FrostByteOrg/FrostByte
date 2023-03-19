@@ -69,7 +69,7 @@ export default function ServerList() {
       <div className="pt-4 pb-4">
         <input
           type="text"
-          className={`${SearchBar}`}
+          className={`${SearchBar()}`}
           placeholder="Search"
         ></input>
       </div>

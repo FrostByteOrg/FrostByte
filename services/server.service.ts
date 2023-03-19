@@ -276,6 +276,22 @@ export async function getUsersInServer(
     .returns<User>();
 }
 
+type GetUsersInServerResponse = Awaited<ReturnType<typeof getUsersInServer>>;
+export type GetUsersInServerResponseSuccess = GetUsersInServerResponse['data'];
+export type GetUsersInServerResponseError = GetUsersInServerResponse['error'];
+
+export async function getServerIdFromMessageId(
+  supabase: SupabaseClient<Database>,
+  message_id: number
+) {
+  return await supabase
+    .rpc('get_server_id_of_message', { m_id: message_id }).single();
+}
+
+type GetServerIdFromMessageIdResponse = Awaited<ReturnType<typeof getServerIdFromMessageId>>;
+export type GetServerIdFromMessageIdResponseSuccess = GetServerIdFromMessageIdResponse['data'];
+export type GetServerIdFromMessageIdResponseError = GetServerIdFromMessageIdResponse['error'];
+
 export async function addServerIcon(
   supabase: SupabaseClient<Database>,
   filePath: string,
@@ -295,3 +311,7 @@ export async function addServerIcon(
     .select()
     .single();
 }
+
+type AddServerIconResponse = Awaited<ReturnType<typeof addServerIcon>>;
+export type AddServerIconResponseSuccess = AddServerIconResponse['data'];
+export type AddServerIconResponseError = AddServerIconResponse['error'];

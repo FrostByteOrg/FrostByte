@@ -17,9 +17,10 @@ ${bg}
 flex-1`;
 }
 
-export const SearchBar = `w-full
+export function SearchBar(bg = 'bg-grey-950 ') {
+  return `w-full
 py-2 
-pl-6
+pl-5
 self-start
 text-base
 font-normal
@@ -30,5 +31,6 @@ transition
 ease-in-out
 m-0
 focus:outline-none
-bg-grey-950
+${bg}
 flex-1`;
+}

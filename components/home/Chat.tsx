@@ -1,25 +1,20 @@
-import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageInput from './MessageInput';
-
-import { createMessage } from '@/services/message.service';
+import type { MessageWithServerProfile, Message as MessageType } from '@/types/dbtypes';
+import { createMessage  } from '@/services/message.service';
 import Message from '@/components/home/Message';
-
-import { ChannelPermissions } from '@/types/permissions';
-
 import { useChannel, useMessages, useUserPerms } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
+import { ChannelPermissions } from '@/types/permissions';
 
 export default function Chat() {
   const supabase = useSupabaseClient();
   const user = useUser();
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
-  const realtimeRef = useOnlinePresenceRef();
-
   const messages = useMessages();
   const channel = useChannel();
   const userPerms = useUserPerms();
@@ -58,8 +53,7 @@ export default function Chat() {
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
-              const previousMessage: ChatMessageWithUser | null =
-                index > 0 ? array[index - 1] : null;
+              const previousMessage: MessageWithServerProfile | null = index > 0 ? array[index - 1] : null;
 
               return (
                 <Message
@@ -67,7 +61,7 @@ export default function Chat() {
                   message={value}
                   collapse_user={
                     !!previousMessage &&
-                    previousMessage.profiles.id === value.profiles.id
+                    previousMessage.profile.id === value.profile.id
                   }
                   hasDeletePerms={
                     (userPerms & ChannelPermissions.MANAGE_MESSAGES) !== 0
