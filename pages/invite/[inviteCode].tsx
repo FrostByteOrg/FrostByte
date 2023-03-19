@@ -1,19 +1,16 @@
 import { useRouter } from 'next/router';
-import Image from 'next/image';
-import Head from 'next/head';
 import styles from '@/styles/Invite.module.css';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { ServerInvite } from '@/types/dbtypes';
 import { getInviteAndServer } from '@/services/invites.service';
-import { ServerMemberStats } from '@/components/home/ServerMemberStats';
 import { addUserToServer } from '@/services/profile.service';
 import ServersIcon from '@/components/icons/ServersIcon';
 import { OverflowMarquee } from '@/components/home/OverflowMarquee';
-import { useServers } from '@/lib/store';
+import { getServersForUser } from '@/services/server.service';
 
 export default function InviteSplash() {
-  const servers = useServers();
+  const user = useUser();
   const router = useRouter();
   const { inviteCode } = router.query;
   const supabase = useSupabaseClient();
@@ -22,7 +19,12 @@ export default function InviteSplash() {
 
   useEffect(() => {
     async function handleAsync() {
+      if (!user || !inviteCode) {
+        return;
+      }
+
       const { data, error } = await getInviteAndServer(supabase, inviteCode as string);
+      const { data: servers, error: serverError } = await getServersForUser(supabase, user!.id);
 
       if (error) {
         console.error(error);
@@ -33,12 +35,17 @@ export default function InviteSplash() {
         console.log(data);
         setInvite(data);
       }
-      console.log(servers);
+
+      if (serverError) {
+        console.error(serverError);
+        return;
+      }
+
       setUserInServer(servers.some((s) => s.server_id === data.servers.id));
     };
 
     handleAsync();
-  }, [inviteCode, supabase, servers]);
+  }, [inviteCode, supabase, user]);
 
   return (
     <>
