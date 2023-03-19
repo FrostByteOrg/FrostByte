@@ -3,9 +3,11 @@ import styles from '@/styles/Chat.module.css';
 
 export default function MessageInput({
   onSubmit,
+  channelName,
   disabled = false,
 }: {
   onSubmit: Function;
+  channelName: string;
   disabled?: boolean;
 }) {
   const [messageText, setMessageText] = useState('');
@@ -42,7 +44,7 @@ export default function MessageInput({
 
       `}
         disabled={disabled}
-        placeholder="Message general"
+        placeholder={`Message ${channelName}`}
         value={
           disabled
             ? 'You do not have permission to message in this channel'

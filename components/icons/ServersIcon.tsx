@@ -18,7 +18,7 @@ export default function ServersIcon({
       <img
         src={server.image_url}
         alt={`${server.name}`}
-        className={className}
+        className={`${className} rounded-xl`}
       />
     );
   }
@@ -29,7 +29,7 @@ export default function ServersIcon({
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke={hovered ? '#8aa0a8' : 'currentColor'}
-      className={className}
+      className={`${className} rounded-xl`}
     >
       <path
         strokeLinecap="round"
