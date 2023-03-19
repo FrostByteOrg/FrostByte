@@ -1,7 +1,7 @@
-import { create, createStore, StateCreator } from 'zustand';
+import { create } from 'zustand';
 import {
   Channel,
-  ChatMessageWithUser,
+  MessageWithServerProfile,
   Server,
   ServersForUser,
   ServerUser,
@@ -15,6 +15,7 @@ import {
   getMessageWithUser,
 } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
+import { getMessageWithServerProfile } from '@/services/profile.service';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -62,7 +63,7 @@ const useServerStore = create<ServerState>()((set) => ({
   },
 }));
 export interface MessagesState {
-  messages: ChatMessageWithUser[];
+  messages: MessageWithServerProfile[];
   channelId: number;
   setChannelId: (channelId: number) => void;
   addMessage: (supabase: SupabaseClient<Database>, messageId: number) => void;
@@ -79,7 +80,7 @@ const useMessagesStore = create<MessagesState>()((set) => ({
   channelId: 0,
   setChannelId: (chId) => set((state) => ({ channelId: chId })),
   addMessage: async (supabase, messageId) => {
-    const { data, error } = await getMessageWithUser(supabase, messageId);
+    const { data, error } = await getMessageWithServerProfile(supabase, messageId);
 
     if (error) {
       console.error(error);
@@ -88,12 +89,12 @@ const useMessagesStore = create<MessagesState>()((set) => ({
 
     if (data) {
       set((state) => ({
-        messages: [...state.messages, data as ChatMessageWithUser],
+        messages: [...state.messages, data as MessageWithServerProfile],
       }));
     }
   },
   updateMessage: async (supabase, messageId) => {
-    const { data, error } = await getMessageWithUser(supabase, messageId);
+    const { data, error } = await getMessageWithServerProfile(supabase, messageId);
 
     if (error) {
       console.error(error);
@@ -105,7 +106,7 @@ const useMessagesStore = create<MessagesState>()((set) => ({
         messages: state.messages.map((message) => {
           // Once we hit a message that matches the id, we can return the updated message instead of the old one
           if (message.id === data.id) {
-            return data as ChatMessageWithUser;
+            return data as MessageWithServerProfile;
           }
 
           // Otherwise fallback to the old one
@@ -133,7 +134,7 @@ const useMessagesStore = create<MessagesState>()((set) => ({
 
     if (data) {
       data.reverse();
-      set({ messages: data as ChatMessageWithUser[] });
+      set({ messages: data as MessageWithServerProfile[] });
     }
   },
 }));

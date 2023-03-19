@@ -1,7 +1,7 @@
 import { sanitizeMessage } from '@/lib/messageHelpers';
 import { getPagination } from '@/lib/paginationHelper';
 import { Database } from '@/types/database.supabase';
-import { ChatMessageWithUser, UnsavedMessage } from '@/types/dbtypes';
+import { MessageWithServerProfile, UnsavedMessage } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export async function getMessagesInChannel(supabase: SupabaseClient<Database>, channelId: number, page: number = 0, pageSize: number = 50) {
@@ -26,12 +26,12 @@ export async function getMessagesInChannelWithUser(
   const { from, to } = getPagination(page, pageSize);
 
   return await supabase
-    .from('messages')
-    .select('*, profiles(\*)')
-    .eq('channel_id', channelId)
+    .rpc('get_messages_in_channel_with_server_profile', {
+      c_id: channelId,
+    })
     .order('sent_time', { ascending: false })
     .range(from, to)
-    .returns<ChatMessageWithUser>();
+    .returns<MessageWithServerProfile>();
 }
 
 type Profiles = Database['public']['Tables']['profiles']['Row'];
@@ -45,7 +45,7 @@ export type MessagesWithUsersResponseError = MessagesWithUsersResponse['error']
 export async function getMessageWithUser(supabase: SupabaseClient<Database>, messageId: number) {
   return await supabase
     .from('messages')
-    .select('*, profiles(\*)')
+    .select('*, profiles(\*), server_users(nickname)')
     .eq('id', messageId)
     .single();
 }

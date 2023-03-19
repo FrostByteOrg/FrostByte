@@ -1,4 +1,5 @@
 import { Database } from '@/types/database.supabase';
+import { MessageWithServerProfile, ServerUserProfile } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export async function getProfiles(supabase: SupabaseClient<Database>) {
@@ -62,3 +63,44 @@ export async function addUserToServer(
 type AddUserToServerResponse = Awaited<ReturnType<typeof addUserToServer>>;
 export type AddUserToServerResponseSuccess = AddUserToServerResponse['data'];
 export type AddUserToServerResponseError = AddUserToServerResponse['error'];
+
+export async function getUserProfileAndServerUserProps(supabase: SupabaseClient<Database>, userId: string, serverId: number) {
+  return await supabase
+    .from('profiles')
+    .select('*, server_users(*)')
+    .eq('id', userId)
+    .eq('server_users.server_id', serverId)
+    .returns<ServerUserProfile>()
+    .single();
+}
+
+type GetUserProfileAndServerUserPropsResponse = Awaited<ReturnType<typeof getUserProfileAndServerUserProps>>;
+export type GetUserProfileAndServerUserPropsResponseSuccess = GetUserProfileAndServerUserPropsResponse['data'];
+export type GetUserProfileAndServerUserPropsResponseError = GetUserProfileAndServerUserPropsResponse['error'];
+
+export async function getServerProfileForUser(supabase: SupabaseClient<Database>, userId: string, serverId: number) {
+  return await supabase
+    .rpc('get_server_profile_for_user', {
+      p_id: userId,
+      s_id: serverId,
+    })
+    .returns<ServerUserProfile>()
+    .single();
+}
+
+type GetServerProfileForUserResponse = Awaited<ReturnType<typeof getServerProfileForUser>>;
+export type GetServerProfileForUserResponseSuccess = GetServerProfileForUserResponse['data'];
+export type GetServerProfileForUserResponseError = GetServerProfileForUserResponse['error'];
+
+export async function getMessageWithServerProfile(supabase: SupabaseClient<Database>, messageId: number) {
+  const data = await supabase
+    .rpc('get_message_with_server_profile', {
+      m_id: messageId,
+    })
+    .returns<MessageWithServerProfile>()
+    .single();
+
+  console.table(data);
+
+  return data;
+}
