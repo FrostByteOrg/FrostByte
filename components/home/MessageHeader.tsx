@@ -10,20 +10,30 @@ export function MessageHeader({
   message_color,
   display_time,
   edited,
-  roles
+  roles,
 }: {
-  profile: User,
-  server_user: ServerUser,
-  message_id: number,
-  message_color: string,
-  display_time: string,
-  edited: boolean,
-  roles: Role[],
+  profile: User;
+  server_user: ServerUser;
+  message_id: number;
+  message_color: string;
+  display_time: string;
+  edited: boolean;
+  roles: Role[];
 }) {
   return (
     <div className="flex-grow flex flex-row">
-      <Tooltip id={profile.id} className='z-20 !w-12' clickable noArrow>
-        <MiniProfile profile={profile} server_user={server_user} roles={roles} />
+      <Tooltip
+        id={profile.id}
+        className="z-20 !w-12 !opacity-100 "
+        style={{ backgroundColor: '#21282b', borderRadius: '0.5rem' }}
+        clickable
+        noArrow
+      >
+        <MiniProfile
+          profile={profile}
+          server_user={server_user}
+          roles={roles}
+        />
       </Tooltip>
       <UserIcon user={profile} />
       <div className="flex-grow flex items-center">
@@ -39,9 +49,7 @@ export function MessageHeader({
         </div>
         <div className="text-xs tracking-wider text-grey-300 mt-1">
           {display_time}{' '}
-          {edited && (
-            <span className="text-gray-400">(edited)</span>
-          )}
+          {edited && <span className="text-gray-400">(edited)</span>}
         </div>
       </div>
     </div>
