@@ -1,16 +1,18 @@
+import { useServers } from '@/lib/store';
 import { getInviteAndServer } from '@/services/invites.service';
 import { addUserToServer } from '@/services/profile.service';
 import { ServerInvite } from '@/types/dbtypes';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import ServersIcon from '../icons/ServersIcon';
 import { OverflowMarquee } from './OverflowMarquee';
 import { ServerMemberStats } from './ServerMemberStats';
 
 export function InviteEmbed({ invite_code }: { invite_code: string }) {
-  const user = useUser();
+  const servers = useServers();
   const supabase = useSupabaseClient();
   const [invite, setInvite] = useState<ServerInvite | null>(null);
+  const [ userInServer, setUserInServer ] = useState<boolean>(false);
 
   useEffect(() => {
     async function handleAsync() {
@@ -25,10 +27,12 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
         console.log(data);
         setInvite(data);
       }
+
+      setUserInServer(servers.some((s) => s.server_id === data.servers.id));
     };
 
     handleAsync();
-  }, [invite_code, supabase]);
+  }, [invite_code, supabase, servers]);
 
   if (!invite) {
     return (<></>);
@@ -90,12 +94,12 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
               align-middle
               disabled:bg-gray-600
             "
-            disabled
+            disabled={userInServer}
             onClick={async () => {
               await addUserToServer(supabase, invite.servers.id);
             }}
           >
-            Join
+            {userInServer ? 'Joined' : 'Join'}
           </button>
         </div>
       </div>

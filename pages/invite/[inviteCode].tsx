@@ -10,12 +10,15 @@ import { ServerMemberStats } from '@/components/home/ServerMemberStats';
 import { addUserToServer } from '@/services/profile.service';
 import ServersIcon from '@/components/icons/ServersIcon';
 import { OverflowMarquee } from '@/components/home/OverflowMarquee';
+import { useServers } from '@/lib/store';
 
 export default function InviteSplash() {
+  const servers = useServers();
   const router = useRouter();
   const { inviteCode } = router.query;
   const supabase = useSupabaseClient();
   const [invite, setInvite] = useState<ServerInvite | null>(null);
+  const [ userInServer, setUserInServer ] = useState<boolean>(false);
 
   useEffect(() => {
     async function handleAsync() {
@@ -30,10 +33,12 @@ export default function InviteSplash() {
         console.log(data);
         setInvite(data);
       }
+      console.log(servers);
+      setUserInServer(servers.some((s) => s.server_id === data.servers.id));
     };
 
     handleAsync();
-  }, [inviteCode, supabase]);
+  }, [inviteCode, supabase, servers]);
 
   return (
     <>
@@ -84,12 +89,12 @@ export default function InviteSplash() {
                           h-7
                           disabled:bg-gray-600
                         "
-                        disabled
+                        disabled={userInServer}
                         onClick={async () => {
                           await addUserToServer(supabase, invite.servers.id);
                         }}
                       >
-                        Join
+                        {userInServer ? 'Joined' : 'Join'}
                       </button>
                     </div>
                   </div>
