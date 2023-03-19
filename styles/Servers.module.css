@@ -26,3 +26,12 @@
     margin-left: 0;
   }
 }
+
+.arrow {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+
+  border-right: 10px solid rgb(33 40 43 / 1);
+}

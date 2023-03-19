@@ -3,11 +3,12 @@ import FriendsIcon from '@/components/icons/FriendsIcon';
 import ServersIcon from '@/components/icons/ServersIcon';
 import MessagesIcon from '@/components/icons/MessagesIcon';
 import { useState } from 'react';
-import { useChannelIdSetter } from '@/context/ChatCtx';
+import { useSetChannel } from '@/lib/store';
 
 export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
   const setSideBarOption = useSideBarOptionSetter();
-  const setChannelId = useChannelIdSetter();
+
+  const setChannel = useSetChannel();
 
   const [friendsHover, setFriendsHover] = useState(false);
   const [serversHover, setServersHover] = useState(false);
@@ -26,7 +27,7 @@ export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
         }`}
         onClick={() => {
           setSideBarOption('friends');
-          setChannelId(0);
+          setChannel(null);
         }}
         onMouseEnter={() => setFriendsHover(true)}
         onMouseLeave={() => setFriendsHover(false)}
@@ -41,7 +42,7 @@ export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
         }`}
         onClick={() => {
           setSideBarOption('servers');
-          setChannelId(0);
+          setChannel(null);
         }}
         onMouseEnter={() => setServersHover(true)}
         onMouseLeave={() => setServersHover(false)}
@@ -61,7 +62,7 @@ export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
         }`}
         onClick={() => {
           setSideBarOption('messages');
-          setChannelId(0);
+          setChannel(null);
         }}
         onMouseEnter={() => setMessagesHover(true)}
         onMouseLeave={() => setMessagesHover(false)}
