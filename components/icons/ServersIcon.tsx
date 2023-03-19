@@ -3,8 +3,6 @@ import { Server } from '@/types/dbtypes';
 export default function ServersIcon({
   server,
   hovered = false,
-  width = 6,
-  height = 6,
   className = 'w-6 h-6',
 }: {
   server: Server;
