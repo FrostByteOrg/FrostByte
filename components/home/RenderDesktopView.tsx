@@ -7,12 +7,15 @@ import DMessageList from '@/components/home/DMessageList';
 import ServerList from '@/components/home/ServerList';
 import DefaultTest from '@/components/home/DefaultTest';
 import { useChannel } from '@/lib/store';
-import { Channel } from '@/types/dbtypes';
+import { Channel, User } from '@/types/dbtypes';
 import MediaChat from '@/components/home/MediaChat';
 import { RoomAudioRenderer, TrackToggle } from '@livekit/components-react';
 import { Track } from 'livekit-client';
+import UserIcon from '../icons/UserIcon';
+import { BsMicFill, BsGearFill } from 'react-icons/bs';
+import { FaHeadphones } from 'react-icons/fa';
 
-export default function RenderDesktopView() {
+export default function RenderDesktopView({profile} : {profile: User}) {
   const channel = useChannel();
   const sideBarOption = useSideBarOptionValue();
 
@@ -26,10 +29,21 @@ export default function RenderDesktopView() {
       </div>
       <div className="col-start-2 col-end-4 flex-col bg-grey-900 relative">
         {sideBarView}
-        <div className={'bg-grey-950 w-full h-auto p-3 absolute bottom-[0px]'}>
-          <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 rounded-lg text-lg'} source={Track.Source.Microphone} initialState={false}>
-          Mic
-          </TrackToggle> 
+        <div className={'bg-grey-950 h-auto w-full p-3 absolute bottom-[0px]'}>
+          <div className='flex flex-row justify-between'>
+            <UserIcon user={profile} indicator={false}/>
+            <div className='flex flex-row w-9'>
+              <button className='w-7 h-7'>
+                <FaHeadphones  size={22}/>
+              </button>
+              <TrackToggle showIcon={false} className={'w-7 h-7'} source={Track.Source.Microphone}>
+                <BsMicFill size={22}/>
+              </TrackToggle> 
+              <button className='w-7 h-7'>
+                <BsGearFill  size={22}/>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <div className="col-start-4 col-end-13 flex flex-col h-screen">

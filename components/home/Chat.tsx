@@ -10,7 +10,6 @@ import { useChannel, useMessages, useUserPerms } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
 import { ChannelPermissions } from '@/types/permissions';
-import Stream from '@/components/home/Stream';
 
 export default function Chat() {
   const supabase = useSupabaseClient();

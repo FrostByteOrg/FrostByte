@@ -9,15 +9,17 @@ import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
-import { LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
+import { LiveKitRoom } from '@livekit/components-react';
 import { useTokenRef } from '@/lib/store';
+import { getProfile } from '@/services/profile.service';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
   const token = useTokenRef();
-
+  const profile = getProfile(supabase, user?.id);
+  
   useRealtimeStore(supabase);
 
   const [isMobile, setIsMobile] = useState(false);
@@ -78,7 +80,7 @@ export default function Home() {
           ) : (
             <div>
               <div className={'bg-grey-800 '}>
-                <RenderDesktopView />
+                <RenderDesktopView profile={profile}/>
                 <div>
                   {!user ? (
                     ''
