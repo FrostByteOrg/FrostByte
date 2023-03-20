@@ -14,8 +14,6 @@ import {
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
-import { AudioTrack, TrackToggle } from '@livekit/components-react';
-import { Track } from 'livekit-client';
 
 export default function Server({
   server,
@@ -240,6 +238,8 @@ export default function Server({
         <div>
           <VerticalSettingsIcon />
         </div>
+
+
       </div>
     </div>
   );

@@ -9,7 +9,8 @@ import DefaultTest from '@/components/home/DefaultTest';
 import { useChannel } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import MediaChat from '@/components/home/MediaChat';
-import { RoomAudioRenderer } from '@livekit/components-react';
+import { RoomAudioRenderer, TrackToggle } from '@livekit/components-react';
+import { Track } from 'livekit-client';
 
 export default function RenderDesktopView() {
   const channel = useChannel();
@@ -20,12 +21,16 @@ export default function RenderDesktopView() {
   return (
     <div className={`${styles.container} `}>
       <RoomAudioRenderer/>
-
       <div className="col-start-1 col-end-2 bg-grey-950 flex-col justify-center ">
         <NavBar type="vertical" />
       </div>
-      <div className="col-start-2 col-end-4 flex-col bg-grey-900 ">
+      <div className="col-start-2 col-end-4 flex-col bg-grey-900 relative">
         {sideBarView}
+        <div className={'bg-grey-950 w-full h-auto p-3 absolute bottom-[0px]'}>
+          <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 rounded-lg text-lg'} source={Track.Source.Microphone} initialState={false}>
+          Mic
+          </TrackToggle> 
+        </div>
       </div>
       <div className="col-start-4 col-end-13 flex flex-col h-screen">
         {mainView}

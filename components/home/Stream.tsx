@@ -1,13 +1,12 @@
 import {
   useToken,
-  LiveKitRoom,
-  RoomAudioRenderer,
   ParticipantLoop,
   ParticipantTile,
   TrackToggle,
   DisconnectButton,
   VideoTrack,
   AudioTrack,
+  ParticipantName,
 } from '@livekit/components-react';
 import { useUser } from '@supabase/auth-helpers-react';
 
@@ -39,10 +38,11 @@ export default function Stream() {
           <ParticipantLoop>
             <ParticipantTile className={'w-12 mb-5 mr-4 mt-5'}>
               <div className={''}>
-                <VideoTrack source={Track.Source.Camera} className={'rounded-xl mx-2'}/>
+                <VideoTrack source={Track.Source.Camera} className={'rounded-xl mx-2'} />
                 <VideoTrack source={Track.Source.ScreenShare} className={'rounded-xl'}/>
               </div>
               <AudioTrack source={Track.Source.Microphone}/>
+              <ParticipantName />
             </ParticipantTile>
           </ParticipantLoop>
         </div>

@@ -12,9 +12,7 @@ export default function MediaChat() {
   const supabase = useSupabaseClient();
   const user = useUser();
 
-  const realtimeRef = useOnlinePresenceRef();
   const channel = useChannel();
-  const userPerms = useUserPerms();
 
   return (
     <>
