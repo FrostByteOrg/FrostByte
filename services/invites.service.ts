@@ -20,6 +20,7 @@ export type InviteByCodeResponseError = InviteByCodeResponse['error'];
 export async function createInvite(
   supabase: SupabaseClient<Database>,
   serverId: number,
+  channelId: number,
   expiresAt: InviteExpiry = '1 week',
   numUses: number | null = null,
   urlId: string | null = null
@@ -79,6 +80,7 @@ export async function createInvite(
     .from('server_invites')
     .insert({
       server_id: serverId,
+      channel_id: channelId,
       uses_remaining: numUses,
       expires_at: parsedExpiresAt?.toISOString() || null,
       url_id: urlId,

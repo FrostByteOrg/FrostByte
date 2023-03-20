@@ -199,6 +199,7 @@ export interface Database {
       }
       server_invites: {
         Row: {
+          channel_id: number
           created_at: string | null
           expires_at: string | null
           id: number
@@ -207,6 +208,7 @@ export interface Database {
           uses_remaining: number | null
         }
         Insert: {
+          channel_id: number
           created_at?: string | null
           expires_at?: string | null
           id?: number
@@ -215,6 +217,7 @@ export interface Database {
           uses_remaining?: number | null
         }
         Update: {
+          channel_id?: number
           created_at?: string | null
           expires_at?: string | null
           id?: number
@@ -301,7 +304,6 @@ export interface Database {
           description: string | null
           id: number
           image_url: string | null
-          landing_channel: number | null
           name: string
         }
         Insert: {
@@ -309,7 +311,6 @@ export interface Database {
           description?: string | null
           id?: number
           image_url?: string | null
-          landing_channel?: number | null
           name: string
         }
         Update: {
@@ -317,7 +318,6 @@ export interface Database {
           description?: string | null
           id?: number
           image_url?: string | null
-          landing_channel?: number | null
           name?: string
         }
       }
@@ -472,7 +472,6 @@ export interface Database {
           description: string | null
           id: number
           image_url: string | null
-          landing_channel: number | null
           name: string
         }[]
       }

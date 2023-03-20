@@ -6,9 +6,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { method } = req;
 
   let serverId: number;
+  let channelId: number;
 
   try {
     serverId = parseInt(req.query.serverId as string);
+    channelId = parseInt(req.query.channelId as string);
   }
 
   catch (err: any) {
@@ -21,6 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { data: invite, error } = await createInvite(
       supabaseServerClient,
       serverId,
+      channelId,
       req.body.expiresAt,
       req.body.numUses,
       req.body.urlId
