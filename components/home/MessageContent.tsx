@@ -13,9 +13,7 @@ function CustomAnchorTag(props: AnchorHTMLAttributes<HTMLAnchorElement>) {
     const inviteCode = props.href.split('/invite/')[1];
     return (
       <>
-        <p className="text-frost-300">
-          {props.children}
-        </p>
+        <a className="text-frost-300" {...props} target="_blank"/>
         <InviteEmbed invite_code={inviteCode} />
       </>
     );

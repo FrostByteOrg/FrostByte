@@ -33,6 +33,8 @@
       5px 5px 4px hsla(0, 0%, 18%, 0.749),
       5px 5px 20px hsla(0, 0%, 21%, 0.749),
       -5px 1px 4px hsla(0, 0%, 21%, 0.749);
+
+    background: rgba(50, 50, 50, 0.8) !important;
   }
 }
 

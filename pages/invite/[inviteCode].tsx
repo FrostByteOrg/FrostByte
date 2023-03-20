@@ -8,6 +8,7 @@ import { addUserToServer } from '@/services/profile.service';
 import ServersIcon from '@/components/icons/ServersIcon';
 import { OverflowMarquee } from '@/components/home/OverflowMarquee';
 import { getServersForUser } from '@/services/server.service';
+import { useMediaQuery } from 'react-responsive';
 
 export default function InviteSplash() {
   const user = useUser();
@@ -16,6 +17,12 @@ export default function InviteSplash() {
   const supabase = useSupabaseClient();
   const [invite, setInvite] = useState<ServerInvite | null>(null);
   const [ userInServer, setUserInServer ] = useState<boolean>(false);
+  const mq = useMediaQuery({ query: '(max-width: 1280px)' });
+  const [ isMobile, setIsMobile ] = useState(true);
+
+  useEffect(() => {
+    setIsMobile(mq);
+  }, [mq]);
 
   useEffect(() => {
     async function handleAsync() {
@@ -32,7 +39,6 @@ export default function InviteSplash() {
       }
 
       if (data) {
-        console.log(data);
         setInvite(data);
       }
 
@@ -51,7 +57,11 @@ export default function InviteSplash() {
     <>
       <main className={`${styles.mainBackground} xl:bg-grey-600`}>
         <div
-          className={`${styles.authMD} items-center overflow-auto h-screen w-full `}
+          className={`${styles.authMD} items-center overflow-auto h-screen w-full`}
+          style={{
+            background: isMobile ? 'rgba(50,50,50, 0.8)' : '',
+            backdropFilter: isMobile ? 'blur(10px)' : '',
+          }}
         >
           <div
             className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full xl:rounded-3xl`}
