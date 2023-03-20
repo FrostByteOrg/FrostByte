@@ -385,6 +385,44 @@ export interface Database {
         }
         Returns: number
       }
+      get_message_with_server_profile: {
+        Args: {
+          m_id: number
+        }
+        Returns: {
+          id: number
+          sent_time: string
+          is_edited: boolean
+          is_pinned: boolean
+          edited_time: string
+          channel_id: number
+          author_id: number
+          content: string
+          profile_id: string
+          profiles: Json
+          nickname: string
+          roles: Json
+        }[]
+      }
+      get_messages_in_channel_with_server_profile: {
+        Args: {
+          c_id: number
+        }
+        Returns: {
+          id: number
+          sent_time: string
+          is_edited: boolean
+          is_pinned: boolean
+          edited_time: string
+          channel_id: number
+          author_id: number
+          content: string
+          profile_id: string
+          profiles: Json
+          nickname: string
+          roles: Json
+        }[]
+      }
       get_owner_id_of_server_from_message: {
         Args: {
           m_id: number
@@ -410,6 +448,23 @@ export interface Database {
           m_id: number
         }
         Returns: number
+      }
+      get_server_profile_for_user: {
+        Args: {
+          s_id: number
+          p_id: string
+        }
+        Returns: {
+          id: string
+          updated_at: string
+          username: string
+          full_name: string
+          avatar_url: string
+          website: string
+          email: string
+          nickname: string
+          roles: Json
+        }[]
       }
       get_servers_for_user: {
         Args: Record<PropertyKey, never>

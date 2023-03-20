@@ -6,7 +6,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Components.module.css';
 import { useEffect } from 'react';
 import Modal from '@/components/home/Modal';
-import { ChatMessageWithUser } from '@/types/dbtypes';
+import { MessageWithServerProfile } from '@/types/dbtypes';
 
 export default function DeleteMsgModal({
   showModal,
@@ -15,7 +15,7 @@ export default function DeleteMsgModal({
   setMessageOptions,
 }: {
   showModal: boolean;
-  message: ChatMessageWithUser;
+  message: MessageWithServerProfile;
   displayTime: string;
   setMessageOptions: Dispatch<SetStateAction<'delete' | 'edit' | null>>;
 }) {
@@ -54,10 +54,10 @@ export default function DeleteMsgModal({
     >
       <>
         <div className="flex-grow flex flex-row">
-          <UserIcon user={message.profiles} />
+          <UserIcon user={message.profile} />
           <div className="flex-grow flex items-center">
             <div className="text-xl font-semibold tracking-wider mr-2">
-              {message.profiles.username}
+              {message.profile.username}
             </div>
             <div className="text-xs tracking-wider text-grey-300 mt-1">
               {displayTime}{' '}
