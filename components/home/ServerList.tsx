@@ -7,6 +7,7 @@ import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
 import { useGetServers, useServers } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
+import PlusIcon from '@/components/icons/PlusIcon';
 
 export default function ServerList() {
   //TODO: fetch server_users via profile id, select server_id -> fetch channels via this server_id && fetch servers with server_id
@@ -57,7 +58,8 @@ export default function ServerList() {
             style={{
               backgroundColor: '#21282b',
               borderRadius: '0.5rem',
-              fontSize: '1rem',
+              fontSize: '1.125rem',
+              lineHeight: '1.75rem',
             }}
             id="addServer"
             clickable
@@ -73,7 +75,8 @@ export default function ServerList() {
           placeholder="Search"
         ></input>
       </div>
-      <div className="overflow-y-scroll">
+
+      <div className="overflow-y-scroll ">
         {servers &&
           servers.map((server, idx, serverList) => {
             if (server) {
@@ -97,6 +100,23 @@ export default function ServerList() {
             }
           })}
       </div>
+      <Tooltip
+        className="z-20 !opacity-100 font-semibold "
+        style={{
+          backgroundColor: '#21282b',
+          borderRadius: '0.5rem',
+          fontSize: '1.125rem',
+          lineHeight: '1.75rem',
+        }}
+        id="serverSettings"
+        clickable
+        openOnClick={true}
+      >
+        <div className="flex justify-center items-center hover:text-grey-300 cursor-pointer">
+          <PlusIcon width={5} height={5} />
+          <span className="ml-1">New channel</span>
+        </div>
+      </Tooltip>
     </div>
   );
 }

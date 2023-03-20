@@ -20,6 +20,7 @@ import {
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
+import { Tooltip } from 'react-tooltip';
 
 export default function Server({
   server,
@@ -84,7 +85,7 @@ export default function Server({
 
   if (expand) {
     return (
-      <div className="relative ">
+      <div className="relative overflow-x-visible">
         <div className="border-b-2 border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div
@@ -138,6 +139,8 @@ export default function Server({
             onMouseEnter={() => setIsSettingsHovered(true)}
             onMouseLeave={() => setIsSettingsHovered(false)}
             className="hover:cursor-pointer"
+            data-tooltip-id="serverSettings"
+            data-tooltip-place="right"
           >
             <VerticalSettingsIcon hovered={isSettingsHovered} />
           </div>
