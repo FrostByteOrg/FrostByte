@@ -36,8 +36,6 @@ export default function Home() {
   }, [checkMobile]);
 
   useEffect(() => {
-    console.log('channel_id', channel_id);
-
     if (!channel_id) {
       return;
     }
