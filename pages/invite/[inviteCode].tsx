@@ -99,7 +99,7 @@ export default function InviteSplash() {
                         disabled={userInServer}
                         onClick={async () => {
                           await addUserToServer(supabase, invite.servers.id);
-                          router.push(`/?s=${invite.server_id}&c=${invite.channel_id}`, '/');
+                          router.push(`/?c=${invite.channel_id}`, '/');
                         }}
                       >
                         {userInServer ? 'Joined' : 'Join'}

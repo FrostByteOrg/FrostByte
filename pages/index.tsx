@@ -15,7 +15,7 @@ export default function Home() {
   const supabase = useSupabaseClient();
   const router = useRouter();
   const setChannel = useSetChannel();
-  const { s: server_id, c: channel_id } = router.query;
+  const { c: channel_id } = router.query;
 
   useRealtimeStore(supabase);
 
@@ -37,9 +37,8 @@ export default function Home() {
 
   useEffect(() => {
     console.log('channel_id', channel_id);
-    console.log('server_id', server_id);
 
-    if (!channel_id || !server_id) {
+    if (!channel_id) {
       return;
     }
 
@@ -60,7 +59,7 @@ export default function Home() {
 
     handleAsync();
 
-  }, [channel_id, server_id, setChannel, supabase]);
+  }, [channel_id, setChannel, supabase]);
 
   return (
     <>
