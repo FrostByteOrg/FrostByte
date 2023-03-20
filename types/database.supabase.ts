@@ -301,6 +301,7 @@ export interface Database {
           description: string | null
           id: number
           image_url: string | null
+          landing_channel: number | null
           name: string
         }
         Insert: {
@@ -308,6 +309,7 @@ export interface Database {
           description?: string | null
           id?: number
           image_url?: string | null
+          landing_channel?: number | null
           name: string
         }
         Update: {
@@ -315,6 +317,7 @@ export interface Database {
           description?: string | null
           id?: number
           image_url?: string | null
+          landing_channel?: number | null
           name?: string
         }
       }
@@ -396,11 +399,9 @@ export interface Database {
           is_pinned: boolean
           edited_time: string
           channel_id: number
-          author_id: number
           content: string
-          profile_id: string
-          profiles: Json
-          nickname: string
+          author: Json
+          profile: Json
           roles: Json
         }[]
       }
@@ -415,11 +416,9 @@ export interface Database {
           is_pinned: boolean
           edited_time: string
           channel_id: number
-          author_id: number
           content: string
-          profile_id: string
-          profiles: Json
-          nickname: string
+          author: Json
+          profile: Json
           roles: Json
         }[]
       }
@@ -462,7 +461,7 @@ export interface Database {
           avatar_url: string
           website: string
           email: string
-          nickname: string
+          server_user: Json
           roles: Json
         }[]
       }
@@ -473,6 +472,7 @@ export interface Database {
           description: string | null
           id: number
           image_url: string | null
+          landing_channel: number | null
           name: string
         }[]
       }

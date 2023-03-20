@@ -1,19 +1,21 @@
 import Head from 'next/head';
-import styles from '@/styles/Home.module.css';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
-import NavBar from '@/components/home/NavBar';
 import { SideBarOptionProvider } from '@/context/SideBarOptionCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
 import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
+import { useSetChannel } from '@/lib/store';
+import { getChannelById } from '@/services/channels.service';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
+  const setChannel = useSetChannel();
+  const { s: server_id, c: channel_id } = router.query;
 
   useRealtimeStore(supabase);
 
@@ -32,6 +34,33 @@ export default function Home() {
   useEffect(() => {
     setIsMobile(checkMobile);
   }, [checkMobile]);
+
+  useEffect(() => {
+    console.log('channel_id', channel_id);
+    console.log('server_id', server_id);
+
+    if (!channel_id || !server_id) {
+      return;
+    }
+
+    async function handleAsync() {
+      // First, try parsing the channel_id as a number. If that fails, we're done
+      const channel_id_as_number = parseInt(channel_id as string);
+
+      if (isNaN(channel_id_as_number)) {
+        return;
+      }
+
+      const { data: _channel } = await getChannelById(supabase, channel_id_as_number);
+
+      if (_channel) {
+        setChannel(_channel);
+      }
+    }
+
+    handleAsync();
+
+  }, [channel_id, server_id, setChannel, supabase]);
 
   return (
     <>
