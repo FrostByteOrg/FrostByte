@@ -9,12 +9,14 @@ import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
-import { LiveKitRoom } from '@livekit/components-react';
+import { LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
+import { useTokenRef } from '@/lib/store';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
+  const token = useTokenRef();
 
   useRealtimeStore(supabase);
 
@@ -45,44 +47,54 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <SideBarOptionProvider>
-        {isMobile ? (
-          <div>
-            <div className={'bg-grey-800'}>
-              <RenderMobileView />
-
-              <div>
-                {!user ? (
-                  ''
-                ) : (
-                  <button
-                    className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                )}
+        <LiveKitRoom
+          video={false}
+          audio={true}
+          screen={false}
+          token={token}
+          serverUrl={process.env.NEXT_PUBLIC_LK_SERVER_URL}
+          connect={tryConnect}
+          onConnected={() => setConnected(true)}
+          className='flex flex-col w-full' 
+        >
+          {isMobile ? (
+            <div>
+              <div className={'bg-grey-800'}>
+                <RenderMobileView />
+                <div>
+                  {!user ? (
+                    ''
+                  ) : (
+                    <button
+                      className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div>
-            <div className={'bg-grey-800 '}>
-              <RenderDesktopView />
-              <div>
-                {!user ? (
-                  ''
-                ) : (
-                  <button
-                    className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                )}
+          ) : (
+            <div>
+              <div className={'bg-grey-800 '}>
+                <RenderDesktopView />
+                <div>
+                  {!user ? (
+                    ''
+                  ) : (
+                    <button
+                      className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </LiveKitRoom>
       </SideBarOptionProvider>
     </>
   );

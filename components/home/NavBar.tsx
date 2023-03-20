@@ -4,6 +4,8 @@ import ServersIcon from '@/components/icons/ServersIcon';
 import MessagesIcon from '@/components/icons/MessagesIcon';
 import { useState } from 'react';
 import { useSetChannel } from '@/lib/store';
+import { TrackToggle } from '@livekit/components-react';
+import { Track } from 'livekit-client';
 
 export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
   const setSideBarOption = useSideBarOptionSetter();
@@ -68,6 +70,11 @@ export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
         onMouseLeave={() => setMessagesHover(false)}
       >
         <MessagesIcon hovered={messagesHover} width={6} height={6} />
+      </div>
+      <div>
+        <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 rounded-lg text-lg'} source={Track.Source.Microphone} initialState={false}>
+         Mic
+        </TrackToggle> 
       </div>
     </>
   );

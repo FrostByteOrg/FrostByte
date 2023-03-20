@@ -171,6 +171,16 @@ const useChannelStore = create<ChannelState>()((set) => ({
   setChannel: (channel) => set((state) => ({ channel: channel })),
 }));
 
+export interface TokenState {
+  token: string | undefined,
+  setToken: (token: string | undefined) => void;
+}
+
+const useTokenStore = create<TokenState>()((set) => ({
+  token: '',
+  setToken: (token) => set((state) => ({token: token})),
+}));
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -190,3 +200,5 @@ export const useGetUserPerms = () =>
 export const useUserPerms = () => useUserPermsStore((state) => state.userPerms);
 export const useSetChannel = () => useChannelStore((state) => state.setChannel);
 export const useChannel = () => useChannelStore((state) => state.channel);
+export const useSetToken = () => useTokenStore((state) => state.setToken);
+export const useTokenRef = () => useTokenStore((state) => state.token);

@@ -14,7 +14,8 @@ import {
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
-import { useToken } from '@livekit/components-react';
+import { AudioTrack, TrackToggle } from '@livekit/components-react';
+import { Track } from 'livekit-client';
 
 export default function Server({
   server,
@@ -73,9 +74,9 @@ export default function Server({
     setChannel(channel);
   }
 
-  function joinVideoChannel(e: SyntheticEvent, channelId: number){
+  function joinVideoChannel(e: SyntheticEvent, channel: Channel){
     e.stopPropagation();
-    setChannel(channelId);
+    setChannel(channel);
   }
 
   if (expand) {
@@ -139,7 +140,7 @@ export default function Server({
               }`}
               onClick={(e) => {
                 if (channel.is_media) {
-                  return;
+                  joinVideoChannel(e, channel);
                 }
                 else {
                   joinTextChannel(e, channel);
@@ -242,4 +243,5 @@ export default function Server({
       </div>
     </div>
   );
+
 }

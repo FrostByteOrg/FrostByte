@@ -8,6 +8,8 @@ import ServerList from '@/components/home/ServerList';
 import DefaultTest from '@/components/home/DefaultTest';
 import { useChannel } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
+import MediaChat from '@/components/home/MediaChat';
+import { RoomAudioRenderer } from '@livekit/components-react';
 
 export default function RenderDesktopView() {
   const channel = useChannel();
@@ -17,6 +19,8 @@ export default function RenderDesktopView() {
 
   return (
     <div className={`${styles.container} `}>
+      <RoomAudioRenderer/>
+
       <div className="col-start-1 col-end-2 bg-grey-950 flex-col justify-center ">
         <NavBar type="vertical" />
       </div>
@@ -39,7 +43,9 @@ export function renderContent(
       if (channel) return [<FriendsList key={1} />, <Chat key={2} />];
       return [<FriendsList key={1} />, <DefaultTest key={2} />];
     case 'servers':
-      if (channel) return [<ServerList key={1} />, <Chat key={2} />];
+      if (channel)
+        if (channel.is_media) return [<ServerList key={1} />, <MediaChat key={2} />];
+        else return [<ServerList key={1} />, <Chat key={2} />];
       return [<ServerList key={1} />, <DefaultTest key={2} />];
     case 'messages':
       if (channel) return [<DMessageList key={1} />, <Chat key={2} />];
