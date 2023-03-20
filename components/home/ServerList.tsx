@@ -5,17 +5,17 @@ import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
+import AddChannelModal from '@/components/home/AddChannelModal';
 import { useGetServers, useServers } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
 
 export default function ServerList() {
-  //TODO: fetch server_users via profile id, select server_id -> fetch channels via this server_id && fetch servers with server_id
-  //This should at minimum return server_id, author_id (serveruser id), server name, channel id, channel name
-
   //TODO: Display default page (when user belongs to and has no servers)
+  //TODO: Only show add channel if user has perms for it
 
   const [showAddServer, setShowAddServer] = useState(false);
+  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [expanded, setExpanded] = useState(0);
 
   const user = useUser();
@@ -39,6 +39,11 @@ export default function ServerList() {
       <AddServerModal
         showModal={showAddServer}
         setShowModal={setShowAddServer}
+      />
+      <AddChannelModal
+        showModal={showAddChannelModal}
+        setShowModal={setShowAddChannelModal}
+        serverId={expanded}
       />
       <div className="flex pb-3 items-center border-b-2 border-grey-700">
         <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
@@ -112,7 +117,12 @@ export default function ServerList() {
         clickable
         openOnClick={true}
       >
-        <div className="flex justify-center items-center hover:text-grey-300 cursor-pointer">
+        <div
+          className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+          onClick={() => {
+            setShowAddChannelModal(true);
+          }}
+        >
           <PlusIcon width={5} height={5} />
           <span className="ml-1">New channel</span>
         </div>
