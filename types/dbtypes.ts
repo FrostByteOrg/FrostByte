@@ -9,6 +9,7 @@ export type ServerUser = Database['public']['Tables']['server_users']['Row'];
 export type ChannelPermissions = Database['public']['Tables']['channel_permissions']['Row'];
 export type Role = Database['public']['Tables']['server_roles']['Row'];
 export type ProfileRelations = Database['public']['Tables']['profile_relations']['Row'];
+export type DetailedProfileRelations = Omit<ProfileRelations, 'user1' | 'user2'> & { user1: User, user2: User };
 export type ProfileRelationship = Database['public']['Enums']['relationship'];
 
 // Custom type modifications for client side
