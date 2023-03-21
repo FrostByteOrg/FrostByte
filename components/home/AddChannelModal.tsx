@@ -8,6 +8,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createChannel } from '@/services/channels.service';
+import { PostgrestError } from '@supabase/supabase-js';
+import {
+  useGetUserPermsForServer,
+  useUserPerms,
+  useUserServerPerms,
+} from '@/lib/store';
+import { ChannelPermissions } from '@/types/permissions';
 
 export default function AddChannelModal({
   showModal,
@@ -25,6 +33,10 @@ export default function AddChannelModal({
   const [channelType, setChannelType] = useState<'media' | 'text'>('text');
 
   const supabase = useSupabaseClient();
+
+  const getUserServerPerms = useGetUserPermsForServer();
+  getUserServerPerms(supabase, serverId);
+  const userServerPerms = useUserServerPerms();
 
   const {
     register,
@@ -45,8 +57,33 @@ export default function AddChannelModal({
   const onSubmit = async (formData: CreateChannelInput) => {
     //
     console.log(serverId);
+    console.log(userPerms & ChannelPermissions.MANAGE_MESSAGES);
+    const { data, error } = await createChannel(
+      supabase,
+      serverId,
+      formData.name,
+      formData.description,
+      formData.isMedia
+    );
 
-    // setChannelType('text');
+    if (error) {
+      if ((error as PostgrestError).message) {
+        setServerError((error as PostgrestError).message);
+      } else {
+        setServerError(error as string);
+      }
+
+      setTimeout(() => {
+        setServerError('');
+      }, 7000);
+      return;
+    } else {
+      addChannelRef.current?.close();
+      setChannelType('text');
+      setSetShowDesc(false);
+      reset();
+      setShowModal(false);
+    }
   };
 
   return (

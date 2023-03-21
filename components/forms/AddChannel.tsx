@@ -9,6 +9,7 @@ import {
   Controller,
 } from 'react-hook-form';
 import ChannelMessageIcon from '@/components/icons/ChannelMessageIcon';
+import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
 
 export default function AddChannel({
   register,
@@ -103,7 +104,7 @@ export default function AddChannel({
                     channelType == 'media' ? 'bg-grey-600' : 'bg-grey-700'
                   } rounded-2xl py-2 pl-6 mt-2 items-center`}
                 >
-                  <ChannelMessageIcon />
+                  <ChannelMediaIcon />
                   <label className="ml-1 flex items-center w-full justify-between hover:cursor-pointer">
                     Voice{' '}
                     <input

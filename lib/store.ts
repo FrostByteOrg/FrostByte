@@ -8,7 +8,11 @@ import {
 } from '@/types/dbtypes';
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { getServerForUser, getServersForUser } from '@/services/server.service';
+import {
+  getCurrentUserServerPermissions,
+  getServerForUser,
+  getServersForUser,
+} from '@/services/server.service';
 import {
   createMessage,
   getMessagesInChannelWithUser,
@@ -80,7 +84,10 @@ const useMessagesStore = create<MessagesState>()((set) => ({
   channelId: 0,
   setChannelId: (chId) => set((state) => ({ channelId: chId })),
   addMessage: async (supabase, messageId) => {
-    const { data, error } = await getMessageWithServerProfile(supabase, messageId);
+    const { data, error } = await getMessageWithServerProfile(
+      supabase,
+      messageId
+    );
 
     if (error) {
       console.error(error);
@@ -94,7 +101,10 @@ const useMessagesStore = create<MessagesState>()((set) => ({
     }
   },
   updateMessage: async (supabase, messageId) => {
-    const { data, error } = await getMessageWithServerProfile(supabase, messageId);
+    const { data, error } = await getMessageWithServerProfile(
+      supabase,
+      messageId
+    );
 
     if (error) {
       console.error(error);
@@ -141,11 +151,17 @@ const useMessagesStore = create<MessagesState>()((set) => ({
 
 export interface UserPermsState {
   userPerms: any;
+  userServerPerms: any;
   getUserPerms: (supabase: SupabaseClient<Database>, channelId: number) => void;
+  getUserPermsForServer: (
+    supabase: SupabaseClient<Database>,
+    server_id: number
+  ) => void;
 }
 
 const useUserPermsStore = create<UserPermsState>()((set) => ({
   userPerms: [],
+  userServerPerms: [],
   getUserPerms: async (supabase, channelId) => {
     const { data, error } = await getCurrentUserChannelPermissions(
       supabase,
@@ -158,6 +174,20 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
 
     if (data) {
       set({ userPerms: data });
+    }
+  },
+  getUserPermsForServer: async (supabase, serverId) => {
+    const { data, error } = await getCurrentUserServerPermissions(
+      supabase,
+      serverId
+    );
+
+    if (error) {
+      console.log(error);
+    }
+    // console.log('data', data);
+    if (data) {
+      set({ userServerPerms: data });
     }
   },
 }));
@@ -191,3 +221,7 @@ export const useGetUserPerms = () =>
 export const useUserPerms = () => useUserPermsStore((state) => state.userPerms);
 export const useSetChannel = () => useChannelStore((state) => state.setChannel);
 export const useChannel = () => useChannelStore((state) => state.channel);
+export const useGetUserPermsForServer = () =>
+  useUserPermsStore((state) => state.getUserPermsForServer);
+export const useUserServerPerms = () =>
+  useUserPermsStore((state) => state.userServerPerms);

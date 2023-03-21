@@ -6,9 +6,15 @@ import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
 import AddChannelModal from '@/components/home/AddChannelModal';
-import { useGetServers, useServers } from '@/lib/store';
+import {
+  useGetServers,
+  useGetUserPermsForServer,
+  useServers,
+  useUserServerPerms,
+} from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
+import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
@@ -23,6 +29,11 @@ export default function ServerList() {
 
   const servers = useServers();
   const getServers = useGetServers();
+
+  const getUserServerPerms = useGetUserPermsForServer();
+  getUserServerPerms(supabase, expanded);
+  const userServerPerms = useUserServerPerms();
+  console.log(userServerPerms & ServerPermissions.OWNER);
 
   useEffect(() => {
     if (getServers) {
@@ -105,28 +116,32 @@ export default function ServerList() {
             }
           })}
       </div>
-      <Tooltip
-        className="z-20 !opacity-100 font-semibold "
-        style={{
-          backgroundColor: '#21282b',
-          borderRadius: '0.5rem',
-          fontSize: '1.125rem',
-          lineHeight: '1.75rem',
-        }}
-        id="serverSettings"
-        clickable
-        openOnClick={true}
-      >
-        <div
-          className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-          onClick={() => {
-            setShowAddChannelModal(true);
+      {userServerPerms & ServerPermissions.MANAGE_MESSAGES ? (
+        <Tooltip
+          className="z-20 !opacity-100 font-semibold "
+          style={{
+            backgroundColor: '#21282b',
+            borderRadius: '0.5rem',
+            fontSize: '1.125rem',
+            lineHeight: '1.75rem',
           }}
+          id="serverSettings"
+          clickable
+          openOnClick={true}
         >
-          <PlusIcon width={5} height={5} />
-          <span className="ml-1">New channel</span>
-        </div>
-      </Tooltip>
+          <div
+            className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+            onClick={() => {
+              setShowAddChannelModal(true);
+            }}
+          >
+            <PlusIcon width={5} height={5} />
+            <span className="ml-1">New channel</span>
+          </div>
+        </Tooltip>
+      ) : (
+        ''
+      )}
     </div>
   );
 }
