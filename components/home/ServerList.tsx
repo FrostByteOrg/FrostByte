@@ -31,17 +31,17 @@ export default function ServerList() {
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
-  getUserServerPerms(supabase, expanded);
   const userServerPerms = useUserServerPerms();
   console.log(userServerPerms & ServerPermissions.OWNER);
 
   useEffect(() => {
     if (getServers) {
       if (user) {
+        getUserServerPerms(supabase, expanded, user.id);
         getServers(supabase, user.id);
       }
     }
-  }, [getServers, supabase, user]);
+  }, [getServers, supabase, user, getUserServerPerms, expanded]);
 
   //TODO: add isServer check
 
@@ -116,7 +116,9 @@ export default function ServerList() {
             }
           })}
       </div>
-      {userServerPerms & ServerPermissions.MANAGE_MESSAGES ? (
+      {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
+      userServerPerms & ServerPermissions.OWNER ||
+      userServerPerms & ServerPermissions.ADMINISTRATOR ? (
         <Tooltip
           className="z-20 !opacity-100 font-semibold "
           style={{

@@ -5,9 +5,9 @@ import {
   createChannelSchema,
 } from '@/types/client/channel';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Dispatch, SetStateAction, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { createChannel } from '@/services/channels.service';
 import { PostgrestError } from '@supabase/supabase-js';
 import {
@@ -34,8 +34,10 @@ export default function AddChannelModal({
 
   const supabase = useSupabaseClient();
 
+  const user = useUser();
+
   const getUserServerPerms = useGetUserPermsForServer();
-  getUserServerPerms(supabase, serverId);
+
   const userServerPerms = useUserServerPerms();
 
   const {
@@ -54,10 +56,18 @@ export default function AddChannelModal({
     },
   });
 
+  useEffect(() => {
+    if (getUserServerPerms) {
+      if (user) {
+        getUserServerPerms(supabase, serverId, user.id);
+      }
+    }
+  }, [user, getUserServerPerms, supabase, serverId]);
+
   const onSubmit = async (formData: CreateChannelInput) => {
     //
-    console.log(serverId);
-    console.log(userPerms & ChannelPermissions.MANAGE_MESSAGES);
+    // console.log(serverId);
+    // console.log(userPerms & ChannelPermissions.MANAGE_MESSAGES);
     const { data, error } = await createChannel(
       supabase,
       serverId,

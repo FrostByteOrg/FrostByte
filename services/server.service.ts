@@ -230,11 +230,12 @@ export type KickUserResponseError = KickUserResponse['error'];
 
 export async function getCurrentUserServerPermissions(
   supabase: SupabaseClient<Database>,
-  server_id: number
+  server_id: number,
+  userId?: string
 ) {
   return await supabase.rpc('get_permission_flags_for_server_user', {
     s_id: server_id,
-    p_id: (await supabase.auth.getUser()).data.user?.id!,
+    p_id: userId ? userId : (await supabase.auth.getUser()).data.user?.id!,
   });
 }
 
@@ -285,12 +286,17 @@ export async function getServerIdFromMessageId(
   message_id: number
 ) {
   return await supabase
-    .rpc('get_server_id_of_message', { m_id: message_id }).single();
+    .rpc('get_server_id_of_message', { m_id: message_id })
+    .single();
 }
 
-type GetServerIdFromMessageIdResponse = Awaited<ReturnType<typeof getServerIdFromMessageId>>;
-export type GetServerIdFromMessageIdResponseSuccess = GetServerIdFromMessageIdResponse['data'];
-export type GetServerIdFromMessageIdResponseError = GetServerIdFromMessageIdResponse['error'];
+type GetServerIdFromMessageIdResponse = Awaited<
+  ReturnType<typeof getServerIdFromMessageId>
+>;
+export type GetServerIdFromMessageIdResponseSuccess =
+  GetServerIdFromMessageIdResponse['data'];
+export type GetServerIdFromMessageIdResponseError =
+  GetServerIdFromMessageIdResponse['error'];
 
 export async function addServerIcon(
   supabase: SupabaseClient<Database>,

@@ -155,7 +155,8 @@ export interface UserPermsState {
   getUserPerms: (supabase: SupabaseClient<Database>, channelId: number) => void;
   getUserPermsForServer: (
     supabase: SupabaseClient<Database>,
-    server_id: number
+    server_id: number,
+    userId?: string
   ) => void;
 }
 
@@ -176,10 +177,11 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
       set({ userPerms: data });
     }
   },
-  getUserPermsForServer: async (supabase, serverId) => {
+  getUserPermsForServer: async (supabase, serverId, userId) => {
     const { data, error } = await getCurrentUserServerPermissions(
       supabase,
-      serverId
+      serverId,
+      userId
     );
 
     if (error) {
