@@ -8,6 +8,8 @@ export type Invite = Database['public']['Tables']['server_invites']['Row'];
 export type ServerUser = Database['public']['Tables']['server_users']['Row'];
 export type ChannelPermissions = Database['public']['Tables']['channel_permissions']['Row'];
 export type Role = Database['public']['Tables']['server_roles']['Row'];
+export type ProfileRelations = Database['public']['Tables']['profile_relations']['Row'];
+export type ProfileRelationship = Database['public']['Enums']['relationship'];
 
 // Custom type modifications for client side
 export type UnsavedMessage = Omit<Message, 'id' | 'created_at' | 'sent_time' | 'is_edited' | 'is_pinned' | 'edited_time' | 'author_id'>;

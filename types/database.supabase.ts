@@ -145,6 +145,29 @@ export interface Database {
           sent_time?: string
         }
       }
+      profile_relations: {
+        Row: {
+          created_at: string | null
+          id: number
+          relationship: Database["public"]["Enums"]["relationship"]
+          user1: string
+          user2: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          relationship: Database["public"]["Enums"]["relationship"]
+          user1: string
+          user2: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          relationship?: Database["public"]["Enums"]["relationship"]
+          user1?: string
+          user2?: string
+        }
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -199,6 +222,7 @@ export interface Database {
       }
       server_invites: {
         Row: {
+          channel_id: number
           created_at: string | null
           expires_at: string | null
           id: number
@@ -207,6 +231,7 @@ export interface Database {
           uses_remaining: number | null
         }
         Insert: {
+          channel_id: number
           created_at?: string | null
           expires_at?: string | null
           id?: number
@@ -215,6 +240,7 @@ export interface Database {
           uses_remaining?: number | null
         }
         Update: {
+          channel_id?: number
           created_at?: string | null
           expires_at?: string | null
           id?: number
@@ -396,11 +422,9 @@ export interface Database {
           is_pinned: boolean
           edited_time: string
           channel_id: number
-          author_id: number
           content: string
-          profile_id: string
-          profiles: Json
-          nickname: string
+          author: Json
+          profile: Json
           roles: Json
         }[]
       }
@@ -415,11 +439,9 @@ export interface Database {
           is_pinned: boolean
           edited_time: string
           channel_id: number
-          author_id: number
           content: string
-          profile_id: string
-          profiles: Json
-          nickname: string
+          author: Json
+          profile: Json
           roles: Json
         }[]
       }
@@ -462,7 +484,7 @@ export interface Database {
           avatar_url: string
           website: string
           email: string
-          nickname: string
+          server_user: Json
           roles: Json
         }[]
       }
@@ -499,7 +521,7 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      relationship: "friend_requested" | "friends" | "blocked"
     }
     CompositeTypes: {
       [_ in never]: never
