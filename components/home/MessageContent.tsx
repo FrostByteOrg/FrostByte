@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes } from 'react';
+import { AnchorHTMLAttributes, Fragment } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
@@ -36,6 +36,7 @@ function CustomAnchorTag(props: AnchorHTMLAttributes<HTMLAnchorElement>) {
 export default function MessageContent({ messageContent }: { messageContent: string }) {
   return (
     <ReactMarkdown
+      className='w-full'
       components={{
         ul: ({ children }) => <ul className="list-disc ml-6">{children}</ul>,
         ol: ({ children }) => <ol className="list-decimal ml-6">{children}</ol>,
@@ -64,6 +65,7 @@ export default function MessageContent({ messageContent }: { messageContent: str
             {...props}
           ></blockquote>
         ),
+        p: Fragment,
       }}
       rehypePlugins={[
         [rehypeHighlight, { detect: false, ignoreMissing: true }],
