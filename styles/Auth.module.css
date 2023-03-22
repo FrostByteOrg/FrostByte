@@ -34,9 +34,7 @@
       18px 25px 20px hsla(0, 0%, 21%, 0.749),
       -12px 1px 4px hsla(0, 0%, 21%, 0.749);
   }
-}
 
-@media only screen and (min-width: 1280px) {
   .resetPWMD {
     display: grid;
     grid-template-columns:
@@ -53,7 +51,7 @@
   .mainContainer {
     filter: drop-shadow(0 2px 10px rgba(51, 50, 50, 0.904))
       drop-shadow(0 10px 8px rgba(75, 73, 73, 0.08));
-      background-color: #354045;
+    background-color: #354045;
   }
 }
 
@@ -125,22 +123,14 @@
 
 .passwordReset {
   background-image: linear-gradient(
-        to top left,
-        hsla(197, 79%, 74%, 10%),
-        hsla(197, 81%, 39%, 10%)
-      ),
-      linear-gradient(
-        to top,
-        hsla(197, 79%, 74%, 100%),
-        hsla(197, 81%, 39%, 70%)
-      ),
-      url('../public/bubbles.svg'),
-      linear-gradient(
-        to top,
-        hsla(197, 79%, 74%, 90%),
-        hsla(197, 81%, 39%, 100%)
-      );
-    box-shadow: inset 0 10px 4px hsla(197, 81%, 44%, 30%),
-      17px 17px 4px hsla(0, 0%, 18%, 0.749),
-      18px 25px 20px hsla(0, 0%, 21%, 0.749)
+      to top left,
+      hsla(197, 79%, 74%, 10%),
+      hsla(197, 81%, 39%, 10%)
+    ),
+    linear-gradient(to top, hsla(197, 79%, 74%, 100%), hsla(197, 81%, 39%, 70%)),
+    url('../public/bubbles.svg'),
+    linear-gradient(to top, hsla(197, 79%, 74%, 90%), hsla(197, 81%, 39%, 100%));
+  box-shadow: inset 0 10px 4px hsla(197, 81%, 44%, 30%),
+    17px 17px 4px hsla(0, 0%, 18%, 0.749),
+    18px 25px 20px hsla(0, 0%, 21%, 0.749);
 }

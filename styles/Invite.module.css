@@ -18,27 +18,16 @@
         hsla(197, 79%, 74%, 10%),
         hsla(197, 81%, 39%, 10%)
       ),
-      linear-gradient(
-        to top,
-        rgb(33, 46, 51),
-        hsla(204, 11%, 9%, 0.7)
-      ),
+      linear-gradient(to top, rgb(33, 46, 51), hsla(204, 11%, 9%, 0.7)),
       url('../public/banner.png'),
-      linear-gradient(
-        to top,
-        hsla(197, 21%, 32%, 0.9),
-        rgb(72, 98, 109)
-      );
+      linear-gradient(to top, hsla(197, 21%, 32%, 0.9), rgb(72, 98, 109));
     box-shadow: inset 0 2px 4px hsla(0, 0%, 18%, 0.749),
-      5px 5px 4px hsla(0, 0%, 18%, 0.749),
-      5px 5px 20px hsla(0, 0%, 21%, 0.749),
+      5px 5px 4px hsla(0, 0%, 18%, 0.749), 5px 5px 20px hsla(0, 0%, 21%, 0.749),
       -5px 1px 4px hsla(0, 0%, 21%, 0.749);
 
     background: rgba(50, 50, 50, 0.8) !important;
   }
-}
 
-@media only screen and (min-width: 1280px) {
   .resetPWMD {
     display: grid;
     grid-template-columns:
@@ -55,9 +44,9 @@
   .mainContainer {
     filter: drop-shadow(0 2px 10px rgba(51, 50, 50, 0.904))
       drop-shadow(0 10px 8px rgba(75, 73, 73, 0.08));
-      background-color: #354045;
+    /* background-color: #354045; */
     background-image: url('../public/leftbanner.png');
-    background-size: contain;
+    background-size: auto;
     background-repeat: no-repeat;
   }
 }
