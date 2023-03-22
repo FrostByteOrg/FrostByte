@@ -390,6 +390,15 @@ export interface Database {
           sent_time: string
         }[]
       }
+      detailed_profile_relations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: number
+          target_profile: Json
+          relationship: Database["public"]["Enums"]["relationship"]
+          created_at: string
+        }[]
+      }
       get_all_channels_for_user: {
         Args: {
           p_id: string

@@ -36,8 +36,8 @@ export function renderContent(
 ) {
   switch (sideBarOption) {
     case 'friends':
-      if (channel) return [<FriendsList key={1} />, <Chat key={2} />];
-      return [<FriendsList key={1} />, <DefaultTest key={2} />];
+      if (channel) return [<DMessageList key={1} />, <Chat key={2} />];
+      return [<DMessageList key={1} />, <FriendsList key={2} />];
     case 'servers':
       if (channel) return [<ServerList key={1} />, <Chat key={2} />];
       return [<ServerList key={1} />, <DefaultTest key={2} />];
