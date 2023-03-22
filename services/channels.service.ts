@@ -9,7 +9,7 @@ export async function getChannelById(
   return await supabase
     .from('channels')
     .select('*')
-    .eq('id', channelId)
+    .eq('channel_id', channelId)
     .single();
 }
 

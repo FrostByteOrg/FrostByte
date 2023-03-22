@@ -94,27 +94,33 @@ export default function ServerList() {
 
       <div className="overflow-y-scroll ">
         {servers &&
-          servers.map((server, idx, serverList) => {
-            if (server) {
-              return (
-                <span
-                  key={server.server_id}
-                  onClick={() => {
-                    return expanded !== server.server_id
-                      ? setExpanded(server.server_id)
-                      : '';
-                  }}
-                >
-                  <Server
-                    server={server.servers}
-                    expanded={expanded}
-                    isLast={idx == serverList.length - 1}
-                    setExpanded={setExpanded}
-                  />
-                </span>
-              );
-            }
-          })}
+          servers
+            .sort(function (a, b) {
+              var textA = a.servers.name.toUpperCase();
+              var textB = b.servers.name.toUpperCase();
+              return textA < textB ? -1 : textA > textB ? 1 : 0;
+            })
+            .map((server, idx, serverList) => {
+              if (server) {
+                return (
+                  <span
+                    key={server.server_id}
+                    onClick={() => {
+                      return expanded !== server.server_id
+                        ? setExpanded(server.server_id)
+                        : '';
+                    }}
+                  >
+                    <Server
+                      server={server.servers}
+                      expanded={expanded}
+                      isLast={idx == serverList.length - 1}
+                      setExpanded={setExpanded}
+                    />
+                  </span>
+                );
+              }
+            })}
       </div>
       {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
       userServerPerms & ServerPermissions.OWNER ||

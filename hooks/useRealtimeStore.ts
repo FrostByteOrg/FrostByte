@@ -41,7 +41,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         .channel('server_users')
         .on<ServerUser>(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'server_users' },
+          { event: 'INSERT', schema: 'public', table: 'server_users', filter: `profile_id=eq.${user?.id}` },
           async (payload) => {
             console.log('insert');
 
@@ -50,7 +50,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         )
         .on<ServerUser>(
           'postgres_changes',
-          { event: 'DELETE', schema: 'public', table: 'server_users' },
+          { event: 'DELETE', schema: 'public', table: 'server_users', filter: `profile_id=eq.${user?.id}` },
           async (payload) => {
             console.log('remove user from server');
 
