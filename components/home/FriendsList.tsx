@@ -1,6 +1,8 @@
 import { getRelationships } from '@/services/friends.service';
 import styles from '@/styles/Chat.module.css';
 import { DetailedProfileRelation, ProfileRelationshipType } from '@/types/dbtypes';
+import * as ContextMenu from '@radix-ui/react-context-menu';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
@@ -85,12 +87,34 @@ export default function FriendsList() {
               {relation.target_profile.username}
             </h1>
             <div className='flex flex-row space-x-2'>
-              <button className="rounded-md p-3 border-2 border-gray-500 hover:bg-gray-500">
+              <button
+                className="rounded-md p-3 border-2 border-gray-500 hover:bg-gray-500"
+                onClick={() => {
+                  console.log('DM');
+                }}
+              >
                 <ChannelMessageIcon />
               </button>
-              <button className="rounded-md p-2 border-2 border-gray-500 hover:bg-gray-500">
-                <VerticalSettingsIcon />
-              </button>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <button
+                    className="rounded-md p-2 border-2 border-gray-500 hover:bg-gray-500"
+                    onClick={() => {
+                      console.log('Options');
+                    }}
+                  >
+                    <VerticalSettingsIcon />
+                  </button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content className='ContextMenuContent' side='left'>
+                  <DropdownMenu.Item
+                    className='ContextMenuItem'
+                    onClick={() => console.log(`remove ${relation.target_profile.username} from friends`)}
+                  >
+                    Remove friend
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
             </div>
           </div>
         ))}
