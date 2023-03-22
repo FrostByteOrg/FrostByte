@@ -27,7 +27,7 @@ export default function Login() {
             className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full  xl:rounded-3xl`}
           >
             <div className=" w-full hidden xl:flex xl:flex-col  h-full ">
-              <div className="h-full flex justify-center items-center text-8xl font-extrabold">
+              <div className="h-full flex justify-center items-center text-7xl font-extrabold">
                 <div className={`${styles.frostCord}`}>FrostCord</div>
               </div>
               <div className="h-13 relative">

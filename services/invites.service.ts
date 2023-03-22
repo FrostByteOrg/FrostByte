@@ -1,6 +1,6 @@
 import { addDate } from '@/lib/dateManagement';
 import { Database } from '@/types/database.supabase';
-import { Invite } from '@/types/dbtypes';
+import { Invite, ServerInvite } from '@/types/dbtypes';
 import { InviteExpiry } from '@/types/inviteExpiry';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,6 +20,7 @@ export type InviteByCodeResponseError = InviteByCodeResponse['error'];
 export async function createInvite(
   supabase: SupabaseClient<Database>,
   serverId: number,
+  channelId: number,
   expiresAt: InviteExpiry = '1 week',
   numUses: number | null = null,
   urlId: string | null = null
@@ -79,6 +80,7 @@ export async function createInvite(
     .from('server_invites')
     .insert({
       server_id: serverId,
+      channel_id: channelId,
       uses_remaining: numUses,
       expires_at: parsedExpiresAt?.toISOString() || null,
       url_id: urlId,
@@ -110,5 +112,21 @@ export async function decrementInviteUses(supabase: SupabaseClient<Database>, in
     .update({ uses_remaining: invite.uses_remaining! - 1 })
     .eq('id', invite.id)
     .select()
+    .single();
+}
+
+type DecrementInviteUsesResponse = Awaited<ReturnType<typeof decrementInviteUses>>;
+export type DecrementInviteUsesResponseSuccess = DecrementInviteUsesResponse['data'];
+export type DecrementInviteUsesResponseError = DecrementInviteUsesResponse['error'];
+
+export async function getInviteAndServer(
+  supabase: SupabaseClient<Database>,
+  inviteCode: string
+) {
+  return await supabase
+    .from('server_invites')
+    .select('*, servers(*)')
+    .eq('url_id', inviteCode)
+    .returns<ServerInvite>()
     .single();
 }
