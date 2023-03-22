@@ -1,4 +1,4 @@
-import { useChannel, useSetConnectionState, useSetToken} from '@/lib/store';
+import { useChannel, useSetConnectionState, useSetCurrentRoom, useSetToken} from '@/lib/store';
 import styles from '@/styles/Chat.module.css';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
@@ -7,7 +7,7 @@ import { AudioTrack, DisconnectButton, ParticipantLoop, ParticipantTile, TrackTo
 import { Track, ConnectionState } from 'livekit-client';
 import { User } from '@/types/dbtypes';
 import UserIcon from '../icons/UserIcon';
-import {  BsCamera, BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
+import { BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 
 export default function MediaChat() {
@@ -16,13 +16,14 @@ export default function MediaChat() {
   const userName = useUser();
   const userID = useUser();
   const setToken = useSetToken();
+  const setRoom = useSetCurrentRoom();
   const videoTrack = useLocalParticipant();
   const screenTrack = useLocalParticipant();
 
   const setConnectionState = useSetConnectionState();
   const connectionState = useConnectionState();
 
-  const user : User = useUser();
+  const user : User | any = useUser();
 
   const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, channel!.channel_id.toString(), {
     userInfo: {
@@ -30,9 +31,7 @@ export default function MediaChat() {
       name: userName?.email
     },
   });
-
-  setToken(token);
-
+  
   return (
     <>
       <div className={`${styles.chatHeader} px-5 pt-5 mb-3`}>
@@ -74,7 +73,7 @@ export default function MediaChat() {
               <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'} source={Track.Source.ScreenShare}> 
                 {screenTrack.isScreenShareEnabled ? (<TbScreenShare size={22}/>) : (<TbScreenShareOff size={22}/>) }
               </TrackToggle>
-              {connectionState !== ConnectionState.Connected ? (<button className='w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md' onClick={() => {setConnectionState(true);}}> Join </button> ) : (
+              {connectionState !== ConnectionState.Connected ? (<button className='w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md' onClick={() => {setConnectionState(true), setRoom(channel?.channel_id), setToken(token);}}> Join </button> ) : (
                 <DisconnectButton className={'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl'} onClick={() => {setConnectionState(false); }}> End </DisconnectButton>
               )}
             </div>

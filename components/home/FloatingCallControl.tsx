@@ -1,4 +1,5 @@
-import { TrackToggle, useLocalParticipant } from '@livekit/components-react';
+import { useSetConnectionState } from '@/lib/store';
+import { DisconnectButton, TrackToggle, useLocalParticipant } from '@livekit/components-react';
 import { Track } from 'livekit-client';
 import { BiPhoneOff } from 'react-icons/bi';
 import { BsBarChart, BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
@@ -9,6 +10,7 @@ export default function FloatingCallControl(){
 
   const videoTrack = useLocalParticipant();
   const screenTrack = useLocalParticipant();
+  const setConnectionState = useSetConnectionState();
 
   return(
     <div className='h-auto border rounded-md absolute bottom-2 bg-grey-950 w-full'>
@@ -17,7 +19,9 @@ export default function FloatingCallControl(){
           <BsBarChart size={22} className='text-green-500 mr-3' />
           <span className='text-green-500 text-lg font-semibold'>Connected</span>
         </div>
-        <BiPhoneOff size={24} className='mr-4 text-red-500 hover:text-red-700'/>
+        <DisconnectButton onClick={() => {setConnectionState(false); }}>
+          <BiPhoneOff size={24} className='mr-4 text-red-500 hover:text-red-700'/>
+        </DisconnectButton>
       </div>
       <div className='flex flex-row justify-evenly'>
         <TrackToggle showIcon={false} className={'w-2/4 h-7 mb-2 mx-2 px-2 py-1 border hover:bg-grey-800 rounded-md text-md flex items-center justify-center'} source={Track.Source.ScreenShare}> 

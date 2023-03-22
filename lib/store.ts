@@ -192,6 +192,16 @@ const useConnectionStore = create<ConnectionState>()((set) => ({
   setConnection: (connection) => set((state) => ({connection: connection})),
 }));
 
+export interface CurrentRoomState {
+  currentRoom: number | undefined,
+  setCurrentRoom: (currentRoom: number | undefined) => void;
+}
+
+const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
+  currentRoom: 0,
+  setCurrentRoom: (currentRoom) => set((state) => ({currentRoom: currentRoom})),
+}));
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -215,3 +225,5 @@ export const useSetToken = () => useTokenStore((state) => state.setToken);
 export const useTokenRef = () => useTokenStore((state) => state.token);
 export const useSetConnectionState = () => useConnectionStore((state) => state.setConnection);
 export const useConnectionRef = () => useConnectionStore((state) => state.connection);
+export const useSetCurrentRoom = () => useCurrentRoomStore((state) => state.setCurrentRoom);
+export const useCurrentRoomRef = () => useCurrentRoomStore((state) => state.currentRoom);

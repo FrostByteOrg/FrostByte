@@ -12,8 +12,12 @@ import {
   getUsersInServer,
 } from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
-import { useSetChannel } from '@/lib/store';
+import { useSetChannel, useCurrentRoomRef } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
+import ChannelName from './ChannelName';
+import {  useParticipants, useConnectionState } from '@livekit/components-react';
+import { Participant, ConnectionState} from 'livekit-client';
+
 
 export default function Server({
   server,
@@ -30,11 +34,14 @@ export default function Server({
   const [onlineCount, setOnlineCount] = useState(0);
   const onlinePresenceChannel = useOnlinePresenceRef();
 
-  const [isChannelHovered, setIsChannelHovered] = useState(false);
   const [isServerHovered, setIsServerHovered] = useState(false);
 
   const setChannel = useSetChannel();
 
+  const participants = useParticipants();
+  const currentRoom = useCurrentRoomRef();
+  const connection = useConnectionState();
+  
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
 
@@ -146,34 +153,24 @@ export default function Server({
               }}
               key={channel.channel_id}
             >
-              <div className="w-4">
+              <div className="w-auto">
                 {channel.is_media ? (
-                  <ChannelMediaIcon />
+                  <div className='flex flex-col'>
+                    <div className='flex flex-row items-center'>
+                      <ChannelMediaIcon />
+                      <ChannelName {...channel} />
+                    </div>
+                    {participants.map((user: Participant, id ) => (
+                      <div key={id}> 
+                        { currentRoom?.toString() === channel.channel_id.toString() &&  connection === ConnectionState.Connected ? (<p>{user.name}</p>) : (<p> {user.name} </p>)}
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <ChannelMessageIcon />
-                )}
-              </div>
-
-              <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">
-                {channel.name.length > 10 ? (
-                  <span
-                    onMouseEnter={() => setIsChannelHovered(true)}
-                    onMouseLeave={() => setIsChannelHovered(false)}
-                  >
-                    {isChannelHovered ? (
-                      <Marquee
-                        play={isChannelHovered}
-                        direction={'left'}
-                        gradient={false}
-                      >
-                        {`${channel.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
-                      </Marquee>
-                    ) : (
-                      `${channel.name.slice(0, 9)}...`
-                    )}
-                  </span>
-                ) : (
-                  channel.name
+                  <div className='flex flex-row items-center'>
+                    <ChannelMessageIcon />
+                    <ChannelName {...channel} />
+                  </div>
                 )}
               </div>
             </div>
