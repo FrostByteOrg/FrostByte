@@ -6,36 +6,16 @@ import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
-import Marquee from 'react-fast-marquee';
-import {
-  getServerMemberCount,
-  getUsersInServer,
-} from '@/services/server.service';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
+import { ServerMemberStats } from './ServerMemberStats';
+import { OverflowMarquee } from './OverflowMarquee';
 import { useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 
-export default function Server({
-  server,
-  expanded,
-  isLast = false,
-}: {
-  server: ServerType;
-  expanded: number;
-  isLast?: boolean;
-}) {
+export default function Server({ server, expanded, isLast = false }: { server: ServerType, expanded: number, isLast?: boolean }) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
-  const [memberCount, setMemberCount] = useState(0);
-  const [onlineCount, setOnlineCount] = useState(0);
-  const onlinePresenceChannel = useOnlinePresenceRef();
-
-  const [isChannelHovered, setIsChannelHovered] = useState(false);
-  const [isServerHovered, setIsServerHovered] = useState(false);
-
   const setChannel = useSetChannel();
-
-  //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
 
   useEffect(() => {
@@ -44,28 +24,9 @@ export default function Server({
         const { data } = await getChannelsInServer(supabase, server.id);
         setChannels(data!);
       }
-
-      // Total Members
-      setMemberCount(await getServerMemberCount(supabase, server.id));
-
-      // Now we need to get the online count
-      const { data: onlineData, error } = await getUsersInServer(
-        supabase,
-        server.id
-      );
-
-      let onlineUsers = 0;
-      if (!error) {
-        for (const profile of onlineData) {
-          if (onlinePresenceChannel.presenceState()[profile.id] !== undefined) {
-            onlineUsers++;
-          }
-        }
-        setOnlineCount(onlineUsers);
-      }
     };
     handleAsync();
-  }, [server, supabase, onlinePresenceChannel]);
+  }, [server, supabase]);
 
   function joinTextChannel(e: SyntheticEvent, channel: Channel) {
     e.stopPropagation();
@@ -82,43 +43,9 @@ export default function Server({
             </div>
             <div className="ml-3">
               <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
-                {server.name.length > 10 ? (
-                  <span
-                    onMouseEnter={() => setIsServerHovered(true)}
-                    onMouseLeave={() => setIsServerHovered(false)}
-                  >
-                    {isServerHovered ? (
-                      <Marquee
-                        play={isServerHovered}
-                        direction={'left'}
-                        gradient={false}
-                      >
-                        {`${server.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
-                      </Marquee>
-                    ) : (
-                      `${server.name.slice(0, 11)}...`
-                    )}
-                  </span>
-                ) : (
-                  server.name
-                )}
+                <OverflowMarquee content={server.name} maxLength={10}/>
               </div>
-              <div
-                className={`text-xs tracking-wide text-grey-300  ${styles.flexDirection}`}
-              >
-                <div className="flex items-center">
-                  <span className="p-1 bg-green-300 rounded-full mr-1"></span>
-                  <span>{onlineCount} Online</span>
-                </div>
-                <div
-                  className={`flex items-center ml-2 ${styles.membersSpacing}`}
-                >
-                  <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
-                  <span>
-                    {memberCount} Member{memberCount !== 1 ? 's' : ''}
-                  </span>
-                </div>
-              </div>
+              <ServerMemberStats server={server} />
             </div>
           </div>
           <div>
@@ -143,34 +70,11 @@ export default function Server({
               key={channel.channel_id}
             >
               <div className="w-4">
-                {channel.is_media ? (
-                  <ChannelMediaIcon />
-                ) : (
-                  <ChannelMessageIcon />
-                )}
+                {channel.is_media ? <ChannelMediaIcon />: <ChannelMessageIcon />}
               </div>
 
               <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">
-                {channel.name.length > 10 ? (
-                  <span
-                    onMouseEnter={() => setIsChannelHovered(true)}
-                    onMouseLeave={() => setIsChannelHovered(false)}
-                  >
-                    {isChannelHovered ? (
-                      <Marquee
-                        play={isChannelHovered}
-                        direction={'left'}
-                        gradient={false}
-                      >
-                        {`${channel.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
-                      </Marquee>
-                    ) : (
-                      `${channel.name.slice(0, 9)}...`
-                    )}
-                  </span>
-                ) : (
-                  channel.name
-                )}
+                <OverflowMarquee content={channel.name} maxLength={8}/>
               </div>
             </div>
           ))}
@@ -192,43 +96,9 @@ export default function Server({
           </div>
           <div className="ml-3">
             <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
-              {server.name.length > 10 ? (
-                <span
-                  onMouseEnter={() => setIsServerHovered(true)}
-                  onMouseLeave={() => setIsServerHovered(false)}
-                >
-                  {isServerHovered ? (
-                    <Marquee
-                      play={isServerHovered}
-                      direction={'left'}
-                      gradient={false}
-                    >
-                      {`${server.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`}
-                    </Marquee>
-                  ) : (
-                    `${server.name.slice(0, 11)}...`
-                  )}
-                </span>
-              ) : (
-                server.name
-              )}
+              <OverflowMarquee content={server.name} maxLength={10}/>
             </div>
-            <div
-              className={`text-xs tracking-wide text-grey-300  ${styles.flexDirection}`}
-            >
-              <div className="flex items-center">
-                <span className="p-1 bg-green-300 rounded-full mr-1 "></span>
-                <span>{onlineCount} Online</span>
-              </div>
-              <div
-                className={`flex items-center ml-2 ${styles.membersSpacing}`}
-              >
-                <span className="p-1 bg-grey-300 rounded-full mr-1"></span>
-                <span>
-                  {memberCount} Member{memberCount !== 1 ? 's' : ''}
-                </span>
-              </div>
-            </div>
+            <ServerMemberStats server={server} />
           </div>
         </div>
         <div>

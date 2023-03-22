@@ -18,21 +18,14 @@
         hsla(197, 79%, 74%, 10%),
         hsla(197, 81%, 39%, 10%)
       ),
-      linear-gradient(
-        to top,
-        hsla(197, 79%, 74%, 100%),
-        hsla(197, 81%, 39%, 70%)
-      ),
-      url('../public/bubbles.svg'),
-      linear-gradient(
-        to top,
-        hsla(197, 79%, 74%, 90%),
-        hsla(197, 81%, 39%, 100%)
-      );
-    box-shadow: inset 0 10px 4px hsla(197, 81%, 44%, 30%),
-      17px 17px 4px hsla(0, 0%, 18%, 0.749),
-      18px 25px 20px hsla(0, 0%, 21%, 0.749),
-      -12px 1px 4px hsla(0, 0%, 21%, 0.749);
+      linear-gradient(to top, rgb(33, 46, 51), hsla(204, 11%, 9%, 0.7)),
+      url('../public/banner.png'),
+      linear-gradient(to top, hsla(197, 21%, 32%, 0.9), rgb(72, 98, 109));
+    box-shadow: inset 0 2px 4px hsla(0, 0%, 18%, 0.749),
+      5px 5px 4px hsla(0, 0%, 18%, 0.749), 5px 5px 20px hsla(0, 0%, 21%, 0.749),
+      -5px 1px 4px hsla(0, 0%, 21%, 0.749);
+
+    background: rgba(50, 50, 50, 0.8) !important;
   }
 
   .resetPWMD {
@@ -51,7 +44,10 @@
   .mainContainer {
     filter: drop-shadow(0 2px 10px rgba(51, 50, 50, 0.904))
       drop-shadow(0 10px 8px rgba(75, 73, 73, 0.08));
-    background-color: #354045;
+    /* background-color: #354045; */
+    background-image: url('../public/leftbanner.png');
+    background-size: auto;
+    background-repeat: no-repeat;
   }
 }
 
@@ -67,7 +63,7 @@
         hsla(197, 79%, 74%, 100%),
         hsla(197, 81%, 39%, 70%)
       ),
-      url('../public/bubbles.svg'),
+      url('../public/banner.png'),
       linear-gradient(
         to top,
         hsla(197, 79%, 74%, 90%),
@@ -110,10 +106,17 @@
 }
 
 .frostCord {
-  filter: drop-shadow(0 2px 3px rgba(237, 232, 232, 0.904))
+  color: #ffffff;
+  filter: drop-shadow(0 2px 3px rgba(237, 232, 232, 0.349))
     drop-shadow(0 10px 8px rgba(227, 214, 214, 0.08));
   font-family: 'BaronNeue', sans-serif;
   text-transform: uppercase;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: url('https://cdn.cgmagonline.com/wp-content/uploads/2017/08/frostpunk-gamescom-2017-preview-trapped-under-ice.jpg');
+  background-size: cover;
+  /* background-position-y: 120%; */
 }
 
 .logo {
@@ -121,16 +124,6 @@
     2px 10px 8px hsla(0, 0%, 16%, 0.649), 5px 20px 20px hsla(0, 0%, 16%, 0.649);
 }
 
-.passwordReset {
-  background-image: linear-gradient(
-      to top left,
-      hsla(197, 79%, 74%, 10%),
-      hsla(197, 81%, 39%, 10%)
-    ),
-    linear-gradient(to top, hsla(197, 79%, 74%, 100%), hsla(197, 81%, 39%, 70%)),
-    url('../public/bubbles.svg'),
-    linear-gradient(to top, hsla(197, 79%, 74%, 90%), hsla(197, 81%, 39%, 100%));
-  box-shadow: inset 0 10px 4px hsla(197, 81%, 44%, 30%),
-    17px 17px 4px hsla(0, 0%, 18%, 0.749),
-    18px 25px 20px hsla(0, 0%, 21%, 0.749);
+.mainBackground {
+  background-image: url('../public/frostland.png');
 }

@@ -14,6 +14,7 @@ export type UnsavedMessage = Omit<Message, 'id' | 'created_at' | 'sent_time' | '
 export type MessageWithServerProfile = Omit<Message, 'profile_id' | 'author_id'> & { profile: User, author: ServerUser, roles: Role[], };
 export type ServersForUser =  { server_id: number } & { servers: Server };
 export type ServerUserProfile = User & { server_user: ServerUser, roles: Role[]; };
+export type ServerInvite = Invite & { servers: Server };
 
 export interface IStringIndexable {
   [key: string]: any

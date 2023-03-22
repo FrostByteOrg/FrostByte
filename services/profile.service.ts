@@ -47,13 +47,12 @@ export type UpdateUserProfileResponseError = UpdateUserProfileResponse['error'];
 
 export async function addUserToServer(
   supabase: SupabaseClient<Database>,
-  userId: string,
   serverId: number,
 ) {
   return await supabase
     .from('server_users')
     .insert({
-      profile_id: userId,
+      profile_id: (await supabase.auth.getUser()).data.user!.id,
       server_id: serverId,
     })
     .select('*')

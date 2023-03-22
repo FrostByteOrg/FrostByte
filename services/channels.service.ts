@@ -6,7 +6,7 @@ export async function getChannelById(supabase: SupabaseClient<Database>, channel
   return await supabase
     .from('channels')
     .select('*')
-    .eq('id', channelId)
+    .eq('channel_id', channelId)
     .single();
 }
 
