@@ -10,7 +10,7 @@ import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { LiveKitRoom } from '@livekit/components-react';
-import { useTokenRef } from '@/lib/store';
+import { useTokenRef, useConnectionRef } from '@/lib/store';
 import { getProfile } from '@/services/profile.service';
 
 export default function Home() {
@@ -23,8 +23,10 @@ export default function Home() {
   useRealtimeStore(supabase);
 
   const [isMobile, setIsMobile] = useState(false);
-  const [tryConnect, setTryConnect] =useState(true);
-  const [connected, setConnected] = useState(true);
+  const [connect, setConnect] = useState(false);
+  const [connected, setConnected] = useState(false);
+
+  const tryConnect = useConnectionRef();
 
   const checkMobile = useMediaQuery({ query: '(max-width: 940px)' });
   //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
@@ -40,6 +42,11 @@ export default function Home() {
     setIsMobile(checkMobile);
   }, [checkMobile]);
 
+  const handleDisconnect = () => {
+    setConnect(false);
+    setConnected(false);
+  };
+
   return (
     <>
       <Head>
@@ -51,12 +58,13 @@ export default function Home() {
       <SideBarOptionProvider>
         <LiveKitRoom
           video={false}
-          audio={true}
+          audio={false}
           screen={false}
           token={token}
           serverUrl={process.env.NEXT_PUBLIC_LK_SERVER_URL}
           connect={tryConnect}
           onConnected={() => setConnected(true)}
+          onDisconnected={handleDisconnect}
           className='flex flex-col w-full' 
         >
           {isMobile ? (

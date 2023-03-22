@@ -38,7 +38,6 @@ export default async function tokenHandle(
 
   try {
     const token = createToken({ identity, name }, grant);
-    console.log(token);
 
     res.status(200).json({ identity, accessToken: token });
   } 

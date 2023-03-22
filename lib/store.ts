@@ -182,6 +182,16 @@ const useTokenStore = create<TokenState>()((set) => ({
   setToken: (token) => set((state) => ({token: token})),
 }));
 
+export interface ConnectionState {
+  connection: boolean | undefined,
+  setConnection: (connection: boolean | undefined) => void;
+}
+
+const useConnectionStore = create<ConnectionState>()((set) => ({
+  connection: false,
+  setConnection: (connection) => set((state) => ({connection: connection})),
+}));
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -203,3 +213,5 @@ export const useSetChannel = () => useChannelStore((state) => state.setChannel);
 export const useChannel = () => useChannelStore((state) => state.channel);
 export const useSetToken = () => useTokenStore((state) => state.setToken);
 export const useTokenRef = () => useTokenStore((state) => state.token);
+export const useSetConnectionState = () => useConnectionStore((state) => state.setConnection);
+export const useConnectionRef = () => useConnectionStore((state) => state.connection);

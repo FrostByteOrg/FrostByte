@@ -9,45 +9,50 @@ import DefaultTest from '@/components/home/DefaultTest';
 import { useChannel } from '@/lib/store';
 import { Channel, User } from '@/types/dbtypes';
 import MediaChat from '@/components/home/MediaChat';
-import { RoomAudioRenderer, TrackToggle } from '@livekit/components-react';
-import { Track } from 'livekit-client';
+import { RoomAudioRenderer, TrackToggle, useConnectionState, useLocalParticipant } from '@livekit/components-react';
+import { Track, ConnectionState } from 'livekit-client';
 import UserIcon from '../icons/UserIcon';
-import { BsMicFill, BsGearFill } from 'react-icons/bs';
-import { FaHeadphones } from 'react-icons/fa';
+import { BsMic, BsMicMute, BsGear } from 'react-icons/bs';
+import { TbHeadphones } from 'react-icons/tb';
+import FloatingCallControl from './FloatingCallControl';
 
 export default function RenderDesktopView({profile} : {profile: User}) {
   const channel = useChannel();
   const sideBarOption = useSideBarOptionValue();
+  const audioTrack = useLocalParticipant();
+  const connectionState = useConnectionState();
+
 
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
 
   return (
     <div className={`${styles.container} `}>
       <RoomAudioRenderer/>
-      <div className="col-start-1 col-end-2 bg-grey-950 flex-col justify-center ">
+      <div className="col-start-1 col-end-2 row-start-1 row-end-2 bg-grey-950 flex-col justify-center ">
         <NavBar type="vertical" />
       </div>
-      <div className="col-start-2 col-end-4 flex-col bg-grey-900 relative">
+      <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex-col bg-grey-900 relative">
         {sideBarView}
-        <div className={'bg-grey-950 h-auto w-full p-3 absolute bottom-[0px]'}>
-          <div className='flex flex-row justify-between'>
-            <UserIcon user={profile} indicator={false}/>
-            <div className='flex flex-row w-9'>
-              <button className='w-7 h-7'>
-                <FaHeadphones  size={22}/>
-              </button>
-              <TrackToggle showIcon={false} className={'w-7 h-7'} source={Track.Source.Microphone}>
-                <BsMicFill size={22}/>
-              </TrackToggle> 
-              <button className='w-7 h-7'>
-                <BsGearFill  size={22}/>
-              </button>
-            </div>
+        {connectionState === ConnectionState.Connected ? (<FloatingCallControl/>) : (<div className='hidden'/>)}
+      </div>
+      <div className="col-start-4 col-end-13 row-start-1 row-end-3 flex flex-col h-screen">
+        {mainView}
+      </div>
+      <div id='sideBarControls' className='col-start-1 col-end-4 row-start-2 row-end-3 w-full bg-grey-925 h-auto p-3'>
+        <div className='flex flex-row justify-between'>
+          <UserIcon user={profile} indicator={false}/>
+          <div className='flex flex-row w-9'>
+            <button className='w-7 h-7 hover:text-grey-400'>
+              <TbHeadphones  size={22}/>
+            </button>
+            <TrackToggle showIcon={false} className={'w-7 h-7 hover:text-grey-400'} source={Track.Source.Microphone}>
+              {audioTrack.isMicrophoneEnabled  ? (<BsMic size={22}/>) : (<BsMicMute size={22}/>)}
+            </TrackToggle> 
+            <button className='w-7 h-7 hover:text-grey-400'>
+              <BsGear  size={22}/>
+            </button>
           </div>
         </div>
-      </div>
-      <div className="col-start-4 col-end-13 flex flex-col h-screen">
-        {mainView}
       </div>
     </div>
   );
