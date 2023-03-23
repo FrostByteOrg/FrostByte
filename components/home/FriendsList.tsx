@@ -67,7 +67,7 @@ export default function FriendsList() {
           >
             Pending
           </button>
-          <button
+          {/* <button
             className="rounded-md p-1 px-3 border-2 border-gray-500 hover:bg-gray-500"
             onClick={() => setActiveCategory('blocked')}
             style={{
@@ -76,7 +76,7 @@ export default function FriendsList() {
             }}
           >
             Blocked
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex flex-col">

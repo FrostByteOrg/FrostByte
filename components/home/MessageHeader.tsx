@@ -70,13 +70,12 @@ export function MessageHeader({
               // TODO: Use store to fetch relations and conditionally activate this
               sendFriendRequest(supabase, profile.id);
             }}
-            disabled
           >
             Send friend request
           </ContextMenu.Item>
-          <ContextMenu.Item className='ContextMenuItem'>
+          {/* <ContextMenu.Item className='ContextMenuItem'>
             Block {server_user.nickname || profile.username}
-          </ContextMenu.Item>
+          </ContextMenu.Item> */}
         </ContextMenu.Content>
       )}
     </ContextMenu.Root>
