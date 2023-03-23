@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import {
   Channel,
+  DetailedProfileRelation,
   MessageWithServerProfile,
   Server,
   ServersForUser,
@@ -171,6 +172,11 @@ const useChannelStore = create<ChannelState>()((set) => ({
   channel: null,
   setChannel: (channel) => set((state) => ({ channel: channel })),
 }));
+
+export interface RelationsState {
+  relations: DetailedProfileRelation[];
+  addRelation: (target_profile_id: string) => void;
+}
 
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
