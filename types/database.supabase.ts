@@ -372,6 +372,18 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      accept_friend_request: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          created_at: string | null
+          id: number
+          relationship: Database["public"]["Enums"]["relationship"]
+          user1: string
+          user2: string
+        }[]
+      }
       createmessage: {
         Args: {
           c_id: number
@@ -466,6 +478,18 @@ export interface Database {
           p_id: string
         }
         Returns: number
+      }
+      get_profile_relationship_by_target_profile_id: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          created_at: string | null
+          id: number
+          relationship: Database["public"]["Enums"]["relationship"]
+          user1: string
+          user2: string
+        }[]
       }
       get_roles_for_user_in_server: {
         Args: {

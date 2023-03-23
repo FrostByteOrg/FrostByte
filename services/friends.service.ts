@@ -31,7 +31,7 @@ export async function getRelationships(supabase: SupabaseClient<Database>) {
 }
 
 export async function sendFriendRequest(supabase: SupabaseClient<Database>, targetUserId: string) {
-  return supabase
+  return await supabase
     .from('profile_relations')
     .insert({
       user1: (await supabase.auth.getUser()).data.user?.id!,
@@ -39,4 +39,12 @@ export async function sendFriendRequest(supabase: SupabaseClient<Database>, targ
       relationship: 'friend_requested',
     })
     .single();
+}
+
+export async function acceptFriendRequest(supabase: SupabaseClient<Database>, targetUserId: string) {
+  return await supabase
+    .rpc('accept_friend_request', {
+      t_p_id: targetUserId,
+    })
+    .returns<DetailedProfileRelation>();
 }
