@@ -426,6 +426,18 @@ export interface Database {
         }
         Returns: number
       }
+      get_detailed_profile_relation: {
+        Args: {
+          pr_id: number
+        }
+        Returns: {
+          id: number
+          target_profile: Json
+          initiator_profile_id: string
+          relationship: Database["public"]["Enums"]["relationship"]
+          created_at: string
+        }[]
+      }
       get_highest_role_position_for_user: {
         Args: {
           p_id: string

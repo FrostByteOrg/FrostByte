@@ -1,4 +1,4 @@
-import { ServerUser, Server } from '@/types/dbtypes';
+import { ServerUser, Server, ProfileRelation } from '@/types/dbtypes';
 import {
   useAddMessage,
   useAddServer,
@@ -16,6 +16,7 @@ import { useUser } from '@supabase/auth-helpers-react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import type { Message as MessageType } from '@/types/dbtypes';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
+import { getRelationships, relationToDetailedRelation } from '@/services/friends.service';
 
 export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const addServer = useAddServer();
@@ -141,6 +142,58 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           async (payload) => {
             console.log('Channel permissions update event');
             getUserPerms(supabase, channel.channel_id);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation insert event');
+            // Get the details of the new profile relation
+            const { data, error } = await getRelationships(supabase);
+
+            if (error) {
+              console.error(error);
+              return;
+            }
+
+            addProfileRelationship(data);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation update event');
+            // Get the details of the new profile relation
+            const { data, error } = await relationToDetailedRelation(supabase, payload.new.id);
+
+            if (error) {
+              console.error(error);
+              return;
+            }
+
+            updateProfileRelationship(data);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation delete event');
+            removeProfileRelationship(payload.old.id);
           }
         )
         .subscribe();
