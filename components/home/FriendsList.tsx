@@ -1,36 +1,15 @@
-import { getRelationships } from '@/services/friends.service';
+import { useRelations } from '@/lib/store';
 import styles from '@/styles/Chat.module.css';
 import { DetailedProfileRelation, ProfileRelationshipType } from '@/types/dbtypes';
-import * as ContextMenu from '@radix-ui/react-context-menu';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
-import ChannelMessageIcon from '../icons/ChannelMessageIcon';
-import UserIcon from '../icons/UserIcon';
-import VerticalSettingsIcon from '../icons/VerticalSettingsIcon';
 import { FriendRequestItem } from './FriendRequestItem';
 import { FriendsListItem } from './FriendsListItem';
 
 export default function FriendsList() {
-  const supabase = useSupabaseClient();
   const [ activeCategory, setActiveCategory ] = useState<ProfileRelationshipType>('friends');
-  const [ relationships, setRelationships ] = useState<DetailedProfileRelation[]>([]);
+  const relationships = useRelations();
   const [ dispRelations, setDispRelations ] = useState<DetailedProfileRelation[]>([]);
-
-  useEffect(() => {
-    async function handleAsync() {
-      const { data, error } = await getRelationships(supabase);
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      setRelationships(data);
-    }
-
-    handleAsync();
-  }, [supabase]);
 
   useEffect(() => {
     console.log(activeCategory);

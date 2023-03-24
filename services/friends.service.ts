@@ -33,7 +33,8 @@ export async function getRelationships(supabase: SupabaseClient<Database>) {
 export async function relationToDetailedRelation(supabase: SupabaseClient<Database>, relationId: number) {
   return await supabase
     .rpc('get_detailed_profile_relation', { pr_id: relationId })
-    .returns<DetailedProfileRelation>();
+    .returns<DetailedProfileRelation>()
+    .single();
 }
 
 export async function sendFriendRequest(supabase: SupabaseClient<Database>, targetUserId: string) {

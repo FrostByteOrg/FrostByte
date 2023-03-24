@@ -1,14 +1,18 @@
 import { ServerUser, Server, ProfileRelation } from '@/types/dbtypes';
 import {
   useAddMessage,
+  useAddRelation,
   useAddServer,
   useChannel,
   useGetMessages,
+  useGetRelations,
   useGetServers,
   useGetUserPerms,
   useMessages,
   useRemoveMessage,
+  useRemoveRelation,
   useUpdateMessage,
+  useUpdateRelation,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -30,6 +34,11 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
   const getMessages = useGetMessages();
   const getUserPerms = useGetUserPerms();
+
+  const addRelation = useAddRelation();
+  const updateRelation = useUpdateRelation();
+  const removeRelation = useRemoveRelation();
+  const getRelations = useGetRelations();
 
   const user = useUser();
 
@@ -153,15 +162,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Profile relation insert event');
-            // Get the details of the new profile relation
-            const { data, error } = await getRelationships(supabase);
-
-            if (error) {
-              console.error(error);
-              return;
-            }
-
-            addProfileRelationship(data);
+            addRelation(supabase, payload.new.id);
           }
         )
         .on<ProfileRelation>(
@@ -173,15 +174,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Profile relation update event');
-            // Get the details of the new profile relation
-            const { data, error } = await relationToDetailedRelation(supabase, payload.new.id);
-
-            if (error) {
-              console.error(error);
-              return;
-            }
-
-            updateProfileRelationship(data);
+            updateRelation(supabase, payload.new.id);
           }
         )
         .on<ProfileRelation>(
@@ -193,7 +186,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Profile relation delete event');
-            removeProfileRelationship(payload.old.id);
+            removeRelation(supabase, payload.old.id as number);
           }
         )
         .subscribe();
@@ -206,6 +199,9 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     removeMessage,
     supabase,
     updateMessage,
+    addRelation,
+    updateRelation,
+    removeRelation,
   ]);
 
   useEffect(() => {
@@ -214,4 +210,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
       getMessages(supabase, channel.channel_id);
     }
   }, [channel, getUserPerms, supabase, getMessages]);
+
+  useEffect(() => {
+    getRelations(supabase);
+  }, [getRelations, supabase]);
 }
