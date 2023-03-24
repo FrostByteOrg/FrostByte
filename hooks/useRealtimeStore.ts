@@ -1,4 +1,4 @@
-import { ServerUser, Server } from '@/types/dbtypes';
+import { ServerUser, Server, Channel } from '@/types/dbtypes';
 import {
   useAddMessage,
   useAddServer,
@@ -8,7 +8,9 @@ import {
   useGetUserPerms,
   useMessages,
   useRemoveMessage,
+  useServers,
   useUpdateMessage,
+  useUpdateServer,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -20,6 +22,8 @@ import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtyp
 export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const addServer = useAddServer();
   const getServers = useGetServers();
+  const servers = useServers();
+  const updateServer = useUpdateServer();
 
   const messages = useMessages();
   const addMessage = useAddMessage();
@@ -36,12 +40,18 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
   useEffect(() => {
     //this condition makes sure that the functions in the store are initialized, realistically it can be any function, I just chose addServer
+
     if (addServer) {
       supabase
         .channel('server_users')
         .on<ServerUser>(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'server_users', filter: `profile_id=eq.${user?.id}` },
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'server_users',
+            filter: `profile_id=eq.${user?.id}`,
+          },
           async (payload) => {
             console.log('insert');
 
@@ -50,7 +60,12 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         )
         .on<ServerUser>(
           'postgres_changes',
-          { event: 'DELETE', schema: 'public', table: 'server_users', filter: `profile_id=eq.${user?.id}` },
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'server_users',
+            filter: `profile_id=eq.${user?.id}`,
+          },
           async (payload) => {
             console.log('remove user from server');
 
@@ -77,11 +92,29 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           }
         )
         .subscribe();
+
+      supabase
+        .channel('channels')
+        .on<Channel>(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'channels' },
+          async (payload) => {
+            console.log('insert channel');
+            const server = servers.find(
+              (server) => server.server_id == payload.new.server_id
+            );
+
+            if (server) {
+              updateServer(supabase, server.server_id);
+            }
+          }
+        )
+        .subscribe();
     }
 
     // add return right here!
-    // return serverUsersListener.unsubscribe();
-  }, [addServer, supabase, user, getServers]);
+    // return serverUsersListener.unsubscribe();;
+  }, [addServer, supabase, user, getServers, servers, updateServer]);
 
   useEffect(() => {
     if (addMessage && getUserPerms && channel) {
@@ -93,7 +126,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             event: 'INSERT',
             schema: 'public',
             table: 'messages',
-            filter: `channel_id=eq.${channel?.channel_id}`,
+            filter: `channel_id=eq.${channel.channel_id}`,
           },
           async (payload) => {
             console.log('New message event');

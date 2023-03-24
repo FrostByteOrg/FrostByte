@@ -1,6 +1,12 @@
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
-import { SyntheticEvent, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from 'react';
 import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
@@ -11,10 +17,30 @@ import { ServerMemberStats } from './ServerMemberStats';
 import { OverflowMarquee } from './OverflowMarquee';
 import { useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
+import { Tooltip } from 'react-tooltip';
 
-export default function Server({ server, expanded, isLast = false }: { server: ServerType, expanded: number, isLast?: boolean }) {
+export default function Server({
+  server,
+  expanded,
+  isLast = false,
+  setExpanded,
+}: {
+  server: ServerType;
+  expanded: number;
+  isLast?: boolean;
+  setExpanded: Dispatch<SetStateAction<number>>;
+}) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
+  const [memberCount, setMemberCount] = useState(0);
+  const [onlineCount, setOnlineCount] = useState(0);
+  const onlinePresenceChannel = useOnlinePresenceRef();
+
+  const [isChannelHovered, setIsChannelHovered] = useState(false);
+  const [isServerHovered, setIsServerHovered] = useState(false);
+  const [isSettingsHovered, setIsSettingsHovered] = useState(false);
+  const [isSettingsClicked, setIsSettingsClicked] = useState(false);
+
   const setChannel = useSetChannel();
   const [channels, setChannels] = useState<Channel[]>([]);
 
@@ -35,21 +61,30 @@ export default function Server({ server, expanded, isLast = false }: { server: S
 
   if (expand) {
     return (
-      <div className="relative ">
-        <div className="border-b-2 hover:cursor-pointer border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
+      <div className="relative overflow-x-visible">
+        <div className="border-b-2 border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
-            <div className="bg-grey-900 p-[6px] rounded-xl">
+            <div
+              className="bg-grey-900 p-[6px] rounded-xl hover:cursor-pointer"
+              onClick={() => setExpanded(0)}
+            >
               <ServersIcon server={server} hovered={false} />
             </div>
             <div className="ml-3">
               <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
-                <OverflowMarquee content={server.name} maxLength={10}/>
+                <OverflowMarquee content={server.name} maxLength={10} />
               </div>
               <ServerMemberStats server={server} />
             </div>
           </div>
-          <div>
-            <VerticalSettingsIcon />
+          <div
+            onMouseEnter={() => setIsSettingsHovered(true)}
+            onMouseLeave={() => setIsSettingsHovered(false)}
+            className="hover:cursor-pointer"
+            data-tooltip-id="serverSettings"
+            data-tooltip-place="right"
+          >
+            <VerticalSettingsIcon hovered={isSettingsHovered} />
           </div>
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
@@ -70,11 +105,15 @@ export default function Server({ server, expanded, isLast = false }: { server: S
               key={channel.channel_id}
             >
               <div className="w-4">
-                {channel.is_media ? <ChannelMediaIcon />: <ChannelMessageIcon />}
+                {channel.is_media ? (
+                  <ChannelMediaIcon />
+                ) : (
+                  <ChannelMessageIcon />
+                )}
               </div>
 
               <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">
-                <OverflowMarquee content={channel.name} maxLength={8}/>
+                <OverflowMarquee content={channel.name} maxLength={8} />
               </div>
             </div>
           ))}
@@ -96,14 +135,12 @@ export default function Server({ server, expanded, isLast = false }: { server: S
           </div>
           <div className="ml-3">
             <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
-              <OverflowMarquee content={server.name} maxLength={10}/>
+              <OverflowMarquee content={server.name} maxLength={10} />
             </div>
             <ServerMemberStats server={server} />
           </div>
         </div>
-        <div>
-          <VerticalSettingsIcon />
-        </div>
+        <div></div>
       </div>
     </div>
   );

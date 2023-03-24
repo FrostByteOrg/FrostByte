@@ -8,7 +8,12 @@ import {
 } from '@/types/dbtypes';
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { getServerForUser, getServersForUser } from '@/services/server.service';
+import {
+  getCurrentUserServerPermissions,
+  getServer,
+  getServerForUser,
+  getServersForUser,
+} from '@/services/server.service';
 import {
   createMessage,
   getMessagesInChannelWithUser,
@@ -22,6 +27,7 @@ export interface ServerState {
   addServer: (supabase: SupabaseClient<Database>, serverUserId: number) => void;
   removeServer: (serverId: number) => void;
   getServers: (supabase: SupabaseClient<Database>, userId: string) => void;
+  updateServer: (supabase: SupabaseClient<Database>, serverId: number) => void;
 }
 
 const useServerStore = create<ServerState>()((set) => ({
@@ -41,14 +47,9 @@ const useServerStore = create<ServerState>()((set) => ({
     }
   },
   removeServer: async (serverId) => {
-    set(
-      (state) => ({
-        servers: state.servers.filter(
-          (server) => server.server_id !== serverId
-        ),
-      }),
-      true
-    );
+    set((state) => ({
+      servers: state.servers.filter((server) => server.server_id !== serverId),
+    }));
   },
   getServers: async (supabase, userId) => {
     const { data, error } = await getServersForUser(supabase, userId);
@@ -58,7 +59,28 @@ const useServerStore = create<ServerState>()((set) => ({
     }
 
     if (data) {
-      set({ servers: data as ServersForUser[] }, true);
+      set({ servers: data as ServersForUser[] });
+    }
+  },
+  updateServer: async (supabase, serverId) => {
+    const { data, error } = await getServer(supabase, serverId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      set((state) => ({
+        servers: state.servers.map((server) => {
+          // Once we hit a server that matches the id, we can return the updated server instead of the old one
+          if (server.server_id === data[0].id) {
+            return { server_id: serverId, servers: data[0] };
+          }
+          // Otherwise fallback to the old one
+          return server;
+        }),
+      }));
     }
   },
 }));
@@ -80,7 +102,10 @@ const useMessagesStore = create<MessagesState>()((set) => ({
   channelId: 0,
   setChannelId: (chId) => set((state) => ({ channelId: chId })),
   addMessage: async (supabase, messageId) => {
-    const { data, error } = await getMessageWithServerProfile(supabase, messageId);
+    const { data, error } = await getMessageWithServerProfile(
+      supabase,
+      messageId
+    );
 
     if (error) {
       console.error(error);
@@ -94,7 +119,10 @@ const useMessagesStore = create<MessagesState>()((set) => ({
     }
   },
   updateMessage: async (supabase, messageId) => {
-    const { data, error } = await getMessageWithServerProfile(supabase, messageId);
+    const { data, error } = await getMessageWithServerProfile(
+      supabase,
+      messageId
+    );
 
     if (error) {
       console.error(error);
@@ -141,11 +169,18 @@ const useMessagesStore = create<MessagesState>()((set) => ({
 
 export interface UserPermsState {
   userPerms: any;
+  userServerPerms: any;
   getUserPerms: (supabase: SupabaseClient<Database>, channelId: number) => void;
+  getUserPermsForServer: (
+    supabase: SupabaseClient<Database>,
+    server_id: number,
+    userId?: string
+  ) => void;
 }
 
 const useUserPermsStore = create<UserPermsState>()((set) => ({
   userPerms: [],
+  userServerPerms: [],
   getUserPerms: async (supabase, channelId) => {
     const { data, error } = await getCurrentUserChannelPermissions(
       supabase,
@@ -158,6 +193,21 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
 
     if (data) {
       set({ userPerms: data });
+    }
+  },
+  getUserPermsForServer: async (supabase, serverId, userId) => {
+    const { data, error } = await getCurrentUserServerPermissions(
+      supabase,
+      serverId,
+      userId
+    );
+
+    if (error) {
+      console.log(error);
+    }
+
+    if (data) {
+      set({ userServerPerms: data });
     }
   },
 }));
@@ -176,6 +226,8 @@ export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
   useServerStore((state) => state.removeServer);
+export const useUpdateServer = () =>
+  useServerStore((state) => state.updateServer);
 export const useGetServers = () => useServerStore((state) => state.getServers);
 export const useMessages = () => useMessagesStore((state) => state.messages);
 export const useGetMessages = () =>
@@ -191,3 +243,7 @@ export const useGetUserPerms = () =>
 export const useUserPerms = () => useUserPermsStore((state) => state.userPerms);
 export const useSetChannel = () => useChannelStore((state) => state.setChannel);
 export const useChannel = () => useChannelStore((state) => state.channel);
+export const useGetUserPermsForServer = () =>
+  useUserPermsStore((state) => state.getUserPermsForServer);
+export const useUserServerPerms = () =>
+  useUserPermsStore((state) => state.userServerPerms);

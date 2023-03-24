@@ -1,14 +1,18 @@
 export default function PlusIcon({
   color = 'currentColor',
+  width = 6,
+  height = 6,
 }: {
   color?: string;
+  width?: number;
+  height?: number;
 }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill={color}
-      className="w-6 h-6"
+      className={`w-${width} h-${height}`}
     >
       <path
         fillRule="evenodd"

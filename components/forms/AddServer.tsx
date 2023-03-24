@@ -10,9 +10,7 @@ import {
   useEffect,
 } from 'react';
 import Image from 'next/image';
-import { createServerSchema, CreateServerInput } from '@/types/client/server';
 import { FieldErrorsImpl, useForm, UseFormRegister } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function AddServer({
   serverImage,

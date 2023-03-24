@@ -16,11 +16,11 @@ export default function RenderDesktopView() {
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
 
   return (
-    <div className={`${styles.container}`}>
+    <div className={`${styles.container} `}>
       <div className="col-start-1 col-end-2 bg-grey-950 flex-col justify-center ">
         <NavBar type="vertical" />
       </div>
-      <div className="col-start-2 col-end-4 flex-col bg-grey-900 h-screen overflow-y-scroll overflow-x-hidden">
+      <div className="col-start-2 col-end-4 flex-col bg-grey-900  ">
         {sideBarView}
       </div>
       <div className="col-start-4 col-end-13 flex flex-col h-screen">
