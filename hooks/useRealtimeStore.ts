@@ -85,6 +85,42 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             }
           }
         )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation insert event');
+            addRelation(supabase, payload.new.id);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation update event');
+            updateRelation(supabase, payload.new.id);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation delete event');
+            removeRelation(supabase, payload.old.id as number);
+          }
+        )
         .subscribe();
     }
 
@@ -150,42 +186,6 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           async (payload) => {
             console.log('Channel permissions update event');
             getUserPerms(supabase, channel.channel_id);
-          }
-        )
-        .on<ProfileRelation>(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'profile_relations',
-          },
-          async (payload) => {
-            console.log('Profile relation insert event');
-            addRelation(supabase, payload.new.id);
-          }
-        )
-        .on<ProfileRelation>(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'profile_relations',
-          },
-          async (payload) => {
-            console.log('Profile relation update event');
-            updateRelation(supabase, payload.new.id);
-          }
-        )
-        .on<ProfileRelation>(
-          'postgres_changes',
-          {
-            event: 'DELETE',
-            schema: 'public',
-            table: 'profile_relations',
-          },
-          async (payload) => {
-            console.log('Profile relation delete event');
-            removeRelation(supabase, payload.old.id as number);
           }
         )
         .subscribe();
