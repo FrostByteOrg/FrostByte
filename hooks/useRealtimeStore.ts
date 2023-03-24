@@ -126,7 +126,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
     // add return right here!
     // return serverUsersListener.unsubscribe();
-  }, [addServer, supabase, user, getServers]);
+  }, [addServer, supabase, user, getServers, addRelation, updateRelation, removeRelation]);
 
   useEffect(() => {
     if (addMessage && getUserPerms && channel) {
