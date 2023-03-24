@@ -20,7 +20,7 @@ export function FriendRequestItem({ relation }: { relation: DetailedProfileRelat
       <div className='flex flex-row space-x-2'>
         {relation.initiator_profile_id !== user?.id && (
           <button
-            className="rounded-md p-3 border-2 border-gray-500 hover:bg-gray-500"
+            className="rounded-md p-2 border-2 border-gray-500 hover:bg-gray-500"
             onClick={async () => {
               const { error } = await acceptFriendRequest(supabase, relation.id);
               if (error) {
