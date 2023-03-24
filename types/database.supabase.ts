@@ -407,6 +407,7 @@ export interface Database {
         Returns: {
           id: number
           target_profile: Json
+          initiator_profile_id: string
           relationship: Database["public"]["Enums"]["relationship"]
           created_at: string
         }[]

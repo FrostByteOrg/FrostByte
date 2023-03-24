@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import UserIcon from '../icons/UserIcon';
 import VerticalSettingsIcon from '../icons/VerticalSettingsIcon';
+import { FriendRequestItem } from './FriendRequestItem';
+import { FriendsListItem } from './FriendsListItem';
 
 export default function FriendsList() {
   const supabase = useSupabaseClient();
@@ -81,42 +83,8 @@ export default function FriendsList() {
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex flex-col">
         {dispRelations.map((relation) => (
-          <div key={relation.id} className="flex flex-row items-center space-x-3 p-2 w-full hover:bg-grey-900 rounded-md transition-colors">
-            <UserIcon user={relation.target_profile} />
-            <h1 className="text-xl font-semibold tracking-wide flex-grow">
-              {relation.target_profile.username}
-            </h1>
-            <div className='flex flex-row space-x-2'>
-              <button
-                className="rounded-md p-3 border-2 border-gray-500 hover:bg-gray-500"
-                onClick={() => {
-                  console.log('DM');
-                }}
-              >
-                <ChannelMessageIcon />
-              </button>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <button
-                    className="rounded-md p-2 border-2 border-gray-500 hover:bg-gray-500"
-                    onClick={() => {
-                      console.log('Options');
-                    }}
-                  >
-                    <VerticalSettingsIcon />
-                  </button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content className='ContextMenuContent' side='left'>
-                  <DropdownMenu.Item
-                    className='ContextMenuItem'
-                    onClick={() => console.log(`remove ${relation.target_profile.username} from friends`)}
-                  >
-                    Remove friend
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            </div>
-          </div>
+          relation.relationship === 'friends' ?
+            <FriendsListItem key={relation.id} relation={relation} /> : <FriendRequestItem key={relation.id} relation={relation} />
         ))}
       </div>
     </>

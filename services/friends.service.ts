@@ -41,10 +41,22 @@ export async function sendFriendRequest(supabase: SupabaseClient<Database>, targ
     .single();
 }
 
-export async function acceptFriendRequest(supabase: SupabaseClient<Database>, targetUserId: string) {
+export async function acceptFriendRequest(supabase: SupabaseClient<Database>, relationId: number) {
   return await supabase
-    .rpc('accept_friend_request', {
-      t_p_id: targetUserId,
+    .from('profile_relations')
+    .update({
+      relationship: 'friends',
     })
-    .returns<DetailedProfileRelation>();
+    .eq('id', relationId)
+    .select()
+    .single();
+}
+
+export async function removeFriendOrRequest(supabase: SupabaseClient<Database>, relationId: number) {
+  return await supabase
+    .from('profile_relations')
+    .delete()
+    .eq('id', relationId)
+    .select()
+    .single();
 }
