@@ -4,7 +4,7 @@ import { MiniProfile } from '../forms/MiniProfile';
 import UserIcon from '../icons/UserIcon';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import { removeFriendOrRequest, sendFriendRequest } from '@/services/friends.service';
+import { acceptFriendRequest, removeFriendOrRequest, sendFriendRequest } from '@/services/friends.service';
 import { useRelations } from '@/lib/store';
 
 export function MessageHeader({
@@ -80,11 +80,25 @@ export function MessageHeader({
             className='ContextMenuItem'
             onClick={() => {
               // NOTE: Since this is only shown if a relation exists, therefore we can assume relation is not undefined
+              acceptFriendRequest(supabase, relation!.id);
+            }}
+            hidden={!relation || relation.relationship !== 'friend_requested' || relation.initiator_profile_id === currentUser?.id}
+          >
+            Accept friend request
+          </ContextMenu.Item>
+          <ContextMenu.Item
+            className='ContextMenuItem'
+            onClick={() => {
+              // NOTE: Since this is only shown if a relation exists, therefore we can assume relation is not undefined
               removeFriendOrRequest(supabase, relation!.id);
             }}
             hidden={!relation}
           >
-            { relation && relation.relationship === 'friend_requested' ? 'Cancel friend request' : 'Remove friend' }
+            {
+              relation && relation.relationship === 'friend_requested' ?
+                (relation.initiator_profile_id === currentUser?.id ? 'Cancel friend request' : 'Reject friend request')
+                : 'Remove friend'
+            }
           </ContextMenu.Item>
         </ContextMenu.Content>
       )}
