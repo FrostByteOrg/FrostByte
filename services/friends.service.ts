@@ -17,13 +17,6 @@ export async function getFriendRequests(supabase: SupabaseClient<Database>) {
     .returns<DetailedProfileRelation>();
 }
 
-export async function getBlockedUsers(supabase: SupabaseClient<Database>) {
-  return await supabase
-    .rpc('detailed_profile_relations')
-    .filter('relation', 'eq', 'blocked')
-    .returns<DetailedProfileRelation>();
-}
-
 export async function getRelationships(supabase: SupabaseClient<Database>) {
   return await supabase
     .rpc('detailed_profile_relations')
