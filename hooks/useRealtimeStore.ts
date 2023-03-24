@@ -1,4 +1,4 @@
-import { ServerUser, Server } from '@/types/dbtypes';
+import { ServerUser, Server, Channel } from '@/types/dbtypes';
 import {
   useAddMessage,
   useAddServer,
@@ -8,7 +8,9 @@ import {
   useGetUserPerms,
   useMessages,
   useRemoveMessage,
+  useServers,
   useUpdateMessage,
+  useUpdateServer,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -20,6 +22,8 @@ import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtyp
 export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const addServer = useAddServer();
   const getServers = useGetServers();
+  const servers = useServers();
+  const updateServer = useUpdateServer();
 
   const messages = useMessages();
   const addMessage = useAddMessage();
@@ -36,6 +40,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
   useEffect(() => {
     //this condition makes sure that the functions in the store are initialized, realistically it can be any function, I just chose addServer
+
     if (addServer) {
       supabase
         .channel('server_users')
@@ -90,14 +95,17 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
       supabase
         .channel('channels')
-        .on<Server>(
+        .on<Channel>(
           'postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'channels' },
           async (payload) => {
-            console.log('update');
+            console.log('insert channel');
+            const server = servers.find(
+              (server) => server.server_id == payload.new.server_id
+            );
 
-            if (user) {
-              getServers(supabase, user.id);
+            if (server) {
+              updateServer(supabase, server.server_id);
             }
           }
         )
@@ -105,8 +113,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     }
 
     // add return right here!
-    // return serverUsersListener.unsubscribe();
-  }, [addServer, supabase, user, getServers]);
+    // return serverUsersListener.unsubscribe();;
+  }, [addServer, supabase, user, getServers, servers, updateServer]);
 
   useEffect(() => {
     if (addMessage && getUserPerms && channel) {

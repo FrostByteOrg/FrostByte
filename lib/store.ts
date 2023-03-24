@@ -47,14 +47,9 @@ const useServerStore = create<ServerState>()((set) => ({
     }
   },
   removeServer: async (serverId) => {
-    set(
-      (state) => ({
-        servers: state.servers.filter(
-          (server) => server.server_id !== serverId
-        ),
-      }),
-      true
-    );
+    set((state) => ({
+      servers: state.servers.filter((server) => server.server_id !== serverId),
+    }));
   },
   getServers: async (supabase, userId) => {
     const { data, error } = await getServersForUser(supabase, userId);
@@ -64,7 +59,7 @@ const useServerStore = create<ServerState>()((set) => ({
     }
 
     if (data) {
-      set({ servers: data as ServersForUser[] }, true);
+      set({ servers: data as ServersForUser[] });
     }
   },
   updateServer: async (supabase, serverId) => {
@@ -78,13 +73,12 @@ const useServerStore = create<ServerState>()((set) => ({
     if (data) {
       set((state) => ({
         servers: state.servers.map((server) => {
-          // Once we hit a message that matches the id, we can return the updated message instead of the old one
+          // Once we hit a server that matches the id, we can return the updated server instead of the old one
           if (server.server_id === data[0].id) {
-            return data as MessageWithServerProfile;
+            return { server_id: serverId, servers: data[0] };
           }
-
           // Otherwise fallback to the old one
-          return message;
+          return server;
         }),
       }));
     }
@@ -232,6 +226,8 @@ export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
   useServerStore((state) => state.removeServer);
+export const useUpdateServer = () =>
+  useServerStore((state) => state.updateServer);
 export const useGetServers = () => useServerStore((state) => state.getServers);
 export const useMessages = () => useMessagesStore((state) => state.messages);
 export const useGetMessages = () =>
