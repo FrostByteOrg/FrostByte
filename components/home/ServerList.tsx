@@ -18,7 +18,6 @@ import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
-  //TODO: Only show add channel if user has perms for it
 
   const [showAddServer, setShowAddServer] = useState(false);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
@@ -32,7 +31,6 @@ export default function ServerList() {
 
   const getUserServerPerms = useGetUserPermsForServer();
   const userServerPerms = useUserServerPerms();
-  console.log(userServerPerms & ServerPermissions.OWNER);
 
   useEffect(() => {
     if (getServers) {

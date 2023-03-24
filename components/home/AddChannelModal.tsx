@@ -15,7 +15,6 @@ import {
   useUserPerms,
   useUserServerPerms,
 } from '@/lib/store';
-import { ChannelPermissions } from '@/types/permissions';
 
 export default function AddChannelModal({
   showModal,
@@ -37,8 +36,6 @@ export default function AddChannelModal({
   const user = useUser();
 
   const getUserServerPerms = useGetUserPermsForServer();
-
-  const userServerPerms = useUserServerPerms();
 
   const {
     register,
@@ -65,9 +62,6 @@ export default function AddChannelModal({
   }, [user, getUserServerPerms, supabase, serverId]);
 
   const onSubmit = async (formData: CreateChannelInput) => {
-    //
-    // console.log(serverId);
-    // console.log(userPerms & ChannelPermissions.MANAGE_MESSAGES);
     const { data, error } = await createChannel(
       supabase,
       serverId,

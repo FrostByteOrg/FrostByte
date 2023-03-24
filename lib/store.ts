@@ -10,6 +10,7 @@ import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
 import {
   getCurrentUserServerPermissions,
+  getServer,
   getServerForUser,
   getServersForUser,
 } from '@/services/server.service';
@@ -26,6 +27,7 @@ export interface ServerState {
   addServer: (supabase: SupabaseClient<Database>, serverUserId: number) => void;
   removeServer: (serverId: number) => void;
   getServers: (supabase: SupabaseClient<Database>, userId: string) => void;
+  updateServer: (supabase: SupabaseClient<Database>, serverId: number) => void;
 }
 
 const useServerStore = create<ServerState>()((set) => ({
@@ -63,6 +65,28 @@ const useServerStore = create<ServerState>()((set) => ({
 
     if (data) {
       set({ servers: data as ServersForUser[] }, true);
+    }
+  },
+  updateServer: async (supabase, serverId) => {
+    const { data, error } = await getServer(supabase, serverId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      set((state) => ({
+        servers: state.servers.map((server) => {
+          // Once we hit a message that matches the id, we can return the updated message instead of the old one
+          if (server.server_id === data[0].id) {
+            return data as MessageWithServerProfile;
+          }
+
+          // Otherwise fallback to the old one
+          return message;
+        }),
+      }));
     }
   },
 }));
@@ -187,7 +211,7 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
     if (error) {
       console.log(error);
     }
-    // console.log('data', data);
+
     if (data) {
       set({ userServerPerms: data });
     }

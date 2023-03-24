@@ -41,7 +41,12 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         .channel('server_users')
         .on<ServerUser>(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'server_users', filter: `profile_id=eq.${user?.id}` },
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'server_users',
+            filter: `profile_id=eq.${user?.id}`,
+          },
           async (payload) => {
             console.log('insert');
 
@@ -50,7 +55,12 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         )
         .on<ServerUser>(
           'postgres_changes',
-          { event: 'DELETE', schema: 'public', table: 'server_users', filter: `profile_id=eq.${user?.id}` },
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'server_users',
+            filter: `profile_id=eq.${user?.id}`,
+          },
           async (payload) => {
             console.log('remove user from server');
 
@@ -77,6 +87,21 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           }
         )
         .subscribe();
+
+      supabase
+        .channel('channels')
+        .on<Server>(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'channels' },
+          async (payload) => {
+            console.log('update');
+
+            if (user) {
+              getServers(supabase, user.id);
+            }
+          }
+        )
+        .subscribe();
     }
 
     // add return right here!
@@ -93,7 +118,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             event: 'INSERT',
             schema: 'public',
             table: 'messages',
-            filter: `channel_id=eq.${channel?.channel_id}`,
+            filter: `channel_id=eq.${channel.channel_id}`,
           },
           async (payload) => {
             console.log('New message event');
