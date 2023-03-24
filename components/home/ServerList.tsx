@@ -123,31 +123,31 @@ export default function ServerList() {
       {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
       userServerPerms & ServerPermissions.OWNER ||
       userServerPerms & ServerPermissions.ADMINISTRATOR ? (
-        <Tooltip
-          className="z-20 !opacity-100 font-semibold "
-          style={{
-            backgroundColor: '#21282b',
-            borderRadius: '0.5rem',
-            fontSize: '1.125rem',
-            lineHeight: '1.75rem',
-          }}
-          id="serverSettings"
-          clickable
-          openOnClick={true}
-        >
-          <div
-            className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-            onClick={() => {
-              setShowAddChannelModal(true);
+          <Tooltip
+            className="z-20 !opacity-100 font-semibold "
+            style={{
+              backgroundColor: '#21282b',
+              borderRadius: '0.5rem',
+              fontSize: '1.125rem',
+              lineHeight: '1.75rem',
             }}
+            id="serverSettings"
+            clickable
+            openOnClick={true}
           >
-            <PlusIcon width={5} height={5} />
-            <span className="ml-1">New channel</span>
-          </div>
-        </Tooltip>
-      ) : (
-        ''
-      )}
+            <div
+              className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+              onClick={() => {
+                setShowAddChannelModal(true);
+              }}
+            >
+              <PlusIcon width={5} height={5} />
+              <span className="ml-1">New channel</span>
+            </div>
+          </Tooltip>
+        ) : (
+          ''
+        )}
     </div>
   );
 }
