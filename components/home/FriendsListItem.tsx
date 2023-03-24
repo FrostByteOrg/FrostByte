@@ -3,8 +3,11 @@ import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import UserIcon from '../icons/UserIcon';
 import VerticalSettingsIcon from '../icons/VerticalSettingsIcon';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { removeFriendOrRequest } from '@/services/friends.service';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export function FriendsListItem({ relation }: { relation: DetailedProfileRelation }) {
+  const supabase = useSupabaseClient();
   return (
     <div key={relation.id} className="flex flex-row items-center space-x-3 p-2 w-full hover:bg-grey-900 rounded-md transition-colors">
       <UserIcon user={relation.target_profile} />
@@ -34,7 +37,7 @@ export function FriendsListItem({ relation }: { relation: DetailedProfileRelatio
           <DropdownMenu.Content className='ContextMenuContent' side='left'>
             <DropdownMenu.Item
               className='ContextMenuItem'
-              onClick={() => console.log(`remove ${relation.target_profile.username} from friends`)}
+              onClick={async () => await removeFriendOrRequest(supabase, relation.id)}
             >
               Remove friend
             </DropdownMenu.Item>

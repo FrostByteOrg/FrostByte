@@ -20,7 +20,6 @@ import { useUser } from '@supabase/auth-helpers-react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import type { Message as MessageType } from '@/types/dbtypes';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
-import { getRelationships, relationToDetailedRelation } from '@/services/friends.service';
 
 export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const addServer = useAddServer();
