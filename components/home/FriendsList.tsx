@@ -1,7 +1,6 @@
 import { useRelations } from '@/lib/store';
 import styles from '@/styles/Chat.module.css';
 import { DetailedProfileRelation, ProfileRelationshipType } from '@/types/dbtypes';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { FriendRequestItem } from './FriendRequestItem';
 import { FriendsListItem } from './FriendsListItem';
