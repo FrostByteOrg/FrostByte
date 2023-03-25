@@ -5,6 +5,7 @@ import {
   Server,
   ServersForUser,
   ServerUser,
+  User,
 } from '@/types/dbtypes';
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -16,6 +17,7 @@ import {
 } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 import { getMessageWithServerProfile } from '@/services/profile.service';
+import { Participant } from 'livekit-client';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -173,7 +175,7 @@ const useChannelStore = create<ChannelState>()((set) => ({
 }));
 
 export interface TokenState {
-  token: string | undefined,
+  token: string | undefined;
   setToken: (token: string | undefined) => void;
 }
 
@@ -183,7 +185,7 @@ const useTokenStore = create<TokenState>()((set) => ({
 }));
 
 export interface ConnectionState {
-  connection: boolean | undefined,
+  connection: boolean | undefined;
   setConnection: (connection: boolean | undefined) => void;
 }
 
@@ -193,7 +195,7 @@ const useConnectionStore = create<ConnectionState>()((set) => ({
 }));
 
 export interface CurrentRoomState {
-  currentRoom: number | undefined,
+  currentRoom: number | undefined;
   setCurrentRoom: (currentRoom: number | undefined) => void;
 }
 

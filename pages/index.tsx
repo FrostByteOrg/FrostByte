@@ -1,8 +1,6 @@
 import Head from 'next/head';
-import styles from '@/styles/Home.module.css';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
-import NavBar from '@/components/home/NavBar';
 import { SideBarOptionProvider } from '@/context/SideBarOptionCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
 import RenderDesktopView from '@/components/home/RenderDesktopView';
@@ -12,14 +10,15 @@ import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { LiveKitRoom } from '@livekit/components-react';
 import { useTokenRef, useConnectionRef } from '@/lib/store';
 import { getProfile } from '@/services/profile.service';
+import { User } from '@/types/dbtypes';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
   const token = useTokenRef();
-  const profile = getProfile(supabase, user?.id);
-  
+
+
   useRealtimeStore(supabase);
 
   const [isMobile, setIsMobile] = useState(false);
@@ -88,7 +87,7 @@ export default function Home() {
           ) : (
             <div>
               <div className={'bg-grey-800 '}>
-                <RenderDesktopView profile={profile}/>
+                <RenderDesktopView/>
                 <div>
                   {!user ? (
                     ''

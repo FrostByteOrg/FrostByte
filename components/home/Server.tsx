@@ -11,7 +11,7 @@ import {
   getServerMemberCount,
   getUsersInServer,
 } from '@/services/server.service';
-import { Channel, Server as ServerType } from '@/types/dbtypes';
+import { Channel, Server as ServerType, User } from '@/types/dbtypes';
 import { useSetChannel, useCurrentRoomRef } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelName from './ChannelName';
@@ -28,20 +28,18 @@ export default function Server({
   expanded: number;
   isLast?: boolean;
 }) {
+  const participants = useParticipants();
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
   const [memberCount, setMemberCount] = useState(0);
   const [onlineCount, setOnlineCount] = useState(0);
   const onlinePresenceChannel = useOnlinePresenceRef();
-
   const [isServerHovered, setIsServerHovered] = useState(false);
 
   const setChannel = useSetChannel();
-
-  const participants = useParticipants();
   const currentRoom = useCurrentRoomRef();
   const connection = useConnectionState();
-  
+
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
 
@@ -54,6 +52,7 @@ export default function Server({
 
       // Total Members
       setMemberCount(await getServerMemberCount(supabase, server.id));
+
 
       // Now we need to get the online count
       const { data: onlineData, error } = await getUsersInServer(
@@ -154,15 +153,15 @@ export default function Server({
               key={channel.channel_id}
             >
               <div className="w-auto">
-                {channel.is_media ? (
+                {channel && channel.is_media ? (
                   <div className='flex flex-col'>
                     <div className='flex flex-row items-center'>
                       <ChannelMediaIcon />
                       <ChannelName {...channel} />
                     </div>
-                    {participants.map((user: Participant, id ) => (
-                      <div key={id}> 
-                        { currentRoom?.toString() === channel.channel_id.toString() &&  connection === ConnectionState.Connected ? (<p>{user.name}</p>) : (<p> {user.name} </p>)}
+                    {currentParticipants.map((user: Participant, id: number, participants) => (
+                      <div key={user.sid}>
+                        {currentRoom !== channel.channel_id ? (<div> empty </div>) : (<div> {user.name} </div>) }
                       </div>
                     ))}
                   </div>

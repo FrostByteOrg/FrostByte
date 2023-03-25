@@ -15,13 +15,15 @@ import UserIcon from '../icons/UserIcon';
 import { BsMic, BsMicMute, BsGear } from 'react-icons/bs';
 import { TbHeadphones } from 'react-icons/tb';
 import FloatingCallControl from './FloatingCallControl';
+import { useUser } from '@supabase/auth-helpers-react';
 
-export default function RenderDesktopView({profile} : {profile: User}) {
+export default function RenderDesktopView() {
   const channel = useChannel();
   const sideBarOption = useSideBarOptionValue();
   const audioTrack = useLocalParticipant();
   const connectionState = useConnectionState();
-
+  const user : User | any = useUser();
+  
 
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
 
@@ -40,7 +42,7 @@ export default function RenderDesktopView({profile} : {profile: User}) {
       </div>
       <div id='sideBarControls' className='col-start-1 col-end-4 row-start-2 row-end-3 w-full bg-grey-925 h-auto p-3'>
         <div className='flex flex-row justify-between'>
-          <UserIcon user={profile} indicator={false}/>
+          <UserIcon user={user} indicator={false}/>
           <div className='flex flex-row w-9'>
             <button className='w-7 h-7 hover:text-grey-400'>
               <TbHeadphones  size={22}/>
@@ -60,7 +62,7 @@ export default function RenderDesktopView({profile} : {profile: User}) {
 
 export function renderContent(
   sideBarOption: 'friends' | 'servers' | 'messages',
-  channel: Channel | null
+  channel: Channel | null,
 ) {
   switch (sideBarOption) {
     case 'friends':

@@ -3,18 +3,16 @@ import styles from '@/styles/Chat.module.css';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useUser } from '@supabase/auth-helpers-react';
-import { AudioTrack, DisconnectButton, ParticipantLoop, ParticipantTile, TrackToggle, VideoTrack, useConnectionState, useLocalParticipant, useToken } from '@livekit/components-react';
-import { Track, ConnectionState } from 'livekit-client';
+import { AudioTrack, DisconnectButton, ParticipantLoop, ParticipantTile, RoomName, TrackToggle, VideoTrack, useConnectionState, useLocalParticipant,useToken } from '@livekit/components-react';
+import { Track, ConnectionState} from 'livekit-client';
 import { User } from '@/types/dbtypes';
-import UserIcon from '../icons/UserIcon';
 import { BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 
 export default function MediaChat() {
 
   const channel = useChannel();
-  const userName = useUser();
-  const userID = useUser();
+  const userID : User | any = useUser();
   const setToken = useSetToken();
   const setRoom = useSetCurrentRoom();
   const videoTrack = useLocalParticipant();
@@ -23,15 +21,13 @@ export default function MediaChat() {
   const setConnectionState = useSetConnectionState();
   const connectionState = useConnectionState();
 
-  const user : User | any = useUser();
-
   const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, channel!.channel_id.toString(), {
     userInfo: {
       identity: userID?.id,
-      name: userName?.email
+      name: userID?.email
     },
   });
-  
+
   return (
     <>
       <div className={`${styles.chatHeader} px-5 pt-5 mb-3`}>
@@ -53,11 +49,11 @@ export default function MediaChat() {
         <div className={'bg-gray-800 h-full w-full items-center'}>
           <div className=''>
             <div className='flex flex-row justify-center'>
+              <RoomName />
               <ParticipantLoop>
                 <ParticipantTile className={'w-12 mb-5 mr-2 mt-5'}>
                   <div className={'flex flex-col items-center'}>
-                    {videoTrack.isCameraEnabled ? (<VideoTrack source={Track.Source.Camera} className={'rounded-xl mx-2'} />) :
-                      (<UserIcon user={user} indicator={false} className='!w-10 !h-10'/>)}
+                    <VideoTrack source={Track.Source.Camera} className={'rounded-xl mx-2'}/>
                     {screenTrack.isScreenShareEnabled ? (<VideoTrack source={Track.Source.ScreenShare} className={'rounded-xl'}/>) : (
                       <div className='hidden'/>
                     )}
