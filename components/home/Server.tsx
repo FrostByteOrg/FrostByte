@@ -7,7 +7,6 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
@@ -32,15 +31,7 @@ export default function Server({
 }) {
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
-  const [memberCount, setMemberCount] = useState(0);
-  const [onlineCount, setOnlineCount] = useState(0);
-  const onlinePresenceChannel = useOnlinePresenceRef();
-
-  const [isChannelHovered, setIsChannelHovered] = useState(false);
-  const [isServerHovered, setIsServerHovered] = useState(false);
   const [isSettingsHovered, setIsSettingsHovered] = useState(false);
-  const [isSettingsClicked, setIsSettingsClicked] = useState(false);
-
   const setChannel = useSetChannel();
   const [channels, setChannels] = useState<Channel[]>([]);
 

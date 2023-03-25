@@ -1,13 +1,17 @@
-import { ServerUser, Server, Channel } from '@/types/dbtypes';
+import { ServerUser, Server, ProfileRelation, Channel } from '@/types/dbtypes';
 import {
   useAddMessage,
+  useAddRelation,
   useAddServer,
   useChannel,
   useGetMessages,
+  useGetRelations,
   useGetServers,
   useGetUserPerms,
   useMessages,
   useRemoveMessage,
+  useRemoveRelation,
+  useUpdateRelation,
   useServers,
   useUpdateMessage,
   useUpdateServer,
@@ -33,6 +37,11 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
   const getMessages = useGetMessages();
   const getUserPerms = useGetUserPerms();
+
+  const addRelation = useAddRelation();
+  const updateRelation = useUpdateRelation();
+  const removeRelation = useRemoveRelation();
+  const getRelations = useGetRelations();
 
   const user = useUser();
 
@@ -91,6 +100,42 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             }
           }
         )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation insert event');
+            addRelation(supabase, payload.new.id);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation update event');
+            updateRelation(supabase, payload.new.id);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation delete event');
+            removeRelation(supabase, payload.old.id as number);
+          }
+        )
         .subscribe();
 
       supabase
@@ -113,8 +158,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     }
 
     // add return right here!
-    // return serverUsersListener.unsubscribe();;
-  }, [addServer, supabase, user, getServers, servers, updateServer]);
+    // return serverUsersListener.unsubscribe();
+  }, [addServer, supabase, user, getServers, servers, updateServer, addRelation, updateRelation, removeRelation]);
 
   useEffect(() => {
     if (addMessage && getUserPerms && channel) {
@@ -186,6 +231,9 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     removeMessage,
     supabase,
     updateMessage,
+    addRelation,
+    updateRelation,
+    removeRelation,
   ]);
 
   useEffect(() => {
@@ -194,4 +242,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
       getMessages(supabase, channel.channel_id);
     }
   }, [channel, getUserPerms, supabase, getMessages]);
+
+  useEffect(() => {
+    getRelations(supabase);
+  }, [getRelations, supabase]);
 }

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import {
   Channel,
+  DetailedProfileRelation,
   MessageWithServerProfile,
   Server,
   ServersForUser,
@@ -21,6 +22,7 @@ import {
 } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 import { getMessageWithServerProfile } from '@/services/profile.service';
+import { getRelationships, relationToDetailedRelation } from '@/services/friends.service';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -222,6 +224,105 @@ const useChannelStore = create<ChannelState>()((set) => ({
   setChannel: (channel) => set((state) => ({ channel: channel })),
 }));
 
+export interface RelationsState {
+  relations: DetailedProfileRelation[];
+  addRelation: (supabase: SupabaseClient<Database>, relationId: number) => void;
+  updateRelation: (supabase: SupabaseClient<Database>, relationId: number) => void;
+  removeRelation: (supabase: SupabaseClient<Database>, relationId: number) => void;
+  getRelations: (supabase: SupabaseClient<Database>) => void;
+}
+
+const useRelationsStore = create<RelationsState>()((set) => ({
+  relations: [],
+  addRelation: async (supabase, relationId) => {
+    // Get the details of the new profile relation
+    const { data, error } = await relationToDetailedRelation(supabase, relationId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => ({
+      relations: [...state.relations, data as DetailedProfileRelation],
+    }));
+  },
+
+  updateRelation: async (supabase, relationId) => {
+    // Get the details of the new profile relation
+    const { data, error } = await relationToDetailedRelation(supabase, relationId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => ({
+      relations: state.relations.map((relation) => {
+        // Once we hit a relation that matches the id, we can return the updated relation instead of the old one
+        if (relation.id === data.id) {
+          return data as DetailedProfileRelation;
+        }
+
+        // Otherwise fallback to the old one
+        return relation;
+      }),
+    }));
+  },
+
+  removeRelation: (supabase, relationId) => {
+    set((state) => ({
+      relations: state.relations.filter((relation) => {
+        return relation.id !== relationId;
+      }),
+    }));
+  },
+
+  getRelations: async (supabase) => {
+    const { data, error } = await getRelationships(supabase);
+
+    if (error) {
+      console.error(error);
+    }
+
+    if (data) {
+      set({ relations: data as DetailedProfileRelation[] });
+    }
+  }
+}));
+
+type OnlineUser = {
+  [key: string]: any;
+}
+export interface OnlineState {
+  onlineUsers: OnlineUser;
+
+  flagUserOnline: (userId: string, presenceInfo: any) => void;
+  flagUserOffline: (userId: string) => void;
+}
+
+const useOnlineStore = create<OnlineState>()((set) => ({
+  onlineUsers: {},
+
+  flagUserOnline: (userId, presenceInfo) => {
+    set((state) => ({
+      onlineUsers: {
+        ...state.onlineUsers,
+        [userId]: presenceInfo
+      }
+    }));
+  },
+
+  flagUserOffline: (userId) => {
+    set((state) => {
+      const { [userId]: _, ...rest } = state.onlineUsers;
+      return {
+        onlineUsers: rest
+      };
+    });
+  },
+}));
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -243,6 +344,18 @@ export const useGetUserPerms = () =>
 export const useUserPerms = () => useUserPermsStore((state) => state.userPerms);
 export const useSetChannel = () => useChannelStore((state) => state.setChannel);
 export const useChannel = () => useChannelStore((state) => state.channel);
+export const useRelations = () => useRelationsStore((state) => state.relations);
+export const useAddRelation = () =>
+  useRelationsStore((state) => state.addRelation);
+export const useUpdateRelation = () =>
+  useRelationsStore((state) => state.updateRelation);
+export const useRemoveRelation = () =>
+  useRelationsStore((state) => state.removeRelation);
+export const useGetRelations = () =>
+  useRelationsStore((state) => state.getRelations);
+export const useOnlineUsers = () => useOnlineStore((state) => state.onlineUsers);
+export const useFlagUserOnline = () => useOnlineStore((state) => state.flagUserOnline);
+export const useFlagUserOffline = () => useOnlineStore((state) => state.flagUserOffline);
 export const useGetUserPermsForServer = () =>
   useUserPermsStore((state) => state.getUserPermsForServer);
 export const useUserServerPerms = () =>

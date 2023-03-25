@@ -145,6 +145,29 @@ export interface Database {
           sent_time?: string
         }
       }
+      profile_relations: {
+        Row: {
+          created_at: string | null
+          id: number
+          relationship: Database['public']['Enums']['relationship']
+          user1: string
+          user2: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          relationship: Database['public']['Enums']['relationship']
+          user1: string
+          user2: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          relationship?: Database['public']['Enums']['relationship']
+          user1?: string
+          user2?: string
+        }
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -349,6 +372,18 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      accept_friend_request: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          created_at: string | null
+          id: number
+          relationship: Database['public']['Enums']['relationship']
+          user1: string
+          user2: string
+        }[]
+      }
       createmessage: {
         Args: {
           c_id: number
@@ -367,6 +402,16 @@ export interface Database {
           sent_time: string
         }[]
       }
+      detailed_profile_relations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: number
+          target_profile: Json
+          initiator_profile_id: string
+          relationship: Database['public']['Enums']['relationship']
+          created_at: string
+        }[]
+      }
       get_all_channels_for_user: {
         Args: {
           p_id: string
@@ -380,6 +425,18 @@ export interface Database {
           c_id: number
         }
         Returns: number
+      }
+      get_detailed_profile_relation: {
+        Args: {
+          pr_id: number
+        }
+        Returns: {
+          id: number
+          target_profile: Json
+          initiator_profile_id: string
+          relationship: Database['public']['Enums']['relationship']
+          created_at: string
+        }[]
       }
       get_highest_role_position_for_user: {
         Args: {
@@ -434,6 +491,18 @@ export interface Database {
           p_id: string
         }
         Returns: number
+      }
+      get_profile_relationship_by_target_profile_id: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          created_at: string | null
+          id: number
+          relationship: Database['public']['Enums']['relationship']
+          user1: string
+          user2: string
+        }[]
       }
       get_roles_for_user_in_server: {
         Args: {
@@ -498,7 +567,7 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      relationship: 'friend_requested' | 'friends' | 'blocked'
     }
     CompositeTypes: {
       [_ in never]: never
