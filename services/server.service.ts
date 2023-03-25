@@ -84,8 +84,9 @@ export async function getServersForUser(
 ) {
   return await supabase
     .from('server_users')
-    .select('server_id, servers ( * )')
-    .eq('profile_id', user_id);
+    .select('server_id, servers!inner( * )')
+    .eq('profile_id', user_id)
+    .eq('servers.is_dm', false);
 }
 
 type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
@@ -99,7 +100,7 @@ export async function getServerForUser(
 ) {
   return await supabase
     .from('server_users')
-    .select('server_id, servers ( * )')
+    .select('server_id, servers!inner( * )')
     .eq('id', serverUser_id)
     .single();
 }
