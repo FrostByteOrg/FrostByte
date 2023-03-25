@@ -1,29 +1,18 @@
-import { getServersForUser } from '@/services/server.service';
-import { ServersForUser } from '@/types/dbtypes';
+import { useFlagUserOffline, useFlagUserOnline } from '@/lib/store';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import { RealtimeChannel } from '@supabase/supabase-js';
 import {
   createContext,
-  SetStateAction,
-  useContext,
-  useState,
-  Dispatch,
-  useEffect,
 } from 'react';
 
-type ChatCtxValue = {
-  onlinePresenceRef: RealtimeChannel | null;
-};
-
-export const ChatCtxDefaultVal: ChatCtxValue = {
-  onlinePresenceRef: null,
-};
-
+type ChatCtxValue = { };
+export const ChatCtxDefaultVal: ChatCtxValue = { };
 export const ChatCtx = createContext(ChatCtxDefaultVal);
 
 export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
   const supabase = useSupabaseClient();
   const user = useUser();
+  const flagUserOnline = useFlagUserOnline();
+  const flagUserOffline = useFlagUserOffline();
 
   const onlinePresenceRef = supabase.channel('online-users', {
     config: {
@@ -32,6 +21,14 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
       },
     },
   });
+
+  onlinePresenceRef
+    .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+      flagUserOnline(key, newPresences);
+    })
+    .on('presence', { event: 'leave' }, ({ key }) => {
+      flagUserOffline(key);
+    });
 
   onlinePresenceRef.subscribe(async (status) => {
     if (status === 'SUBSCRIBED') {
@@ -42,17 +39,8 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
   });
 
   return (
-    <ChatCtx.Provider
-      value={{
-        onlinePresenceRef,
-      }}
-    >
+    <ChatCtx.Provider value={ChatCtxDefaultVal}>
       {children}
     </ChatCtx.Provider>
   );
-}
-
-export function useOnlinePresenceRef() {
-  const { onlinePresenceRef } = useContext(ChatCtx);
-  return onlinePresenceRef!;
 }

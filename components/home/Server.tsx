@@ -1,7 +1,6 @@
 import VerticalSettingsIcon from '@/components/icons/VerticalSettingsIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { SyntheticEvent, useEffect, useState } from 'react';
-import { useOnlinePresenceRef } from '@/context/ChatCtx';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';

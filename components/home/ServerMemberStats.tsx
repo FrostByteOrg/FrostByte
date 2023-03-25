@@ -1,4 +1,4 @@
-import { useOnlinePresenceRef } from '@/context/ChatCtx';
+import { useOnlineUsers } from '@/lib/store';
 import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
 import styles from '@/styles/Servers.module.css';
 import { Server } from '@/types/dbtypes';
@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
 export function ServerMemberStats({ server, flexStyle }: { server: Server, flexStyle?: string }) {
   const [ memberCount, setMemberCount ] = useState(0);
   const [ onlineCount, setOnlineCount ] = useState(0);
-  const onlinePresenceChannel = useOnlinePresenceRef();
   const supabase = useSupabaseClient();
+  const onlineUsers = useOnlineUsers();
 
   useEffect(() => {
     async function handleAsync() {
@@ -19,19 +19,19 @@ export function ServerMemberStats({ server, flexStyle }: { server: Server, flexS
       // Now we need to get the online count
       const { data: onlineData, error } = await getUsersInServer(supabase, server.id);
 
-      let onlineUsers = 0;
+      let amtOnlineUsers = 0;
       if (!error) {
         for (const profile of onlineData) {
-          if (onlinePresenceChannel.presenceState()[profile.id] !== undefined) {
-            onlineUsers++;
+          if (onlineUsers[profile.id] !== undefined) {
+            amtOnlineUsers++;
           }
         }
-        setOnlineCount(onlineUsers);
+        setOnlineCount(amtOnlineUsers);
       }
     }
 
     handleAsync();
-  }, [supabase, onlinePresenceChannel, server.id]);
+  }, [supabase, onlineUsers, server.id]);
 
   return (
     <div className={`text-xs tracking-wide text-grey-300 ${flexStyle}`}>

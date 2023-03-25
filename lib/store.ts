@@ -241,6 +241,38 @@ const useRelationsStore = create<RelationsState>()((set) => ({
   }
 }));
 
+type OnlineUser = {
+  [key: string]: any;
+}
+export interface OnlineState {
+  onlineUsers: OnlineUser;
+
+  flagUserOnline: (userId: string, presenceInfo: any) => void;
+  flagUserOffline: (userId: string) => void;
+}
+
+const useOnlineStore = create<OnlineState>()((set) => ({
+  onlineUsers: {},
+
+  flagUserOnline: (userId, presenceInfo) => {
+    set((state) => ({
+      onlineUsers: {
+        ...state.onlineUsers,
+        [userId]: presenceInfo
+      }
+    }));
+  },
+
+  flagUserOffline: (userId) => {
+    set((state) => {
+      const { [userId]: _, ...rest } = state.onlineUsers;
+      return {
+        onlineUsers: rest
+      };
+    });
+  },
+}));
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -269,3 +301,6 @@ export const useRemoveRelation = () =>
   useRelationsStore((state) => state.removeRelation);
 export const useGetRelations = () =>
   useRelationsStore((state) => state.getRelations);
+export const useOnlineUsers = () => useOnlineStore((state) => state.onlineUsers);
+export const useFlagUserOnline = () => useOnlineStore((state) => state.flagUserOnline);
+export const useFlagUserOffline = () => useOnlineStore((state) => state.flagUserOffline);

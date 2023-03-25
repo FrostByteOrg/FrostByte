@@ -27,7 +27,6 @@ export function MessageHeader({
   const currentUser = useUser();
   const supabase = useSupabaseClient();
   const relation = useRelations().find((relation) => relation.target_profile.id === profile.id);
-  console.table(relation);
 
   return (
     <ContextMenu.Root>
