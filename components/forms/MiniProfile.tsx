@@ -61,9 +61,10 @@ function WrappedComponent({
               const dmChannel = await getOrCreateDMChannel(
                 supabase,
                 profile,
-                dmChannels,
-                setChannel
+                dmChannels
               );
+
+              console.table(dmChannel);
 
               if (dmChannel) {
                 await createMessage(

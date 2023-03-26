@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.supabase';
-import { User } from '@/types/dbtypes';
+import { ServersForUser, User } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -102,6 +102,7 @@ export async function getServerForUser(
     .from('server_users')
     .select('server_id, servers!inner( * )')
     .eq('id', serverUser_id)
+    .returns<ServersForUser>()
     .single();
 }
 

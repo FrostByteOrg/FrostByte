@@ -40,7 +40,7 @@ const useServerStore = create<ServerState>()((set) => ({
       return;
     }
 
-    if (data) {
+    if (data && !data.servers.is_dm) {
       set((state) => ({
         servers: [...state.servers, data as ServersForUser],
       }));
@@ -337,14 +337,10 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
       return;
     }
 
-    console.table(data);
     set((state) => ({
       dmChannels: state.dmChannels.set(
         data.recipient.id,
-        {
-          ...data,
-          name: data.recipient.username,
-        }
+        data
       )
     }));
   },

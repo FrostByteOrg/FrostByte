@@ -8,15 +8,20 @@ import { createDM } from '@/services/directmessage.service';
 export async function getOrCreateDMChannel(
   supabase: SupabaseClient<Database>,
   profile: User,
-  dmChannels: Map<string, DMChannelWithRecipient>,
-  setChannel: (channel: Channel) => void,
+  dmChannels: Map<string, DMChannelWithRecipient>
 ) {
   // First check if we already have a DM channel with this user
   const channel = dmChannels.get(profile.id);
 
   if (channel) {
-    setChannel(channel);
-    return channel;
+    return {
+      channel_id: channel.channel_id,
+      server_id: channel.server_id,
+      name: profile.username,
+      is_media: false,
+      description: null,
+      created_at: null
+    };
   }
 
   // If not, create a new DM channel
@@ -24,19 +29,19 @@ export async function getOrCreateDMChannel(
 
   if (error) {
     console.error(error);
-    return;
+    return null;
   }
 
   if (data) {
-    setChannel({
+    return {
       channel_id: data.channel_id,
       server_id: data.server_id,
       name: profile.username,
       is_media: false,
       description: null,
       created_at: null
-    });
+    };
   }
 
-  return data;
+  return null;
 }

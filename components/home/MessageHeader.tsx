@@ -6,7 +6,6 @@ import * as ContextMenu from '@radix-ui/react-context-menu';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { acceptFriendRequest, removeFriendOrRequest, sendFriendRequest } from '@/services/friends.service';
 import { useChannel, useDMChannels, useRelations, useSetChannel } from '@/lib/store';
-import { createDM } from '@/services/directmessage.service';
 import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
 import { useSideBarOptionSetter } from '@/context/SideBarOptionCtx';
 
@@ -108,14 +107,14 @@ export function MessageHeader({
           <ContextMenu.Item
             className='ContextMenuItem'
             onClick={async () => {
-              await getOrCreateDMChannel(
+              const dmChannel = await getOrCreateDMChannel(
                 supabase,
                 profile,
-                directMessages,
-                setChannel
+                directMessages
               );
 
               setSideBarOption('friends');
+              setChannel(dmChannel);
             }}
             hidden={directMessages.get(profile.id) && directMessages.get(profile.id)!.channel_id === _currentChannel?.channel_id}
           >

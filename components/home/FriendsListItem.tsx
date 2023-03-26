@@ -23,12 +23,15 @@ export function FriendsListItem({ relation }: { relation: DetailedProfileRelatio
         <button
           className="rounded-md p-3 border-2 border-gray-500 hover:bg-gray-500"
           onClick={async () => {
-            await getOrCreateDMChannel(
+            const dmChannel = await getOrCreateDMChannel(
               supabase,
               relation.target_profile,
-              dmChannels,
-              setChannel
+              dmChannels
             );
+
+            if (dmChannel) {
+              setChannel(dmChannel);
+            }
           }}
         >
           <ChannelMessageIcon />
