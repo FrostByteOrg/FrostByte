@@ -37,7 +37,6 @@ function mapToComponentArray(
   return rv;
 }
 export default function DMessageList() {
-  const supabase = useSupabaseClient();
   const setChannel = useSetChannel();
   const dmChannels = useDMChannels();
 
