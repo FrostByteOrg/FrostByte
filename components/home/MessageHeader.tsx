@@ -8,6 +8,7 @@ import { acceptFriendRequest, removeFriendOrRequest, sendFriendRequest } from '@
 import { useChannel, useDMChannels, useRelations, useSetChannel } from '@/lib/store';
 import { createDM } from '@/services/directmessage.service';
 import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
+import { useSideBarOptionSetter } from '@/context/SideBarOptionCtx';
 
 export function MessageHeader({
   profile,
@@ -31,6 +32,7 @@ export function MessageHeader({
   const setChannel = useSetChannel();
   const _currentChannel = useChannel();
   const directMessages = useDMChannels();
+  const setSideBarOption = useSideBarOptionSetter();
   // TODO: DMs store so we can create a new DM only if it doesn't exist
 
   return (
@@ -113,6 +115,8 @@ export function MessageHeader({
                 directMessages,
                 setChannel
               );
+
+              setSideBarOption('friends');
             }}
             hidden={directMessages.get(profile.id) && directMessages.get(profile.id)!.channel_id === _currentChannel?.channel_id}
           >

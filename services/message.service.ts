@@ -4,7 +4,7 @@ import { Database } from '@/types/database.supabase';
 import { MessageWithServerProfile, UnsavedMessage } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-export async function getMessagesInChannel(supabase: SupabaseClient<Database>, channelId: number, page: number = 0, pageSize: number = 50) {
+export async function getMessagesInChannel(supabase: SupabaseClient<Database>, channelId: number, page: number = 0, pageSize: number = 100) {
   // Paginate
   const { from, to } = getPagination(page, pageSize);
 
