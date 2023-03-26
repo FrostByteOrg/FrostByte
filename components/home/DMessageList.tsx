@@ -12,7 +12,7 @@ function mapToComponentArray(
 ) {
   const rv = [];
 
-  for (const [key, value] of _map) {
+  for (const [_, value] of _map) {
     rv.push(
       <div
         key={value.channel_id}

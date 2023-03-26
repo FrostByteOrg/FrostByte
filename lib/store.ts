@@ -337,10 +337,14 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
       return;
     }
 
+    console.table(data);
     set((state) => ({
       dmChannels: state.dmChannels.set(
         data.recipient.id,
-        data
+        {
+          ...data,
+          name: data.recipient.username,
+        }
       )
     }));
   },
@@ -354,7 +358,14 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
     }
 
     set((state) => ({
-      dmChannels: new Map(data.map((channel) => [channel.recipient.id, channel]))
+      dmChannels: new Map(data.map(
+        (channel) => [
+          channel.recipient.id,
+          {
+            ...channel,
+            name: channel.recipient.username,
+          }
+        ]))
     }));
   }
 }));

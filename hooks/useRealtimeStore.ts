@@ -177,7 +177,18 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
     // add return right here!
     // return serverUsersListener.unsubscribe();
-  }, [addServer, supabase, user, getServers, servers, updateServer, addRelation, updateRelation, removeRelation]);
+  }, [
+    addServer,
+    supabase,
+    user,
+    getServers,
+    servers,
+    updateServer,
+    addRelation,
+    updateRelation,
+    removeRelation,
+    addDMChannel
+  ]);
 
   useEffect(() => {
     if (addMessage && getUserPerms && channel) {

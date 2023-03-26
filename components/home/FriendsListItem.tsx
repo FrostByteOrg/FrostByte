@@ -5,12 +5,13 @@ import VerticalSettingsIcon from '../icons/VerticalSettingsIcon';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { removeFriendOrRequest } from '@/services/friends.service';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { createDM } from '@/services/directmessage.service';
-import { useSetChannel } from '@/lib/store';
+import { useDMChannels, useSetChannel } from '@/lib/store';
+import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
 
 export function FriendsListItem({ relation }: { relation: DetailedProfileRelation }) {
   const supabase = useSupabaseClient();
   const setChannel = useSetChannel();
+  const dmChannels = useDMChannels();
 
   return (
     <div key={relation.id} className="flex flex-row items-center space-x-3 p-2 w-full hover:bg-grey-900 rounded-md transition-colors">
@@ -22,24 +23,12 @@ export function FriendsListItem({ relation }: { relation: DetailedProfileRelatio
         <button
           className="rounded-md p-3 border-2 border-gray-500 hover:bg-gray-500"
           onClick={async () => {
-            const { data, error } = await createDM(supabase, relation.target_profile.id);
-
-            if (error) {
-              console.error(error);
-              return;
-            }
-
-            // TODO: GET DM CHANNEL IF IT EXISTS FIRST
-            if (data) {
-              setChannel({
-                channel_id: data.channel_id,
-                server_id: data.server_id,
-                name: relation.target_profile.username,
-                is_media: false,
-                description: null,
-                created_at: null
-              });
-            }
+            await getOrCreateDMChannel(
+              supabase,
+              relation.target_profile,
+              dmChannels,
+              setChannel
+            );
           }}
         >
           <ChannelMessageIcon />
