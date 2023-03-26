@@ -14,3 +14,10 @@ export async function createDM(supabase: SupabaseClient<Database>, targetId: str
     .returns<DMChannelWithRecipient>()
     .single();
 }
+
+export async function getDMChannelFromServerId(supabase: SupabaseClient<Database>, serverId: number) {
+  return await supabase
+    .rpc('get_dm_channel_and_target_profile_by_server_id', { s_id: serverId })
+    .returns<DMChannelWithRecipient>()
+    .single();
+}
