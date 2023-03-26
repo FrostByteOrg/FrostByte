@@ -54,7 +54,7 @@ function WrappedComponent({
         <input
           type="text"
           className={`${SearchBar('bg-grey-900')}`}
-          placeholder={`Message @${profile.username}`}
+          placeholder={`Message ${profile.username}`}
           onKeyDown={async (e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
