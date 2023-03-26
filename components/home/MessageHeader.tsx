@@ -33,7 +33,6 @@ export function MessageHeader({
   const _currentChannel = useChannel();
   const directMessages = useDMChannels();
   const setSideBarOption = useSideBarOptionSetter();
-  // TODO: DMs store so we can create a new DM only if it doesn't exist
 
   return (
     <ContextMenu.Root>

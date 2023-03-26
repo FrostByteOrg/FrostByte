@@ -16,7 +16,7 @@ export async function getOrCreateDMChannel(
 
   if (channel) {
     setChannel(channel);
-    return;
+    return channel;
   }
 
   // If not, create a new DM channel
@@ -37,4 +37,6 @@ export async function getOrCreateDMChannel(
       created_at: null
     });
   }
+
+  return data;
 }
