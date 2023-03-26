@@ -387,6 +387,16 @@ export interface Database {
           user2: string
         }[]
       }
+      create_dm: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          channel_id: number
+          server_id: number
+          recipient: Json
+        }[]
+      }
       createmessage: {
         Args: {
           c_id: number

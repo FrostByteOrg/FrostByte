@@ -16,8 +16,6 @@ export default function DMessageList() {
     async function handleAsync() {
       const { data, error } = await getAllDMChannels(supabase);
 
-      // console.table(data);
-
       if (error) {
         console.error(error);
       }
@@ -54,8 +52,8 @@ export default function DMessageList() {
                 });
               }}
             >
-              <UserIcon user={dmChannel.recipient} className="w-6 h-6" />
-              <div className="ml-2">{dmChannel.recipient.username}</div>
+              <UserIcon user={dmChannel.recipient} className="!w-6 !h-6"/>
+              <div>{dmChannel.recipient.username}</div>
             </div>
           ))
         }

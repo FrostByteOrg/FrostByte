@@ -5,12 +5,12 @@ import UserIcon from '../icons/UserIcon';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { acceptFriendRequest, removeFriendOrRequest, sendFriendRequest } from '@/services/friends.service';
-import { useRelations } from '@/lib/store';
+import { useRelations, useSetChannel } from '@/lib/store';
+import { createDM } from '@/services/directmessage.service';
 
 export function MessageHeader({
   profile,
   server_user,
-  message_id,
   message_color,
   display_time,
   edited,
@@ -27,6 +27,8 @@ export function MessageHeader({
   const currentUser = useUser();
   const supabase = useSupabaseClient();
   const relation = useRelations().find((relation) => relation.target_profile.id === profile.id);
+  const setChannel = useSetChannel();
+  // TODO: DMs store so we can create a new DM only if it doesn't exist
 
   return (
     <ContextMenu.Root>
@@ -98,6 +100,30 @@ export function MessageHeader({
                 (relation.initiator_profile_id === currentUser?.id ? 'Cancel friend request' : 'Reject friend request')
                 : 'Remove friend'
             }
+          </ContextMenu.Item>
+          <ContextMenu.Item
+            className='ContextMenuItem'
+            onClick={async () => {
+              const { data, error } = await createDM(supabase, profile.id);
+
+              if (error) {
+                console.error(error);
+                return;
+              }
+
+              if (data) {
+                setChannel({
+                  channel_id: data.channel_id,
+                  server_id: data.server_id,
+                  name: profile.username,
+                  is_media: false,
+                  description: null,
+                  created_at: null
+                });
+              }
+            }}
+          >
+            Message {profile.username}
           </ContextMenu.Item>
         </ContextMenu.Content>
       )}
