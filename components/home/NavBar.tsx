@@ -54,7 +54,7 @@ export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
           height={6}
         />
       </div>
-      <div
+      {/* <div
         className={`${
           type == 'bottom'
             ? `${bottomStyles} col-start-8 col-end-10`
@@ -68,7 +68,7 @@ export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
         onMouseLeave={() => setMessagesHover(false)}
       >
         <MessagesIcon hovered={messagesHover} width={6} height={6} />
-      </div>
+      </div> */}
     </>
   );
 }
