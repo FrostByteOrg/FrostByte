@@ -99,7 +99,5 @@ export async function getMessageWithServerProfile(supabase: SupabaseClient<Datab
     .returns<MessageWithServerProfile>()
     .single();
 
-  console.table(data);
-
   return data;
 }
