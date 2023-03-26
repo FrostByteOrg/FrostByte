@@ -50,7 +50,7 @@ export default function Chat() {
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
 
       <div
-        className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-scroll`}
+        className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-auto`}
       >
         <div className={`${styles.messageList} flex flex-col `}>
           {messages &&
