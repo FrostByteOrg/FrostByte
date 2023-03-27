@@ -1,6 +1,6 @@
 import { useSideBarOptionSetter } from '@/context/SideBarOptionCtx';
 import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
-import { useAddDMChannel, useDMChannels, useSetChannel } from '@/lib/store';
+import { useDMChannels, useSetChannel } from '@/lib/store';
 import { createMessage } from '@/services/message.service';
 import { Role, ServerUser, User } from '@/types/dbtypes';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
@@ -23,7 +23,6 @@ function WrappedComponent({
   const dmChannels = useDMChannels();
   const setChannel = useSetChannel();
   const setSideBarOption = useSideBarOptionSetter();
-  const addDMChannel = useAddDMChannel();
 
   return (
     <div className="flex flex-col space-y-2 items-center p-3">
