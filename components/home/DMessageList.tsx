@@ -2,7 +2,6 @@ import { Channel, DMChannelWithRecipient } from '@/types/dbtypes';
 import UserIcon from '../icons/UserIcon';
 import styles from '@/styles/Chat.module.css';
 import { useDMChannels, useSetChannel } from '@/lib/store';
-import { useEffect, useState } from 'react';
 
 function mapToComponentArray(
   _map: Map<string, DMChannelWithRecipient>,

@@ -338,10 +338,12 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
     }
 
     set((state) => ({
-      dmChannels: state.dmChannels.set(
-        data.recipient.id,
-        data
-      )
+      dmChannels: new Map(
+        state.dmChannels.set(
+          data.recipient.id,
+          data
+        )
+      ),
     }));
   },
 
