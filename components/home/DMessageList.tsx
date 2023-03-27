@@ -2,6 +2,7 @@ import { Channel, DMChannelWithRecipient } from '@/types/dbtypes';
 import UserIcon from '../icons/UserIcon';
 import styles from '@/styles/Chat.module.css';
 import { useDMChannels, useSetChannel } from '@/lib/store';
+import { useEffect, useState } from 'react';
 
 function mapToComponentArray(
   _map: Map<string, DMChannelWithRecipient>,
@@ -35,7 +36,8 @@ function mapToComponentArray(
 }
 export default function DMessageList() {
   const setChannel = useSetChannel();
-  const dmChannels = Array.from(useDMChannels().values());
+  const dmChannels = useDMChannels();
+  console.table(dmChannels);
 
   return (
     <>
@@ -47,25 +49,7 @@ export default function DMessageList() {
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex flex-col pt-3">
-        { dmChannels.map((value) => (
-          <div
-            key={value.channel_id}
-            className="flex items-center p-2 w-full hover:bg-grey-700 rounded-md transition-colors"
-            onClick={() => {
-              setChannel({
-                channel_id: value.channel_id,
-                server_id: value.server_id,
-                name: value.recipient.username,
-                is_media: false,
-                description: null,
-                created_at: null
-              });
-            }}
-          >
-            <UserIcon user={value.recipient} className="!w-6 !h-6"/>
-            <div>{value.recipient.username}</div>
-          </div>
-        ))}
+        { mapToComponentArray(dmChannels, setChannel) }
       </div>
     </>
   );
