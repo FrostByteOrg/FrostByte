@@ -2,7 +2,6 @@ import { Database } from '@/types/database.supabase';
 import { DMChannelWithRecipient } from '@/types/dbtypes';
 import { User } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Channel } from '@/types/dbtypes';
 import { createDM } from '@/services/directmessage.service';
 
 export async function getOrCreateDMChannel(
