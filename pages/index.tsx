@@ -8,16 +8,14 @@ import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { LiveKitRoom } from '@livekit/components-react';
-import { useTokenRef, useConnectionRef } from '@/lib/store';
-import { getProfile } from '@/services/profile.service';
-import { User } from '@/types/dbtypes';
+import { useTokenRef, useConnectionRef, useUserSettings} from '@/lib/store';
 
 export default function Home() {
   const user = useUser();
   const supabase = useSupabaseClient();
   const router = useRouter();
   const token = useTokenRef();
-
+  const userSettings = useUserSettings();
 
   useRealtimeStore(supabase);
 
@@ -57,14 +55,13 @@ export default function Home() {
       <SideBarOptionProvider>
         <LiveKitRoom
           video={false}
-          audio={false}
+          audio={userSettings}
           screen={false}
           token={token}
           serverUrl={process.env.NEXT_PUBLIC_LK_SERVER_URL}
           connect={tryConnect}
           onConnected={() => setConnected(true)}
           onDisconnected={handleDisconnect}
-          className='flex flex-col w-full' 
         >
           {isMobile ? (
             <div>

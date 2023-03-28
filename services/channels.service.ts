@@ -23,6 +23,8 @@ export async function getChannelsInServer(supabase: SupabaseClient<Database>, se
     .returns<Channel>();
 }
 
+
+
 type ChannelsInServerResponse = Awaited<ReturnType<typeof getChannelsInServer>>;
 export type ChannelsInServerResponseSuccess = ChannelsInServerResponse['data'];
 export type ChannelsInServerResponseError = ChannelsInServerResponse['error'];

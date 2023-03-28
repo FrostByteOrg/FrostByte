@@ -11,12 +11,10 @@ import {
   getServerMemberCount,
   getUsersInServer,
 } from '@/services/server.service';
-import { Channel, Server as ServerType, User } from '@/types/dbtypes';
-import { useSetChannel, useCurrentRoomRef } from '@/lib/store';
+import { Channel, Server as ServerType} from '@/types/dbtypes';
+import { useSetChannel, useCurrentRoomRef} from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelName from './ChannelName';
-import {  useParticipants, useConnectionState } from '@livekit/components-react';
-import { Participant, ConnectionState} from 'livekit-client';
 
 
 export default function Server({
@@ -28,7 +26,7 @@ export default function Server({
   expanded: number;
   isLast?: boolean;
 }) {
-  const participants = useParticipants();
+  const roomRef = useCurrentRoomRef();
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
   const [memberCount, setMemberCount] = useState(0);
@@ -37,8 +35,6 @@ export default function Server({
   const [isServerHovered, setIsServerHovered] = useState(false);
 
   const setChannel = useSetChannel();
-  const currentRoom = useCurrentRoomRef();
-  const connection = useConnectionState();
 
   //TODO: getChannelsInServer
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -69,6 +65,7 @@ export default function Server({
         }
         setOnlineCount(onlineUsers);
       }
+
     };
     handleAsync();
   }, [server, supabase, onlinePresenceChannel]);
@@ -159,11 +156,6 @@ export default function Server({
                       <ChannelMediaIcon />
                       <ChannelName {...channel} />
                     </div>
-                    {currentParticipants.map((user: Participant, id: number, participants) => (
-                      <div key={user.sid}>
-                        {currentRoom !== channel.channel_id ? (<div> empty </div>) : (<div> {user.name} </div>) }
-                      </div>
-                    ))}
                   </div>
                 ) : (
                   <div className='flex flex-row items-center'>

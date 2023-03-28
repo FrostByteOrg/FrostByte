@@ -6,50 +6,93 @@ import Chat from '@/components/home/Chat';
 import DMessageList from '@/components/home/DMessageList';
 import ServerList from '@/components/home/ServerList';
 import DefaultTest from '@/components/home/DefaultTest';
-import { useChannel } from '@/lib/store';
+import { useChannel, useSetUserSettings, useUserSettings} from '@/lib/store';
 import { Channel, User } from '@/types/dbtypes';
 import MediaChat from '@/components/home/MediaChat';
 import { RoomAudioRenderer, TrackToggle, useConnectionState, useLocalParticipant } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
 import UserIcon from '../icons/UserIcon';
 import { BsMic, BsMicMute, BsGear } from 'react-icons/bs';
-import { TbHeadphones } from 'react-icons/tb';
+import { TbHeadphones, TbHeadphonesOff } from 'react-icons/tb';
 import FloatingCallControl from './FloatingCallControl';
-import { useUser } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useEffect, useState } from 'react';
+import { getProfile } from '@/services/profile.service';
 
 export default function RenderDesktopView() {
+
+  const supabase = useSupabaseClient();
+
   const channel = useChannel();
   const sideBarOption = useSideBarOptionValue();
   const audioTrack = useLocalParticipant();
   const connectionState = useConnectionState();
-  const user : User | any = useUser();
-  
+  const currentUser = useUser();
 
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
+  const [deafenRoom, setDeafenRoom] = useState(false);
+  const [user, setUser] = useState<User>();
+  
+  const settingsRef = useSetUserSettings();
+  const userSettings = useUserSettings();
+
+  useEffect(() => {
+    const handleAsync = async () => {
+      if(currentUser){
+        const {data, error} = await getProfile(supabase, currentUser?.id);
+        if(error){
+          console.log(error);
+        }
+        setUser(data!);
+      }
+    };
+    handleAsync();
+  }, [currentUser, supabase]);
+
+
 
   return (
     <div className={`${styles.container} `}>
-      <RoomAudioRenderer/>
+      {deafenRoom ? (<></>) : (<RoomAudioRenderer/>)}
+      
       <div className="col-start-1 col-end-2 row-start-1 row-end-2 bg-grey-950 flex-col justify-center ">
         <NavBar type="vertical" />
       </div>
       <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex-col bg-grey-900 relative">
         {sideBarView}
-        {connectionState === ConnectionState.Connected ? (<FloatingCallControl/>) : (<div className='hidden'/>)}
+        {connectionState === ConnectionState.Connected && (<FloatingCallControl/>)}
       </div>
       <div className="col-start-4 col-end-13 row-start-1 row-end-3 flex flex-col h-screen">
         {mainView}
       </div>
-      <div id='sideBarControls' className='col-start-1 col-end-4 row-start-2 row-end-3 w-full bg-grey-925 h-auto p-3'>
-        <div className='flex flex-row justify-between'>
-          <UserIcon user={user} indicator={false}/>
+      <div id='sideBarControls' className='col-start-1 col-end-4 row-start-2 row-end-3 w-full bg-grey-925 h-auto p-2'>
+        <div className='flex flex-row justify-between items-center'>
+          <div className='flex flex-row items-center ml-2 hover:bg-grey-800 py-1 px-2 rounded-lg'>
+            {user && (<UserIcon user={user} indicator={true} className='!mr-1 !h-7 !w-7'/>)}
+            <span className='text-sm'>{user?.username}</span>
+          </div>
+          
           <div className='flex flex-row w-9'>
-            <button className='w-7 h-7 hover:text-grey-400'>
+            {deafenRoom ? (<button className='w-7 h-7 hover:text-grey-400' onClick={ () => setDeafenRoom(false)}>
+              <TbHeadphonesOff  size={22}/>
+            </button>) : (<button className='w-7 h-7 hover:text-grey-400' onClick={ () => setDeafenRoom(true)}>
               <TbHeadphones  size={22}/>
-            </button>
-            <TrackToggle showIcon={false} className={'w-7 h-7 hover:text-grey-400'} source={Track.Source.Microphone}>
-              {audioTrack.isMicrophoneEnabled  ? (<BsMic size={22}/>) : (<BsMicMute size={22}/>)}
-            </TrackToggle> 
+            </button>)}
+            {connectionState !== ConnectionState.Connected ? 
+              (
+                <> {userSettings ? 
+                  (<button className='w-7 h-7 hover:text-grey-400' onClick={ () => settingsRef(false)}><BsMic size={22}/></button>) 
+                  : 
+                  (<button className='w-7 h-7 hover:text-grey-400' onClick={ () => settingsRef(true)}><BsMicMute size={22}/></button>)} 
+                </>
+              ) 
+              : 
+              (
+                <TrackToggle showIcon={false} className={'w-7 h-7 hover:text-grey-400'} source={Track.Source.Microphone}>
+                  {audioTrack.isMicrophoneEnabled ? (<BsMic size={22} onClick={() => settingsRef(false)}/>) : (<BsMicMute size={22} onClick={() => settingsRef(true)}/>)}
+                </TrackToggle> 
+              )}
+    
             <button className='w-7 h-7 hover:text-grey-400'>
               <BsGear  size={22}/>
             </button>

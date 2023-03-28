@@ -14,13 +14,13 @@ export default function FloatingCallControl(){
 
   return(
     <div className='h-auto border rounded-md absolute bottom-2 bg-grey-950 w-full'>
-      <div className='flex flex-row items-center justify-between '>
-        <div className='p-3 flex flex-row ml-2'>
+      <div className='flex flex-row items-center justify-between'>
+        <div className='p-2 flex flex-row ml-2'>
           <BsBarChart size={22} className='text-green-500 mr-3' />
           <span className='text-green-500 text-lg font-semibold'>Connected</span>
         </div>
         <DisconnectButton onClick={() => {setConnectionState(false); }}>
-          <BiPhoneOff size={24} className='mr-4 text-red-500 hover:text-red-700'/>
+          <BiPhoneOff size={22} className='mr-4 text-red-500 hover:text-red-700'/>
         </DisconnectButton>
       </div>
       <div className='flex flex-row justify-evenly'>

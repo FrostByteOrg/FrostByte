@@ -17,7 +17,8 @@ import {
 } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 import { getMessageWithServerProfile } from '@/services/profile.service';
-import { Participant } from 'livekit-client';
+import { Participant, Room } from 'livekit-client';
+import { LocalUserChoices } from '@livekit/components-react';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -177,7 +178,7 @@ const useChannelStore = create<ChannelState>()((set) => ({
 export interface TokenState {
   token: string | undefined;
   setToken: (token: string | undefined) => void;
-}
+};
 
 const useTokenStore = create<TokenState>()((set) => ({
   token: '',
@@ -187,7 +188,7 @@ const useTokenStore = create<TokenState>()((set) => ({
 export interface ConnectionState {
   connection: boolean | undefined;
   setConnection: (connection: boolean | undefined) => void;
-}
+};
 
 const useConnectionStore = create<ConnectionState>()((set) => ({
   connection: false,
@@ -203,6 +204,17 @@ const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
   currentRoom: 0,
   setCurrentRoom: (currentRoom) => set((state) => ({currentRoom: currentRoom})),
 }));
+
+export interface CurrentUserSetting {
+  currentSetting: boolean | undefined;
+  setCurrentSetting: (currentSetting: boolean | undefined) => void;
+}
+
+const useUserSettingsStore = create<CurrentUserSetting>()((set) => ({
+  currentSetting: false,
+  setCurrentSetting: (currenSetting) => set((state) => ({currentSetting: currenSetting}))
+}));
+
 
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
@@ -229,3 +241,6 @@ export const useSetConnectionState = () => useConnectionStore((state) => state.s
 export const useConnectionRef = () => useConnectionStore((state) => state.connection);
 export const useSetCurrentRoom = () => useCurrentRoomStore((state) => state.setCurrentRoom);
 export const useCurrentRoomRef = () => useCurrentRoomStore((state) => state.currentRoom);
+export const useSetUserSettings = () => useUserSettingsStore((state) => state.setCurrentSetting);
+export const useUserSettings = () => useUserSettingsStore((state) => state.currentSetting);
+

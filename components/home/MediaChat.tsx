@@ -3,13 +3,14 @@ import styles from '@/styles/Chat.module.css';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useUser } from '@supabase/auth-helpers-react';
-import { AudioTrack, DisconnectButton, ParticipantLoop, ParticipantTile, RoomName, TrackToggle, VideoTrack, useConnectionState, useLocalParticipant,useToken } from '@livekit/components-react';
+import { AudioTrack, DisconnectButton, ParticipantLoop, ParticipantTile, TrackToggle, VideoTrack, useConnectionState, useLocalParticipant,useParticipants,useToken } from '@livekit/components-react';
 import { Track, ConnectionState} from 'livekit-client';
 import { User } from '@/types/dbtypes';
 import { BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 
 export default function MediaChat() {
+
 
   const channel = useChannel();
   const userID : User | any = useUser();
@@ -49,7 +50,6 @@ export default function MediaChat() {
         <div className={'bg-gray-800 h-full w-full items-center'}>
           <div className=''>
             <div className='flex flex-row justify-center'>
-              <RoomName />
               <ParticipantLoop>
                 <ParticipantTile className={'w-12 mb-5 mr-2 mt-5'}>
                   <div className={'flex flex-col items-center'}>
@@ -58,7 +58,6 @@ export default function MediaChat() {
                       <div className='hidden'/>
                     )}
                   </div>
-                  <AudioTrack source={Track.Source.Microphone}/>
                 </ParticipantTile>
               </ParticipantLoop>
             </div>
@@ -69,7 +68,7 @@ export default function MediaChat() {
               <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'} source={Track.Source.ScreenShare}> 
                 {screenTrack.isScreenShareEnabled ? (<TbScreenShare size={22}/>) : (<TbScreenShareOff size={22}/>) }
               </TrackToggle>
-              {connectionState !== ConnectionState.Connected ? (<button className='w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md' onClick={() => {setConnectionState(true), setRoom(channel?.channel_id), setToken(token);}}> Join </button> ) : (
+              {connectionState !== ConnectionState.Connected ? (<button className='w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md' onClick={() => {setConnectionState(true), setToken(token);}}> Join </button> ) : (
                 <DisconnectButton className={'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl'} onClick={() => {setConnectionState(false); }}> End </DisconnectButton>
               )}
             </div>
