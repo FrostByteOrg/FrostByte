@@ -1,7 +1,7 @@
-import { useOnlinePresenceRef } from '@/context/ChatCtx';
+import { useOnlineUsers } from '@/lib/store';
 
 export function PresenceIndicator({ userId }: { userId: string }) {
-  const channel = useOnlinePresenceRef()!;
+  const onlineUsers = useOnlineUsers();
 
   return (
     <div
@@ -12,7 +12,7 @@ export function PresenceIndicator({ userId }: { userId: string }) {
         h-4
         rounded-full
         z-10
-        ${channel.presenceState()[userId] ? 'bg-green-600' : 'bg-slate-500'}
+        ${onlineUsers[userId] ? 'bg-green-600' : 'bg-slate-500'}
         border-2
         -mt-3
         mr-2

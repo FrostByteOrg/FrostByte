@@ -58,58 +58,6 @@ export interface Database {
           server_id?: number
         }
       }
-      direct_message_channels: {
-        Row: {
-          created_at: string
-          id: number
-          owner_id: string
-          recepient_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          owner_id: string
-          recepient_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          owner_id?: string
-          recepient_id?: string
-        }
-      }
-      direct_messages: {
-        Row: {
-          author_id: string
-          content: string
-          direct_message_id: number
-          edited_time: string | null
-          id: number
-          is_edited: boolean
-          is_pinned: boolean
-          sent_time: string
-        }
-        Insert: {
-          author_id: string
-          content: string
-          direct_message_id: number
-          edited_time?: string | null
-          id?: number
-          is_edited?: boolean
-          is_pinned?: boolean
-          sent_time?: string
-        }
-        Update: {
-          author_id?: string
-          content?: string
-          direct_message_id?: number
-          edited_time?: string | null
-          id?: number
-          is_edited?: boolean
-          is_pinned?: boolean
-          sent_time?: string
-        }
-      }
       messages: {
         Row: {
           author_id: number
@@ -143,6 +91,29 @@ export interface Database {
           is_pinned?: boolean
           profile_id?: string
           sent_time?: string
+        }
+      }
+      profile_relations: {
+        Row: {
+          created_at: string | null
+          id: number
+          relationship: Database['public']['Enums']['relationship']
+          user1: string
+          user2: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          relationship: Database['public']['Enums']['relationship']
+          user1: string
+          user2: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          relationship?: Database['public']['Enums']['relationship']
+          user1?: string
+          user2?: string
         }
       }
       profiles: {
@@ -199,6 +170,7 @@ export interface Database {
       }
       server_invites: {
         Row: {
+          channel_id: number
           created_at: string | null
           expires_at: string | null
           id: number
@@ -207,6 +179,7 @@ export interface Database {
           uses_remaining: number | null
         }
         Insert: {
+          channel_id: number
           created_at?: string | null
           expires_at?: string | null
           id?: number
@@ -215,6 +188,7 @@ export interface Database {
           uses_remaining?: number | null
         }
         Update: {
+          channel_id?: number
           created_at?: string | null
           expires_at?: string | null
           id?: number
@@ -301,6 +275,7 @@ export interface Database {
           description: string | null
           id: number
           image_url: string | null
+          is_dm: boolean
           name: string
         }
         Insert: {
@@ -308,6 +283,7 @@ export interface Database {
           description?: string | null
           id?: number
           image_url?: string | null
+          is_dm?: boolean
           name: string
         }
         Update: {
@@ -315,6 +291,7 @@ export interface Database {
           description?: string | null
           id?: number
           image_url?: string | null
+          is_dm?: boolean
           name?: string
         }
       }
@@ -346,6 +323,28 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      accept_friend_request: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          created_at: string | null
+          id: number
+          relationship: Database['public']['Enums']['relationship']
+          user1: string
+          user2: string
+        }[]
+      }
+      create_dm: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          channel_id: number
+          server_id: number
+          recipient: Json
+        }[]
+      }
       createmessage: {
         Args: {
           c_id: number
@@ -364,6 +363,16 @@ export interface Database {
           sent_time: string
         }[]
       }
+      detailed_profile_relations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: number
+          target_profile: Json
+          initiator_profile_id: string
+          relationship: Database['public']['Enums']['relationship']
+          created_at: string
+        }[]
+      }
       get_all_channels_for_user: {
         Args: {
           p_id: string
@@ -377,6 +386,35 @@ export interface Database {
           c_id: number
         }
         Returns: number
+      }
+      get_detailed_profile_relation: {
+        Args: {
+          pr_id: number
+        }
+        Returns: {
+          id: number
+          target_profile: Json
+          initiator_profile_id: string
+          relationship: Database['public']['Enums']['relationship']
+          created_at: string
+        }[]
+      }
+      get_dm_channel_and_target_profile_by_server_id: {
+        Args: {
+          s_id: number
+        }
+        Returns: {
+          channel_id: number
+          recipient: Json
+        }[]
+      }
+      get_dm_channels_and_target_profiles: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          channel_id: number
+          server_id: number
+          recipient: Json
+        }[]
       }
       get_highest_role_position_for_user: {
         Args: {
@@ -396,11 +434,9 @@ export interface Database {
           is_pinned: boolean
           edited_time: string
           channel_id: number
-          author_id: number
           content: string
-          profile_id: string
-          profiles: Json
-          nickname: string
+          author: Json
+          profile: Json
           roles: Json
         }[]
       }
@@ -415,11 +451,9 @@ export interface Database {
           is_pinned: boolean
           edited_time: string
           channel_id: number
-          author_id: number
           content: string
-          profile_id: string
-          profiles: Json
-          nickname: string
+          author: Json
+          profile: Json
           roles: Json
         }[]
       }
@@ -435,6 +469,18 @@ export interface Database {
           p_id: string
         }
         Returns: number
+      }
+      get_profile_relationship_by_target_profile_id: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          created_at: string | null
+          id: number
+          relationship: Database['public']['Enums']['relationship']
+          user1: string
+          user2: string
+        }[]
       }
       get_roles_for_user_in_server: {
         Args: {
@@ -462,7 +508,7 @@ export interface Database {
           avatar_url: string
           website: string
           email: string
-          nickname: string
+          server_user: Json
           roles: Json
         }[]
       }
@@ -473,6 +519,7 @@ export interface Database {
           description: string | null
           id: number
           image_url: string | null
+          is_dm: boolean
           name: string
         }[]
       }
@@ -499,7 +546,7 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      relationship: 'friend_requested' | 'friends' | 'blocked'
     }
     CompositeTypes: {
       [_ in never]: never

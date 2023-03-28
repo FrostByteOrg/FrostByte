@@ -1,8 +1,10 @@
-import { getServerProfileForUser } from '@/services/profile.service';
-import { getServerIdFromMessageId } from '@/services/server.service';
-import { Role, ServerUser, ServerUserProfile, User } from '@/types/dbtypes';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { memo, useEffect, useState } from 'react';
+import { useSideBarOptionSetter } from '@/context/SideBarOptionCtx';
+import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
+import { useDMChannels, useSetChannel } from '@/lib/store';
+import { createMessage } from '@/services/message.service';
+import { Role, ServerUser, User } from '@/types/dbtypes';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { memo, } from 'react';
 import UserIcon from '../icons/UserIcon';
 import { SearchBar } from './Styles';
 
@@ -16,6 +18,12 @@ function WrappedComponent({
   server_user: ServerUser;
   roles: Role[];
 }) {
+  const user = useUser();
+  const supabase = useSupabaseClient();
+  const dmChannels = useDMChannels();
+  const setChannel = useSetChannel();
+  const setSideBarOption = useSideBarOptionSetter();
+
   return (
     <div className="flex flex-col space-y-2 items-center p-3">
       <UserIcon user={profile} className="!w-9 !h-9" />
@@ -42,13 +50,37 @@ function WrappedComponent({
         ))}
       </div>
       <hr />
-      <form>
+      {profile.id !== user?.id && (<form>
         <input
           type="text"
           className={`${SearchBar('bg-grey-900')}`}
-          placeholder={`Message @${profile.username}`}
+          placeholder={`Message ${profile.username}`}
+          onKeyDown={async (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              const dmChannel = await getOrCreateDMChannel(
+                supabase,
+                profile,
+                dmChannels
+              );
+
+              if (dmChannel) {
+                await createMessage(
+                  supabase,
+                  {
+                    content: (e.target as HTMLInputElement).value,
+                    channel_id: dmChannel.channel_id,
+                    profile_id: user!.id,
+                  }
+                );
+
+                setSideBarOption('friends');
+                setChannel(dmChannel);
+              }
+            }
+          }}
         />
-      </form>
+      </form>)}
     </div>
   );
 }

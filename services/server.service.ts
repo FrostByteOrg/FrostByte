@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.supabase';
-import { User } from '@/types/dbtypes';
+import { ServersForUser, User } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -84,8 +84,9 @@ export async function getServersForUser(
 ) {
   return await supabase
     .from('server_users')
-    .select('server_id, servers ( * )')
-    .eq('profile_id', user_id);
+    .select('server_id, servers!inner( * )')
+    .eq('profile_id', user_id)
+    .eq('servers.is_dm', false);
 }
 
 type GetServersForUserResponse = Awaited<ReturnType<typeof getServersForUser>>;
@@ -99,8 +100,9 @@ export async function getServerForUser(
 ) {
   return await supabase
     .from('server_users')
-    .select('server_id, servers ( * )')
+    .select('server_id, servers!inner( * )')
     .eq('id', serverUser_id)
+    .returns<ServersForUser>()
     .single();
 }
 
@@ -230,11 +232,12 @@ export type KickUserResponseError = KickUserResponse['error'];
 
 export async function getCurrentUserServerPermissions(
   supabase: SupabaseClient<Database>,
-  server_id: number
+  server_id: number,
+  userId?: string
 ) {
   return await supabase.rpc('get_permission_flags_for_server_user', {
     s_id: server_id,
-    p_id: (await supabase.auth.getUser()).data.user?.id!,
+    p_id: userId ? userId : (await supabase.auth.getUser()).data.user?.id!,
   });
 }
 
@@ -285,12 +288,17 @@ export async function getServerIdFromMessageId(
   message_id: number
 ) {
   return await supabase
-    .rpc('get_server_id_of_message', { m_id: message_id }).single();
+    .rpc('get_server_id_of_message', { m_id: message_id })
+    .single();
 }
 
-type GetServerIdFromMessageIdResponse = Awaited<ReturnType<typeof getServerIdFromMessageId>>;
-export type GetServerIdFromMessageIdResponseSuccess = GetServerIdFromMessageIdResponse['data'];
-export type GetServerIdFromMessageIdResponseError = GetServerIdFromMessageIdResponse['error'];
+type GetServerIdFromMessageIdResponse = Awaited<
+  ReturnType<typeof getServerIdFromMessageId>
+>;
+export type GetServerIdFromMessageIdResponseSuccess =
+  GetServerIdFromMessageIdResponse['data'];
+export type GetServerIdFromMessageIdResponseError =
+  GetServerIdFromMessageIdResponse['error'];
 
 export async function addServerIcon(
   supabase: SupabaseClient<Database>,

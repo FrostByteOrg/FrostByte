@@ -1,14 +1,22 @@
-import { ServerUser, Server } from '@/types/dbtypes';
+import { ServerUser, Server, ProfileRelation, Channel } from '@/types/dbtypes';
 import {
   useAddMessage,
+  useAddRelation,
   useAddServer,
   useChannel,
   useGetMessages,
+  useGetRelations,
   useGetServers,
   useGetUserPerms,
   useMessages,
   useRemoveMessage,
+  useRemoveRelation,
+  useUpdateRelation,
+  useServers,
   useUpdateMessage,
+  useUpdateServer,
+  useAddDMChannel,
+  useGetDMChannels,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -20,6 +28,8 @@ import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtyp
 export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const addServer = useAddServer();
   const getServers = useGetServers();
+  const servers = useServers();
+  const updateServer = useUpdateServer();
 
   const messages = useMessages();
   const addMessage = useAddMessage();
@@ -30,18 +40,31 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const getMessages = useGetMessages();
   const getUserPerms = useGetUserPerms();
 
+  const addRelation = useAddRelation();
+  const updateRelation = useUpdateRelation();
+  const removeRelation = useRemoveRelation();
+  const getRelations = useGetRelations();
+
+  const addDMChannel = useAddDMChannel();
+  const getDMChannels = useGetDMChannels();
   const user = useUser();
 
   //TODO: CASCADE DELETE ICONS
 
   useEffect(() => {
     //this condition makes sure that the functions in the store are initialized, realistically it can be any function, I just chose addServer
+
     if (addServer) {
       supabase
         .channel('server_users')
         .on<ServerUser>(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'server_users' },
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'server_users',
+            filter: `profile_id=eq.${user?.id}`,
+          },
           async (payload) => {
             console.log('insert');
 
@@ -50,7 +73,12 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         )
         .on<ServerUser>(
           'postgres_changes',
-          { event: 'DELETE', schema: 'public', table: 'server_users' },
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'server_users',
+            filter: `profile_id=eq.${user?.id}`,
+          },
           async (payload) => {
             console.log('remove user from server');
 
@@ -63,6 +91,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         )
         .subscribe();
 
+      // START: Entrypoint for always active listeners
       supabase
         .channel('servers')
         .on<Server>(
@@ -76,12 +105,90 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             }
           }
         )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation insert event');
+            addRelation(supabase, payload.new.id);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation update event');
+            updateRelation(supabase, payload.new.id);
+          }
+        )
+        .on<ProfileRelation>(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'profile_relations',
+          },
+          async (payload) => {
+            console.log('Profile relation delete event');
+            removeRelation(supabase, payload.old.id as number);
+          }
+        )
+        .on<Server>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'servers',
+            filter: 'is_dm=eq.true',
+          },
+          async (payload) => {
+            console.log('DM server insert event');
+            addDMChannel(supabase, payload.new.id);
+          }
+        )
+        .subscribe();
+
+      supabase
+        .channel('channels')
+        .on<Channel>(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'channels' },
+          async (payload) => {
+            console.log('insert channel');
+            const server = servers.find(
+              (server) => server.server_id == payload.new.server_id
+            );
+
+            if (server) {
+              updateServer(supabase, server.server_id);
+            }
+          }
+        )
         .subscribe();
     }
 
     // add return right here!
     // return serverUsersListener.unsubscribe();
-  }, [addServer, supabase, user, getServers]);
+  }, [
+    addServer,
+    supabase,
+    user,
+    getServers,
+    servers,
+    updateServer,
+    addRelation,
+    updateRelation,
+    removeRelation,
+    addDMChannel
+  ]);
 
   useEffect(() => {
     if (addMessage && getUserPerms && channel) {
@@ -93,7 +200,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             event: 'INSERT',
             schema: 'public',
             table: 'messages',
-            filter: `channel_id=eq.${channel?.channel_id}`,
+            filter: `channel_id=eq.${channel.channel_id}`,
           },
           async (payload) => {
             console.log('New message event');
@@ -153,6 +260,9 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     removeMessage,
     supabase,
     updateMessage,
+    addRelation,
+    updateRelation,
+    removeRelation,
   ]);
 
   useEffect(() => {
@@ -161,4 +271,9 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
       getMessages(supabase, channel.channel_id);
     }
   }, [channel, getUserPerms, supabase, getMessages]);
+
+  useEffect(() => {
+    getRelations(supabase);
+    getDMChannels(supabase);
+  }, [getRelations, getDMChannels, supabase]);
 }

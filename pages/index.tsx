@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { LiveKitRoom } from '@livekit/components-react';
 import { useTokenRef, useConnectionRef, useUserSettings} from '@/lib/store';
+import { useSetChannel } from '@/lib/store';
+import { getChannelById } from '@/services/channels.service';
 
 export default function Home() {
   const user = useUser();
@@ -16,6 +18,8 @@ export default function Home() {
   const router = useRouter();
   const token = useTokenRef();
   const userSettings = useUserSettings();
+  const setChannel = useSetChannel();
+  const { c: channel_id } = router.query;
 
   useRealtimeStore(supabase);
 
@@ -43,6 +47,30 @@ export default function Home() {
     setConnect(false);
     setConnected(false);
   };
+
+  useEffect(() => {
+    if (!channel_id) {
+      return;
+    }
+
+    async function handleAsync() {
+      // First, try parsing the channel_id as a number. If that fails, we're done
+      const channel_id_as_number = parseInt(channel_id as string);
+
+      if (isNaN(channel_id_as_number)) {
+        return;
+      }
+
+      const { data: _channel } = await getChannelById(supabase, channel_id_as_number);
+
+      if (_channel) {
+        setChannel(_channel);
+      }
+    }
+
+    handleAsync();
+
+  }, [channel_id, setChannel, supabase]);
 
   return (
     <>

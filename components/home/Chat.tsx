@@ -3,8 +3,11 @@ import { useRef, useEffect } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageInput from './MessageInput';
-import type { MessageWithServerProfile, Message as MessageType } from '@/types/dbtypes';
-import { createMessage  } from '@/services/message.service';
+import type {
+  MessageWithServerProfile,
+  Message as MessageType,
+} from '@/types/dbtypes';
+import { createMessage } from '@/services/message.service';
 import Message from '@/components/home/Message';
 import { useChannel, useMessages, useUserPerms } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
@@ -46,13 +49,14 @@ export default function Chat() {
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
       <div
-        className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-scroll`}
+        className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-auto`}
       >
         <div className={`${styles.messageList} flex flex-col `}>
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
-              const previousMessage: MessageWithServerProfile | null = index > 0 ? array[index - 1] : null;
+              const previousMessage: MessageWithServerProfile | null =
+                index > 0 ? array[index - 1] : null;
 
               return (
                 <Message

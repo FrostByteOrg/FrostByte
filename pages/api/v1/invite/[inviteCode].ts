@@ -63,7 +63,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Add the user to the server
       await addUserToServer(
         supabaseServerClient,
-        user!.id,
         invite!.server_id
       );
 

@@ -112,16 +112,16 @@ export function renderContent(
 ) {
   switch (sideBarOption) {
     case 'friends':
-      if (channel) return [<FriendsList key={1} />, <Chat key={2} />];
-      return [<FriendsList key={1} />, <DefaultTest key={2} />];
+      if (channel) return [<DMessageList key={1} />, <Chat key={2} />];
+      return [<DMessageList key={1} />, <FriendsList key={2} />];
     case 'servers':
       if (channel)
         if (channel.is_media) return [<ServerList key={1} />, <MediaChat key={2} />];
         else return [<ServerList key={1} />, <Chat key={2} />];
       return [<ServerList key={1} />, <DefaultTest key={2} />];
-    case 'messages':
-      if (channel) return [<DMessageList key={1} />, <Chat key={2} />];
-      return [<DMessageList key={1} />, <DefaultTest key={2} />];
+    // case 'messages':
+    //   if (channel) return [<DMessageList key={1} />, <Chat key={2} />];
+    //   return [<DMessageList key={1} />, <DefaultTest key={2} />];
     default:
       return [<FriendsList key={1} />, <DefaultTest key={2} />];
   }
