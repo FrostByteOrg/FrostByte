@@ -6,6 +6,7 @@ import DMessageList from '@/components/home/DMessageList';
 import NavBar from '../NavBar';
 import styles from '@/styles/Home.module.css';
 import { useChannel } from '@/lib/store';
+import MediaChat from '../MediaChat';
 
 export default function RenderMobileView() {
   const sideBarOption = useSideBarOptionValue();
@@ -13,6 +14,18 @@ export default function RenderMobileView() {
   const channel = useChannel();
 
   if (channel) {
+    if(channel.is_media){
+      return (
+        <div className=" flex flex-col h-screen">
+          <div className=" grow overflow-y-clip flex flex-col h-full ">
+            <MediaChat />
+          </div>
+          <div className={`${styles.bottomNav} bg-grey-950 shrink-0`}>
+            <NavBar type="bottom" />
+          </div>
+        </div>
+      );
+    }
     return (
       <div className=" flex flex-col h-screen">
         <div className=" grow overflow-y-clip flex flex-col h-full ">

@@ -24,3 +24,8 @@
 } */
 
 /* hsl(194, 71%, 48%) */
+
+.mediaControls {
+  width: 33%;
+  min-width: 20rem;
+}

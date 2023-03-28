@@ -6,7 +6,7 @@ import Chat from '@/components/home/Chat';
 import DMessageList from '@/components/home/DMessageList';
 import ServerList from '@/components/home/ServerList';
 import DefaultTest from '@/components/home/DefaultTest';
-import { useChannel, useSetUserSettings, useUserSettings} from '@/lib/store';
+import { useChannel, useSetUser, useSetUserSettings, useUserSettings} from '@/lib/store';
 import { Channel, User } from '@/types/dbtypes';
 import MediaChat from '@/components/home/MediaChat';
 import { RoomAudioRenderer, TrackToggle, useConnectionState, useLocalParticipant } from '@livekit/components-react';
@@ -32,6 +32,8 @@ export default function RenderDesktopView() {
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
   const [deafenRoom, setDeafenRoom] = useState(false);
   const [user, setUser] = useState<User>();
+
+  const userRef = useSetUser();
   
   const settingsRef = useSetUserSettings();
   const userSettings = useUserSettings();
@@ -44,6 +46,7 @@ export default function RenderDesktopView() {
           console.log(error);
         }
         setUser(data!);
+        userRef(data!);
       }
     };
     handleAsync();

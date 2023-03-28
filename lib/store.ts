@@ -205,14 +205,18 @@ const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
   setCurrentRoom: (currentRoom) => set((state) => ({currentRoom: currentRoom})),
 }));
 
-export interface CurrentUserSetting {
+export interface CurrentUserState {
   currentSetting: boolean | undefined;
+  currentUser: User | undefined;
   setCurrentSetting: (currentSetting: boolean | undefined) => void;
+  setCurrentUser: (currentUser: User | undefined) => void;
 }
 
-const useUserSettingsStore = create<CurrentUserSetting>()((set) => ({
+const useUserStore = create<CurrentUserState>()((set) => ({
   currentSetting: false,
-  setCurrentSetting: (currenSetting) => set((state) => ({currentSetting: currenSetting}))
+  currentUser: undefined,
+  setCurrentSetting: (currenSetting) => set((state) => ({currentSetting: currenSetting})),
+  setCurrentUser: (currentUser) => set((state) => ({currentUser: currentUser}))
 }));
 
 
@@ -241,6 +245,8 @@ export const useSetConnectionState = () => useConnectionStore((state) => state.s
 export const useConnectionRef = () => useConnectionStore((state) => state.connection);
 export const useSetCurrentRoom = () => useCurrentRoomStore((state) => state.setCurrentRoom);
 export const useCurrentRoomRef = () => useCurrentRoomStore((state) => state.currentRoom);
-export const useSetUserSettings = () => useUserSettingsStore((state) => state.setCurrentSetting);
-export const useUserSettings = () => useUserSettingsStore((state) => state.currentSetting);
+export const useSetUserSettings = () => useUserStore((state) => state.setCurrentSetting);
+export const useUserSettings = () => useUserStore((state) => state.currentSetting);
+export const useSetUser = () => useUserStore((state) => state.setCurrentUser);
+export const useUserRef = () => useUserStore((state) => state.currentUser);
 
