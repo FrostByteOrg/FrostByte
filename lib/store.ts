@@ -3,9 +3,7 @@ import {
   Channel,
   DetailedProfileRelation,
   MessageWithServerProfile,
-  Server,
   ServersForUser,
-  ServerUser,
 } from '@/types/dbtypes';
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -16,13 +14,13 @@ import {
   getServersForUser,
 } from '@/services/server.service';
 import {
-  createMessage,
   getMessagesInChannelWithUser,
-  getMessageWithUser,
 } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
 import { getMessageWithServerProfile } from '@/services/profile.service';
 import { getRelationships, relationToDetailedRelation } from '@/services/friends.service';
+import { DMChannelWithRecipient } from '@/types/dbtypes';
+import { getDMChannelFromServerId, getAllDMChannels } from '@/services/directmessage.service';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -42,7 +40,7 @@ const useServerStore = create<ServerState>()((set) => ({
       return;
     }
 
-    if (data) {
+    if (data && !data.servers.is_dm) {
       set((state) => ({
         servers: [...state.servers, data as ServersForUser],
       }));
@@ -323,6 +321,53 @@ const useOnlineStore = create<OnlineState>()((set) => ({
   },
 }));
 
+export interface DMChannelsState {
+  dmChannels: Map<string, DMChannelWithRecipient>; // Map of profileId -> DMChannel
+  addDMChannel: (supabase: SupabaseClient<Database>, serverId: number) => void;
+  getDMChannels: (supabase: SupabaseClient<Database>) => void;
+}
+
+const useDMChannelsStore = create<DMChannelsState>()((set) => ({
+  dmChannels: new Map(),
+  addDMChannel: async (supabase, serverId) => {
+    const { data, error } = await getDMChannelFromServerId(supabase, serverId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => ({
+      dmChannels: new Map(
+        state.dmChannels.set(
+          data.recipient.id,
+          data
+        )
+      ),
+    }));
+  },
+
+  getDMChannels: async (supabase) => {
+    const { data, error } = await getAllDMChannels(supabase);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => ({
+      dmChannels: new Map(data.map(
+        (channel) => [
+          channel.recipient.id,
+          {
+            ...channel,
+            name: channel.recipient.username,
+          }
+        ]))
+    }));
+  }
+}));
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -360,3 +405,6 @@ export const useGetUserPermsForServer = () =>
   useUserPermsStore((state) => state.getUserPermsForServer);
 export const useUserServerPerms = () =>
   useUserPermsStore((state) => state.userServerPerms);
+export const useAddDMChannel = () => useDMChannelsStore((state) => state.addDMChannel);
+export const useDMChannels = () => useDMChannelsStore((state) => state.dmChannels);
+export const useGetDMChannels = () => useDMChannelsStore((state) => state.getDMChannels);

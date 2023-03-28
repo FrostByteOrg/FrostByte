@@ -58,58 +58,6 @@ export interface Database {
           server_id?: number
         }
       }
-      direct_message_channels: {
-        Row: {
-          created_at: string
-          id: number
-          owner_id: string
-          recepient_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          owner_id: string
-          recepient_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          owner_id?: string
-          recepient_id?: string
-        }
-      }
-      direct_messages: {
-        Row: {
-          author_id: string
-          content: string
-          direct_message_id: number
-          edited_time: string | null
-          id: number
-          is_edited: boolean
-          is_pinned: boolean
-          sent_time: string
-        }
-        Insert: {
-          author_id: string
-          content: string
-          direct_message_id: number
-          edited_time?: string | null
-          id?: number
-          is_edited?: boolean
-          is_pinned?: boolean
-          sent_time?: string
-        }
-        Update: {
-          author_id?: string
-          content?: string
-          direct_message_id?: number
-          edited_time?: string | null
-          id?: number
-          is_edited?: boolean
-          is_pinned?: boolean
-          sent_time?: string
-        }
-      }
       messages: {
         Row: {
           author_id: number
@@ -327,6 +275,7 @@ export interface Database {
           description: string | null
           id: number
           image_url: string | null
+          is_dm: boolean
           name: string
         }
         Insert: {
@@ -334,6 +283,7 @@ export interface Database {
           description?: string | null
           id?: number
           image_url?: string | null
+          is_dm?: boolean
           name: string
         }
         Update: {
@@ -341,6 +291,7 @@ export interface Database {
           description?: string | null
           id?: number
           image_url?: string | null
+          is_dm?: boolean
           name?: string
         }
       }
@@ -382,6 +333,16 @@ export interface Database {
           relationship: Database['public']['Enums']['relationship']
           user1: string
           user2: string
+        }[]
+      }
+      create_dm: {
+        Args: {
+          t_p_id: string
+        }
+        Returns: {
+          channel_id: number
+          server_id: number
+          recipient: Json
         }[]
       }
       createmessage: {
@@ -436,6 +397,23 @@ export interface Database {
           initiator_profile_id: string
           relationship: Database['public']['Enums']['relationship']
           created_at: string
+        }[]
+      }
+      get_dm_channel_and_target_profile_by_server_id: {
+        Args: {
+          s_id: number
+        }
+        Returns: {
+          channel_id: number
+          recipient: Json
+        }[]
+      }
+      get_dm_channels_and_target_profiles: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          channel_id: number
+          server_id: number
+          recipient: Json
         }[]
       }
       get_highest_role_position_for_user: {
@@ -541,6 +519,7 @@ export interface Database {
           description: string | null
           id: number
           image_url: string | null
+          is_dm: boolean
           name: string
         }[]
       }

@@ -18,6 +18,7 @@ export type MessageWithServerProfile = Omit<Message, 'profile_id' | 'author_id'>
 export type ServersForUser =  { server_id: number } & { servers: Server };
 export type ServerUserProfile = User & { server_user: ServerUser, roles: Role[]; };
 export type ServerInvite = Invite & { servers: Server };
+export type DMChannelWithRecipient = { channel_id: number, server_id: number, recipient: User };
 
 export interface IStringIndexable {
   [key: string]: any

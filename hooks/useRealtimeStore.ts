@@ -15,6 +15,8 @@ import {
   useServers,
   useUpdateMessage,
   useUpdateServer,
+  useAddDMChannel,
+  useGetDMChannels,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -43,6 +45,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const removeRelation = useRemoveRelation();
   const getRelations = useGetRelations();
 
+  const addDMChannel = useAddDMChannel();
+  const getDMChannels = useGetDMChannels();
   const user = useUser();
 
   //TODO: CASCADE DELETE ICONS
@@ -87,6 +91,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         )
         .subscribe();
 
+      // START: Entrypoint for always active listeners
       supabase
         .channel('servers')
         .on<Server>(
@@ -136,6 +141,19 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             removeRelation(supabase, payload.old.id as number);
           }
         )
+        .on<Server>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'servers',
+            filter: 'is_dm=eq.true',
+          },
+          async (payload) => {
+            console.log('DM server insert event');
+            addDMChannel(supabase, payload.new.id);
+          }
+        )
         .subscribe();
 
       supabase
@@ -159,7 +177,18 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
     // add return right here!
     // return serverUsersListener.unsubscribe();
-  }, [addServer, supabase, user, getServers, servers, updateServer, addRelation, updateRelation, removeRelation]);
+  }, [
+    addServer,
+    supabase,
+    user,
+    getServers,
+    servers,
+    updateServer,
+    addRelation,
+    updateRelation,
+    removeRelation,
+    addDMChannel
+  ]);
 
   useEffect(() => {
     if (addMessage && getUserPerms && channel) {
@@ -245,5 +274,6 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
   useEffect(() => {
     getRelations(supabase);
-  }, [getRelations, supabase]);
+    getDMChannels(supabase);
+  }, [getRelations, getDMChannels, supabase]);
 }

@@ -5,12 +5,13 @@ import UserIcon from '../icons/UserIcon';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { acceptFriendRequest, removeFriendOrRequest, sendFriendRequest } from '@/services/friends.service';
-import { useRelations } from '@/lib/store';
+import { useChannel, useDMChannels, useRelations, useSetChannel } from '@/lib/store';
+import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
+import { useSideBarOptionSetter } from '@/context/SideBarOptionCtx';
 
 export function MessageHeader({
   profile,
   server_user,
-  message_id,
   message_color,
   display_time,
   edited,
@@ -27,6 +28,10 @@ export function MessageHeader({
   const currentUser = useUser();
   const supabase = useSupabaseClient();
   const relation = useRelations().find((relation) => relation.target_profile.id === profile.id);
+  const setChannel = useSetChannel();
+  const _currentChannel = useChannel();
+  const directMessages = useDMChannels();
+  const setSideBarOption = useSideBarOptionSetter();
 
   return (
     <ContextMenu.Root>
@@ -98,6 +103,22 @@ export function MessageHeader({
                 (relation.initiator_profile_id === currentUser?.id ? 'Cancel friend request' : 'Reject friend request')
                 : 'Remove friend'
             }
+          </ContextMenu.Item>
+          <ContextMenu.Item
+            className='ContextMenuItem'
+            onClick={async () => {
+              const dmChannel = await getOrCreateDMChannel(
+                supabase,
+                profile,
+                directMessages
+              );
+
+              setSideBarOption('friends');
+              setChannel(dmChannel);
+            }}
+            hidden={directMessages.get(profile.id) && directMessages.get(profile.id)!.channel_id === _currentChannel?.channel_id}
+          >
+            Message {profile.username}
           </ContextMenu.Item>
         </ContextMenu.Content>
       )}

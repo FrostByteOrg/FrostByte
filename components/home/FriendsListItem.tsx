@@ -5,9 +5,14 @@ import VerticalSettingsIcon from '../icons/VerticalSettingsIcon';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { removeFriendOrRequest } from '@/services/friends.service';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useDMChannels, useSetChannel } from '@/lib/store';
+import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
 
 export function FriendsListItem({ relation }: { relation: DetailedProfileRelation }) {
   const supabase = useSupabaseClient();
+  const setChannel = useSetChannel();
+  const dmChannels = useDMChannels();
+
   return (
     <div key={relation.id} className="flex flex-row items-center space-x-3 p-2 w-full hover:bg-grey-900 rounded-md transition-colors">
       <UserIcon user={relation.target_profile} />
@@ -17,8 +22,16 @@ export function FriendsListItem({ relation }: { relation: DetailedProfileRelatio
       <div className='flex flex-row space-x-2'>
         <button
           className="rounded-md p-3 border-2 border-gray-500 hover:bg-gray-500"
-          onClick={() => {
-            console.log('DM');
+          onClick={async () => {
+            const dmChannel = await getOrCreateDMChannel(
+              supabase,
+              relation.target_profile,
+              dmChannels
+            );
+
+            if (dmChannel) {
+              setChannel(dmChannel);
+            }
           }}
         >
           <ChannelMessageIcon />
