@@ -17,6 +17,7 @@ import { OverflowMarquee } from './OverflowMarquee';
 import { useSetChannel, useCurrentRoomRef} from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import { Tooltip } from 'react-tooltip';
+import ChannelName from './ChannelName';
 
 export default function Server({
   server,
