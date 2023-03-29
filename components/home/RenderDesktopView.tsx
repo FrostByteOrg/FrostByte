@@ -80,7 +80,7 @@ export default function RenderDesktopView() {
 
       <div
         id="sideBarControls"
-        className="col-start-1 col-end-4 z-10 row-start-2 row-end-4 w-full bg-grey-925  p-2"
+        className="col-start-1 col-end-4 z-10 row-start-2 row-end-4 w-full bg-grey-925  p-1 h-auto"
       >
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row items-center ml-2 hover:bg-grey-800 py-1 px-2 rounded-lg">
@@ -88,7 +88,7 @@ export default function RenderDesktopView() {
               <UserIcon
                 user={user}
                 indicator={true}
-                className="!mr-1 !h-7 !w-7"
+                className="!mr-1 !h-6 !w-6"
               />
             )}
             <span className="text-sm">{user?.username}</span>
