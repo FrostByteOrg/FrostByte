@@ -29,9 +29,15 @@
   npx supabase start
   ```
 10. Install the livekit server by following instructions [here](https://docs.livekit.io/getting-started/server-setup/)
+  - If you're on Linux or Mac, you'll be ready to move onto the next step
+  - But if you're on windows, you'll want to make sure that the executable is somewhere that's on your system PATH
 11. Run livekit in dev mode
   ```bash
+  # linux/mac
   livekit-server --dev
+
+  # or for windows users
+  livekit-server.exe --dev
   ```
 12. Navigate to http://localhost:54323/project/default/storage/buckets and create 2 public buckets:
   - avatars
