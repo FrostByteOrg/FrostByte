@@ -39,6 +39,7 @@
   # or for windows users
   livekit-server.exe --dev
   ```
+  - If you're on windows and get an error mentioning `bind: An attempt was made to access a socket in a way forbidden by its access permissions.`, you'll want to disable winnat using `net stop winnat` in your terminal. You can restart winnat again after using `net start winnat`
 12. Navigate to http://localhost:54323/project/default/storage/buckets and create 2 public buckets:
   - avatars
   - servericons
