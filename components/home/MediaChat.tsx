@@ -11,7 +11,6 @@ import { BsCameraVideo, BsCameraVideoOff, BsGear } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 import UserIcon from '../icons/UserIcon';
 import { useEffect, useState } from 'react';
-import { connect } from 'http2';
 
 export default function MediaChat() {
 
@@ -60,10 +59,10 @@ export default function MediaChat() {
                 <span className='text-lg font-bold'>You are connected to {currentRoom}</span>
                 <span className='text-lg font-bold'>Please end your call</span>
               </div>
-              <div className={`flex flex-row justify-evenly ${mediaStyle.mediaControls} mb-5 w-8 bg-grey-950 py-3 items-center rounded-xl absolute bottom-1 inset-x-1 mx-auto`}>
+              <div className={`flex flex-row justify-evenly ${mediaStyle.mediaControls} mb-5 w-8 bg-grey-950 h-8 items-center rounded-xl absolute bottom-1 inset-x-1 mx-auto`}>
                 <DisconnectButton 
                   className={'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl'} 
-                  onClick={() => {setConnectionState(false), setRoomRef(0); }}> 
+                  onClick={() => {setConnectionState(false); }}> 
                   End 
                 </DisconnectButton>
               </div>
@@ -107,9 +106,8 @@ export default function MediaChat() {
                           <AudioTrack source={Track.Source.Microphone} />
                         </ParticipantTile>  
                       </ParticipantLoop>)}
-                    
                   </div>
-                  <div className={`flex flex-row justify-evenly ${mediaStyle.mediaControls} mb-5 min-w-0 bg-grey-950 py-3 items-center rounded-xl absolute bottom-1 inset-x-1 mx-auto`}>
+                  <div className={`flex flex-row justify-evenly ${mediaStyle.mediaControls} mb-5 bg-grey-950 py-3 items-center rounded-xl  inset-x-1 mx-auto`}>
                     {connectionState === ConnectionState.Connected && <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'} source={Track.Source.Camera}>
                       {videoTrack.isCameraEnabled ? (<BsCameraVideo size={22} onClick={() => {setDisplayVideo(true);}}/>) : (<BsCameraVideoOff size={22} onClick={() => {setDisplayVideo(false);}}/>)} 
                     </TrackToggle>}
@@ -117,7 +115,7 @@ export default function MediaChat() {
                       {screenTrack.isScreenShareEnabled ? (<TbScreenShare size={22}/>) : (<TbScreenShareOff size={22}/>) }
                     </TrackToggle>}
                     {connectionState !== ConnectionState.Connected ? (<button className='w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md' onClick={() => {setConnectionState(true), setToken(token), setRoomRef(channel?.channel_id);}}> Join </button> ) : (
-                      <DisconnectButton className={'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl'} onClick={() => {setConnectionState(false), setRoomRef(0); }}> End </DisconnectButton>
+                      <DisconnectButton className={'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl'} onClick={() => {setConnectionState(false); }}> End </DisconnectButton>
                     )}
                   </div>
                 </div>

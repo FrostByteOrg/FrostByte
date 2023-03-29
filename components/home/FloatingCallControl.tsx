@@ -20,7 +20,7 @@ export default function FloatingCallControl(){
           <BsBarChart size={22} className='text-green-500 mr-3' />
           <span className='text-green-500 text-lg font-semibold'>Connected</span>
         </div>
-        <DisconnectButton onClick={() => {setConnectionState(false), setCurrentRoom(0); }}>
+        <DisconnectButton onClick={() => {setConnectionState(false); }}>
           <BiPhoneOff size={22} className='mr-4 text-red-500 hover:text-red-700'/>
         </DisconnectButton>
       </div>
