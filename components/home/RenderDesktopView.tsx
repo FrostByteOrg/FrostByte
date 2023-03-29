@@ -50,7 +50,7 @@ export default function RenderDesktopView() {
       }
     };
     handleAsync();
-  }, [currentUser, supabase]);
+  }, [currentUser, supabase, userRef]);
 
 
 
