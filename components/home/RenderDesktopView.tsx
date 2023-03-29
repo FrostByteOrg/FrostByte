@@ -164,7 +164,10 @@ export function renderContent(
     case 'servers':
       if (channel)
         if (channel.is_media)
-          return [<ServerList key={1} />, <MediaChat key={2} />];
+          return [
+            <ServerList key={1} />,
+            <MediaChat channel={channel} key={2} />,
+          ];
         else return [<ServerList key={1} />, <Chat key={2} />];
       return [<ServerList key={1} />, <DefaultTest key={2} />];
     // case 'messages':
