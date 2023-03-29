@@ -7,10 +7,11 @@ import { useUser } from '@supabase/auth-helpers-react';
 import { AudioTrack, DisconnectButton, ParticipantLoop, ParticipantName, ParticipantTile, TrackToggle, VideoTrack, useConnectionState, useLocalParticipant,useParticipantContext,useParticipants,useRemoteParticipant,useRemoteParticipants,useToken, useTracks } from '@livekit/components-react';
 import { Track, ConnectionState} from 'livekit-client';
 import { User } from '@/types/dbtypes';
-import { BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
+import { BsCameraVideo, BsCameraVideoOff, BsGear } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 import UserIcon from '../icons/UserIcon';
 import { useEffect, useState } from 'react';
+import { connect } from 'http2';
 
 export default function MediaChat() {
 
@@ -36,7 +37,7 @@ export default function MediaChat() {
 
   return (
     <>
-      {currentRoom !== channel?.channel_id  && connectionState === ConnectionState.Connected ? (
+      {currentRoom !== channel?.channel_id && connectionState === ConnectionState.Connected ? (
         <>
           <div className={`${styles.chatHeader} px-5 pt-5 mb-3`}>
             <div className='flex items-center'>
@@ -71,6 +72,7 @@ export default function MediaChat() {
         </>
       ) 
         : (
+          
           <>
             <div className={`${styles.chatHeader} px-5 pt-5 mb-3`}>
               <div className='flex items-center'>
@@ -91,14 +93,21 @@ export default function MediaChat() {
               <div className={'bg-grey-800 h-full w-full items-center'}>
                 <div className=''>
                   <div className='flex flex-row justify-center flex-wrap p-5'>
-                    <ParticipantLoop>
-                      <ParticipantTile className='w-12 h-12 flex flex-col justify-center items-center m-4'>
-                        {connectionState === ConnectionState.Connected && <ParticipantName className='text-lg font-semibold mt-2'/>}
-                        <VideoTrack source={Track.Source.Camera} className={'rounded-xl mx-2 mb-3'}/>
-                        <VideoTrack source={Track.Source.ScreenShare} className={'rounded-xl'}/>
-                        <AudioTrack source={Track.Source.Microphone} />
-                      </ParticipantTile>  
-                    </ParticipantLoop>
+                    {connectionState === ConnectionState.Connecting ? (
+                      <div className='flex flex-row items-center mt-2'>
+                        <BsGear size={40} className='animate-spin mr-2'/>
+                        <span>Connecting...</span> 
+                      </div> 
+                    ): 
+                      (<ParticipantLoop>
+                        <ParticipantTile className='w-12 h-12 flex flex-col justify-center items-center m-4'>
+                          {connectionState === ConnectionState.Connected && <ParticipantName className='text-lg font-semibold mt-2'/>}
+                          <VideoTrack source={Track.Source.Camera} className={'rounded-xl mx-2 mb-3'}/>
+                          <VideoTrack source={Track.Source.ScreenShare} className={'rounded-xl'}/>
+                          <AudioTrack source={Track.Source.Microphone} />
+                        </ParticipantTile>  
+                      </ParticipantLoop>)}
+                    
                   </div>
                   <div className={`flex flex-row justify-evenly ${mediaStyle.mediaControls} mb-5 min-w-0 bg-grey-950 py-3 items-center rounded-xl absolute bottom-1 inset-x-1 mx-auto`}>
                     {connectionState === ConnectionState.Connected && <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'} source={Track.Source.Camera}>
