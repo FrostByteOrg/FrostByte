@@ -2,6 +2,8 @@ import { Channel, DMChannelWithRecipient } from '@/types/dbtypes';
 import UserIcon from '../icons/UserIcon';
 import styles from '@/styles/Chat.module.css';
 import { useDMChannels, useSetChannel } from '@/lib/store';
+import { SearchBar } from '@/components/forms/Styles';
+import { useState } from 'react';
 
 function mapToComponentArray(
   _map: Map<string, DMChannelWithRecipient>,
@@ -35,7 +37,8 @@ function mapToComponentArray(
 }
 export default function DMessageList() {
   const setChannel = useSetChannel();
-  const dmChannels = useDMChannels();
+  const _dmChannels = useDMChannels();
+  const [ dmChannels, setDmChannels ] = useState(_dmChannels);
   console.table(dmChannels);
 
   return (
@@ -48,6 +51,28 @@ export default function DMessageList() {
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex flex-col pt-3">
+        <div className="pt-4 pb-4">
+          <input
+            type="text"
+            className={`${SearchBar()}`}
+            placeholder="Search"
+            onKeyUp={(e) => {
+              const value = (e.target as HTMLInputElement).value;
+
+              // Filter DMs
+
+              setDmChannels(
+                new Map(
+                  [..._dmChannels].filter(([_, dmChannel]) => {
+                    return dmChannel.recipient.username
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  })
+                )
+              );
+            }}
+          />
+        </div>
         { mapToComponentArray(dmChannels, setChannel) }
       </div>
     </>

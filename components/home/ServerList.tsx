@@ -3,7 +3,6 @@ import { SearchBar } from '@/components/forms/Styles';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
 import AddChannelModal from '@/components/home/AddChannelModal';
 import {
@@ -14,7 +13,7 @@ import {
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
-import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
+import { ServerPermissions } from '@/types/permissions';
 
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
@@ -26,7 +25,8 @@ export default function ServerList() {
   const user = useUser();
   const supabase = useSupabaseClient();
 
-  const servers = useServers();
+  const _servers = useServers();
+  const [ servers, setServers ] = useState(_servers);
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
@@ -87,7 +87,17 @@ export default function ServerList() {
           type="text"
           className={`${SearchBar()}`}
           placeholder="Search"
-        ></input>
+          onKeyUp={(e) => {
+            const value = (e.target as HTMLInputElement).value;
+
+            // Filter servers
+            const filteredServers = _servers.filter((server) => {
+              return server.servers.name.toLowerCase().includes(value.toLowerCase());
+            });
+
+            setServers(filteredServers);
+          }}
+        />
       </div>
 
       <div className="overflow-y-auto ">
