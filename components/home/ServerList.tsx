@@ -14,6 +14,7 @@ import {
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
+import GearIcon from '@/components/icons/GearIcon';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 
 export default function ServerList() {
@@ -135,14 +136,25 @@ export default function ServerList() {
           clickable
           openOnClick={true}
         >
-          <div
-            className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-            onClick={() => {
-              setShowAddChannelModal(true);
-            }}
-          >
-            <PlusIcon width={5} height={5} />
-            <span className="ml-1">New channel</span>
+          <div className="flex flex-col items-start">
+            <div
+              className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+              onClick={() => {
+                setShowAddChannelModal(true);
+              }}
+            >
+              <PlusIcon width={5} height={5} />
+              <span className="ml-1">New channel</span>
+            </div>
+            <div
+              className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+              onClick={() => {
+                // setShowAddChannelModal(true);
+              }}
+            >
+              <GearIcon width={5} height={5} />
+              <span className="ml-1">Server Settings</span>
+            </div>
           </div>
         </Tooltip>
       ) : (
