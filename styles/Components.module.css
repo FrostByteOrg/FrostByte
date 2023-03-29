@@ -26,6 +26,9 @@
 /* hsl(194, 71%, 48%) */
 
 .mediaControls {
-  width: 33%;
-  min-width: 20rem;
+  max-width: 20rem;
+}
+
+.mediaError {
+  box-shadow: 2px 4px 10px 1px #010101;
 }

@@ -1,4 +1,4 @@
-import { useSetConnectionState } from '@/lib/store';
+import { useSetConnectionState, useSetCurrentRoom } from '@/lib/store';
 import { DisconnectButton, TrackToggle, useLocalParticipant } from '@livekit/components-react';
 import { Track } from 'livekit-client';
 import { BiPhoneOff } from 'react-icons/bi';
@@ -11,6 +11,7 @@ export default function FloatingCallControl(){
   const videoTrack = useLocalParticipant();
   const screenTrack = useLocalParticipant();
   const setConnectionState = useSetConnectionState();
+  const setCurrentRoom = useSetCurrentRoom();
 
   return(
     <div className='h-auto border rounded-md absolute bottom-8 bg-grey-950 w-full'>
@@ -19,7 +20,7 @@ export default function FloatingCallControl(){
           <BsBarChart size={22} className='text-green-500 mr-3' />
           <span className='text-green-500 text-lg font-semibold'>Connected</span>
         </div>
-        <DisconnectButton onClick={() => {setConnectionState(false); }}>
+        <DisconnectButton onClick={() => {setConnectionState(false), setCurrentRoom(0); }}>
           <BiPhoneOff size={22} className='mr-4 text-red-500 hover:text-red-700'/>
         </DisconnectButton>
       </div>
