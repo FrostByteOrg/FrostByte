@@ -57,7 +57,6 @@ export default function RenderDesktopView() {
   return (
     <div className={`${styles.container} `}>
       {deafenRoom ? (<></>) : (<RoomAudioRenderer/>)}
-      
       <div className="col-start-1 col-end-2 row-start-1 row-end-2 bg-grey-950 flex-col justify-center ">
         <NavBar type="vertical" />
       </div>
@@ -68,7 +67,7 @@ export default function RenderDesktopView() {
       <div className="col-start-4 col-end-13 row-start-1 row-end-3 flex flex-col h-screen">
         {mainView}
       </div>
-      <div id='sideBarControls' className='col-start-1 col-end-4 row-start-2 row-end-3 w-full bg-grey-925 h-auto p-2'>
+      <div id='sideBarControls' className='col-start-1 col-end-4 row-start-2 row-end-3 w-full bg-grey-925 p-2'>
         <div className='flex flex-row justify-between items-center'>
           <div className='flex flex-row items-center ml-2 hover:bg-grey-800 py-1 px-2 rounded-lg'>
             {user && (<UserIcon user={user} indicator={true} className='!mr-1 !h-7 !w-7'/>)}
@@ -95,7 +94,6 @@ export default function RenderDesktopView() {
                   {audioTrack.isMicrophoneEnabled ? (<BsMic size={22} onClick={() => settingsRef(false)}/>) : (<BsMicMute size={22} onClick={() => settingsRef(true)}/>)}
                 </TrackToggle> 
               )}
-    
             <button className='w-7 h-7 hover:text-grey-400'>
               <BsGear  size={22}/>
             </button>

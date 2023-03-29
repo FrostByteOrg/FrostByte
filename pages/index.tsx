@@ -22,7 +22,6 @@ export default function Home() {
   const { c: channel_id } = router.query;
 
   useRealtimeStore(supabase);
-
   const [isMobile, setIsMobile] = useState(false);
   const [connect, setConnect] = useState(false);
   const [connected, setConnected] = useState(false);

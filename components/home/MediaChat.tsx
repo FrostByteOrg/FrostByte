@@ -4,47 +4,34 @@ import mediaControls from '@/styles/Components.module.css';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useUser } from '@supabase/auth-helpers-react';
-import { AudioTrack, DisconnectButton, ParticipantLoop, ParticipantTile, TrackToggle, VideoTrack, useConnectionState, useLocalParticipant,useParticipantContext,useParticipants,useToken, useTracks } from '@livekit/components-react';
-import { Track, ConnectionState, Participant} from 'livekit-client';
+import { AudioTrack, DisconnectButton, ParticipantLoop, ParticipantName, ParticipantTile, TrackToggle, VideoTrack, useConnectionState, useLocalParticipant,useParticipantContext,useParticipants,useRemoteParticipant,useRemoteParticipants,useToken, useTracks } from '@livekit/components-react';
+import { Track, ConnectionState, Participant, ParticipantEvent} from 'livekit-client';
 import { User } from '@/types/dbtypes';
 import { BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 import UserIcon from '../icons/UserIcon';
+import { useEffect, useState } from 'react';
 
 export default function MediaChat() {
-
 
   const channel = useChannel();
   const userID : User | any = useUser();
   const user = useUserRef();
   const setToken = useSetToken();
-  const setRoom = useSetCurrentRoom();
   const videoTrack = useLocalParticipant();
+  const videoStatus = Track.Kind.Video;
   const screenTrack = useLocalParticipant();
-  const particitpants = useParticipants();
-
   const setConnectionState = useSetConnectionState();
   const connectionState = useConnectionState();
+  
+  const [displayVideo, setDisplayVideo] = useState(false);
 
   const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, channel!.channel_id.toString(), {
     userInfo: {
       identity: userID.id,
-      name: userID.email
+      name: user?.username
     },
   });
-
-  const CustomTile = () => {
-
-    return(
-      <div className={'flex flex-col items-center'}>
-        {videoTrack.isCameraEnabled ? <div className='w-10 h-10 p-2'>
-          <VideoTrack source={Track.Source.Camera} placeholder='Yo' className={'rounded-xl mx-2 mb-3'}/>
-        </div> : <p>off</p>}
-        
-        <VideoTrack source={Track.Source.ScreenShare} className={'rounded-xl'}/>
-      </div>      
-    );
-  };
 
   return (
     <>
@@ -66,14 +53,19 @@ export default function MediaChat() {
       <div className={'h-full relative'}>
         <div className={'bg-gray-800 h-full w-full items-center'}>
           <div className=''>
-            <div className='flex flex-row justify-center flex-wrapv h-5/6'>
+            <div className='flex flex-row justify-center flex-wrap p-5'>
               <ParticipantLoop>
-                <CustomTile />
+                <ParticipantTile className='w-12 h-12 flex flex-col justify-center items-center m-4'>
+                  {connectionState === ConnectionState.Connected && <ParticipantName className='text-lg font-semibold mt-2'/>}
+                  <VideoTrack source={Track.Source.Camera} className={'rounded-xl mx-2 mb-3'}/>
+                  <VideoTrack source={Track.Source.ScreenShare} className={'rounded-xl'}/>
+                  <AudioTrack source={Track.Source.Microphone} />
+                </ParticipantTile>  
               </ParticipantLoop>
             </div>
             <div className={`flex flex-row justify-evenly ${mediaControls.mediaControls} mb-5 min-w-0 bg-grey-950 py-3 items-center rounded-xl absolute bottom-1 inset-x-1 mx-auto`}>
               <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'} source={Track.Source.Camera}>
-                {videoTrack.isCameraEnabled ? (<BsCameraVideo size={22}/>) : (<BsCameraVideoOff size={22}/>)} 
+                {videoTrack.isCameraEnabled ? (<BsCameraVideo size={22} onClick={() => {setDisplayVideo(true);}}/>) : (<BsCameraVideoOff size={22} onClick={() => {setDisplayVideo(false);}}/>)} 
               </TrackToggle>
               <TrackToggle showIcon={false} className={'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'} source={Track.Source.ScreenShare}> 
                 {screenTrack.isScreenShareEnabled ? (<TbScreenShare size={22}/>) : (<TbScreenShareOff size={22}/>) }

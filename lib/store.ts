@@ -434,6 +434,7 @@ export const useUpdateMessage = () =>
   useMessagesStore((state) => state.updateMessage);
 export const useGetUserPerms = () =>
   useUserPermsStore((state) => state.getUserPerms);
+  
 export const useUserPerms = () => useUserPermsStore((state) => state.userPerms);
 export const useSetChannel = () => useChannelStore((state) => state.setChannel);
 export const useChannel = () => useChannelStore((state) => state.channel);
