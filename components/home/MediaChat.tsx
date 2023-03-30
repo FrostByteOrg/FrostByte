@@ -16,7 +16,6 @@ import { useUser } from '@supabase/auth-helpers-react';
 import {
   AudioTrack,
   DisconnectButton,
-  ParticipantLoop,
   ParticipantName,
   ParticipantTile,
   TrackToggle,
@@ -24,12 +23,14 @@ import {
   useConnectionState,
   useLocalParticipant,
   useToken,
+  useParticipants,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
 import { Channel, User } from '@/types/dbtypes';
 import { BsCameraVideo, BsCameraVideoOff, BsGear } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 import UserIcon from '../icons/UserIcon';
+import { useState } from 'react';
 
 export default function MediaChat({
   channel: visableChannel,
