@@ -1,5 +1,5 @@
 import AddServer from '@/components/forms/AddServer';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import { CreateServerInput, createServerSchema } from '@/types/client/server';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';

@@ -1,5 +1,5 @@
 import AddChannel from '@/components/forms/AddChannel';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import {
   CreateChannelInput,
   createChannelSchema,
@@ -73,8 +73,7 @@ export default function AddChannelModal({
     if (error) {
       if ((error as PostgrestError).message) {
         setServerError((error as PostgrestError).message);
-      }
-      else {
+      } else {
         setServerError(error as string);
       }
 
@@ -82,8 +81,7 @@ export default function AddChannelModal({
         setServerError('');
       }, 7000);
       return;
-    }
-    else {
+    } else {
       addChannelRef.current?.close();
       setChannelType('text');
       setSetShowDesc(false);

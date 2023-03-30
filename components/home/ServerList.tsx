@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
-import AddServerModal from '@/components/home/AddServerModal';
-import AddChannelModal from '@/components/home/AddChannelModal';
+import AddServerModal from '@/components/home/modals/AddServerModal';
+import AddChannelModal from '@/components/home/modals/AddChannelModal';
 import {
   useGetServers,
   useGetUserPermsForServer,
