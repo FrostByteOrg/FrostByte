@@ -8,7 +8,6 @@ import ServerList from '@/components/home/ServerList';
 import DefaultTest from '@/components/home/DefaultTest';
 import {
   useChannel,
-  useConnectionRef,
   useSetUser,
   useSetUserSettings,
   useUserSettings,
@@ -25,7 +24,6 @@ import { Track, ConnectionState } from 'livekit-client';
 import UserIcon from '../icons/UserIcon';
 import { BsMic, BsMicMute, BsGear } from 'react-icons/bs';
 import { TbHeadphones, TbHeadphonesOff } from 'react-icons/tb';
-import FloatingCallControl from './FloatingCallControl';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';

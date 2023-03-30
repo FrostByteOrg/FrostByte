@@ -2,7 +2,7 @@ import { Channel, DMChannelWithRecipient } from '@/types/dbtypes';
 import UserIcon from '../icons/UserIcon';
 import styles from '@/styles/Chat.module.css';
 import { useConnectionRef, useDMChannels, useSetChannel } from '@/lib/store';
-import FloatingCallControl from './FloatingCallControl';
+import SidebarCallControl from '@/components/home/SidebarCallControl';
 
 function mapToComponentArray(
   _map: Map<string, DMChannelWithRecipient>,
@@ -54,7 +54,7 @@ export default function DMessageList() {
       </div>
       { isInVoice && (
         <div className="w-full self-end p-4 mb-7">
-          <FloatingCallControl />
+          <SidebarCallControl />
         </div>
       )}
     </div>

@@ -3,7 +3,6 @@ import {
   useSetRoomServerName,
   useServers,
   useSetConnectionState,
-  useSetCurrentRoomId,
 } from '@/lib/store';
 import {
   DisconnectButton,
@@ -18,7 +17,7 @@ import { BiPhoneOff } from 'react-icons/bi';
 import { BsBarChart, BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 
-export default function FloatingCallControl() {
+export default function SidebarCallControl() {
   const currentParticipant = useLocalParticipant();
   const setConnectionState = useSetConnectionState();
   const servers = useServers();
