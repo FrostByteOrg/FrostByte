@@ -3,10 +3,10 @@ import { SearchBar } from '@/components/forms/Styles';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
 import AddChannelModal from '@/components/home/AddChannelModal';
 import {
+  useConnectionRef,
   useGetServers,
   useGetUserPermsForServer,
   useServers,
@@ -15,7 +15,7 @@ import {
 import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
-
+import SidebarCallControl from '@/components/home/SidebarCallControl';
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
@@ -31,6 +31,7 @@ export default function ServerList() {
 
   const getUserServerPerms = useGetUserPermsForServer();
   const userServerPerms = useUserServerPerms();
+  const isInVoice = useConnectionRef();
 
   useEffect(() => {
     if (getServers) {
@@ -90,7 +91,7 @@ export default function ServerList() {
         ></input>
       </div>
 
-      <div className="overflow-y-auto ">
+      <div className="flex-grow overflow-y-auto ">
         {servers &&
           servers
             .sort(function (a, b) {
@@ -120,6 +121,11 @@ export default function ServerList() {
               }
             })}
       </div>
+      { isInVoice && (
+        <div className="w-full self-end mb-7">
+          <SidebarCallControl />
+        </div>
+      )}
       {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
       userServerPerms & ServerPermissions.OWNER ||
       userServerPerms & ServerPermissions.ADMINISTRATOR ? (

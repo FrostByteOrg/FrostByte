@@ -18,32 +18,29 @@ import {
   DisconnectButton,
   ParticipantName,
   ParticipantTile,
-  TrackToggle,
   VideoTrack,
   useConnectionState,
   useLocalParticipant,
   useParticipants,
   useToken,
+  useParticipants,
+  useTracks,
+  GridLayout,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
 import { Channel, User } from '@/types/dbtypes';
-import { BsCameraVideo, BsCameraVideoOff, BsGear } from 'react-icons/bs';
-import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
+import { BsGear } from 'react-icons/bs';
 import UserIcon from '../icons/UserIcon';
 import ScreenShareIcon from '../icons/ScreenShareIcon';
 import ScreenShareOff from '../icons/ScreenShareOff';
+import { FloatingCallControl } from './FloatingCallControl';
+import { MediaDispTrack } from './MediaDispTrack';
+import { TrackBundle, TrackBundleWithPlaceholder } from '@livekit/components-core';
 
-export default function MediaChat({
-  channel: visableChannel,
-}: {
-  channel?: Channel;
-}) {
+export default function MediaChat({ channel: visibleChannel }: { channel?: Channel }) {
   const channel = useChannel();
   const userID: User | any = useUser();
   const user = useUserRef();
-  const setToken = useSetToken();
-  const videoTrack = useLocalParticipant();
-  const screenTrack = useLocalParticipant();
   const setConnectionState = useSetConnectionState();
   const connectionState = useConnectionState();
   const setRoomIdRef = useSetCurrentRoomId();
@@ -52,6 +49,7 @@ export default function MediaChat({
   const setRoomServerId = useSetCurrentRoomServerId();
 
   const participants = useParticipants();
+  const tracks = useTracks([{source: Track.Source.Camera, withPlaceholder: true }, {source: Track.Source.ScreenShare, withPlaceholder: false }]);
 
   const token = useToken(
     process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT,
@@ -134,191 +132,68 @@ export default function MediaChat({
               </div>
             </div>
             <div className="border-t-2 mx-5 border-grey-700 flex "></div>
-            <div className={'h-full'}>
-              <div className={'bg-grey-800 w-full justify-center items-center'}>
-                <div className="w-full">
-                  <div className="grid gap-2 grid-cols-2 p-5 space-x-4 items-center overflow-auto">
+            <div>
+              <div className={'bg-grey-800 items-center'}>
+                <div className="">
+                  <div
+                    className="grid gap-2 p-5 space-x-4 overflow-y-auto h-screen"
+                    style={{
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 3fr))',
+                    }}
+                  >
                     {connectionState === ConnectionState.Connecting ? (
                       <div className="flex flex-row items-center mt-2">
                         <BsGear size={40} className="animate-spin mr-2" />
                         <span>Connecting...</span>
                       </div>
                     ) : (
-                      participants.map((participant) => (
-                        <ParticipantTile key={participant.sid} participant={participant}>
-                          <div>
-                            { (participant.isCameraEnabled || participant.isScreenShareEnabled) ?
-                              (
-                                <div>
-                                  {participant.isCameraEnabled && (
-                                    <div>
-                                      <VideoTrack
-                                        source={Track.Source.Camera}
-                                        participant={participant}
-                                        className={'rounded-lg'}
-                                      />
-                                      <ParticipantName
-                                        participant={participant}
-                                        className="
-                                          text-lg
-                                          font-semibold
-                                          mt-2
-                                          py-1
-                                          px-2
-                                          rounded-md
-                                          bg-slate-900
-                                          text-center
-                                          float-right
-                                          relative
-                                          bottom-7
-                                          right-2
-                                        "
-                                      />
-                                    </div>
-                                  )}
-                                  {participant.isScreenShareEnabled && (
-                                    <div>
-                                      <VideoTrack
-                                        participant={participant}
-                                        source={Track.Source.ScreenShare}
-                                        className={'rounded-lg'}
-                                      />
-                                      <ParticipantName
-                                        participant={participant}
-                                        className="
-                                          text-lg
-                                          font-semibold
-                                          mt-2
-                                          py-1
-                                          px-2
-                                          rounded-md
-                                          bg-slate-900
-                                          text-center
-                                          float-right
-                                          relative
-                                          bottom-7
-                                          right-2
-                                        "
-                                      />
-                                    </div>
-                                  )}
-                                </div>
-                              ) : (
-                                <>
-                                  {currentRoom.channel_id === channel?.channel_id && connectionState === ConnectionState.Connected &&  
-                                  <div className="bg-gray-600 rounded-lg">
-                                    <img
-                                      className='rounded-lg'
-                                      src="https://designshack.net/wp-content/uploads/placehold.jpg"
-                                      alt=""
-                                    />
-                                    <ParticipantName
-                                      participant={participant}
-                                      className="
-                                    text-lg
-                                    font-semibold
-                                    mt-2
-                                    py-1
-                                    px-2
-                                    rounded-md
-                                    bg-slate-900
-                                    text-center
-                                    float-right
-                                    relative
-                                    bottom-7
-                                    right-2
-                                  "
-                                    />
-                                  </div>}
-                                </>
-                              )
-                            }
-                          </div>
-                          <AudioTrack source={Track.Source.Microphone} participant={participant}/>
-                        </ParticipantTile>
-                      ))
+                      tracks.map((track) => {
+                        // @ts-expect-error We need to check if the publication is here at all since the union type is jank
+                        if (track.publication === undefined) {
+                          return (
+                            <div key={track.participant.sid}>
+                              <div className="bg-slate-600 rounded-md">
+                                <img
+                                  src="https://www.eurovps.com/blog/wp-content/uploads/2012/10/placeholder-images.jpg"
+                                  alt="placeholder"
+                                />
+
+                              </div>
+                              <ParticipantName
+                                participant={track.participant}
+                                className="
+                                  text-lg
+                                  font-semibold
+                                  mt-2
+                                  py-1
+                                  px-2
+                                  rounded-md
+                                  bg-slate-900
+                                  text-center
+                                  float-right
+                                  relative
+                                  bottom-7
+                                  right-2
+                                "
+                              />
+                            </div>
+
+                          );
+                        }
+
+                        else {
+                          return (
+                            <MediaDispTrack
+                              key={(track as TrackBundle).publication.trackSid}
+                              track={track as TrackBundle}
+                            />
+                          );
+                        }
+                      })
                     )}
+
                   </div>
-                  <div
-                    className={`
-                      flex
-                      flex-row
-                      justify-evenly
-                      ${mediaStyle.mediaControls}
-                      mb-5
-                      min-w-0
-                      bg-grey-950
-                      py-3
-                      items-center
-                      rounded-xl
-                      absolute
-                      bottom-1
-                      inset-x-1
-                      mx-auto
-                    `}
-                  >
-                    {connectionState === ConnectionState.Connected && (
-                      <TrackToggle
-                        showIcon={false}
-                        className={
-                          'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'
-                        }
-                        source={Track.Source.Camera}
-                      >
-                        {videoTrack.isCameraEnabled ? (
-                          <BsCameraVideo
-                            size={22}
-                          />
-                        ) : (
-                          <BsCameraVideoOff
-                            size={22}
-                          />
-                        )}
-                      </TrackToggle>
-                    )}
-                    {connectionState === ConnectionState.Connected && (
-                      <TrackToggle
-                        showIcon={false}
-                        className={
-                          'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'
-                        }
-                        source={Track.Source.ScreenShare}
-                      >
-                        {screenTrack.isScreenShareEnabled ? (
-                          <ScreenShareOff width={6} height={6}/>
-                        ) : (
-                          <ScreenShareIcon width={6} height={6}/>
-                        )}
-                      </TrackToggle>
-                    )}
-                    {connectionState !== ConnectionState.Connected ? (
-                      <button
-                        className="w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md"
-                        onClick={() => {
-                          setConnectionState(true),
-                          setToken(token),
-                          setRoomIdRef(visableChannel?.channel_id);
-                          setRoomName(visableChannel?.name);
-                          setRoomServerId(visableChannel?.server_id);
-                        }}
-                      >
-                        {' '}
-                      Join{' '}
-                      </button>
-                    ) : (
-                      <DisconnectButton
-                        className={
-                          'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl'
-                        }
-                        onClick={() => {
-                          setConnectionState(false);
-                        }}
-                      >
-                        {' '}
-                      End{' '}
-                      </DisconnectButton>
-                    )}
-                  </div>
+                  <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
                 </div>
               </div>
             </div>

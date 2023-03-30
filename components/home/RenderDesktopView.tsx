@@ -24,7 +24,6 @@ import { Track, ConnectionState } from 'livekit-client';
 import UserIcon from '../icons/UserIcon';
 import { BsMic, BsMicMute, BsGear } from 'react-icons/bs';
 import { TbHeadphones, TbHeadphonesOff } from 'react-icons/tb';
-import FloatingCallControl from './FloatingCallControl';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';
@@ -69,9 +68,6 @@ export default function RenderDesktopView() {
       </div>
       <div className="col-start-2 col-end-4 row-start-1 row-end-4  flex-col bg-grey-900 relative ">
         {sideBarView}
-        {connectionState === ConnectionState.Connected && (
-          <FloatingCallControl />
-        )}
       </div>
 
       <div className="col-start-4 col-end-13 row-start-1 row-end-4  flex flex-col h-screen">
