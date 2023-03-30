@@ -8,22 +8,45 @@ import {
 import {
   DisconnectButton,
   TrackToggle,
+  useConnectionState,
   useLocalParticipant,
 } from '@livekit/components-react';
-import { Track } from 'livekit-client';
+import { ConnectionQuality, ConnectionState, Track } from 'livekit-client';
+import { ConnectionQuality as _ConnQual } from 'livekit-server-sdk/dist/proto/livekit_models';
 import { useEffect } from 'react';
 import { BiPhoneOff } from 'react-icons/bi';
 import { BsBarChart, BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 
 export default function FloatingCallControl() {
-  const videoTrack = useLocalParticipant();
-  const screenTrack = useLocalParticipant();
+  const currentParticipant = useLocalParticipant();
   const setConnectionState = useSetConnectionState();
   const setCurrentRoomId = useSetCurrentRoomId();
   const servers = useServers();
   const setServerName = useSetRoomServerName();
   const currentRoom = useCurrentRoomRef();
+  const connectionState = useConnectionState();
+
+  const connectionQualityColor = () => {
+    if (connectionState === ConnectionState.Connecting || connectionState === ConnectionState.Reconnecting) {
+      return 'text-yellow-400';
+    }
+
+    else if (connectionState === ConnectionState.Disconnected) {
+      return 'text-red-400';
+    }
+
+    switch (currentParticipant.localParticipant.connectionQuality) {
+      case ConnectionQuality.Excellent:
+        return 'text-green-500';
+      case ConnectionQuality.Good:
+        return 'text-green-300';
+      case ConnectionQuality.Poor:
+        return 'text-red-400';
+      case ConnectionQuality.Unknown:
+        return 'text-grey-400';
+    }
+  };
 
   useEffect(() => {
     if (setServerName) {
@@ -36,9 +59,12 @@ export default function FloatingCallControl() {
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-col pb-2">
           <div className="pt-2 px-2 flex flex-row ml-2">
-            <BsBarChart size={22} className="text-green-500 mr-3" />
-            <span className="text-green-500 text-lg font-semibold">
-              Connected
+            <BsBarChart
+              size={22}
+              className={`${connectionQualityColor()} mr-3`}
+            />
+            <span className={`${connectionQualityColor()} text-lg font-semibold`}>
+              { connectionState.charAt(0).toUpperCase() + connectionState.slice(1) }
             </span>
           </div>
           <span className="text-sm text-grey-300 italic ml-4">
@@ -57,7 +83,7 @@ export default function FloatingCallControl() {
           }
           source={Track.Source.ScreenShare}
         >
-          {screenTrack.isScreenShareEnabled ? (
+          {currentParticipant.isScreenShareEnabled ? (
             <div className="flex flex-row">
               <TbScreenShare size={22} className="mr-2" />
               <span className="text-sm">Screen</span>
@@ -76,7 +102,7 @@ export default function FloatingCallControl() {
           }
           source={Track.Source.Camera}
         >
-          {videoTrack.isCameraEnabled ? (
+          {currentParticipant.isCameraEnabled ? (
             <div className="flex flex-row items-center">
               <BsCameraVideo size={18} className="mr-2" />
               <span className="text-sm">Video</span>
