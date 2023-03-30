@@ -30,7 +30,6 @@ import { Channel, User } from '@/types/dbtypes';
 import { BsCameraVideo, BsCameraVideoOff, BsGear } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 import UserIcon from '../icons/UserIcon';
-import { useState } from 'react';
 
 export default function MediaChat({
   channel: visableChannel,
@@ -49,7 +48,6 @@ export default function MediaChat({
   const setRoomName = useSetCurrentRoomName();
   const currentRoom = useCurrentRoomRef();
   const setRoomServerId = useSetCurrentRoomServerId();
-  const [displayVideo, setDisplayVideo] = useState(false);
 
   const participants = useParticipants();
 
