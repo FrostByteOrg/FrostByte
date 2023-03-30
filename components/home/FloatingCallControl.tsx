@@ -15,6 +15,10 @@ import { useEffect } from 'react';
 import { BiPhoneOff } from 'react-icons/bi';
 import { BsBarChart, BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
+import ConnectionIcon from '../icons/ConnectionIcon';
+import HangUpIcon from '../icons/HangUpIcon';
+import ScreenShareOff from '../icons/ScreenShareOff';
+import ScreenShareIcon from '../icons/ScreenShareIcon';
 
 export default function FloatingCallControl() {
   const videoTrack = useLocalParticipant();
@@ -36,7 +40,7 @@ export default function FloatingCallControl() {
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-col pb-2">
           <div className="pt-2 px-2 flex flex-row ml-2">
-            <BsBarChart size={22} className="text-green-500 mr-3" />
+            <ConnectionIcon width={5} height={5} className='text-green-500 mr-2 font-semibold'/>
             <span className="text-green-500 text-lg font-semibold">
               Connected
             </span>
@@ -46,7 +50,7 @@ export default function FloatingCallControl() {
           </span>
         </div>
         <DisconnectButton onClick={() => {setConnectionState(false); }}>
-          <BiPhoneOff size={22} className='mr-4 text-red-500 hover:text-red-700'/>
+          <HangUpIcon width={5} height={5} className='mr-4 text-red-500 hover:text-red-700'/>
         </DisconnectButton>
       </div>
       <div className="flex flex-row justify-evenly">
@@ -59,12 +63,12 @@ export default function FloatingCallControl() {
         >
           {screenTrack.isScreenShareEnabled ? (
             <div className="flex flex-row">
-              <TbScreenShare size={22} className="mr-2" />
+              <ScreenShareOff width={5} height={5} className={'mr-2'}/>
               <span className="text-sm">Screen</span>
             </div>
           ) : (
             <div className="flex flex-row">
-              <TbScreenShareOff size={22} className="mr-2" />
+              <ScreenShareIcon width={5} height={5} className={'mr-2'}/>
               <span className="text-sm">Screen</span>
             </div>
           )}

@@ -16,13 +16,13 @@ import { useUser } from '@supabase/auth-helpers-react';
 import {
   AudioTrack,
   DisconnectButton,
-  ParticipantLoop,
   ParticipantName,
   ParticipantTile,
   TrackToggle,
   VideoTrack,
   useConnectionState,
   useLocalParticipant,
+  useParticipants,
   useToken,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
@@ -30,6 +30,8 @@ import { Channel, User } from '@/types/dbtypes';
 import { BsCameraVideo, BsCameraVideoOff, BsGear } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 import UserIcon from '../icons/UserIcon';
+import ScreenShareIcon from '../icons/ScreenShareIcon';
+import ScreenShareOff from '../icons/ScreenShareOff';
 
 export default function MediaChat({
   channel: visableChannel,
@@ -48,7 +50,6 @@ export default function MediaChat({
   const setRoomName = useSetCurrentRoomName();
   const currentRoom = useCurrentRoomRef();
   const setRoomServerId = useSetCurrentRoomServerId();
-  const [displayVideo, setDisplayVideo] = useState(false);
 
   const participants = useParticipants();
 
@@ -134,9 +135,9 @@ export default function MediaChat({
             </div>
             <div className="border-t-2 mx-5 border-grey-700 flex "></div>
             <div className={'h-full'}>
-              <div className={'bg-grey-800 w-full items-center'}>
+              <div className={'bg-grey-800 w-full justify-center items-center'}>
                 <div className="w-full">
-                  <div className="grid gap-2 grid-cols-2 p-5 space-x-4 overflow-auto">
+                  <div className="grid gap-2 grid-cols-2 p-5 space-x-4 items-center overflow-auto">
                     {connectionState === ConnectionState.Connecting ? (
                       <div className="flex flex-row items-center mt-2">
                         <BsGear size={40} className="animate-spin mr-2" />
@@ -203,30 +204,33 @@ export default function MediaChat({
                                   )}
                                 </div>
                               ) : (
-                                <div className="bg-gray-600 rounded-lg">
-                                  <img
-                                    className='rounded-lg'
-                                    src="https://designshack.net/wp-content/uploads/placehold.jpg"
-                                    alt=""
-                                  />
-                                  <ParticipantName
-                                    participant={participant}
-                                    className="
-                                      text-lg
-                                      font-semibold
-                                      mt-2
-                                      py-1
-                                      px-2
-                                      rounded-md
-                                      bg-slate-900
-                                      text-center
-                                      float-right
-                                      relative
-                                      bottom-7
-                                      right-2
-                                    "
-                                  />
-                                </div>
+                                <>
+                                  {currentRoom.channel_id === channel?.channel_id && connectionState === ConnectionState.Connected &&  
+                                  <div className="bg-gray-600 rounded-lg">
+                                    <img
+                                      className='rounded-lg'
+                                      src="https://designshack.net/wp-content/uploads/placehold.jpg"
+                                      alt=""
+                                    />
+                                    <ParticipantName
+                                      participant={participant}
+                                      className="
+                                    text-lg
+                                    font-semibold
+                                    mt-2
+                                    py-1
+                                    px-2
+                                    rounded-md
+                                    bg-slate-900
+                                    text-center
+                                    float-right
+                                    relative
+                                    bottom-7
+                                    right-2
+                                  "
+                                    />
+                                  </div>}
+                                </>
                               )
                             }
                           </div>
@@ -281,9 +285,9 @@ export default function MediaChat({
                         source={Track.Source.ScreenShare}
                       >
                         {screenTrack.isScreenShareEnabled ? (
-                          <TbScreenShare size={22} />
+                          <ScreenShareOff width={6} height={6}/>
                         ) : (
-                          <TbScreenShareOff size={22} />
+                          <ScreenShareIcon width={6} height={6}/>
                         )}
                       </TrackToggle>
                     )}
