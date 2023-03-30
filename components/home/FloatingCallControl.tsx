@@ -45,15 +45,8 @@ export default function FloatingCallControl() {
             {currentRoom.server_name}/{currentRoom.name}
           </span>
         </div>
-        <DisconnectButton
-          onClick={() => {
-            setConnectionState(false), setCurrentRoomId(0);
-          }}
-        >
-          <BiPhoneOff
-            size={22}
-            className="mr-4 text-red-500 hover:text-red-700"
-          />
+        <DisconnectButton onClick={() => {setConnectionState(false); }}>
+          <BiPhoneOff size={22} className='mr-4 text-red-500 hover:text-red-700'/>
         </DisconnectButton>
       </div>
       <div className="flex flex-row justify-evenly">
