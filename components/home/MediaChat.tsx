@@ -42,7 +42,6 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
   const setRoomIdRef = useSetCurrentRoomId();
   const setRoomName = useSetCurrentRoomName();
   const currentRoom = useCurrentRoomRef();
-  const setRoomServerId = useSetCurrentRoomServerId();
 
   const participants = useParticipants();
   const tracks = useTracks([
@@ -50,10 +49,6 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
     {source: Track.Source.ScreenShare, withPlaceholder: false }
   ]);
 
-  const [ showModal, setShowModal ] = useState(
-    currentRoom.channel_id !== channel?.channel_id
-    && connectionState === ConnectionState.Connected
-  );
   const modalRef = useRef<HTMLDialogElement>(null);
 
   const token = useToken(
@@ -68,22 +63,30 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
   );
 
   useEffect(() => {
-    if (currentRoom.channel_id !== channel?.channel_id && connectionState === ConnectionState.Connected) {
+    if (
+      !modalRef.current?.open
+      && currentRoom.channel_id !== channel?.channel_id
+      && connectionState === ConnectionState.Connected
+    ) {
       modalRef.current?.showModal();
     }
-  }, [currentRoom.channel_id, channel?.channel_id, connectionState]);
+    // NOTE: We only want this to run when the channel changes. Not when currentRoom or connectionstate changes.
+    // Hence why we're not including them in the dependency array.
+  }, [channel?.channel_id]);
 
   return (
     <>
       <Modal
         modalRef={modalRef}
-        showModal={showModal}
+        showModal={false}
         title="Already Connected"
         buttons={
           <div className="flex flex-row w-full h-7">
             <button
               className="w-full"
-              onClick={() => modalRef.current?.close()}
+              onClick={() => {
+                modalRef.current?.close();
+              }}
             >
               Cancel
             </button>
@@ -92,10 +95,10 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                 'w-full bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl'
               }
               onClick={() => {
+                modalRef.current?.close();
                 setConnectionState(false);
                 setRoomIdRef(0);
                 setRoomName(undefined);
-                modalRef.current?.close();
               }}
             >
               End
@@ -105,7 +108,7 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
       >
         <div>
           <p>
-            {`Looks like you're already connected to ${currentRoom.name}...\n`}
+            {`Looks like you're already connected to ${currentRoom.name}...`}
 
             {'You\'ll need to end your current call before you can join another.'}
           </p>
