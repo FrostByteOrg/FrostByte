@@ -37,7 +37,6 @@ function mapToComponentArray(
 export default function DMessageList() {
   const setChannel = useSetChannel();
   const dmChannels = useDMChannels();
-  console.table(dmChannels);
   const isInVoice = useConnectionRef();
 
   return (
