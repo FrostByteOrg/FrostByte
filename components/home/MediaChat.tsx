@@ -23,19 +23,13 @@ import {
   VideoTrack,
   useConnectionState,
   useLocalParticipant,
-  useParticipantContext,
-  useParticipants,
-  useRemoteParticipant,
-  useRemoteParticipants,
   useToken,
-  useTracks,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
 import { Channel, User } from '@/types/dbtypes';
 import { BsCameraVideo, BsCameraVideoOff, BsGear } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 import UserIcon from '../icons/UserIcon';
-import { useEffect, useState } from 'react';
 
 export default function MediaChat({
   channel: visableChannel,
@@ -54,8 +48,6 @@ export default function MediaChat({
   const setRoomName = useSetCurrentRoomName();
   const currentRoom = useCurrentRoomRef();
   const setRoomServerId = useSetCurrentRoomServerId();
-
-  const [displayVideo, setDisplayVideo] = useState(false);
 
   const token = useToken(
     process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT,
@@ -149,7 +141,7 @@ export default function MediaChat({
                       </div>
                     ) : (
                       <ParticipantLoop>
-                        <ParticipantTile className="w-12 h-12 flex flex-col justify-center items-center m-4">
+                        <ParticipantTile className="w-1/4 h-1/4 flex flex-row justify-center items-center m-4">
                           {connectionState === ConnectionState.Connected && (
                             <ParticipantName className="text-lg font-semibold mt-2" />
                           )}
@@ -180,16 +172,10 @@ export default function MediaChat({
                         {videoTrack.isCameraEnabled ? (
                           <BsCameraVideo
                             size={22}
-                            onClick={() => {
-                              setDisplayVideo(true);
-                            }}
                           />
                         ) : (
                           <BsCameraVideoOff
                             size={22}
-                            onClick={() => {
-                              setDisplayVideo(false);
-                            }}
                           />
                         )}
                       </TrackToggle>
@@ -230,8 +216,6 @@ export default function MediaChat({
                         }
                         onClick={() => {
                           setConnectionState(false);
-                          setRoomIdRef(0);
-                          setRoomName(undefined);
                         }}
                       >
                         {' '}
