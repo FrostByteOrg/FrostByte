@@ -170,9 +170,6 @@ export function renderContent(
           ];
         else return [<ServerList key={1} />, <Chat key={2} />];
       return [<ServerList key={1} />, <DefaultTest key={2} />];
-    // case 'messages':
-    //   if (channel) return [<DMessageList key={1} />, <Chat key={2} />];
-    //   return [<DMessageList key={1} />, <DefaultTest key={2} />];
     default:
       return [<FriendsList key={1} />, <DefaultTest key={2} />];
   }
