@@ -7,6 +7,7 @@ import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/AddServerModal';
 import AddChannelModal from '@/components/home/AddChannelModal';
 import {
+  useConnectionRef,
   useGetServers,
   useGetUserPermsForServer,
   useServers,
@@ -15,6 +16,7 @@ import {
 import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
+import FloatingCallControl from './FloatingCallControl';
 
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
@@ -31,6 +33,7 @@ export default function ServerList() {
 
   const getUserServerPerms = useGetUserPermsForServer();
   const userServerPerms = useUserServerPerms();
+  const isInVoice = useConnectionRef();
 
   useEffect(() => {
     if (getServers) {
@@ -90,7 +93,7 @@ export default function ServerList() {
         ></input>
       </div>
 
-      <div className="overflow-y-auto ">
+      <div className="flex-grow overflow-y-auto ">
         {servers &&
           servers
             .sort(function (a, b) {
@@ -120,6 +123,11 @@ export default function ServerList() {
               }
             })}
       </div>
+      { isInVoice && (
+        <div className="w-full self-end mb-7">
+          <FloatingCallControl />
+        </div>
+      )}
       {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
       userServerPerms & ServerPermissions.OWNER ||
       userServerPerms & ServerPermissions.ADMINISTRATOR ? (

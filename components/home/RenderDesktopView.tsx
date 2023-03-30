@@ -46,7 +46,6 @@ export default function RenderDesktopView() {
   const userRef = useSetUser();
 
   const settingsRef = useSetUserSettings();
-  const isInVoice = useConnectionRef();
   const userSettings = useUserSettings();
 
   useEffect(() => {
@@ -71,9 +70,6 @@ export default function RenderDesktopView() {
       </div>
       <div className="col-start-2 col-end-4 row-start-1 row-end-4  flex-col bg-grey-900 relative ">
         {sideBarView}
-        { isInVoice && (
-          <FloatingCallControl />
-        )}
       </div>
 
       <div className="col-start-4 col-end-13 row-start-1 row-end-4  flex flex-col h-screen">

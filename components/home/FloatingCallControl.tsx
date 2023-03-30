@@ -21,7 +21,6 @@ import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 export default function FloatingCallControl() {
   const currentParticipant = useLocalParticipant();
   const setConnectionState = useSetConnectionState();
-  const setCurrentRoomId = useSetCurrentRoomId();
   const servers = useServers();
   const setServerName = useSetRoomServerName();
   const currentRoom = useCurrentRoomRef();
@@ -55,7 +54,7 @@ export default function FloatingCallControl() {
   }, [currentRoom.server_id, setServerName, servers]);
 
   return (
-    <div className="h-auto border rounded-md absolute bottom-8 bg-grey-950 w-full">
+    <div className="h-auto border rounded-md bottom-8 bg-grey-950 w-full">
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-col pb-2">
           <div className="pt-2 px-2 flex flex-row ml-2">
