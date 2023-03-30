@@ -93,7 +93,9 @@ export default function Server({
               onClick={(e) => {
                 if (channel.is_media) {
                   joinVideoChannel(e, channel);
-                } else {
+                }
+
+                else {
                   joinTextChannel(e, channel);
                 }
               }}
