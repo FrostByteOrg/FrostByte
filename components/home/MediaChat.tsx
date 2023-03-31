@@ -20,13 +20,12 @@ import {
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
 import { Channel, User } from '@/types/dbtypes';
-import { BsGear } from 'react-icons/bs';
 import { FloatingCallControl } from './FloatingCallControl';
 import { MediaDispTrack } from './MediaDispTrack';
 import { TrackBundle } from '@livekit/components-core';
-import GearIcon from '../icons/GearIcon';
 import Modal from '@/components/home/Modal';
 import { useEffect, useRef, useState } from 'react';
+import LoadingIcon from '../icons/LoadingIcon';
 
 export default function MediaChat({ channel: visibleChannel }: { channel?: Channel }) {
   const channel = useChannel();
@@ -125,16 +124,13 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
       <div className='justify-center h-screen w-full items-center'>
         <div className={'bg-grey-800 h-screen'}>
           {connectionState === ConnectionState.Connecting ? (
-            <div className="flex flex-row items-center mt-6 w-1/5 mx-auto">
-              <BsGear size={40} className="animate-spin mr-2" />
+            <div className={`flex flex-row items-center relative top-11 mx-auto h-auto ${mediaStyle.channelLoad}`}>
+              <LoadingIcon className='w-7 h-7 stroke-frost-300 mr-2' />
               <span>Connecting...</span>
             </div>
           ) : (
             <div
-              className="grid p-5 overflow-y-auto h-screen"
-              style={{
-                gridTemplateColumns: 'repeat(auto-fill, minmax(min(500px, 90%), 3fr))',
-              }}
+              className={`grid p-5 overflow-y-auto h-screen ${mediaStyle.mediaGrid}`}
             >
               {tracks.map((track) => {
                 // @ts-expect-error We need to check if the publication is here at all since the union type is jank
@@ -144,7 +140,7 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                       {connectionState === ConnectionState.Connected &&
                       <div key={track.participant.sid} className="p-2 h-fit">
                         <div
-                          className={`bg-slate-600 rounded-md border-2 ${track.participant.isSpeaking ? 'border-green-600' : 'border-gray-800'}`}
+                          className={`bg-slate-600 rounded-md border-2 ${track.participant.isSpeaking ? 'border-green-600 rounded-md' : 'border-gray-800'}`}
                         >
                           <img
                             src="https://www.eurovps.com/blog/wp-content/uploads/2012/10/placeholder-images.jpg"

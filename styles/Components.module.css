@@ -28,6 +28,15 @@
 .mediaControls {
   width: 20rem;
   max-width: 25rem;
+  bottom: 10rem;
+}
+
+.channelLoad {
+  width: 15%;
+}
+
+.mediaGrid {
+  grid-template-columns: repeat(auto-fill, minmax(min(23rem, 75%), 3fr));
 }
 
 .mediaError {
