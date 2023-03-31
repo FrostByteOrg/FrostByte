@@ -126,9 +126,9 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
         <div className={'bg-grey-800 items-center'}>
           <div className="">
             <div
-              className="grid gap-2 p-5 space-x-4 overflow-y-auto h-screen"
+              className="grid p-5 overflow-y-auto h-screen"
               style={{
-                gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 3fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(500px, 90%), 3fr))',
               }}
             >
               {connectionState === ConnectionState.Connecting ? (
@@ -142,16 +142,17 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                   if (track.publication === undefined) {
                     return (
                       <>
-                        {connectionState === ConnectionState.Connected && 
-                      <div key={track.participant.sid}>
-                        <div className="bg-slate-600 rounded-md">
+                        {connectionState === ConnectionState.Connected &&
+                      <div key={track.participant.sid} className="p-2 h-fit">
+                        <div className="bg-slate-600 rounded-md border-2 border-gray-800">
                           <img
                             src="https://www.eurovps.com/blog/wp-content/uploads/2012/10/placeholder-images.jpg"
                             alt="placeholder"
+                            className="rounded-lg"
                           />
 
                         </div>
-                         
+
                         <ParticipantName
                           participant={track.participant}
                           className="
@@ -169,8 +170,8 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                             right-2
                           "
                         />
-                  
-                       
+
+
                       </div>}
                       </>
                     );
