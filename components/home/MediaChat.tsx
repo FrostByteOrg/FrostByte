@@ -4,8 +4,6 @@ import {
   useSetConnectionState,
   useSetCurrentRoomId,
   useSetCurrentRoomName,
-  useSetCurrentRoomServerId,
-  useSetToken,
   useUserRef,
 } from '@/lib/store';
 import styles from '@/styles/Chat.module.css';
@@ -23,9 +21,6 @@ import {
 import { Track, ConnectionState } from 'livekit-client';
 import { Channel, User } from '@/types/dbtypes';
 import { BsGear } from 'react-icons/bs';
-import UserIcon from '../icons/UserIcon';
-import ScreenShareIcon from '../icons/ScreenShareIcon';
-import ScreenShareOff from '../icons/ScreenShareOff';
 import { FloatingCallControl } from './FloatingCallControl';
 import { MediaDispTrack } from './MediaDispTrack';
 import { TrackBundle } from '@livekit/components-core';
@@ -42,8 +37,6 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
   const setRoomIdRef = useSetCurrentRoomId();
   const setRoomName = useSetCurrentRoomName();
   const currentRoom = useCurrentRoomRef();
-
-  const participants = useParticipants();
   const tracks = useTracks([
     {source: Track.Source.Camera, withPlaceholder: true },
     {source: Track.Source.ScreenShare, withPlaceholder: false }
@@ -148,6 +141,8 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                   // @ts-expect-error We need to check if the publication is here at all since the union type is jank
                   if (track.publication === undefined) {
                     return (
+                      <>
+                        {connectionState === ConnectionState.Connected && 
                       <div key={track.participant.sid}>
                         <div className="bg-slate-600 rounded-md">
                           <img
@@ -156,6 +151,7 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                           />
 
                         </div>
+                         
                         <ParticipantName
                           participant={track.participant}
                           className="
@@ -173,10 +169,12 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                             right-2
                           "
                         />
-                      </div>
+                  
+                       
+                      </div>}
+                      </>
                     );
                   }
-
                   else {
                     return (
                       <MediaDispTrack
@@ -187,7 +185,6 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                   }
                 })
               )}
-
             </div>
             <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
           </div>

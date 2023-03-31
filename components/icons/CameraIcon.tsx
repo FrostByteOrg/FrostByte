@@ -11,7 +11,7 @@ export default function CameraIcon({
     <svg xmlns="http://www.w3.org/2000/svg" 
       className={`icon icon-tabler icon-tabler-video w-${width} h-${height} ${className}`} 
       viewBox="0 0 24 24" 
-      stroke-width={2} 
+      stroke-width={1} 
       stroke="currentColor" 
       fill="none" 
       strokeLinecap="round" 
