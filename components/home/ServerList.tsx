@@ -27,6 +27,7 @@ export default function ServerList() {
   const supabase = useSupabaseClient();
 
   const servers = useServers();
+  const [ filteredServers, setFilteredServers ] = useState(servers);
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
@@ -88,12 +89,22 @@ export default function ServerList() {
           type="text"
           className={`${SearchBar()}`}
           placeholder="Search"
-        ></input>
+          onKeyUp={(e) => {
+            const value = (e.target as HTMLInputElement).value;
+
+            // Filter servers
+            const filteredServers = servers.filter((server) => {
+              return server.servers.name.toLowerCase().includes(value.toLowerCase());
+            });
+
+            setFilteredServers(filteredServers);
+          }}
+        />
       </div>
 
       <div className="flex-grow overflow-y-auto ">
-        {servers &&
-          servers
+        {filteredServers &&
+          filteredServers
             .sort(function (a, b) {
               var textA = a.servers.name.toUpperCase();
               var textB = b.servers.name.toUpperCase();

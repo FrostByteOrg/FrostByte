@@ -3,6 +3,8 @@ import UserIcon from '../icons/UserIcon';
 import styles from '@/styles/Chat.module.css';
 import { useConnectionRef, useDMChannels, useSetChannel } from '@/lib/store';
 import SidebarCallControl from '@/components/home/SidebarCallControl';
+import { SearchBar } from '@/components/forms/Styles';
+import { useState } from 'react';
 
 function mapToComponentArray(
   _map: Map<string, DMChannelWithRecipient>,
@@ -38,6 +40,7 @@ export default function DMessageList() {
   const setChannel = useSetChannel();
   const dmChannels = useDMChannels();
   const isInVoice = useConnectionRef();
+  const [ filteredDMs, setFilteredDMs ] = useState(dmChannels);
 
   return (
     <div className="flex flex-col h-full">
@@ -49,7 +52,29 @@ export default function DMessageList() {
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex-grow pt-3">
-        { mapToComponentArray(dmChannels, setChannel) }
+        <div className="pt-4 pb-4">
+          <input
+            type="text"
+            className={`${SearchBar()}`}
+            placeholder="Search"
+            onKeyUp={(e) => {
+              const value = (e.target as HTMLInputElement).value;
+
+              // Filter DMs
+
+              setFilteredDMs(
+                new Map(
+                  [...dmChannels].filter(([_, dmChannel]) => {
+                    return dmChannel.recipient.username
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  })
+                )
+              );
+            }}
+          />
+        </div>
+        { mapToComponentArray(filteredDMs, setChannel) }
       </div>
       { isInVoice && (
         <div className="w-full self-end p-4 mb-7">
