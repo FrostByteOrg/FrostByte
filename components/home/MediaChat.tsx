@@ -122,10 +122,10 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
-      <div className='flex flex-col justify-center h-screen w-full items-center'>
+      <div className='justify-center h-screen w-full items-center'>
         <div className={'bg-grey-800 h-screen'}>
           {connectionState === ConnectionState.Connecting ? (
-            <div className="flex flex-row items-center mt-6 mx-auto">
+            <div className="w-full absolute right-1/2 top-1/2">
               <BsGear size={40} className="animate-spin mr-2" />
               <span>Connecting...</span>
             </div>
@@ -143,7 +143,9 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                     <>
                       {connectionState === ConnectionState.Connected &&
                       <div key={track.participant.sid} className="p-2 h-fit">
-                        <div className="bg-slate-600 rounded-md border-2 border-gray-800">
+                        <div
+                          className={`bg-slate-600 rounded-md border-2 ${track.participant.isSpeaking ? 'border-green-600' : 'border-gray-800'}`}
+                        >
                           <img
                             src="https://www.eurovps.com/blog/wp-content/uploads/2012/10/placeholder-images.jpg"
                             alt="placeholder"
