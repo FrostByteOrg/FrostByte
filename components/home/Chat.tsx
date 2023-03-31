@@ -13,6 +13,9 @@ import { useChannel, useMessages, useUserPerms } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
 import { ChannelPermissions } from '@/types/permissions';
+import MobileCallControls from './mobile/MobileCallControls';
+import { useConnectionState } from '@livekit/components-react';
+import { ConnectionState } from 'livekit-client';
 
 export default function Chat() {
   const supabase = useSupabaseClient();
@@ -21,6 +24,7 @@ export default function Chat() {
   const messages = useMessages();
   const channel = useChannel();
   const userPerms = useUserPerms();
+  const connectionState = useConnectionState();
 
   useEffect(() => {
     if (newestMessageRef && messages) {
@@ -48,6 +52,7 @@ export default function Chat() {
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
+      {connectionState === ConnectionState.Connected && <MobileCallControls />}
       <div
         className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-auto`}
       >

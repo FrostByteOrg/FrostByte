@@ -13,7 +13,6 @@ import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useUser } from '@supabase/auth-helpers-react';
 import {
   DisconnectButton,
-  ParticipantName,
   useConnectionState,
   useToken,
   useTracks,

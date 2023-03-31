@@ -22,11 +22,14 @@ import {
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
 import UserIcon from '../icons/UserIcon';
-import { BsMic, BsMicMute, BsGear } from 'react-icons/bs';
-import { TbHeadphones, TbHeadphonesOff } from 'react-icons/tb';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';
+import GearIcon from '../icons/GearIcon';
+import MicrophoneIcon from '../icons/MicrophoneIcon';
+import MicrophoneOff from '../icons/MicroPhoneOff';
+import HeadPhonesIcon from '../icons/HeadPhonesIcon';
+import HeadPhonesOffIcon from '../icons/HeadPhonesOffIcon';
 
 export default function RenderDesktopView() {
   const supabase = useSupabaseClient();
@@ -96,14 +99,14 @@ export default function RenderDesktopView() {
                 className="w-7 h-7 hover:text-grey-400"
                 onClick={() => setDeafenRoom(false)}
               >
-                <TbHeadphonesOff size={22} />
+                <HeadPhonesOffIcon width={5} height={5} />
               </button>
             ) : (
               <button
                 className="w-7 h-7 hover:text-grey-400"
                 onClick={() => setDeafenRoom(true)}
               >
-                <TbHeadphones size={22} />
+                <HeadPhonesIcon width={5} height={5}/>
               </button>
             )}
             {connectionState !== ConnectionState.Connected ? (
@@ -114,14 +117,14 @@ export default function RenderDesktopView() {
                     className="w-7 h-7 hover:text-grey-400"
                     onClick={() => settingsRef(false)}
                   >
-                    <BsMic size={22} />
+                    <MicrophoneIcon width={5} height={5}/>
                   </button>
                 ) : (
                   <button
                     className="w-7 h-7 hover:text-grey-400"
                     onClick={() => settingsRef(true)}
                   >
-                    <BsMicMute size={22} />
+                    <MicrophoneOff width={5} height={5} />
                   </button>
                 )}
               </>
@@ -130,17 +133,18 @@ export default function RenderDesktopView() {
                 showIcon={false}
                 className={'w-7 h-7 hover:text-grey-400'}
                 source={Track.Source.Microphone}
+                onClick={() => settingsRef(false)} 
               >
                 {audioTrack.isMicrophoneEnabled ? (
-                  <BsMic size={22} onClick={() => settingsRef(false)} />
+                  <MicrophoneIcon width={5} height={5}/>
                 ) : (
-                  <BsMicMute size={22} onClick={() => settingsRef(true)} />
+                  <MicrophoneOff width={5} height={5} />
                 )}
               </TrackToggle>
             )}
 
             <button className="w-7 h-7 hover:text-grey-400">
-              <BsGear size={22} />
+              <GearIcon width={6} height={6} />
             </button>
           </div>
         </div>

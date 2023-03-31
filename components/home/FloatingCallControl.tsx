@@ -7,6 +7,8 @@ import { useSetConnectionState, useSetCurrentRoomId, useSetCurrentRoomName, useS
 import { Channel } from '@/types/dbtypes';
 import CameraOffIcon from '../icons/CameraOffIcon';
 import CameraIcon from '../icons/CameraIcon';
+import JoinCallIcon from '../icons/JoinCallIcon';
+import HangUpIcon from '../icons/HangUpIcon';
 
 export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?: Channel, token?: string }) {
   const connectionState = useConnectionState();
@@ -65,13 +67,13 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
       )}
       {connectionState !== ConnectionState.Connected ? (
         <button disabled 
-          className='w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center'>
+          className={`w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center ${mediaStyle.disappear}`}>
           <ScreenShareIcon className='text-grey-600'/>
         </button>) : (
         <TrackToggle
           showIcon={false}
           className={
-            'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'
+            `w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center ${mediaStyle.disappear}`
           }
           source={Track.Source.ScreenShare}
           disabled={true}
@@ -85,25 +87,23 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
       )}
       {connectionState !== ConnectionState.Connected ? (
         <button
-          className="w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md"
+          className="w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md flex items-center justify-center"
           onClick={() => {
             handleConnect();
           }}
         >
-          {' '}
-        Join{' '}
+          <JoinCallIcon width={6} height={6} />
         </button>
       ) : (
         <DisconnectButton
           className={
-            'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl'
+            'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl flex items-center justify-center'
           }
           onClick={() => {
             setConnectionState(false);
           }}
         >
-          {' '}
-        End{' '}
+          <HangUpIcon width={6} height={6} />
         </DisconnectButton>
       )}
     </div>

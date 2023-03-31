@@ -33,8 +33,23 @@
 @media (max-width: 940px) {
   .mediaControls{
     margin-bottom: 10px;
+    width: 15rem;
+    justify-content: space-evenly;
   }
 }
+
+@media (max-width: 940px) {
+  .disappear{
+    display: none;
+  }
+}
+
+@media(min-width: 940px) {
+  .appear{
+    display: none;
+  }
+  }
+
 
 .gridContainer{
   height: 80%;

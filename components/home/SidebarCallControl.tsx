@@ -11,12 +11,9 @@ import {
   useConnectionState,
   useLocalParticipant,
 } from '@livekit/components-react';
-import { ConnectionQuality, ConnectionState, Track, ConnectionErrorReason, ConnectionError } from 'livekit-client';
+import { ConnectionQuality, ConnectionState, Track } from 'livekit-client';
 import { ConnectionQuality as _ConnQual } from 'livekit-server-sdk/dist/proto/livekit_models';
 import { useEffect } from 'react';
-import { BiPhoneOff } from 'react-icons/bi';
-import { BsBarChart, BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
-import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
 import ConnectionIcon from '../icons/ConnectionIcon';
 import ScreenShareIcon from '../icons/ScreenShareIcon';
 import ScreenShareOff from '../icons/ScreenShareOff';

@@ -1,5 +1,6 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
+import mediaStyle from '@/styles/Components.module.css';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
@@ -16,6 +17,9 @@ import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 import SidebarCallControl from '@/components/home/SidebarCallControl';
+import { ConnectionState } from 'livekit-client';
+import { useConnectionState } from '@livekit/components-react';
+import MobileCallControls from './mobile/MobileCallControls';
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
@@ -33,6 +37,8 @@ export default function ServerList() {
   const getUserServerPerms = useGetUserPermsForServer();
   const userServerPerms = useUserServerPerms();
   const isInVoice = useConnectionRef();
+
+  const connectionState = useConnectionState();
 
   useEffect(() => {
     if (getServers) {
@@ -84,6 +90,8 @@ export default function ServerList() {
           </Tooltip>
         </div>
       </div>
+      {connectionState === ConnectionState.Connected && <MobileCallControls />}
+
       <div className="pt-4 pb-4">
         <input
           type="text"
@@ -133,7 +141,7 @@ export default function ServerList() {
             })}
       </div>
       { isInVoice && (
-        <div className="w-full self-end mb-7">
+        <div className={`w-full self-end mb-7 ${mediaStyle.disappear}` }>
           <SidebarCallControl />
         </div>
       )}
