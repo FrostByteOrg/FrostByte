@@ -16,13 +16,19 @@ import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
 import GearIcon from '@/components/icons/GearIcon';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
+import ServerSettingsModal from './modals/ServerSettingsModal';
+import { ServersForUser } from '@/types/dbtypes';
 
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
   const [showAddServer, setShowAddServer] = useState(false);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
+  const [showServerSettingsModal, setShowServerSettingsModal] = useState(false);
   const [expanded, setExpanded] = useState(0);
+  const [currentServer, setCurrentServer] = useState<ServersForUser | null>(
+    null
+  );
 
   const user = useUser();
   const supabase = useSupabaseClient();
@@ -54,6 +60,11 @@ export default function ServerList() {
         showModal={showAddChannelModal}
         setShowModal={setShowAddChannelModal}
         serverId={expanded}
+      />
+      <ServerSettingsModal
+        showModal={showServerSettingsModal}
+        setShowModal={setShowServerSettingsModal}
+        server={currentServer}
       />
       <div className="flex pb-3 items-center border-b-2 border-grey-700">
         <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
@@ -106,7 +117,8 @@ export default function ServerList() {
                     key={server.server_id}
                     onClick={() => {
                       return expanded !== server.server_id
-                        ? setExpanded(server.server_id)
+                        ? (setExpanded(server.server_id),
+                          setCurrentServer(server))
                         : '';
                     }}
                   >
@@ -123,7 +135,10 @@ export default function ServerList() {
       </div>
       {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
       userServerPerms & ServerPermissions.OWNER ||
-      userServerPerms & ServerPermissions.ADMINISTRATOR ? (
+      userServerPerms &
+        ServerPermissions.ADMINISTRATOR &
+        userServerPerms &
+        ServerPermissions.MANAGE_SERVER ? (
         <Tooltip
           className="z-20 !opacity-100 font-semibold "
           style={{
@@ -146,15 +161,23 @@ export default function ServerList() {
               <PlusIcon width={5} height={5} />
               <span className="ml-1">New channel</span>
             </div>
-            <div
-              className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-              onClick={() => {
-                // setShowAddChannelModal(true);
-              }}
-            >
-              <GearIcon width={5} height={5} />
-              <span className="ml-1">Server Settings</span>
-            </div>
+            {userServerPerms & ServerPermissions.OWNER ||
+            userServerPerms &
+              ServerPermissions.ADMINISTRATOR &
+              userServerPerms &
+              ServerPermissions.MANAGE_SERVER ? (
+              <div
+                className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                onClick={() => {
+                  setShowServerSettingsModal(true);
+                }}
+              >
+                <GearIcon width={5} height={5} />
+                <span className="ml-1">Server Settings</span>
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         </Tooltip>
       ) : (
