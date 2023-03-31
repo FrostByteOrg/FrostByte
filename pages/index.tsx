@@ -8,7 +8,7 @@ import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { LiveKitRoom } from '@livekit/components-react';
-import { useTokenRef, useConnectionRef, useUserSettings} from '@/lib/store';
+import { useTokenRef, useConnectionRef, useUserSettings, useSetConnectionState} from '@/lib/store';
 import { useSetChannel } from '@/lib/store';
 import { getChannelById } from '@/services/channels.service';
 
@@ -27,6 +27,7 @@ export default function Home() {
   const [connected, setConnected] = useState(false);
 
   const tryConnect = useConnectionRef();
+  const setConnectionState = useSetConnectionState();
 
   const checkMobile = useMediaQuery({ query: '(max-width: 940px)' });
   //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
@@ -89,6 +90,10 @@ export default function Home() {
           connect={tryConnect}
           onConnected={() => setConnected(true)}
           onDisconnected={handleDisconnect}
+          onError={(err) => {
+            console.error(err);
+            setConnectionState(false);
+          }}
         >
           {isMobile ? (
             <div>
