@@ -134,8 +134,8 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
               className={`grid p-5 overflow-y-auto h-screen items-center place-content-evenly justify-items-stretch ${mediaStyle.mediaGrid}`}
             >
               {tracks.map((track) => {
-                // @ts-expect-error We need to check if the publication is here at all since the union type is jank
-                if (track.publication === undefined) {
+                console.table(track);
+                if (!track.participant.isCameraEnabled) {
                   return (
                     <>
                       {connectionState === ConnectionState.Connected && <MediaPlaceholderTrack participant={track.participant}/>}
