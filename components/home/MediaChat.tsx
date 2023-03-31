@@ -23,9 +23,7 @@ import {
   useLocalParticipant,
   useParticipants,
   useToken,
-  useParticipants,
   useTracks,
-  GridLayout,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
 import { Channel, User } from '@/types/dbtypes';
@@ -36,6 +34,7 @@ import ScreenShareOff from '../icons/ScreenShareOff';
 import { FloatingCallControl } from './FloatingCallControl';
 import { MediaDispTrack } from './MediaDispTrack';
 import { TrackBundle, TrackBundleWithPlaceholder } from '@livekit/components-core';
+import GearIcon from '../icons/GearIcon';
 
 export default function MediaChat({ channel: visibleChannel }: { channel?: Channel }) {
   const channel = useChannel();
@@ -143,25 +142,27 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                   >
                     {connectionState === ConnectionState.Connecting ? (
                       <div className="flex flex-row items-center mt-2">
-                        <BsGear size={40} className="animate-spin mr-2" />
+                        <GearIcon className="animate-spin mr-2" />
                         <span>Connecting...</span>
                       </div>
                     ) : (
-                      tracks.map((track) => {
-                        // @ts-expect-error We need to check if the publication is here at all since the union type is jank
-                        if (track.publication === undefined) {
-                          return (
-                            <div key={track.participant.sid}>
-                              <div className="bg-slate-600 rounded-md">
-                                <img
-                                  src="https://www.eurovps.com/blog/wp-content/uploads/2012/10/placeholder-images.jpg"
-                                  alt="placeholder"
-                                />
+                      <>
+                        {connectionState === ConnectionState.Connected && 
+                       tracks.map((track) => {
+                         // @ts-expect-error We need to check if the publication is here at all since the union type is jank
+                         if (track.publication === undefined) {
+                           return (
+                             <div key={track.participant.sid}>
+                               <div className="bg-slate-600 rounded-md">
+                                 <img
+                                   src="https://www.eurovps.com/blog/wp-content/uploads/2012/10/placeholder-images.jpg"
+                                   alt="placeholder"
+                                 />
 
-                              </div>
-                              <ParticipantName
-                                participant={track.participant}
-                                className="
+                               </div>
+                               <ParticipantName
+                                 participant={track.participant}
+                                 className="
                                   text-lg
                                   font-semibold
                                   mt-2
@@ -175,23 +176,23 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                                   bottom-7
                                   right-2
                                 "
-                              />
-                            </div>
+                               />
+                             </div>
 
-                          );
-                        }
-
-                        else {
-                          return (
-                            <MediaDispTrack
-                              key={(track as TrackBundle).publication.trackSid}
-                              track={track as TrackBundle}
-                            />
-                          );
-                        }
-                      })
+                           );
+                         }
+                         else {
+                           return (
+                             <MediaDispTrack
+                               key={(track as TrackBundle).publication.trackSid}
+                               track={track as TrackBundle}
+                             />
+                           );
+                         }
+                       })}
+                     
+                      </>
                     )}
-
                   </div>
                   <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
                 </div>

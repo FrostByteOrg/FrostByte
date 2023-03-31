@@ -3,6 +3,7 @@ import {
   useSetRoomServerName,
   useServers,
   useSetConnectionState,
+  useConnectionRef,
 } from '@/lib/store';
 import {
   DisconnectButton,
@@ -10,12 +11,18 @@ import {
   useConnectionState,
   useLocalParticipant,
 } from '@livekit/components-react';
-import { ConnectionQuality, ConnectionState, Track } from 'livekit-client';
+import { ConnectionQuality, ConnectionState, Track, ConnectionErrorReason, ConnectionError } from 'livekit-client';
 import { ConnectionQuality as _ConnQual } from 'livekit-server-sdk/dist/proto/livekit_models';
 import { useEffect } from 'react';
 import { BiPhoneOff } from 'react-icons/bi';
 import { BsBarChart, BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
+import ConnectionIcon from '../icons/ConnectionIcon';
+import ScreenShareIcon from '../icons/ScreenShareIcon';
+import ScreenShareOff from '../icons/ScreenShareOff';
+import CameraOffIcon from '../icons/CameraOffIcon';
+import CameraIcon from '../icons/CameraIcon';
+import HangUpIcon from '../icons/HangUpIcon';
 
 export default function SidebarCallControl() {
   const currentParticipant = useLocalParticipant();
@@ -24,6 +31,7 @@ export default function SidebarCallControl() {
   const setServerName = useSetRoomServerName();
   const currentRoom = useCurrentRoomRef();
   const connectionState = useConnectionState();
+  const liveKitStatus = useConnectionRef();
 
   const connectionQualityColor = () => {
     if (connectionState === ConnectionState.Connecting || connectionState === ConnectionState.Reconnecting) {
@@ -57,8 +65,9 @@ export default function SidebarCallControl() {
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-col pb-2">
           <div className="pt-2 px-2 flex flex-row ml-2">
-            <BsBarChart
-              size={22}
+            <ConnectionIcon
+              width={5}
+              height={5}
               className={`${connectionQualityColor()} mr-3`}
             />
             <span className={`${connectionQualityColor()} text-lg font-semibold`}>
@@ -70,7 +79,7 @@ export default function SidebarCallControl() {
           </span>
         </div>
         <DisconnectButton onClick={() => {setConnectionState(false); }}>
-          <BiPhoneOff size={22} className='mr-4 text-red-500 hover:text-red-700'/>
+          <HangUpIcon width={5} height={5} className='mr-4 text-red-500 hover:text-red-700'/>
         </DisconnectButton>
       </div>
       <div className="flex flex-row justify-evenly">
@@ -83,12 +92,12 @@ export default function SidebarCallControl() {
         >
           {currentParticipant.isScreenShareEnabled ? (
             <div className="flex flex-row">
-              <TbScreenShare size={22} className="mr-2" />
+              <ScreenShareOff width={5} height={5} className="mr-2" />
               <span className="text-sm">Screen</span>
             </div>
           ) : (
             <div className="flex flex-row">
-              <TbScreenShareOff size={22} className="mr-2" />
+              <ScreenShareIcon width={5} height={5} className="mr-2" />
               <span className="text-sm">Screen</span>
             </div>
           )}
@@ -102,12 +111,12 @@ export default function SidebarCallControl() {
         >
           {currentParticipant.isCameraEnabled ? (
             <div className="flex flex-row items-center">
-              <BsCameraVideo size={18} className="mr-2" />
+              <CameraOffIcon width={5} height={5} className="mr-2" />
               <span className="text-sm">Video</span>
             </div>
           ) : (
             <div className="flex flex-row items-center">
-              <BsCameraVideoOff size={18} className="mr-2" />
+              <CameraIcon width={5} height={5} className="mr-2" />
               <span className="text-sm">Video</span>
             </div>
           )}

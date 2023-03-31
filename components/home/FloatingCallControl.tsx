@@ -1,14 +1,12 @@
 import { DisconnectButton, TrackToggle, useConnectionState, useLocalParticipant } from '@livekit/components-react';
-import { BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
-import { TbScreenShare, TbScreenShareOff } from 'react-icons/tb';
-import ConnectionIcon from '../icons/ConnectionIcon';
-import HangUpIcon from '../icons/HangUpIcon';
 import ScreenShareOff from '../icons/ScreenShareOff';
 import ScreenShareIcon from '../icons/ScreenShareIcon';
 import mediaStyle from '@/styles/Components.module.css';
 import { ConnectionState, Track } from 'livekit-client';
-import { useSetConnectionState, useSetCurrentRoomId, useSetCurrentRoomName, useSetCurrentRoomServerId, useSetToken } from '@/lib/store';
+import { useSetConnectionState, useSetCurrentRoomId, useSetCurrentRoomName, useSetCurrentRoomServerId, useSetToken, useConnectionRef } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
+import CameraOffIcon from '../icons/CameraOffIcon';
+import CameraIcon from '../icons/CameraIcon';
 
 export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?: Channel, token?: string }) {
   const connectionState = useConnectionState();
@@ -18,6 +16,15 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
   const setRoomServerId = useSetCurrentRoomServerId();
   const setRoomIdRef = useSetCurrentRoomId();
   const setRoomName = useSetCurrentRoomName();
+  const liveKitStatus = useConnectionRef();
+
+  const handleConnect = () => {
+    setConnectionState(true),
+    setToken(token),
+    setRoomIdRef(visibleChannel?.channel_id);
+    setRoomName(visibleChannel?.name);
+    setRoomServerId(visibleChannel?.server_id);
+  };
 
   return (
     <div
@@ -41,7 +48,10 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
       `}
       draggable
     >
-      {connectionState === ConnectionState.Connected && (
+      {connectionState !== ConnectionState.Connected ? (
+        <button disabled className='w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center'>
+          <CameraIcon className='text-grey-600'/>
+        </button>) : (
         <TrackToggle
           showIcon={false}
           className={
@@ -50,28 +60,31 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
           source={Track.Source.Camera}
         >
           {currentParticipant.isCameraEnabled ? (
-            <BsCameraVideo
-              size={22}
+            <CameraOffIcon
             />
           ) : (
-            <BsCameraVideoOff
-              size={22}
+            <CameraIcon
             />
           )}
         </TrackToggle>
       )}
-      {connectionState === ConnectionState.Connected && (
+      {connectionState !== ConnectionState.Connected ? (
+        <button disabled 
+          className='w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center'>
+          <ScreenShareIcon className='text-grey-600'/>
+        </button>) : (
         <TrackToggle
           showIcon={false}
           className={
             'w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center'
           }
           source={Track.Source.ScreenShare}
+          disabled={true}
         >
           {currentParticipant.isScreenShareEnabled ? (
-            <TbScreenShare size={22} />
+            <ScreenShareOff />
           ) : (
-            <TbScreenShareOff size={22} />
+            <ScreenShareIcon />
           )}
         </TrackToggle>
       )}
@@ -79,11 +92,7 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
         <button
           className="w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md"
           onClick={() => {
-            setConnectionState(true),
-            setToken(token),
-            setRoomIdRef(visibleChannel?.channel_id);
-            setRoomName(visibleChannel?.name);
-            setRoomServerId(visibleChannel?.server_id);
+            handleConnect();
           }}
         >
           {' '}

@@ -2,9 +2,11 @@
 export default function CameraOffIcon({
   width = 6,
   height = 6,
+  className =''
 }: {
   width?: number;
   height?: number;
+  className?: string
 }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" 
@@ -12,7 +14,7 @@ export default function CameraOffIcon({
       viewBox="0 0 24 24" 
       strokeWidth={1.5} 
       stroke="currentColor" 
-      className={`w-${width} h-${height}`}>
+      className={`w-${width} h-${height} ${className}`}>
       <path 
         strokeLinecap="round" 
         strokeLinejoin="round" 

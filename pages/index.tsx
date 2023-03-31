@@ -8,7 +8,7 @@ import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { LiveKitRoom } from '@livekit/components-react';
-import { useTokenRef, useConnectionRef, useUserSettings} from '@/lib/store';
+import { useTokenRef, useConnectionRef, useUserSettings, useSetConnectionState} from '@/lib/store';
 import { useSetChannel } from '@/lib/store';
 import { getChannelById } from '@/services/channels.service';
 
@@ -19,6 +19,7 @@ export default function Home() {
   const token = useTokenRef();
   const userSettings = useUserSettings();
   const setChannel = useSetChannel();
+  const setConnectionState = useSetConnectionState();
   const { c: channel_id } = router.query;
 
   useRealtimeStore(supabase);
@@ -87,8 +88,11 @@ export default function Home() {
           token={token}
           serverUrl={process.env.NEXT_PUBLIC_LK_SERVER_URL}
           connect={tryConnect}
-          onConnected={() => setConnected(true)}
           onDisconnected={handleDisconnect}
+          onError={(err) => {
+            console.error('LIVEKIT ERROR CALLBACK', err);
+            setConnectionState(false);
+          }}
         >
           {isMobile ? (
             <div>
