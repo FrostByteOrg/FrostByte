@@ -130,7 +130,7 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
             </div>
           ) : (
             <div
-              className={`grid p-5 overflow-y-auto h-screen ${mediaStyle.mediaGrid}`}
+              className={`grid p-5 overflow-y-auto h-screen items-center place-content-evenly justify-items-stretch ${mediaStyle.mediaGrid}`}
             >
               {tracks.map((track) => {
                 // @ts-expect-error We need to check if the publication is here at all since the union type is jank
@@ -138,14 +138,14 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                   return (
                     <>
                       {connectionState === ConnectionState.Connected &&
-                      <div key={track.participant.sid} className="p-2 h-fit">
+                      <div key={track.participant.sid} className="px-2 ">
                         <div
                           className={`bg-slate-600 rounded-md border-2 ${track.participant.isSpeaking ? 'border-green-600 rounded-md' : 'border-gray-800'}`}
                         >
                           <img
                             src="https://www.eurovps.com/blog/wp-content/uploads/2012/10/placeholder-images.jpg"
                             alt="placeholder"
-                            className="rounded-lg"
+                            className="rounded-lg h-full w-full"
                           />
 
                         </div>
