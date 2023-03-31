@@ -26,7 +26,8 @@
 /* hsl(194, 71%, 48%) */
 
 .mediaControls {
-  max-width: 20rem;
+  width: 20rem;
+  max-width: 25rem;
 }
 
 .mediaError {

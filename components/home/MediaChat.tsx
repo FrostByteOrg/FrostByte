@@ -122,27 +122,26 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
-      <div>
-        <div className={'bg-grey-800 items-center'}>
-          <div className="">
+      <div className='flex flex-col justify-center h-screen w-full items-center'>
+        <div className={'bg-grey-800 h-screen'}>
+          {connectionState === ConnectionState.Connecting ? (
+            <div className="flex flex-row items-center mt-6 mx-auto">
+              <BsGear size={40} className="animate-spin mr-2" />
+              <span>Connecting...</span>
+            </div>
+          ) : (
             <div
-              className="grid gap-2 p-5 space-x-4 overflow-y-auto h-screen"
+              className="grid gap-2 p-5 space-x-4 overflow-y-auto h-full"
               style={{
                 gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 3fr))',
               }}
             >
-              {connectionState === ConnectionState.Connecting ? (
-                <div className="flex flex-row items-center mt-2">
-                  <BsGear size={40} className="animate-spin mr-2" />
-                  <span>Connecting...</span>
-                </div>
-              ) : (
-                tracks.map((track) => {
-                  // @ts-expect-error We need to check if the publication is here at all since the union type is jank
-                  if (track.publication === undefined) {
-                    return (
-                      <>
-                        {connectionState === ConnectionState.Connected && 
+              {tracks.map((track) => {
+                // @ts-expect-error We need to check if the publication is here at all since the union type is jank
+                if (track.publication === undefined) {
+                  return (
+                    <>
+                      {connectionState === ConnectionState.Connected && 
                       <div key={track.participant.sid}>
                         <div className="bg-slate-600 rounded-md">
                           <img
@@ -172,23 +171,22 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                   
                        
                       </div>}
-                      </>
-                    );
-                  }
-                  else {
-                    return (
-                      <MediaDispTrack
-                        key={(track as TrackBundle).publication.trackSid}
-                        track={track as TrackBundle}
-                      />
-                    );
-                  }
-                })
-              )}
+                    </>
+                  );
+                }
+                else {
+                  return (
+                    <MediaDispTrack
+                      key={(track as TrackBundle).publication.trackSid}
+                      track={track as TrackBundle}
+                    />
+                  );
+                }
+              })}
             </div>
-            <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
-          </div>
+          )}
         </div>
+        <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
       </div>
     </>
   );

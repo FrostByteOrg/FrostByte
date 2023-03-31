@@ -3,7 +3,7 @@ import { ParticipantName, VideoTrack } from '@livekit/components-react';
 
 export function MediaDispTrack({track}: { track: TrackBundle }) {
   return (
-    <div>
+    <div className=''>
       <VideoTrack
         source={track.publication.source}
         participant={track.participant}

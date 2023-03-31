@@ -16,7 +16,6 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
   const setRoomServerId = useSetCurrentRoomServerId();
   const setRoomIdRef = useSetCurrentRoomId();
   const setRoomName = useSetCurrentRoomName();
-  const liveKitStatus = useConnectionRef();
 
   const handleConnect = () => {
     setConnectionState(true),
