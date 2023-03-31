@@ -37,9 +37,8 @@ function mapToComponentArray(
 }
 export default function DMessageList() {
   const setChannel = useSetChannel();
-  const _dmChannels = useDMChannels();
-  const [ dmChannels, setDmChannels ] = useState(_dmChannels);
-  console.table(dmChannels);
+  const dmChannels = useDMChannels();
+  const [ filteredDMs, setFilteredDMs ] = useState(dmChannels);
 
   return (
     <>
@@ -61,9 +60,9 @@ export default function DMessageList() {
 
               // Filter DMs
 
-              setDmChannels(
+              setFilteredDMs(
                 new Map(
-                  [..._dmChannels].filter(([_, dmChannel]) => {
+                  [...dmChannels].filter(([_, dmChannel]) => {
                     return dmChannel.recipient.username
                       .toLowerCase()
                       .includes(value.toLowerCase());
@@ -73,7 +72,7 @@ export default function DMessageList() {
             }}
           />
         </div>
-        { mapToComponentArray(dmChannels, setChannel) }
+        { mapToComponentArray(filteredDMs, setChannel) }
       </div>
     </>
   );

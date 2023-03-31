@@ -25,8 +25,8 @@ export default function ServerList() {
   const user = useUser();
   const supabase = useSupabaseClient();
 
-  const _servers = useServers();
-  const [ servers, setServers ] = useState(_servers);
+  const servers = useServers();
+  const [ filteredServers, setFilteredServers ] = useState(servers);
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
@@ -91,18 +91,18 @@ export default function ServerList() {
             const value = (e.target as HTMLInputElement).value;
 
             // Filter servers
-            const filteredServers = _servers.filter((server) => {
+            const filteredServers = servers.filter((server) => {
               return server.servers.name.toLowerCase().includes(value.toLowerCase());
             });
 
-            setServers(filteredServers);
+            setFilteredServers(filteredServers);
           }}
         />
       </div>
 
       <div className="overflow-y-auto ">
-        {servers &&
-          servers
+        {filteredServers &&
+          filteredServers
             .sort(function (a, b) {
               var textA = a.servers.name.toUpperCase();
               var textB = b.servers.name.toUpperCase();
