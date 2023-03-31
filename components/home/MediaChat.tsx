@@ -133,31 +133,32 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
             <div
               className={`grid ${mediaStyle.mediaGrid}`}
             >
-              {tracks.map((track) => {
-                if (
-                  (
-                    // @ts-expect-error Fck you livekit
-                    !!track.publication
-                    // @ts-expect-error Fck you livekit
-                    && track.publication.source == Track.Source.Camera
-                    && !track.participant.isCameraEnabled
-                    // @ts-expect-error Fck you livekit
-                  ) || track.publication === undefined) {
-                  return (
-                    <>
-                      {connectionState === ConnectionState.Connected && <MediaPlaceholderTrack participant={track.participant}/>}
-                    </>
-                  );
-                }
-                else {
-                  return (
-                    <MediaDispTrack
-                      key={(track as TrackBundle).publication.trackSid}
-                      track={track as TrackBundle}
-                    />
-                  );
-                }
-              })}
+              { currentRoom.channel_id === channel?.channel_id && connectionState === ConnectionState.Connected && (
+                tracks.map((track) => {
+                  if (
+                    (
+                      // @ts-expect-error Fck you livekit
+                      !!track.publication
+                      // @ts-expect-error Fck you livekit
+                      && track.publication.source == Track.Source.Camera
+                      && !track.participant.isCameraEnabled
+                      // @ts-expect-error Fck you livekit
+                    ) || track.publication === undefined) {
+                    return (
+                      <>
+                        {connectionState === ConnectionState.Connected && <MediaPlaceholderTrack participant={track.participant}/>}
+                      </>
+                    );
+                  }
+                  else {
+                    return (
+                      <MediaDispTrack
+                        key={(track as TrackBundle).publication.trackSid}
+                        track={track as TrackBundle}
+                      />
+                    );
+                  }
+                }))}
             </div>
           )}
         </div>
