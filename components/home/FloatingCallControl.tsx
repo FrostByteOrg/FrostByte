@@ -32,18 +32,17 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
         flex-row
         justify-evenly
         ${mediaStyle.mediaControls}
-        mb-5
         min-w-0
         bg-grey-950
         py-3
         items-center
         rounded-xl
-        bottom-11
         inset-x-1
         mx-auto
         relative
         z-10
         right-1/2
+        bottom-10
       `}
       draggable
     >

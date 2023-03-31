@@ -121,11 +121,11 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
           </h1>
         </div>
       </div>
-      <div className="border-t-2 mx-5 border-grey-700 flex "></div>
-      <div className='flex flex-col justify-center h-screen w-full items-center'>
+      <div className="border-t-2 mx-5 border-grey-700"></div>
+      <div className='justify-center h-screen'>
         <div className={'bg-grey-800 h-screen'}>
           {connectionState === ConnectionState.Connecting ? (
-            <div className="flex flex-row items-center mt-6 mx-auto">
+            <div className="flex flex-row items-center mt-6 w-1/5 mx-auto">
               <BsGear size={40} className="animate-spin mr-2" />
               <span>Connecting...</span>
             </div>
