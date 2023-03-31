@@ -122,7 +122,7 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
-      <div className='justify-center h-screen w-full items-center'>
+      <div className='h-full w-full'>
         <div className={'bg-grey-800 h-screen'}>
           {connectionState === ConnectionState.Connecting ? (
             <div className={`flex flex-row items-center relative top-11 mx-auto h-auto ${mediaStyle.channelLoad}`}>
@@ -131,11 +131,10 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
             </div>
           ) : (
             <div
-              className={`grid p-5 overflow-y-auto h-screen items-center place-content-evenly justify-items-stretch ${mediaStyle.mediaGrid}`}
+              className={`grid p-5 overflow-y-auto h-screen ${mediaStyle.mediaGrid}`}
             >
               {tracks.map((track) => {
-                // @ts-expect-error We need to check if the publication is here at all since the union type is jank
-                if (track.publication === undefined) {
+                if (!track.participant.isCameraEnabled) {
                   return (
                     <>
                       {connectionState === ConnectionState.Connected && <MediaPlaceholderTrack participant={track.participant}/>}
@@ -154,6 +153,9 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
             </div>
           )}
         </div>
+        
+      </div>
+      <div className='w-full h-full bg-red-300'>
         <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
       </div>
     </>
