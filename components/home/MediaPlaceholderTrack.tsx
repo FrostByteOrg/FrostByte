@@ -25,7 +25,7 @@ export function MediaPlaceholderTrack({ participant }: { participant: Participan
           h-full
           flex
           justify-center
-          py-6
+          py-9
           ${participant.isSpeaking ? 'border-green-600' : 'border-gray-800'}
         `}
       >
@@ -47,8 +47,8 @@ export function MediaPlaceholderTrack({ participant }: { participant: Participan
           text-center
           float-right
           relative
-          bottom-7
           right-2
+          bottom-7
         "
       />
     </div>

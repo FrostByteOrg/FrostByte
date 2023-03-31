@@ -28,7 +28,17 @@
 .mediaControls {
   width: 20rem;
   max-width: 25rem;
-  bottom: 10rem;
+}
+
+@media (max-width: 940px) {
+  .mediaControls{
+    margin-bottom: 10px;
+  }
+}
+
+.gridContainer{
+  height: 80%;
+  padding: 20px;
 }
 
 .channelLoad {
@@ -36,7 +46,7 @@
 }
 
 .mediaGrid {
-  grid-template-columns: repeat(auto-fill, minmax(min(23rem, 65%), 2fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(23rem, 65%), 3fr));
 }
 
 .mediaError {

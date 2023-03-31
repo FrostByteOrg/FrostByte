@@ -39,9 +39,7 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
         inset-x-1
         mx-auto
         py-3
-        relative
         z-10
-        right-1/2
       `}
       draggable
     >

@@ -122,8 +122,8 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
-      <div className='h-full w-full'>
-        <div className={'bg-grey-800 h-screen'}>
+      <div className={`${mediaStyle.gridContainer} overflow-y-auto`}>
+        <div className={'bg-grey-800'}>
           {connectionState === ConnectionState.Connecting ? (
             <div className={`flex flex-row items-center relative top-11 mx-auto h-auto ${mediaStyle.channelLoad}`}>
               <LoadingIcon className='w-7 h-7 stroke-frost-300 mr-2' />
@@ -131,7 +131,7 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
             </div>
           ) : (
             <div
-              className={`grid p-5 overflow-y-auto h-screen ${mediaStyle.mediaGrid}`}
+              className={`grid ${mediaStyle.mediaGrid}`}
             >
               {tracks.map((track) => {
                 if (!track.participant.isCameraEnabled) {
@@ -155,7 +155,7 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
         </div>
         
       </div>
-      <div className='w-full h-full bg-red-300'>
+      <div className='w-full h-auto mb-1'>
         <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
       </div>
     </>
