@@ -134,7 +134,15 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
               className={`grid ${mediaStyle.mediaGrid}`}
             >
               {tracks.map((track) => {
-                if (!track.participant.isCameraEnabled) {
+                if (
+                  (
+                    // @ts-expect-error Fck you livekit
+                    !!track.publication
+                    // @ts-expect-error Fck you livekit
+                    && track.publication.source == Track.Source.Camera
+                    && !track.participant.isCameraEnabled
+                    // @ts-expect-error Fck you livekit
+                  ) || track.publication === undefined) {
                   return (
                     <>
                       {connectionState === ConnectionState.Connected && <MediaPlaceholderTrack participant={track.participant}/>}
@@ -153,7 +161,6 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
             </div>
           )}
         </div>
-        
       </div>
       <div className='w-full h-auto mb-1'>
         <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
