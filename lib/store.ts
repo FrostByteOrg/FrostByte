@@ -16,7 +16,7 @@ import {
 } from '@/services/server.service';
 import { getMessagesInChannelWithUser } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
-import { getMessageWithServerProfile } from '@/services/profile.service';
+import { getMessageWithServerProfile, getProfile } from '@/services/profile.service';
 import {
   getRelationships,
   relationToDetailedRelation,
@@ -250,6 +250,7 @@ const useConnectionStore = create<ConnectionState>()((set) => ({
 
 export interface CurrentRoomState {
   currentRoom: Room;
+  profileMap: Map<string, User>;
   setCurrentRoomId: (currentRoomId: number | undefined) => void;
   setCurrentRoomName: (currentRoomName: string | undefined) => void;
   setCurrentRoomServerId: (currentRoomServerId: number | undefined) => void;
@@ -257,9 +258,14 @@ export interface CurrentRoomState {
     currentRoomServerId: number | undefined,
     servers: ServersForUser[]
   ) => void;
+  fetchProfile: (
+    supabase: SupabaseClient<Database>,
+    userId: string
+  ) => void;
 }
 
 const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
+  profileMap: new Map<string, User>(),
   currentRoom: {
     channel_id: undefined,
     name: undefined,
@@ -286,6 +292,29 @@ const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
       currentRoom: { ...state.currentRoom, server_name: server?.servers.name },
     }));
   },
+
+  fetchProfile: async (supabase, userId) => {
+    const profile: User | undefined = useCurrentRoomStore.getState().profileMap.get(userId);
+
+    if (profile) {
+      return;
+    }
+
+    // Otherwise, fetch the profile from the server
+    const { data, error } = await getProfile(supabase, userId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    // Add the profile to the map
+    set((state) => ({
+      profileMap: new Map(state.profileMap.set(data.id, data)),
+    }));
+
+    return;
+  }
 }));
 
 export interface CurrentUserState {
@@ -496,6 +525,10 @@ export const useSetCurrentRoomServerId = () =>
   useCurrentRoomStore((state) => state.setCurrentRoomServerId);
 export const useSetRoomServerName = () =>
   useCurrentRoomStore((state) => state.setCurrentRoomServerName);
+export const useCurrentRoomProfilesMap = () =>
+  useCurrentRoomStore((state) => state.profileMap);
+export const useCurrentRoomFetchProfile = () =>
+  useCurrentRoomStore((state) => state.fetchProfile);
 export const useSetUserSettings = () =>
   useUserStore((state) => state.setCurrentSetting);
 export const useUserSettings = () =>

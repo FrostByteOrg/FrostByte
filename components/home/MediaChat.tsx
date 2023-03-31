@@ -26,6 +26,7 @@ import { TrackBundle } from '@livekit/components-core';
 import Modal from '@/components/home/Modal';
 import { useEffect, useRef, useState } from 'react';
 import LoadingIcon from '../icons/LoadingIcon';
+import { MediaPlaceholderTrack } from './MediaPlaceholderTrack';
 
 export default function MediaChat({ channel: visibleChannel }: { channel?: Channel }) {
   const channel = useChannel();
@@ -137,39 +138,7 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
                 if (track.publication === undefined) {
                   return (
                     <>
-                      {connectionState === ConnectionState.Connected &&
-                      <div key={track.participant.sid} className="p-2 h-fit">
-                        <div
-                          className={`bg-slate-600 rounded-md border-2 ${track.participant.isSpeaking ? 'border-green-600 rounded-md' : 'border-gray-800'}`}
-                        >
-                          <img
-                            src="https://www.eurovps.com/blog/wp-content/uploads/2012/10/placeholder-images.jpg"
-                            alt="placeholder"
-                            className="rounded-lg"
-                          />
-
-                        </div>
-
-                        <ParticipantName
-                          participant={track.participant}
-                          className="
-                            text-lg
-                            font-semibold
-                            mt-2
-                            py-1
-                            px-2
-                            rounded-md
-                            bg-slate-900
-                            text-center
-                            float-right
-                            relative
-                            bottom-7
-                            right-2
-                          "
-                        />
-
-
-                      </div>}
+                      {connectionState === ConnectionState.Connected && <MediaPlaceholderTrack participant={track.participant}/>}
                     </>
                   );
                 }
