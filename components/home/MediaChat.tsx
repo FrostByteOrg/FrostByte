@@ -134,7 +134,6 @@ export default function MediaChat({ channel: visibleChannel }: { channel?: Chann
               className={`grid p-5 overflow-y-auto h-screen items-center place-content-evenly justify-items-stretch ${mediaStyle.mediaGrid}`}
             >
               {tracks.map((track) => {
-                console.table(track);
                 if (!track.participant.isCameraEnabled) {
                   return (
                     <>
