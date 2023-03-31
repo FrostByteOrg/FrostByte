@@ -5,12 +5,13 @@ import { SideBarOptionProvider } from '@/context/SideBarOptionCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
 import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { useMediaQuery } from 'react-responsive';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { LiveKitRoom } from '@livekit/components-react';
 import { useTokenRef, useConnectionRef, useUserSettings, useSetConnectionState} from '@/lib/store';
 import { useSetChannel } from '@/lib/store';
 import { getChannelById } from '@/services/channels.service';
+import Modal from '@/components/home/Modal';
 
 export default function Home() {
   const user = useUser();
@@ -28,6 +29,9 @@ export default function Home() {
 
   const tryConnect = useConnectionRef();
   const setConnectionState = useSetConnectionState();
+  const [ livekitError, setLivekitError ] = useState<Error | null>(null);
+
+  const modalRef = useRef<HTMLDialogElement>(null);
 
   const checkMobile = useMediaQuery({ query: '(max-width: 940px)' });
   //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
@@ -80,6 +84,24 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Modal
+        modalRef={modalRef}
+        showModal={livekitError !== null}
+        title="Error"
+        buttons={
+          <button
+            className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 rounded-xl tracking-wide text-frost-100"
+            onClick={() => {
+              setLivekitError(null);
+              modalRef.current?.close();
+            }}
+          >
+            Close
+          </button>
+        }
+      >
+        <p>{livekitError?.message}</p>
+      </Modal>
       <SideBarOptionProvider>
         <LiveKitRoom
           video={false}
@@ -91,6 +113,7 @@ export default function Home() {
           onDisconnected={handleDisconnect}
           onError={(err) => {
             console.error(err);
+            setLivekitError(err);
             setConnectionState(false);
           }}
         >
