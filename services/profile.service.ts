@@ -26,15 +26,17 @@ export async function updateUserProfile(
   supabase: SupabaseClient<Database>,
   id: string,
   full_name: string,
-  avatar_url: string,
-  website: string,
+  avatar_url: string | null,
+  website: string | null,
+  password: string,
 ) {
   return await supabase
     .from('profiles')
     .update({
       full_name,
       avatar_url,
-      website
+      website,
+      password
     })
     .eq('id', id)
     .select('*')

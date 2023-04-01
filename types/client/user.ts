@@ -17,3 +17,21 @@ export const createUserSchema = object({
 });
 
 export type CreateUserInput = TypeOf<typeof createUserSchema>;
+
+export const updateUserSchema = object({
+  full_name: z.string({required_error: 'Full name is required'}),
+  website: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
+  password: string({
+    required_error: 'Password is required',
+  }).min(6, 'Password must be at least 6 characters'),
+  passwordConfirmation: z
+    .string()
+    .min(1, { message: 'Password confirmation is required' })
+    .optional(),
+}).refine((data) => data.password === data.passwordConfirmation, {
+  message: 'Passwords do not match',
+  path: ['passwordConfirmation'],
+});
+
+export type UpdateUserInput = TypeOf<typeof updateUserSchema>;

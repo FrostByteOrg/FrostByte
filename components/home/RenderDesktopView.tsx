@@ -28,6 +28,8 @@ import FloatingCallControl from './FloatingCallControl';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';
+import EditUserModal from './EditUserModal';
+import { Tooltip } from 'react-tooltip';
 
 export default function RenderDesktopView() {
   const supabase = useSupabaseClient();
@@ -41,6 +43,7 @@ export default function RenderDesktopView() {
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
   const [deafenRoom, setDeafenRoom] = useState(false);
   const [user, setUser] = useState<User>();
+  const [showEditUser, setShowEditUser] = useState(false);
 
   const userRef = useSetUser();
 
@@ -142,8 +145,13 @@ export default function RenderDesktopView() {
                 )}
               </TrackToggle>
             )}
-
-            <button className="w-7 h-7 hover:text-grey-400">
+            <EditUserModal 
+              showModal={showEditUser} 
+              setShowModal={setShowEditUser}
+              user={user!}/>
+            <button 
+              className="w-7 h-7 hover:text-grey-400"
+              onClick={() => {setShowEditUser(true);}}>
               <BsGear size={22} />
             </button>
           </div>
