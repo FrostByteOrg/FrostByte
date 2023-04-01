@@ -2,7 +2,7 @@ import { User } from '@/types/dbtypes';
 import { PresenceIndicator } from '../home/PresenceIndicator';
 import { DefaultUserIcon } from './DefaultUserIcon';
 
-export default function UserIcon({ user, className }: { user: User, className?: string }) {
+export default function UserIcon({ user, className, indicator }: { user: User, className?: string, indicator?: boolean }) {
 
   return (
     <div>
@@ -15,7 +15,9 @@ export default function UserIcon({ user, className }: { user: User, className?: 
           />
         ) : <DefaultUserIcon className={className} />
       }
-      <PresenceIndicator userId={user.id} />
+      {indicator === false ? (
+        <div className='hidden'/>
+      ) : <PresenceIndicator userId={user.id} />}
     </div>
   );
 }
