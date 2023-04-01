@@ -11,10 +11,10 @@ import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
-import { Channel, Server as ServerType} from '@/types/dbtypes';
+import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { ServerMemberStats } from './ServerMemberStats';
 import { OverflowMarquee } from './OverflowMarquee';
-import { useSetChannel, useCurrentRoomRef} from '@/lib/store';
+import { useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import { Tooltip } from 'react-tooltip';
 import ChannelName from './ChannelName';
@@ -30,7 +30,6 @@ export default function Server({
   isLast?: boolean;
   setExpanded: Dispatch<SetStateAction<number>>;
 }) {
-  const roomRef = useCurrentRoomRef();
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
   const [isSettingsHovered, setIsSettingsHovered] = useState(false);
@@ -52,7 +51,7 @@ export default function Server({
     setChannel(channel);
   }
 
-  function joinVideoChannel(e: SyntheticEvent, channel: Channel){
+  function joinVideoChannel(e: SyntheticEvent, channel: Channel) {
     e.stopPropagation();
     setChannel(channel);
   }
@@ -95,6 +94,7 @@ export default function Server({
                 if (channel.is_media) {
                   joinVideoChannel(e, channel);
                 }
+
                 else {
                   joinTextChannel(e, channel);
                 }
@@ -103,14 +103,14 @@ export default function Server({
             >
               <div className="w-auto">
                 {channel && channel.is_media ? (
-                  <div className='flex flex-col'>
-                    <div className='flex flex-row items-center'>
+                  <div className="flex flex-col">
+                    <div className="flex flex-row items-center">
                       <ChannelMediaIcon />
                       <ChannelName {...channel} />
                     </div>
                   </div>
                 ) : (
-                  <div className='flex flex-row items-center'>
+                  <div className="flex flex-row items-center">
                     <ChannelMessageIcon />
                     <ChannelName {...channel} />
                   </div>
@@ -145,5 +145,4 @@ export default function Server({
       </div>
     </div>
   );
-
 }

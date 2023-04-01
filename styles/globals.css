@@ -142,3 +142,7 @@ a {
   font-family: 'BaronNeue';
   src: url('../public/font/Baron/BaronNeue-Regular.otf') format('opentype');
 }
+
+body {
+  overflow: hidden;
+}

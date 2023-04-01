@@ -26,6 +26,44 @@
 /* hsl(194, 71%, 48%) */
 
 .mediaControls {
-  width: 33%;
-  min-width: 20rem;
+  width: 20rem;
+  max-width: 25rem;
+}
+
+@media (max-width: 940px) {
+  .mediaControls{
+    margin-bottom: 10px;
+    width: 15rem;
+    justify-content: space-evenly;
+  }
+}
+
+@media (max-width: 940px) {
+  .disappear{
+    display: none;
+  }
+}
+
+@media(min-width: 940px) {
+  .appear{
+    display: none;
+  }
+  }
+
+
+.gridContainer{
+  height: 80%;
+  padding: 20px;
+}
+
+.channelLoad {
+  width: 15%;
+}
+
+.mediaGrid {
+  grid-template-columns: repeat(auto-fill, minmax(min(23rem, 65%), 3fr));
+}
+
+.mediaError {
+  box-shadow: 2px 4px 10px 1px #010101;
 }

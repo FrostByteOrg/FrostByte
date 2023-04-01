@@ -14,16 +14,19 @@ import {
   getServerForUser,
   getServersForUser,
 } from '@/services/server.service';
-import {
-  getMessagesInChannelWithUser,
-} from '@/services/message.service';
+import { getMessagesInChannelWithUser } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
-import { getMessageWithServerProfile } from '@/services/profile.service';
-import { Participant, Room } from 'livekit-client';
-import { LocalUserChoices } from '@livekit/components-react';
-import { getRelationships, relationToDetailedRelation } from '@/services/friends.service';
+import { getMessageWithServerProfile, getProfile } from '@/services/profile.service';
+import {
+  getRelationships,
+  relationToDetailedRelation,
+} from '@/services/friends.service';
 import { DMChannelWithRecipient } from '@/types/dbtypes';
-import { getDMChannelFromServerId, getAllDMChannels } from '@/services/directmessage.service';
+import {
+  getDMChannelFromServerId,
+  getAllDMChannels,
+} from '@/services/directmessage.service';
+import { Room } from '@/types/client/room';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -228,31 +231,90 @@ const useChannelStore = create<ChannelState>()((set) => ({
 export interface TokenState {
   token: string | undefined;
   setToken: (token: string | undefined) => void;
-};
+}
 
 const useTokenStore = create<TokenState>()((set) => ({
   token: '',
-  setToken: (token) => set((state) => ({token: token})),
+  setToken: (token) => set((state) => ({ token: token })),
 }));
 
 export interface ConnectionState {
   connection: boolean | undefined;
   setConnection: (connection: boolean | undefined) => void;
-};
+}
 
 const useConnectionStore = create<ConnectionState>()((set) => ({
   connection: false,
-  setConnection: (connection) => set((state) => ({connection: connection})),
+  setConnection: (connection) => set((state) => ({ connection: connection })),
 }));
 
 export interface CurrentRoomState {
-  currentRoom: number | undefined;
-  setCurrentRoom: (currentRoom: number | undefined) => void;
+  currentRoom: Room;
+  profileMap: Map<string, User>;
+  setCurrentRoomId: (currentRoomId: number | undefined) => void;
+  setCurrentRoomName: (currentRoomName: string | undefined) => void;
+  setCurrentRoomServerId: (currentRoomServerId: number | undefined) => void;
+  setCurrentRoomServerName: (
+    currentRoomServerId: number | undefined,
+    servers: ServersForUser[]
+  ) => void;
+  fetchProfile: (
+    supabase: SupabaseClient<Database>,
+    userId: string
+  ) => void;
 }
 
 const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
-  currentRoom: 0,
-  setCurrentRoom: (currentRoom) => set((state) => ({currentRoom: currentRoom})),
+  profileMap: new Map<string, User>(),
+  currentRoom: {
+    channel_id: undefined,
+    name: undefined,
+    server_id: undefined,
+    server_name: undefined,
+  },
+  setCurrentRoomId: (currentRoomId) =>
+    set((state) => ({
+      currentRoom: { ...state.currentRoom, channel_id: currentRoomId },
+    })),
+  setCurrentRoomName: (currentRoomName) =>
+    set((state) => ({
+      currentRoom: { ...state.currentRoom, name: currentRoomName },
+    })),
+  setCurrentRoomServerId: (currentRoomServerId) =>
+    set((state) => ({
+      currentRoom: { ...state.currentRoom, server_id: currentRoomServerId },
+    })),
+  setCurrentRoomServerName: (currentRoomServerId, servers) => {
+    const server = servers.find(
+      (server) => server.server_id == currentRoomServerId
+    );
+    set((state) => ({
+      currentRoom: { ...state.currentRoom, server_name: server?.servers.name },
+    }));
+  },
+
+  fetchProfile: async (supabase, userId) => {
+    const profile: User | undefined = useCurrentRoomStore.getState().profileMap.get(userId);
+
+    if (profile) {
+      return;
+    }
+
+    // Otherwise, fetch the profile from the server
+    const { data, error } = await getProfile(supabase, userId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    // Add the profile to the map
+    set((state) => ({
+      profileMap: new Map(state.profileMap.set(data.id, data)),
+    }));
+
+    return;
+  }
 }));
 
 export interface CurrentUserState {
@@ -265,16 +327,23 @@ export interface CurrentUserState {
 const useUserStore = create<CurrentUserState>()((set) => ({
   currentSetting: false,
   currentUser: undefined,
-  setCurrentSetting: (currenSetting) => set((state) => ({currentSetting: currenSetting})),
-  setCurrentUser: (currentUser) => set((state) => ({currentUser: currentUser}))
+  setCurrentSetting: (currenSetting) =>
+    set((state) => ({ currentSetting: currenSetting })),
+  setCurrentUser: (currentUser) =>
+    set((state) => ({ currentUser: currentUser })),
 }));
-
 
 export interface RelationsState {
   relations: DetailedProfileRelation[];
   addRelation: (supabase: SupabaseClient<Database>, relationId: number) => void;
-  updateRelation: (supabase: SupabaseClient<Database>, relationId: number) => void;
-  removeRelation: (supabase: SupabaseClient<Database>, relationId: number) => void;
+  updateRelation: (
+    supabase: SupabaseClient<Database>,
+    relationId: number
+  ) => void;
+  removeRelation: (
+    supabase: SupabaseClient<Database>,
+    relationId: number
+  ) => void;
   getRelations: (supabase: SupabaseClient<Database>) => void;
 }
 
@@ -282,7 +351,10 @@ const useRelationsStore = create<RelationsState>()((set) => ({
   relations: [],
   addRelation: async (supabase, relationId) => {
     // Get the details of the new profile relation
-    const { data, error } = await relationToDetailedRelation(supabase, relationId);
+    const { data, error } = await relationToDetailedRelation(
+      supabase,
+      relationId
+    );
 
     if (error) {
       console.error(error);
@@ -296,7 +368,10 @@ const useRelationsStore = create<RelationsState>()((set) => ({
 
   updateRelation: async (supabase, relationId) => {
     // Get the details of the new profile relation
-    const { data, error } = await relationToDetailedRelation(supabase, relationId);
+    const { data, error } = await relationToDetailedRelation(
+      supabase,
+      relationId
+    );
 
     if (error) {
       console.error(error);
@@ -334,12 +409,12 @@ const useRelationsStore = create<RelationsState>()((set) => ({
     if (data) {
       set({ relations: data as DetailedProfileRelation[] });
     }
-  }
+  },
 }));
 
 type OnlineUser = {
   [key: string]: any;
-}
+};
 export interface OnlineState {
   onlineUsers: OnlineUser;
 
@@ -354,8 +429,8 @@ const useOnlineStore = create<OnlineState>()((set) => ({
     set((state) => ({
       onlineUsers: {
         ...state.onlineUsers,
-        [userId]: presenceInfo
-      }
+        [userId]: presenceInfo,
+      },
     }));
   },
 
@@ -363,7 +438,7 @@ const useOnlineStore = create<OnlineState>()((set) => ({
     set((state) => {
       const { [userId]: _, ...rest } = state.onlineUsers;
       return {
-        onlineUsers: rest
+        onlineUsers: rest,
       };
     });
   },
@@ -386,12 +461,7 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
     }
 
     set((state) => ({
-      dmChannels: new Map(
-        state.dmChannels.set(
-          data.recipient.id,
-          data
-        )
-      ),
+      dmChannels: new Map(state.dmChannels.set(data.recipient.id, data)),
     }));
   },
 
@@ -404,16 +474,17 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
     }
 
     set((state) => ({
-      dmChannels: new Map(data.map(
-        (channel) => [
+      dmChannels: new Map(
+        data.map((channel) => [
           channel.recipient.id,
           {
             ...channel,
             name: channel.recipient.username,
-          }
-        ]))
+          },
+        ])
+      ),
     }));
-  }
+  },
 }));
 
 export const useServers = () => useServerStore((state) => state.servers);
@@ -434,18 +505,34 @@ export const useUpdateMessage = () =>
   useMessagesStore((state) => state.updateMessage);
 export const useGetUserPerms = () =>
   useUserPermsStore((state) => state.getUserPerms);
-  
+
 export const useUserPerms = () => useUserPermsStore((state) => state.userPerms);
 export const useSetChannel = () => useChannelStore((state) => state.setChannel);
 export const useChannel = () => useChannelStore((state) => state.channel);
 export const useSetToken = () => useTokenStore((state) => state.setToken);
 export const useTokenRef = () => useTokenStore((state) => state.token);
-export const useSetConnectionState = () => useConnectionStore((state) => state.setConnection);
-export const useConnectionRef = () => useConnectionStore((state) => state.connection);
-export const useSetCurrentRoom = () => useCurrentRoomStore((state) => state.setCurrentRoom);
-export const useCurrentRoomRef = () => useCurrentRoomStore((state) => state.currentRoom);
-export const useSetUserSettings = () => useUserStore((state) => state.setCurrentSetting);
-export const useUserSettings = () => useUserStore((state) => state.currentSetting);
+export const useSetConnectionState = () =>
+  useConnectionStore((state) => state.setConnection);
+export const useConnectionRef = () =>
+  useConnectionStore((state) => state.connection);
+export const useSetCurrentRoomId = () =>
+  useCurrentRoomStore((state) => state.setCurrentRoomId);
+export const useCurrentRoomRef = () =>
+  useCurrentRoomStore((state) => state.currentRoom);
+export const useSetCurrentRoomName = () =>
+  useCurrentRoomStore((state) => state.setCurrentRoomName);
+export const useSetCurrentRoomServerId = () =>
+  useCurrentRoomStore((state) => state.setCurrentRoomServerId);
+export const useSetRoomServerName = () =>
+  useCurrentRoomStore((state) => state.setCurrentRoomServerName);
+export const useCurrentRoomProfilesMap = () =>
+  useCurrentRoomStore((state) => state.profileMap);
+export const useCurrentRoomFetchProfile = () =>
+  useCurrentRoomStore((state) => state.fetchProfile);
+export const useSetUserSettings = () =>
+  useUserStore((state) => state.setCurrentSetting);
+export const useUserSettings = () =>
+  useUserStore((state) => state.currentSetting);
 export const useSetUser = () => useUserStore((state) => state.setCurrentUser);
 export const useUserRef = () => useUserStore((state) => state.currentUser);
 
@@ -458,13 +545,19 @@ export const useRemoveRelation = () =>
   useRelationsStore((state) => state.removeRelation);
 export const useGetRelations = () =>
   useRelationsStore((state) => state.getRelations);
-export const useOnlineUsers = () => useOnlineStore((state) => state.onlineUsers);
-export const useFlagUserOnline = () => useOnlineStore((state) => state.flagUserOnline);
-export const useFlagUserOffline = () => useOnlineStore((state) => state.flagUserOffline);
+export const useOnlineUsers = () =>
+  useOnlineStore((state) => state.onlineUsers);
+export const useFlagUserOnline = () =>
+  useOnlineStore((state) => state.flagUserOnline);
+export const useFlagUserOffline = () =>
+  useOnlineStore((state) => state.flagUserOffline);
 export const useGetUserPermsForServer = () =>
   useUserPermsStore((state) => state.getUserPermsForServer);
 export const useUserServerPerms = () =>
   useUserPermsStore((state) => state.userServerPerms);
-export const useAddDMChannel = () => useDMChannelsStore((state) => state.addDMChannel);
-export const useDMChannels = () => useDMChannelsStore((state) => state.dmChannels);
-export const useGetDMChannels = () => useDMChannelsStore((state) => state.getDMChannels);
+export const useAddDMChannel = () =>
+  useDMChannelsStore((state) => state.addDMChannel);
+export const useDMChannels = () =>
+  useDMChannelsStore((state) => state.dmChannels);
+export const useGetDMChannels = () =>
+  useDMChannelsStore((state) => state.getDMChannels);

@@ -22,12 +22,14 @@ import {
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
 import UserIcon from '../icons/UserIcon';
-import { BsMic, BsMicMute, BsGear } from 'react-icons/bs';
-import { TbHeadphones, TbHeadphonesOff } from 'react-icons/tb';
-import FloatingCallControl from './FloatingCallControl';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';
+import GearIcon from '../icons/GearIcon';
+import MicrophoneIcon from '../icons/MicrophoneIcon';
+import MicrophoneOff from '../icons/MicroPhoneOff';
+import HeadPhonesIcon from '../icons/HeadPhonesIcon';
+import HeadPhonesOffIcon from '../icons/HeadPhonesOffIcon';
 import EditUserModal from './EditUserModal';
 import { Tooltip } from 'react-tooltip';
 
@@ -72,9 +74,6 @@ export default function RenderDesktopView() {
       </div>
       <div className="col-start-2 col-end-4 row-start-1 row-end-4  flex-col bg-grey-900 relative ">
         {sideBarView}
-        {connectionState === ConnectionState.Connected && (
-          <FloatingCallControl />
-        )}
       </div>
 
       <div className="col-start-4 col-end-13 row-start-1 row-end-4  flex flex-col h-screen">
@@ -103,14 +102,14 @@ export default function RenderDesktopView() {
                 className="w-7 h-7 hover:text-grey-400"
                 onClick={() => setDeafenRoom(false)}
               >
-                <TbHeadphonesOff size={22} />
+                <HeadPhonesOffIcon width={5} height={5} />
               </button>
             ) : (
               <button
                 className="w-7 h-7 hover:text-grey-400"
                 onClick={() => setDeafenRoom(true)}
               >
-                <TbHeadphones size={22} />
+                <HeadPhonesIcon width={5} height={5}/>
               </button>
             )}
             {connectionState !== ConnectionState.Connected ? (
@@ -121,14 +120,14 @@ export default function RenderDesktopView() {
                     className="w-7 h-7 hover:text-grey-400"
                     onClick={() => settingsRef(false)}
                   >
-                    <BsMic size={22} />
+                    <MicrophoneIcon width={5} height={5}/>
                   </button>
                 ) : (
                   <button
                     className="w-7 h-7 hover:text-grey-400"
                     onClick={() => settingsRef(true)}
                   >
-                    <BsMicMute size={22} />
+                    <MicrophoneOff width={5} height={5} />
                   </button>
                 )}
               </>
@@ -137,11 +136,12 @@ export default function RenderDesktopView() {
                 showIcon={false}
                 className={'w-7 h-7 hover:text-grey-400'}
                 source={Track.Source.Microphone}
+                onClick={() => settingsRef(false)} 
               >
                 {audioTrack.isMicrophoneEnabled ? (
-                  <BsMic size={22} onClick={() => settingsRef(false)} />
+                  <MicrophoneIcon width={5} height={5}/>
                 ) : (
-                  <BsMicMute size={22} onClick={() => settingsRef(true)} />
+                  <MicrophoneOff width={5} height={5} />
                 )}
               </TrackToggle>
             )}
@@ -172,12 +172,12 @@ export function renderContent(
     case 'servers':
       if (channel)
         if (channel.is_media)
-          return [<ServerList key={1} />, <MediaChat key={2} />];
+          return [
+            <ServerList key={1} />,
+            <MediaChat channel={channel} key={2} />,
+          ];
         else return [<ServerList key={1} />, <Chat key={2} />];
       return [<ServerList key={1} />, <DefaultTest key={2} />];
-    // case 'messages':
-    //   if (channel) return [<DMessageList key={1} />, <Chat key={2} />];
-    //   return [<DMessageList key={1} />, <DefaultTest key={2} />];
     default:
       return [<FriendsList key={1} />, <DefaultTest key={2} />];
   }

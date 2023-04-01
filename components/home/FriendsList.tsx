@@ -4,11 +4,16 @@ import { DetailedProfileRelation, ProfileRelationshipType } from '@/types/dbtype
 import { useEffect, useState } from 'react';
 import { FriendRequestItem } from './FriendRequestItem';
 import { FriendsListItem } from './FriendsListItem';
+import { ConnectionState } from 'livekit-client';
+import MobileCallControls from './mobile/MobileCallControls';
+import { useConnectionState } from '@livekit/components-react';
 
 export default function FriendsList() {
   const [ activeCategory, setActiveCategory ] = useState<ProfileRelationshipType>('friends');
   const relationships = useRelations();
   const [ dispRelations, setDispRelations ] = useState<DetailedProfileRelation[]>([]);
+  const connectionState = useConnectionState();
+
 
   useEffect(() => {
     console.log(activeCategory);
@@ -60,6 +65,8 @@ export default function FriendsList() {
         </div>
       </div>
       <div className="border-t-2 mx-5 border-grey-700 flex flex-col">
+        {connectionState === ConnectionState.Connected && <MobileCallControls />}
+
         {dispRelations.map((relation) => (
           relation.relationship === 'friends' ?
             <FriendsListItem key={relation.id} relation={relation} /> : <FriendRequestItem key={relation.id} relation={relation} />
