@@ -10,7 +10,7 @@ type ProfilesResponse = Awaited<ReturnType<typeof getProfiles>>;
 export type ProfilesResponseSuccess = ProfilesResponse['data'];
 export type ProfilesResponseError = ProfilesResponse['error'];
 
-export async function getProfile(supabase: SupabaseClient<Database>, id: string) {
+export async function getProfile(supabase: SupabaseClient<Database>, id: string | undefined) {
   return await supabase
     .from('profiles')
     .select()

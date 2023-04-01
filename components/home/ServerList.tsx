@@ -1,5 +1,6 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
+import mediaStyle from '@/styles/Components.module.css';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
@@ -7,6 +8,7 @@ import styles from '@/styles/Servers.module.css';
 import AddServerModal from '@/components/home/modals/AddServerModal';
 import AddChannelModal from '@/components/home/modals/AddChannelModal';
 import {
+  useConnectionRef,
   useGetServers,
   useGetUserPermsForServer,
   useServers,
@@ -19,6 +21,10 @@ import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 import ServerSettingsModal from './modals/ServerSettingsModal';
 import { ServersForUser } from '@/types/dbtypes';
 
+import SidebarCallControl from '@/components/home/SidebarCallControl';
+import { ConnectionState } from 'livekit-client';
+import { useConnectionState } from '@livekit/components-react';
+import MobileCallControls from './mobile/MobileCallControls';
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
@@ -34,10 +40,14 @@ export default function ServerList() {
   const supabase = useSupabaseClient();
 
   const servers = useServers();
+  const [filteredServers, setFilteredServers] = useState(servers);
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
   const userServerPerms = useUserServerPerms();
+  const isInVoice = useConnectionRef();
+
+  const connectionState = useConnectionState();
 
   useEffect(() => {
     if (getServers) {
@@ -94,17 +104,31 @@ export default function ServerList() {
           </Tooltip>
         </div>
       </div>
+      {connectionState === ConnectionState.Connected && <MobileCallControls />}
+
       <div className="pt-4 pb-4">
         <input
           type="text"
           className={`${SearchBar()}`}
           placeholder="Search"
-        ></input>
+          onKeyUp={(e) => {
+            const value = (e.target as HTMLInputElement).value;
+
+            // Filter servers
+            const filteredServers = servers.filter((server) => {
+              return server.servers.name
+                .toLowerCase()
+                .includes(value.toLowerCase());
+            });
+
+            setFilteredServers(filteredServers);
+          }}
+        />
       </div>
 
-      <div className="overflow-y-auto ">
-        {servers &&
-          servers
+      <div className="flex-grow overflow-y-auto ">
+        {filteredServers &&
+          filteredServers
             .sort(function (a, b) {
               var textA = a.servers.name.toUpperCase();
               var textB = b.servers.name.toUpperCase();
@@ -133,6 +157,11 @@ export default function ServerList() {
               }
             })}
       </div>
+      {isInVoice && (
+        <div className={`w-full self-end mb-7 ${mediaStyle.disappear}`}>
+          <SidebarCallControl />
+        </div>
+      )}
       {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
       userServerPerms & ServerPermissions.OWNER ||
       userServerPerms &

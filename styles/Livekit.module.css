@@ -1,0 +1,69 @@
+.modal {
+  max-width: 50ch;
+  border: 0;
+  padding: 0;
+  box-shadow: 0 0 1.5em rgb(0 0 0 / 0.3);
+}
+
+.modal::backdrop {
+  background: linear-gradient(
+    45deg,
+    rgba(18, 91, 122, 0.5),
+    rgba(33, 167, 214, 0.2)
+  );
+  opacity: 0.4;
+}
+
+/* .input {
+  box-shadow: inset 0 5px 2px hsla(0, 0%, 0%, 0.1),
+    1px 5px 3px hsla(0, 1%, 65%, 0.18), inset 0 4px 1px hsla(0, 0%, 0%, 0.1),
+    inset -4px 0 4px hsla(0, 0%, 0%, 0.1);
+} */
+/* .description {
+  text-shadow: 2px 2px 1px hsl(194, 81%, 22%);
+} */
+
+/* hsl(194, 71%, 48%) */
+
+.mediaControls {
+  width: 20rem;
+  max-width: 25rem;
+}
+
+@media (max-width: 940px) {
+  .mediaControls{
+    margin-bottom: 10px;
+    width: 15rem;
+    justify-content: space-evenly;
+  }
+}
+
+@media (max-width: 940px) {
+  .disappear{
+    display: none;
+  }
+}
+
+@media(min-width: 940px) {
+  .appear{
+    display: none;
+  }
+  }
+
+
+.gridContainer{
+  height: 80%;
+  padding: 20px;
+}
+
+.channelLoad {
+  width: 15%;
+}
+
+.mediaGrid {
+  grid-template-columns: repeat(auto-fill, minmax(min(23rem, 65%), 3fr));
+}
+
+.mediaError {
+  box-shadow: 2px 4px 10px 1px #010101;
+}
