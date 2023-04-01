@@ -167,6 +167,8 @@ const useMessagesStore = create<MessagesState>()((set) => ({
   },
 }));
 
+// TODO: Expand this to include more than just the current server
+// As we can edit a server's permissions even if we're not focused on it
 export interface UserPermsState {
   userPerms: any;
   userServerPerms: any;
