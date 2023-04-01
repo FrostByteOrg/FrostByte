@@ -44,12 +44,12 @@ export default function ServerList() {
       if (user) {
         getUserServerPerms(supabase, expanded, user.id);
         getServers(supabase, user.id);
-        console.log(userServerPerms);
       }
     }
   }, [getServers, supabase, user, getUserServerPerms, expanded]);
 
   //TODO: add isServer check
+  console.log(userServerPerms);
 
   return (
     <div className=" p-4 flex-col flex h-screen">
@@ -162,23 +162,19 @@ export default function ServerList() {
                 <PlusIcon width={5} height={5} />
                 <span className="ml-1">New channel</span>
               </div>
-              {userServerPerms & ServerPermissions.OWNER ||
-            userServerPerms &
-              ServerPermissions.ADMINISTRATOR &
-              userServerPerms &
-              ServerPermissions.MANAGE_SERVER ? (
-                  <div
-                    className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-                    onClick={() => {
-                      setShowServerSettingsModal(true);
-                    }}
-                  >
-                    <GearIcon width={5} height={5} />
-                    <span className="ml-1">Server Settings</span>
-                  </div>
-                ) : (
-                  ''
-                )}
+              {userServerPerms & ServerPermissions.MANAGE_SERVER ? (
+                <div
+                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                  onClick={() => {
+                    setShowServerSettingsModal(true);
+                  }}
+                >
+                  <GearIcon width={5} height={5} />
+                  <span className="ml-1">Server Settings</span>
+                </div>
+              ) : (
+                ''
+              )}
             </div>
           </Tooltip>
         ) : (
