@@ -90,30 +90,30 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
         </TrackToggle>
       )}
       {connectionState !== ConnectionState.Connected ? (
-        <div className={`${mediaStyle.appear}`}>
+        <>
           {' '}
           {userSettings ? (
             <button
               onClick={() => settingsRef(false)}
-              className={`w-7 h-7 rounded-lg p-1  bg-grey-900 flex items-center justify-center ${mediaStyle.appear}`}
+              className={'w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center'}
             >
               <MicrophoneIcon width={6} height={6}/>
             </button>
           ) : (
             <button
               onClick={() => settingsRef(true)}
-              className={`w-7 h-7 rounded-lg p-1  bg-grey-900 flex items-center justify-center ${mediaStyle.appear}`}
+              className={'w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center'}
             >
               <MicrophoneOff width={6} height={6} />
             </button>
           )}
-        </div>
+        </>
       ) : (
         <TrackToggle
           showIcon={false}
           source={Track.Source.Microphone}
           onClick={() => settingsRef(false)} 
-          className={`w-7 h-7 rounded-lg p-1  bg-grey-900 flex items-center justify-center ${mediaStyle.appear}`}
+          className='w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center'
         >
           {currentParticipant.isMicrophoneEnabled ? (
             <MicrophoneIcon width={6} height={6}/>
