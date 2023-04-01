@@ -3,12 +3,14 @@ import ScreenShareOff from '../icons/ScreenShareOff';
 import ScreenShareIcon from '../icons/ScreenShareIcon';
 import mediaStyle from '@/styles/Components.module.css';
 import { ConnectionState, Track } from 'livekit-client';
-import { useSetConnectionState, useSetCurrentRoomId, useSetCurrentRoomName, useSetCurrentRoomServerId, useSetToken, useConnectionRef } from '@/lib/store';
+import { useSetConnectionState, useSetCurrentRoomId, useSetCurrentRoomName, useSetCurrentRoomServerId, useSetToken, useConnectionRef, useSetUserSettings, useUserSettings } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import CameraOffIcon from '../icons/CameraOffIcon';
 import CameraIcon from '../icons/CameraIcon';
 import JoinCallIcon from '../icons/JoinCallIcon';
 import HangUpIcon from '../icons/HangUpIcon';
+import MicrophoneIcon from '../icons/MicrophoneIcon';
+import MicrophoneOff from '../icons/MicroPhoneOff';
 
 export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?: Channel, token?: string }) {
   const connectionState = useConnectionState();
@@ -18,6 +20,8 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
   const setRoomServerId = useSetCurrentRoomServerId();
   const setRoomIdRef = useSetCurrentRoomId();
   const setRoomName = useSetCurrentRoomName();
+  const settingsRef = useSetUserSettings();
+  const userSettings = useUserSettings();
 
   const handleConnect = () => {
     setConnectionState(true),
@@ -86,6 +90,39 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
         </TrackToggle>
       )}
       {connectionState !== ConnectionState.Connected ? (
+        <div className={`${mediaStyle.appear}`}>
+          {' '}
+          {userSettings ? (
+            <button
+              onClick={() => settingsRef(false)}
+              className={`w-7 h-7 rounded-lg p-1 bg-frost-600 flex items-center justify-center ${mediaStyle.appear}`}
+            >
+              <MicrophoneIcon width={5} height={5}/>
+            </button>
+          ) : (
+            <button
+              onClick={() => settingsRef(true)}
+              className={`w-7 h-7 rounded-lg p-1 bg-frost-600 flex items-center justify-center ${mediaStyle.appear}`}
+            >
+              <MicrophoneOff width={5} height={5} />
+            </button>
+          )}
+        </div>
+      ) : (
+        <TrackToggle
+          showIcon={false}
+          source={Track.Source.Microphone}
+          onClick={() => settingsRef(false)} 
+          className={`w-7 h-7 rounded-lg p-1 bg-frost-600 flex items-center justify-center ${mediaStyle.appear}`}
+        >
+          {currentParticipant.isMicrophoneEnabled ? (
+            <MicrophoneIcon width={6} height={6}/>
+          ) : (
+            <MicrophoneOff width={6} height={6} />
+          )}
+        </TrackToggle>
+      )}
+      {connectionState !== ConnectionState.Connected ? (
         <button
           className="w-7 h-7 bg-green-500 hover:bg-green-700 rounded-lg font-bold text-md flex items-center justify-center"
           onClick={() => {
@@ -97,7 +134,7 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
       ) : (
         <DisconnectButton
           className={
-            'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg font-bold text-xl flex items-center justify-center'
+            'w-7 h-7 bg-red-500 hover:bg-red-700 rounded-lg flex items-center justify-center'
           }
           onClick={() => {
             setConnectionState(false);
