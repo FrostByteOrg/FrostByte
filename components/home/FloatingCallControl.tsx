@@ -95,16 +95,16 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
           {userSettings ? (
             <button
               onClick={() => settingsRef(false)}
-              className={`w-7 h-7 rounded-lg p-1 bg-frost-600 flex items-center justify-center ${mediaStyle.appear}`}
+              className={`w-7 h-7 rounded-lg p-1  bg-grey-900 flex items-center justify-center ${mediaStyle.appear}`}
             >
-              <MicrophoneIcon width={5} height={5}/>
+              <MicrophoneIcon width={6} height={6}/>
             </button>
           ) : (
             <button
               onClick={() => settingsRef(true)}
-              className={`w-7 h-7 rounded-lg p-1 bg-frost-600 flex items-center justify-center ${mediaStyle.appear}`}
+              className={`w-7 h-7 rounded-lg p-1  bg-grey-900 flex items-center justify-center ${mediaStyle.appear}`}
             >
-              <MicrophoneOff width={5} height={5} />
+              <MicrophoneOff width={6} height={6} />
             </button>
           )}
         </div>
@@ -113,7 +113,7 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
           showIcon={false}
           source={Track.Source.Microphone}
           onClick={() => settingsRef(false)} 
-          className={`w-7 h-7 rounded-lg p-1 bg-frost-600 flex items-center justify-center ${mediaStyle.appear}`}
+          className={`w-7 h-7 rounded-lg p-1  bg-grey-900 flex items-center justify-center ${mediaStyle.appear}`}
         >
           {currentParticipant.isMicrophoneEnabled ? (
             <MicrophoneIcon width={6} height={6}/>
