@@ -66,7 +66,7 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
         </TrackToggle>
       )}
       {connectionState !== ConnectionState.Connected ? (
-        <button disabled 
+        <button disabled
           className={`w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center ${mediaStyle.disappear}`}>
           <ScreenShareIcon className='text-grey-600'/>
         </button>) : (

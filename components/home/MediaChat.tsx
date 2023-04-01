@@ -27,7 +27,7 @@ import { useEffect, useRef, useState } from 'react';
 import LoadingIcon from '../icons/LoadingIcon';
 import { MediaPlaceholderTrack } from './MediaPlaceholderTrack';
 
-export default function MediaChat({ channel: visibleChannel }: { channel?: Channel }) {
+export default function MediaChat({ channel: visibleChannel }: { channel: Channel }) {
   const channel = useChannel();
   const userID: User | any = useUser();
   const user = useUserRef();

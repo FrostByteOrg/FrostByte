@@ -18,7 +18,7 @@ export default function RenderMobileView() {
       return (
         <div className=" flex flex-col h-screen">
           <div className=" grow overflow-y-clip flex flex-col h-full ">
-            <MediaChat />
+            <MediaChat channel={channel}/>
           </div>
           <div className={`${styles.bottomNav} bg-grey-950 shrink-0`}>
             <NavBar type="bottom" />

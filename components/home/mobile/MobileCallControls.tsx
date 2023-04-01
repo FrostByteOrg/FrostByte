@@ -95,7 +95,6 @@ export default function MobileCallControls() {
             <HangUpIcon width={5} height={5} className=''/>
           </DisconnectButton>
         </div>
-
       </div>
     </div>
   );
