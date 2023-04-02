@@ -48,11 +48,11 @@ export enum ServerPermissions {
   CREATE_INVITES = 1 << 8,
 
   /**
-   * 508
+   * 510
    * Server administrator. Effectively contains all permissions aside from destructive operations such as delete server
    */
-  ADMINISTRATOR =
-    ServerPermissions.MANAGE_SERVER
+  ADMINISTRATOR = 2
+    | ServerPermissions.MANAGE_SERVER
     | ServerPermissions.MANAGE_CHANNELS
     | ServerPermissions.MANAGE_USERS
     | ServerPermissions.MANAGE_ROLES
@@ -61,7 +61,7 @@ export enum ServerPermissions {
     | ServerPermissions.CREATE_INVITES,
 
   /**
-   * 509
+   * 511
    * The user is the owner of the server.
    */
   OWNER = 1 | ServerPermissions.ADMINISTRATOR,

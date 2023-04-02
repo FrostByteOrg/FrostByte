@@ -132,25 +132,6 @@ type IsUserInServerResponse = Awaited<ReturnType<typeof isUserInServer>>;
 export type IsUserInServerResponseSuccess = IsUserInServerResponse['data'];
 export type IsUserInServerResponseError = IsUserInServerResponse['error'];
 
-export async function createRole(
-  supabase: SupabaseClient<Database>,
-  server_id: number,
-  name: string,
-  position: number,
-  permissions: ServerPermissions,
-  color: string
-) {
-  return await supabase
-    .from('roles')
-    .insert({ name, color, server_id, position, permissions })
-    .select()
-    .single();
-}
-
-type CreateRoleResponse = Awaited<ReturnType<typeof createRole>>;
-export type CreateRoleResponseSuccess = CreateRoleResponse['data'];
-export type CreateRoleResponseError = CreateRoleResponse['error'];
-
 export async function getServerRoles(
   supabase: SupabaseClient<Database>,
   server_id: number

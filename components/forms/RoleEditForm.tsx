@@ -1,6 +1,9 @@
 import { useUserServerPerms } from '@/lib/store';
-import { Role } from '@/types/dbtypes';
+import { createRole, updateRole } from '@/services/roles.service';
+import { Role, Server } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { HexColorPicker } from 'react-colorful';
 import { useForm } from 'react-hook-form';
 
 const permissionEnumToNameMap = new Map([
@@ -20,27 +23,61 @@ const permissionEnumToNameMap = new Map([
 type RoleEditFormResult = {
   name: string;
   permissions: string | string[];
+  color: string;
 }
 
-export function RoleEditForm({role}: {role?: Role}) {
+export function RoleEditForm({role, server }: {role?: Role, server: Server }) {
   const { register, handleSubmit, formState: { errors } } = useForm<RoleEditFormResult>();
 
+  const supabase = useSupabaseClient();
   const isFormDisabled = (role && role.is_system) || false;
   const serverPermissions = Object.entries(ServerPermissions).filter(
     ([key, value]) => typeof value === 'number' && key !== 'NONE'
   );
 
-  const onSubmit = (data: RoleEditFormResult) => {
-    if (typeof data.permissions === 'string') {
-      data.permissions = [data.permissions];
+  const onSubmit = async (formData: RoleEditFormResult) => {
+    if (typeof formData.permissions === 'string') {
+      formData.permissions = [formData.permissions];
     }
 
-    const perms = data.permissions.reduce((acc, cur) => acc | parseInt(cur), 0);
+    const perms = formData.permissions.reduce((acc, cur) => acc | parseInt(cur), 0);
 
     console.log({
-      name: data.name,
+      ...formData,
+      name: formData.name,
       permissions: perms
     });
+
+    // If a role is being edited, update it
+    // if (!role) {
+    //   const { data, error } = await createRole(
+    //     supabase,
+    //     server.id,
+    //     formData.name,
+    //     1,
+    //     perms,
+    //     formData.color.replace('#', '')
+    //   );
+
+    //   if (error) {
+    //     console.error(error);
+    //   }
+    // }
+
+    // else {
+    //   const { data, error } = await updateRole(
+    //     supabase,
+    //     role.id,
+    //     formData.name,
+    //     1,
+    //     perms,
+    //     formData.color.replace('#', '')
+    //   );
+
+    //   if (error) {
+    //     console.error(error);
+    //   }
+    // }
   };
 
   const userPerms = useUserServerPerms();
@@ -48,36 +85,61 @@ export function RoleEditForm({role}: {role?: Role}) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <input
-        type="text"
-        className="text-xl p-2 rounded-md mb-2"
-        disabled={isFormDisabled}
-        defaultValue={role?.name}
-        placeholder='Role Name'
-        {...register('name', { required: true })}
-      />
+      <div className="w-full space-x-2 mb-2">
+        <input
+          type="text"
+          className="text-xl rounded-md h-7 p-2"
+          disabled={isFormDisabled}
+          defaultValue={role?.name}
+          placeholder='Role Name'
+          {...register('name', { required: true })}
+        />
+
+        <input
+          type="color"
+          className="rounded-md h-7"
+          disabled={isFormDisabled}
+          defaultValue={(role && role?.color || 'a9aaab')}
+          {...register('color', { required: true })}
+        />
+      </div>
+
+      <p className="text-base text-gray-400 text-left w-full">Permissions</p>
       {serverPermissions.map(([permission, value]) => (
         <div key={permission}>
           <input
             type="checkbox"
+            className="w-5 h-5"
             value={value}
-            defaultChecked={(!role || (role && (role.permissions & value as number)) > 0)}
+            defaultChecked={(
+              !role
+              || (role && (role.permissions & value as number)) === ServerPermissions[permission]
+            )}
             disabled={
               isFormDisabled
-              || (
-                (userPerms & ServerPermissions.OWNER) === 0
-                && ((userPerms & value as number) === 0)
-              )
+              || ((userPerms & value as number) === 0)
+              || (permission === 'OWNER')
+              || (permission === 'ADMINISTRATOR' && (userPerms & 2) !== 2)
             }
             {...register('permissions')}
-
           />
           <label> {permissionEnumToNameMap.get(ServerPermissions[permission])}</label>
         </div>
       ))}
       <div className="flex flex-row space-x-2">
-        <button className="bg-red-600 disabled:bg-red-900 rounded-md h-6 w-8 mt-2" disabled={isFormDisabled}>Delete</button>
-        <button className="bg-green-600 disabled:bg-green-900 rounded-md h-6 w-8 mt-2" disabled={isFormDisabled} type="submit">Save</button>
+        <button
+          className="bg-red-600 disabled:bg-red-900 rounded-md h-6 w-8 mt-2"
+          disabled={isFormDisabled}
+        >
+          Delete
+        </button>
+        <button
+          className="bg-green-600 disabled:bg-green-900 rounded-md h-6 w-8 mt-2"
+          disabled={isFormDisabled}
+          type="submit"
+        >
+          Save
+        </button>
       </div>
     </form>
   );
