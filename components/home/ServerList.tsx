@@ -65,7 +65,6 @@ export default function ServerList() {
   }, [servers]);
 
   //TODO: add isServer check
-  console.log(userServerPerms);
 
   return (
     <div className=" p-4 flex-col flex h-screen">
