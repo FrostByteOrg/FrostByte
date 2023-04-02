@@ -49,6 +49,13 @@ export default function ServerList() {
     }
   }, [getServers, supabase, user, getUserServerPerms, expanded]);
 
+  // HACK: At the time of component render, the servers are not yet loaded into the store.
+  useEffect(() => {
+    if (servers) {
+      setFilteredServers(servers);
+    }
+  }, [servers]);
+
   //TODO: add isServer check
 
   return (
