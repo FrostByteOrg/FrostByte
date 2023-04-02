@@ -18,7 +18,9 @@ export default function Modal({
   onKeyDown?: KeyboardEventHandler<HTMLDialogElement> | undefined;
 }) {
   useEffect(() => {
-    if (showModal) modalRef.current?.showModal();
+    if (showModal && !modalRef.current?.open) {
+      modalRef.current?.showModal();
+    }
   }, [showModal, modalRef]);
 
   return (

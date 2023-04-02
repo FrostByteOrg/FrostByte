@@ -17,6 +17,7 @@ import { OverflowMarquee } from './OverflowMarquee';
 import { useChannel, useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import { Tooltip } from 'react-tooltip';
+import ChannelName from './ChannelName';
 
 export default function Server({
   server,
@@ -47,6 +48,11 @@ export default function Server({
   }, [server, supabase]);
 
   function joinTextChannel(e: SyntheticEvent, channel: Channel) {
+    e.stopPropagation();
+    setChannel(channel);
+  }
+
+  function joinVideoChannel(e: SyntheticEvent, channel: Channel) {
     e.stopPropagation();
     setChannel(channel);
   }
@@ -91,24 +97,29 @@ export default function Server({
               }`}
               onClick={(e) => {
                 if (channel.is_media) {
-                  // Entrypoint for media channel
-                  return;
-                } else {
+                  joinVideoChannel(e, channel);
+                }
+
+                else {
                   joinTextChannel(e, channel);
                 }
               }}
               key={channel.channel_id}
             >
-              <div className="w-4">
-                {channel.is_media ? (
-                  <ChannelMediaIcon />
+              <div className="w-auto">
+                {channel && channel.is_media ? (
+                  <div className="flex flex-col">
+                    <div className="flex flex-row items-center">
+                      <ChannelMediaIcon />
+                      <ChannelName {...channel} />
+                    </div>
+                  </div>
                 ) : (
-                  <ChannelMessageIcon />
+                  <div className="flex flex-row items-center">
+                    <ChannelMessageIcon />
+                    <ChannelName {...channel} />
+                  </div>
                 )}
-              </div>
-
-              <div className="ml-2 text-sm font-semibold tracking-wide text-grey-200 max-w-[10ch] overflow-hidden hover:overflow-visible">
-                <OverflowMarquee content={channel.name} maxLength={8} />
               </div>
             </div>
           ))}

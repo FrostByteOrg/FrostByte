@@ -29,6 +29,8 @@ export async function getChannelsInServer(
     .returns<Channel>();
 }
 
+
+
 type ChannelsInServerResponse = Awaited<ReturnType<typeof getChannelsInServer>>;
 export type ChannelsInServerResponseSuccess = ChannelsInServerResponse['data'];
 export type ChannelsInServerResponseError = ChannelsInServerResponse['error'];
