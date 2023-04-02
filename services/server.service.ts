@@ -205,7 +205,7 @@ export async function getCurrentUserServerPermissions(
   return await supabase.rpc('get_permission_flags_for_server_user', {
     s_id: server_id,
     p_id: userId ? userId : (await supabase.auth.getUser()).data.user?.id!,
-  });
+  }).single();
 }
 
 type GetCurrentUserServerPermissionsResponse = Awaited<

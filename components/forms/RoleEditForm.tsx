@@ -113,6 +113,7 @@ export function RoleEditForm({role, server }: {role: Role, server: Server }) {
             value={value}
             defaultChecked={(
               !role
+              // @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown
               || (role.permissions & value as number) === ServerPermissions[permission]
             )}
             disabled={
@@ -123,6 +124,7 @@ export function RoleEditForm({role, server }: {role: Role, server: Server }) {
             }
             {...register('permissions')}
           />
+          {/* @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown */}
           <label> {permissionEnumToNameMap.get(ServerPermissions[permission])}</label>
         </div>
       ))}

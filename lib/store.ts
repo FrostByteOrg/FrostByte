@@ -29,6 +29,7 @@ import {
 } from '@/services/directmessage.service';
 import { Room } from '@/types/client/room';
 import { getRolesFromAllServersUserIsIn, getServerRoles } from '@/services/roles.service';
+import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -178,8 +179,8 @@ const useMessagesStore = create<MessagesState>()((set) => ({
 // TODO: Expand this to include more than just the current server
 // As we can edit a server's permissions even if we're not focused on it
 export interface UserPermsState {
-  userPerms: any;
-  userServerPerms: any;
+  userPerms: ChannelPermissions;
+  userServerPerms: ServerPermissions;
   getUserPerms: (supabase: SupabaseClient<Database>, channelId: number) => void;
   getUserPermsForServer: (
     supabase: SupabaseClient<Database>,
@@ -189,8 +190,8 @@ export interface UserPermsState {
 }
 
 const useUserPermsStore = create<UserPermsState>()((set) => ({
-  userPerms: [],
-  userServerPerms: [],
+  userPerms: 0,
+  userServerPerms: 0,
   getUserPerms: async (supabase, channelId) => {
     const { data, error } = await getCurrentUserChannelPermissions(
       supabase,

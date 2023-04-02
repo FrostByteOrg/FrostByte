@@ -26,10 +26,6 @@ const tabListClass = 'flex flex-col flex-shrink border-r border-gray-600';
 const tabTriggerClass = 'px-3 py-2 focus:border-r focus:border-r-white focus:z-10 focus:outline-none focus-visible:ring text-left focus:bg-gray-500';
 const tabContentClass = 'flex flex-col';
 
-interface EnumIterator<T> {
-  [key: string]: T
-}
-
 export default function ServerSettingsModal({
   showModal,
   setShowModal,
@@ -72,6 +68,7 @@ export default function ServerSettingsModal({
           <Tabs.Trigger
             value='Roles'
             className={tabTriggerClass}
+            disabled={(userServerPerms & ServerPermissions.MANAGE_ROLES) === 0}
           >
             Roles
           </Tabs.Trigger>

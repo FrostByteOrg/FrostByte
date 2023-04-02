@@ -117,7 +117,7 @@ export async function getCurrentUserChannelPermissions(
 ) {
   return await supabase.rpc('get_channel_permission_flags', {
     c_id: channelId,
-  });
+  }).single();
 }
 
 type CurrentUserChannelPermissionsResponse = Awaited<
