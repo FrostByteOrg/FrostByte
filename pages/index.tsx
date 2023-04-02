@@ -11,7 +11,7 @@ import { LiveKitRoom } from '@livekit/components-react';
 import { useTokenRef, useConnectionRef, useUserSettings, useSetConnectionState} from '@/lib/store';
 import { useSetChannel } from '@/lib/store';
 import { getChannelById } from '@/services/channels.service';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 
 export default function Home() {
   const user = useUser();
