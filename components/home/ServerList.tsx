@@ -1,6 +1,6 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
-import mediaStyle from '@/styles/Components.module.css';
+import mediaStyle from '@/styles/Livekit.module.css';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
@@ -31,7 +31,7 @@ export default function ServerList() {
   const supabase = useSupabaseClient();
 
   const servers = useServers();
-  const [ filteredServers, setFilteredServers ] = useState(servers);
+  const [filteredServers, setFilteredServers] = useState(servers);
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
@@ -102,7 +102,9 @@ export default function ServerList() {
 
             // Filter servers
             const filteredServers = servers.filter((server) => {
-              return server.servers.name.toLowerCase().includes(value.toLowerCase());
+              return server.servers.name
+                .toLowerCase()
+                .includes(value.toLowerCase());
             });
 
             setFilteredServers(filteredServers);
@@ -140,8 +142,8 @@ export default function ServerList() {
               }
             })}
       </div>
-      { isInVoice && (
-        <div className={`w-full self-end mb-7 ${mediaStyle.disappear}` }>
+      {isInVoice && (
+        <div className={`w-full self-end mb-7 ${mediaStyle.disappear}`}>
           <SidebarCallControl />
         </div>
       )}
