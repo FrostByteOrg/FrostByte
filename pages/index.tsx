@@ -8,10 +8,15 @@ import { useMediaQuery } from 'react-responsive';
 import { useEffect, useRef, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 import { LiveKitRoom } from '@livekit/components-react';
-import { useTokenRef, useConnectionRef, useUserSettings, useSetConnectionState} from '@/lib/store';
+import {
+  useTokenRef,
+  useConnectionRef,
+  useUserSettings,
+  useSetConnectionState,
+} from '@/lib/store';
 import { useSetChannel } from '@/lib/store';
 import { getChannelById } from '@/services/channels.service';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 
 export default function Home() {
   const user = useUser();
@@ -29,7 +34,7 @@ export default function Home() {
 
   const tryConnect = useConnectionRef();
   const setConnectionState = useSetConnectionState();
-  const [ livekitError, setLivekitError ] = useState<Error | null>(null);
+  const [livekitError, setLivekitError] = useState<Error | null>(null);
 
   const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -65,7 +70,10 @@ export default function Home() {
         return;
       }
 
-      const { data: _channel } = await getChannelById(supabase, channel_id_as_number);
+      const { data: _channel } = await getChannelById(
+        supabase,
+        channel_id_as_number
+      );
 
       if (_channel) {
         setChannel(_channel);
@@ -73,7 +81,6 @@ export default function Home() {
     }
 
     handleAsync();
-
   }, [channel_id, setChannel, supabase]);
 
   return (
@@ -138,7 +145,7 @@ export default function Home() {
           ) : (
             <div>
               <div className={'bg-grey-800 '}>
-                <RenderDesktopView/>
+                <RenderDesktopView />
                 <div>
                   {!user ? (
                     ''

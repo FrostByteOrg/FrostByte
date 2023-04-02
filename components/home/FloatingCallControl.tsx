@@ -1,9 +1,23 @@
-import { DisconnectButton, TrackToggle, useConnectionState, useLocalParticipant } from '@livekit/components-react';
+import {
+  DisconnectButton,
+  TrackToggle,
+  useConnectionState,
+  useLocalParticipant,
+} from '@livekit/components-react';
 import ScreenShareOff from '../icons/ScreenShareOff';
 import ScreenShareIcon from '../icons/ScreenShareIcon';
-import mediaStyle from '@/styles/Components.module.css';
+import mediaStyle from '@/styles/Livekit.module.css';
 import { ConnectionState, Track } from 'livekit-client';
-import { useSetConnectionState, useSetCurrentRoomId, useSetCurrentRoomName, useSetCurrentRoomServerId, useSetToken, useConnectionRef, useSetUserSettings, useUserSettings } from '@/lib/store';
+import {
+  useSetConnectionState,
+  useSetCurrentRoomId,
+  useSetCurrentRoomName,
+  useSetCurrentRoomServerId,
+  useSetToken,
+  useConnectionRef,
+  useSetUserSettings,
+  useUserSettings,
+} from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import CameraOffIcon from '../icons/CameraOffIcon';
 import CameraIcon from '../icons/CameraIcon';
@@ -12,7 +26,13 @@ import HangUpIcon from '../icons/HangUpIcon';
 import MicrophoneIcon from '../icons/MicrophoneIcon';
 import MicrophoneOff from '../icons/MicroPhoneOff';
 
-export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?: Channel, token?: string }) {
+export function FloatingCallControl({
+  visibleChannel,
+  token,
+}: {
+  visibleChannel?: Channel;
+  token?: string;
+}) {
   const connectionState = useConnectionState();
   const currentParticipant = useLocalParticipant();
   const setConnectionState = useSetConnectionState();
@@ -25,8 +45,8 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
 
   const handleConnect = () => {
     setConnectionState(true),
-    setToken(token),
-    setRoomIdRef(visibleChannel?.channel_id);
+      setToken(token),
+      setRoomIdRef(visibleChannel?.channel_id);
     setRoomName(visibleChannel?.name);
     setRoomServerId(visibleChannel?.server_id);
   };
@@ -50,9 +70,13 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
       draggable
     >
       {connectionState !== ConnectionState.Connected ? (
-        <button disabled className='w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center'>
-          <CameraIcon className='text-grey-600'/>
-        </button>) : (
+        <button
+          disabled
+          className="w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center"
+        >
+          <CameraIcon className="text-grey-600" />
+        </button>
+      ) : (
         <TrackToggle
           showIcon={false}
           className={
@@ -61,24 +85,23 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
           source={Track.Source.Camera}
         >
           {currentParticipant.isCameraEnabled ? (
-            <CameraOffIcon
-            />
+            <CameraOffIcon />
           ) : (
-            <CameraIcon
-            />
+            <CameraIcon />
           )}
         </TrackToggle>
       )}
       {connectionState !== ConnectionState.Connected ? (
-        <button disabled
-          className={`w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center ${mediaStyle.disappear}`}>
-          <ScreenShareIcon className='text-grey-600'/>
-        </button>) : (
+        <button
+          disabled
+          className={`w-7 h-7 bg-grey-900 rounded-lg text-lg flex items-center justify-center ${mediaStyle.disappear}`}
+        >
+          <ScreenShareIcon className="text-grey-600" />
+        </button>
+      ) : (
         <TrackToggle
           showIcon={false}
-          className={
-            `w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center ${mediaStyle.disappear}`
-          }
+          className={`w-7 h-7 bg-grey-900 hover:bg-grey-800 rounded-lg text-lg flex items-center justify-center ${mediaStyle.disappear}`}
           source={Track.Source.ScreenShare}
           disabled={true}
         >
@@ -95,14 +118,18 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
           {userSettings ? (
             <button
               onClick={() => settingsRef(false)}
-              className={'w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center'}
+              className={
+                'w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center'
+              }
             >
-              <MicrophoneIcon width={6} height={6}/>
+              <MicrophoneIcon width={6} height={6} />
             </button>
           ) : (
             <button
               onClick={() => settingsRef(true)}
-              className={'w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center'}
+              className={
+                'w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center'
+              }
             >
               <MicrophoneOff width={6} height={6} />
             </button>
@@ -112,11 +139,11 @@ export function FloatingCallControl({ visibleChannel, token }: { visibleChannel?
         <TrackToggle
           showIcon={false}
           source={Track.Source.Microphone}
-          onClick={() => settingsRef(false)} 
-          className='w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center'
+          onClick={() => settingsRef(false)}
+          className="w-7 h-7 rounded-lg p-1 bg-grey-900 hover:bg-grey-800 flex items-center justify-center"
         >
           {currentParticipant.isMicrophoneEnabled ? (
-            <MicrophoneIcon width={6} height={6}/>
+            <MicrophoneIcon width={6} height={6} />
           ) : (
             <MicrophoneOff width={6} height={6} />
           )}
