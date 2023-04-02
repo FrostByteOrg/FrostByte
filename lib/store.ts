@@ -3,6 +3,7 @@ import {
   Channel,
   DetailedProfileRelation,
   MessageWithServerProfile,
+  Role,
   ServersForUser,
   User,
 } from '@/types/dbtypes';
@@ -27,6 +28,7 @@ import {
   getAllDMChannels,
 } from '@/services/directmessage.service';
 import { Room } from '@/types/client/room';
+import { getRolesFromAllServersUserIsIn, getServerRoles } from '@/services/roles.service';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -489,6 +491,97 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
   },
 }));
 
+export interface ServerRolesState {
+  serverRoles: Map<number, Role[]>; // Map of serverId -> Role[]
+
+  addRole: (role: Role) => void;
+  updateRole: (role: Role) => void;
+  removeRole: (role: number) => void;
+
+  getRolesForAllServers: (supabase: SupabaseClient<Database>) => void;
+  getRolesForServer: (supabase: SupabaseClient<Database>, serverId: number) => void;
+}
+
+const useServerRolesStore = create<ServerRolesState>()((set) => ({
+  serverRoles: new Map(),
+
+  addRole: async (role) => {
+    set((state) => ({
+      serverRoles: new Map(
+        state.serverRoles.set(
+          role.server_id,
+          [...state.serverRoles.get(role.server_id) || [], role]
+        )
+      ),
+    }));
+  },
+
+  updateRole: async (role) => {
+    set((state) => ({
+      serverRoles: new Map(
+        state.serverRoles.set(
+          role.server_id,
+          (state.serverRoles
+            .get(role.server_id) || [])
+            .map((r) => (r.id === role.id ? role : r))
+        )
+      ),
+    }));
+  },
+
+  removeRole: async (roleId) => {
+    set((state) => {
+      const rv = new Map();
+
+      for (const [serverId, roles] of state.serverRoles) {
+        rv.set(serverId, roles.filter((r) => r.id !== roleId));
+      }
+
+      return {
+        serverRoles: rv,
+      };
+    });
+  },
+
+  // NOTE: This should be run on app launch and at no other time
+  getRolesForAllServers: async (supabase) => {
+    const { data, error } = await getRolesFromAllServersUserIsIn(supabase);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => {
+      const rv = new Map();
+
+      for (const role of data) {
+        if (!rv.has(role.server_id)) {
+          rv.set(role.server_id, []);
+        }
+
+        rv.set(role.server_id, [...rv.get(role.server_id), role]);
+      }
+
+      return { serverRoles: rv };
+    });
+  },
+
+  getRolesForServer: async (supabase, serverId) => {
+    const { data, error } = await getServerRoles(supabase, serverId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => ({
+      serverRoles: new Map(state.serverRoles.set(serverId, data)),
+    }));
+  }
+}));
+
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -563,3 +656,9 @@ export const useDMChannels = () =>
   useDMChannelsStore((state) => state.dmChannels);
 export const useGetDMChannels = () =>
   useDMChannelsStore((state) => state.getDMChannels);
+export const useServerRoles = (server_id: number) => useServerRolesStore((state) => state.serverRoles.get(server_id) || []);
+export const useAddServerRole = () => useServerRolesStore((state) => state.addRole);
+export const useUpdateServerRole = () => useServerRolesStore((state) => state.updateRole);
+export const useRemoveServerRole = () => useServerRolesStore((state) => state.removeRole);
+export const useGetAllServerRoles = () => useServerRolesStore((state) => state.getRolesForAllServers);
+export const useGetRolesForServer = () => useServerRolesStore((state) => state.getRolesForServer);

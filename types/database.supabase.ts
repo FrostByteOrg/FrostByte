@@ -97,21 +97,21 @@ export interface Database {
         Row: {
           created_at: string | null
           id: number
-          relationship: Database['public']['Enums']['relationship']
+          relationship: Database["public"]["Enums"]["relationship"]
           user1: string
           user2: string
         }
         Insert: {
           created_at?: string | null
           id?: number
-          relationship: Database['public']['Enums']['relationship']
+          relationship: Database["public"]["Enums"]["relationship"]
           user1: string
           user2: string
         }
         Update: {
           created_at?: string | null
           id?: number
-          relationship?: Database['public']['Enums']['relationship']
+          relationship?: Database["public"]["Enums"]["relationship"]
           user1?: string
           user2?: string
         }
@@ -330,7 +330,7 @@ export interface Database {
         Returns: {
           created_at: string | null
           id: number
-          relationship: Database['public']['Enums']['relationship']
+          relationship: Database["public"]["Enums"]["relationship"]
           user1: string
           user2: string
         }[]
@@ -369,7 +369,7 @@ export interface Database {
           id: number
           target_profile: Json
           initiator_profile_id: string
-          relationship: Database['public']['Enums']['relationship']
+          relationship: Database["public"]["Enums"]["relationship"]
           created_at: string
         }[]
       }
@@ -395,7 +395,7 @@ export interface Database {
           id: number
           target_profile: Json
           initiator_profile_id: string
-          relationship: Database['public']['Enums']['relationship']
+          relationship: Database["public"]["Enums"]["relationship"]
           created_at: string
         }[]
       }
@@ -477,9 +477,22 @@ export interface Database {
         Returns: {
           created_at: string | null
           id: number
-          relationship: Database['public']['Enums']['relationship']
+          relationship: Database["public"]["Enums"]["relationship"]
           user1: string
           user2: string
+        }[]
+      }
+      get_roles_for_servers: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          color: string | null
+          created_at: string | null
+          id: number
+          is_system: boolean
+          name: string
+          permissions: number
+          position: number
+          server_id: number
         }[]
       }
       get_roles_for_user_in_server: {
@@ -546,7 +559,7 @@ export interface Database {
       }
     }
     Enums: {
-      relationship: 'friend_requested' | 'friends' | 'blocked'
+      relationship: "friend_requested" | "friends" | "blocked"
     }
     CompositeTypes: {
       [_ in never]: never

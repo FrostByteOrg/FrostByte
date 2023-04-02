@@ -8,7 +8,6 @@ import {
   createServer,
   addServerIcon,
   getServer,
-  getServerRoles,
 } from '@/services/server.service';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { PostgrestError } from '@supabase/supabase-js';
@@ -17,8 +16,9 @@ import { ServerPermissions } from '@/types/permissions';
 import * as Tabs from '@radix-ui/react-tabs';
 import 'styles/TabNav.module.css';
 import { RoleEditForm } from '@/components/forms/RoleEditForm';
-import { useUserServerPerms } from '@/lib/store';
+import { useServerRoles, useUserServerPerms } from '@/lib/store';
 import PlusIcon from '@/components/icons/PlusIcon';
+import { createRole } from '@/services/roles.service';
 
 
 const tabRootClass = 'flex flex-row';
@@ -42,56 +42,7 @@ export default function ServerSettingsModal({
   const modalRef = useRef<HTMLDialogElement>(null);
   const userServerPerms = useUserServerPerms();
   const supabase = useSupabaseClient();
-  const [roles, setRoles] = useState<Role[]>([]);
-
-  useEffect(() => {
-    async function handleAsync() {
-      if (server) {
-        const { data, error } = await getServerRoles(supabase, server.servers.id);
-
-        if (error) {
-          console.log(error);
-          return;
-        }
-
-        setRoles(data);
-      }
-    }
-    handleAsync();
-  }, [server, supabase]);
-
-  // const roleList: Role[] = [
-  //   {
-  //     id: 1,
-  //     name: 'OWNER',
-  //     color: 'bada55',
-  //     permissions: 1,
-  //     server_id: 1,
-  //     is_system: true,
-  //     created_at: new Date().toDateString(),
-  //     position: 32767
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Test Role',
-  //     color: '0000ff',
-  //     permissions: 1,
-  //     server_id: 1,
-  //     is_system: false,
-  //     created_at: new Date().toDateString(),
-  //     position: 32767
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'EVERYONE',
-  //     color: 'cc3344',
-  //     permissions: 256,
-  //     server_id: 1,
-  //     is_system: true,
-  //     created_at: new Date().toDateString(),
-  //     position: 0
-  //   },
-  // ];
+  const roles = useServerRoles(server?.server_id!);
 
   return (
     <Modal
@@ -134,7 +85,15 @@ export default function ServerSettingsModal({
               <h1 className="text-2xl p-2 flex-grow">Roles</h1>
               <button
                 className=""
-                onClick={() => {
+                onClick={async () => {
+                  const { data, error } = await createRole(
+                    supabase,
+                    server?.server_id!,
+                    'New Role',
+                    roles.length - 1,
+                    0,
+                    'a9aaab'
+                  );
                 }}
               >
                 <PlusIcon width={5} height={5} />

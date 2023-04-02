@@ -1,9 +1,8 @@
 import { useUserServerPerms } from '@/lib/store';
-import { createRole, updateRole } from '@/services/roles.service';
+import { createRole, deleteRole, updateRole } from '@/services/roles.service';
 import { Role, Server } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { HexColorPicker } from 'react-colorful';
 import { useForm } from 'react-hook-form';
 
 const permissionEnumToNameMap = new Map([
@@ -26,7 +25,7 @@ type RoleEditFormResult = {
   color: string;
 }
 
-export function RoleEditForm({role, server }: {role?: Role, server: Server }) {
+export function RoleEditForm({role, server }: {role: Role, server: Server }) {
   const { register, handleSubmit, formState: { errors } } = useForm<RoleEditFormResult>();
 
   const supabase = useSupabaseClient();
@@ -45,39 +44,40 @@ export function RoleEditForm({role, server }: {role?: Role, server: Server }) {
     console.log({
       ...formData,
       name: formData.name,
-      permissions: perms
+      permissions: perms,
+      id: role.id
     });
 
     // If a role is being edited, update it
-    // if (!role) {
-    //   const { data, error } = await createRole(
-    //     supabase,
-    //     server.id,
-    //     formData.name,
-    //     1,
-    //     perms,
-    //     formData.color.replace('#', '')
-    //   );
+    if (!role) {
+      const { data, error } = await createRole(
+        supabase,
+        server.id,
+        formData.name,
+        1,
+        perms,
+        formData.color.replace('#', '')
+      );
 
-    //   if (error) {
-    //     console.error(error);
-    //   }
-    // }
+      if (error) {
+        console.error(error);
+      }
+    }
 
-    // else {
-    //   const { data, error } = await updateRole(
-    //     supabase,
-    //     role.id,
-    //     formData.name,
-    //     1,
-    //     perms,
-    //     formData.color.replace('#', '')
-    //   );
+    else {
+      const { data, error } = await updateRole(
+        supabase,
+        role.id,
+        formData.name,
+        1,
+        perms,
+        formData.color.replace('#', '')
+      );
 
-    //   if (error) {
-    //     console.error(error);
-    //   }
-    // }
+      if (error) {
+        console.error(error);
+      }
+    }
   };
 
   const userPerms = useUserServerPerms();
@@ -85,12 +85,12 @@ export function RoleEditForm({role, server }: {role?: Role, server: Server }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="w-full space-x-2 mb-2">
+      <div className="w-full space-x-2 mb-2 flex flex-row">
         <input
           type="text"
           className="text-xl rounded-md h-7 p-2"
           disabled={isFormDisabled}
-          defaultValue={role?.name}
+          defaultValue={role.name}
           placeholder='Role Name'
           {...register('name', { required: true })}
         />
@@ -99,7 +99,7 @@ export function RoleEditForm({role, server }: {role?: Role, server: Server }) {
           type="color"
           className="rounded-md h-7"
           disabled={isFormDisabled}
-          defaultValue={(role && role?.color || 'a9aaab')}
+          defaultValue={`#${(role.color || 'a9aaab')}`}
           {...register('color', { required: true })}
         />
       </div>
@@ -113,7 +113,7 @@ export function RoleEditForm({role, server }: {role?: Role, server: Server }) {
             value={value}
             defaultChecked={(
               !role
-              || (role && (role.permissions & value as number)) === ServerPermissions[permission]
+              || (role.permissions & value as number) === ServerPermissions[permission]
             )}
             disabled={
               isFormDisabled
@@ -128,13 +128,17 @@ export function RoleEditForm({role, server }: {role?: Role, server: Server }) {
       ))}
       <div className="flex flex-row space-x-2">
         <button
-          className="bg-red-600 disabled:bg-red-900 rounded-md h-6 w-8 mt-2"
+          className="bg-red-500 hover:bg-red-700 disabled:bg-red-900 rounded-md h-6 w-8 mt-2"
           disabled={isFormDisabled}
+          onClick={async () => {
+            console.log('delete role');
+            deleteRole(supabase, role.id);
+          }}
         >
           Delete
         </button>
         <button
-          className="bg-green-600 disabled:bg-green-900 rounded-md h-6 w-8 mt-2"
+          className="bg-green-500 hover:bg-green-700 disabled:bg-green-900 rounded-md h-6 w-8 mt-2"
           disabled={isFormDisabled}
           type="submit"
         >

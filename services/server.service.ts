@@ -132,20 +132,6 @@ type IsUserInServerResponse = Awaited<ReturnType<typeof isUserInServer>>;
 export type IsUserInServerResponseSuccess = IsUserInServerResponse['data'];
 export type IsUserInServerResponseError = IsUserInServerResponse['error'];
 
-export async function getServerRoles(
-  supabase: SupabaseClient<Database>,
-  server_id: number
-) {
-  return await supabase
-    .from('server_roles')
-    .select('*')
-    .eq('server_id', server_id);
-}
-
-type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
-export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
-export type GetServerRolesResponseError = GetServerRolesResponse['error'];
-
 export async function getRolesForUser(
   supabase: SupabaseClient<Database>,
   user_id: string,
