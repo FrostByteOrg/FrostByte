@@ -80,3 +80,28 @@ export async function getRolesFromAllServersUserIsIn(supabase: SupabaseClient<Da
 type GetRolesFromAllServersUserIsInResponse = Awaited<ReturnType<typeof getRolesFromAllServersUserIsIn>>;
 export type GetRolesFromAllServersUserIsInResponseSuccess = GetRolesFromAllServersUserIsInResponse['data'];
 export type GetRolesFromAllServersUserIsInResponseError = GetRolesFromAllServersUserIsInResponse['error'];
+
+// NOTE: The swaps for these two functions are intentional
+export async function incrementRolePosition(
+  supabase: SupabaseClient<Database>,
+  role_id: number
+) {
+  return await supabase
+    .rpc('decrement_role_position', { role_id });
+}
+
+type IncrementRolePositionResponse = Awaited<ReturnType<typeof incrementRolePosition>>;
+export type IncrementRolePositionResponseSuccess = IncrementRolePositionResponse['data'];
+export type IncrementRolePositionResponseError = IncrementRolePositionResponse['error'];
+
+export async function decrementRolePosition(
+  supabase: SupabaseClient<Database>,
+  role_id: number
+) {
+  return await supabase
+    .rpc('increment_role_position', { role_id });
+}
+
+type DecrementRolePositionResponse = Awaited<ReturnType<typeof decrementRolePosition>>;
+export type DecrementRolePositionResponseSuccess = DecrementRolePositionResponse['data'];
+export type DecrementRolePositionResponseError = DecrementRolePositionResponse['error'];

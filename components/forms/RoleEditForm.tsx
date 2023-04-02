@@ -1,5 +1,5 @@
 import { useUserServerPerms } from '@/lib/store';
-import { createRole, deleteRole, updateRole } from '@/services/roles.service';
+import { createRole, decrementRolePosition, deleteRole, incrementRolePosition, updateRole } from '@/services/roles.service';
 import { Role, Server } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
@@ -21,17 +21,18 @@ const permissionEnumToNameMap = new Map([
 
 type RoleEditFormResult = {
   name: string;
+  position: number;
   permissions: string | string[];
   color: string;
 }
 
-export function RoleEditForm({role, server }: {role: Role, server: Server }) {
+export function RoleEditForm({role, server, roles_length }: {role: Role, server: Server, roles_length: number }) {
   const { register, handleSubmit, formState: { errors } } = useForm<RoleEditFormResult>();
 
   const supabase = useSupabaseClient();
   const isFormDisabled = (role && role.is_system) || false;
   const serverPermissions = Object.entries(ServerPermissions).filter(
-    ([key, value]) => typeof value === 'number' && key !== 'NONE'
+    ([key, value]) => typeof value === 'number' && key !== 'NONE' && key !== 'OWNER'
   );
 
   const onSubmit = async (formData: RoleEditFormResult) => {
@@ -49,42 +50,25 @@ export function RoleEditForm({role, server }: {role: Role, server: Server }) {
     });
 
     // If a role is being edited, update it
-    if (!role) {
-      const { data, error } = await createRole(
-        supabase,
-        server.id,
-        formData.name,
-        1,
-        perms,
-        formData.color.replace('#', '')
-      );
+    const { data, error } = await updateRole(
+      supabase,
+      role.id,
+      formData.name,
+      role.position,
+      perms,
+      formData.color.replace('#', '')
+    );
 
-      if (error) {
-        console.error(error);
-      }
-    }
-
-    else {
-      const { data, error } = await updateRole(
-        supabase,
-        role.id,
-        formData.name,
-        1,
-        perms,
-        formData.color.replace('#', '')
-      );
-
-      if (error) {
-        console.error(error);
-      }
+    if (error) {
+      console.error(error);
     }
   };
 
   const userPerms = useUserServerPerms();
 
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <p className="text-base text-gray-400 text-left w-full">Display</p>
       <div className="w-full space-x-2 mb-2 flex flex-row">
         <input
           type="text"
@@ -103,7 +87,31 @@ export function RoleEditForm({role, server }: {role: Role, server: Server }) {
           {...register('color', { required: true })}
         />
       </div>
-
+      <p className="text-base text-gray-400 text-left w-full">Heirarchy position</p>
+      <div className="flex flex-row space-x-2">
+        <button
+          className="border-2 border-gray-400 rounded-md h-6 w-full mt-2 disabled:border-grey-800"
+          type="button"
+          onClick={async () => {
+            console.log('up');
+            await incrementRolePosition(supabase, role.id);
+          }}
+          disabled={isFormDisabled || role.position === 1}
+        >
+          Up
+        </button>
+        <button
+          className="border-2 border-gray-400 rounded-md h-6 w-full mt-2 disabled:border-grey-800"
+          type="button"
+          onClick={async () => {
+            console.log('down');
+            await decrementRolePosition(supabase, role.id);
+          }}
+          disabled={isFormDisabled || role.position === roles_length - 2}
+        >
+          Down
+        </button>
+      </div>
       <p className="text-base text-gray-400 text-left w-full">Permissions</p>
       {serverPermissions.map(([permission, value]) => (
         <div key={permission}>
@@ -131,6 +139,7 @@ export function RoleEditForm({role, server }: {role: Role, server: Server }) {
       <div className="flex flex-row space-x-2">
         <button
           className="bg-red-500 hover:bg-red-700 disabled:bg-red-900 rounded-md h-6 w-8 mt-2"
+          type="button"
           disabled={isFormDisabled}
           onClick={async () => {
             console.log('delete role');

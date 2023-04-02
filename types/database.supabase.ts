@@ -363,6 +363,12 @@ export interface Database {
           sent_time: string
         }[]
       }
+      decrement_role_position: {
+        Args: {
+          role_id: number
+        }
+        Returns: undefined
+      }
       detailed_profile_relations: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -549,6 +555,12 @@ export interface Database {
           username: string
           website: string | null
         }[]
+      }
+      increment_role_position: {
+        Args: {
+          role_id: number
+        }
+        Returns: undefined
       }
       is_user_in_server: {
         Args: {

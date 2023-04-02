@@ -118,7 +118,7 @@ export default function ServerSettingsModal({
                   value={role.id.toString()}
                   className={`${tabContentClass} p-2`}
                 >
-                  <RoleEditForm role={role} server={server?.servers!} />
+                  <RoleEditForm role={role} server={server?.servers!} roles_length={roles.length}/>
                 </Tabs.Content>
               ))}
             </Tabs.Root>
