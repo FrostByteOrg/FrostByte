@@ -99,7 +99,7 @@ export default function ServerSettingsModal({
 
             <Tabs.Root className={tabRootClass} orientation='vertical'>
               <Tabs.List className={tabListClass}>
-                {roles.sort((first, second) => second.position - first.position).map((role) => (
+                {roles.sort((first, second) => first.position - second.position).map((role) => (
                   <Tabs.Trigger
                     key={role.id}
                     value={role.id.toString()}
@@ -112,7 +112,7 @@ export default function ServerSettingsModal({
                   </Tabs.Trigger>
                 ))}
               </Tabs.List>
-              {roles.sort((first, second) => second.position - first.position).map((role) => (
+              {roles.sort((first, second) => first.position - second.position).map((role) => (
                 <Tabs.Content
                   key={role.id}
                   value={role.id.toString()}
