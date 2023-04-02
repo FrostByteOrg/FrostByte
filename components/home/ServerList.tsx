@@ -59,6 +59,7 @@ export default function ServerList() {
   }, [getServers, supabase, user, getUserServerPerms, expanded]);
 
   //TODO: add isServer check
+  console.log(userServerPerms);
 
   return (
     <div className=" p-4 flex-col flex h-screen">
@@ -142,7 +143,7 @@ export default function ServerList() {
                     onClick={() => {
                       return expanded !== server.server_id
                         ? (setExpanded(server.server_id),
-                          setCurrentServer(server))
+                        setCurrentServer(server))
                         : '';
                     }}
                   >
@@ -168,50 +169,46 @@ export default function ServerList() {
         ServerPermissions.ADMINISTRATOR &
         userServerPerms &
         ServerPermissions.MANAGE_SERVER ? (
-        <Tooltip
-          className="z-20 !opacity-100 font-semibold "
-          style={{
-            backgroundColor: '#21282b',
-            borderRadius: '0.5rem',
-            fontSize: '1.125rem',
-            lineHeight: '1.75rem',
-          }}
-          id="serverSettings"
-          clickable
-          openOnClick={true}
-        >
-          <div className="flex flex-col items-start">
-            <div
-              className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-              onClick={() => {
-                setShowAddChannelModal(true);
-              }}
-            >
-              <PlusIcon width={5} height={5} />
-              <span className="ml-1">New channel</span>
-            </div>
-            {userServerPerms & ServerPermissions.OWNER ||
-            userServerPerms &
-              ServerPermissions.ADMINISTRATOR &
-              userServerPerms &
-              ServerPermissions.MANAGE_SERVER ? (
+          <Tooltip
+            className="z-20 !opacity-100 font-semibold "
+            style={{
+              backgroundColor: '#21282b',
+              borderRadius: '0.5rem',
+              fontSize: '1.125rem',
+              lineHeight: '1.75rem',
+            }}
+            id="serverSettings"
+            clickable
+            openOnClick={true}
+          >
+            <div className="flex flex-col items-start">
               <div
                 className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
                 onClick={() => {
-                  setShowServerSettingsModal(true);
+                  setShowAddChannelModal(true);
                 }}
               >
-                <GearIcon width={5} height={5} />
-                <span className="ml-1">Server Settings</span>
+                <PlusIcon width={5} height={5} />
+                <span className="ml-1">New channel</span>
               </div>
-            ) : (
-              ''
-            )}
-          </div>
-        </Tooltip>
-      ) : (
-        ''
-      )}
+              {userServerPerms & ServerPermissions.MANAGE_SERVER ? (
+                <div
+                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                  onClick={() => {
+                    setShowServerSettingsModal(true);
+                  }}
+                >
+                  <GearIcon width={5} height={5} />
+                  <span className="ml-1">Server Settings</span>
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
+          </Tooltip>
+        ) : (
+          ''
+        )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 .modal {
-  max-width: 50ch;
+  max-width: fit-content;
   border: 0;
   padding: 0;
   box-shadow: 0 0 1.5em rgb(0 0 0 / 0.3);
@@ -31,7 +31,7 @@
 }
 
 @media (max-width: 940px) {
-  .mediaControls{
+  .mediaControls {
     margin-bottom: 10px;
     width: 15rem;
     justify-content: space-evenly;
@@ -39,19 +39,18 @@
 }
 
 @media (max-width: 940px) {
-  .disappear{
+  .disappear {
     display: none;
   }
 }
 
-@media(min-width: 940px) {
-  .appear{
+@media (min-width: 940px) {
+  .appear {
     display: none;
   }
-  }
+}
 
-
-.gridContainer{
+.gridContainer {
   height: 80%;
   padding: 20px;
 }

@@ -2,16 +2,33 @@ import AddServer from '@/components/forms/AddServer';
 import Modal from '@/components/home/modals/Modal';
 import { CreateServerInput, createServerSchema } from '@/types/client/server';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Dispatch, SetStateAction, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   createServer,
   addServerIcon,
   getServer,
+  getServerRoles,
 } from '@/services/server.service';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { PostgrestError } from '@supabase/supabase-js';
-import { ServersForUser } from '@/types/dbtypes';
+import { Role, ServersForUser } from '@/types/dbtypes';
+import { ServerPermissions } from '@/types/permissions';
+import * as Tabs from '@radix-ui/react-tabs';
+import 'styles/TabNav.module.css';
+import { RoleEditForm } from '@/components/forms/RoleEditForm';
+import { useUserServerPerms } from '@/lib/store';
+import PlusIcon from '@/components/icons/PlusIcon';
+
+
+const tabRootClass = 'flex flex-row';
+const tabListClass = 'flex flex-col flex-shrink border-r border-gray-600';
+const tabTriggerClass = 'px-3 py-2 focus:border-r focus:border-r-white focus:z-10 focus:outline-none focus-visible:ring text-left focus:bg-gray-500';
+const tabContentClass = 'flex flex-col';
+
+interface EnumIterator<T> {
+  [key: string]: T
+}
 
 export default function ServerSettingsModal({
   showModal,
@@ -22,130 +39,136 @@ export default function ServerSettingsModal({
   setShowModal: Dispatch<SetStateAction<boolean>>;
   server: ServersForUser | null;
 }) {
-  const addServerRef = useRef<HTMLDialogElement>(null);
-  const [serverImage, setServerImage] = useState<
-    File | null | undefined | string
-  >(server?.servers.image_url);
-  const [serverError, setServerError] = useState<string>('');
-  const [showDesc, setSetShowDesc] = useState<boolean>(false);
-
+  const modalRef = useRef<HTMLDialogElement>(null);
+  const userServerPerms = useUserServerPerms();
   const supabase = useSupabaseClient();
+  const [roles, setRoles] = useState<Role[]>([]);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<CreateServerInput>({
-    resolver: zodResolver(createServerSchema),
-    mode: 'onSubmit',
-  });
+  useEffect(() => {
+    async function handleAsync() {
+      if (server) {
+        const { data, error } = await getServerRoles(supabase, server.servers.id);
 
-  const onSubmit = async (formData: CreateServerInput) => {
-    const { data, error } = await createServer(
-      supabase,
-      formData.name,
-      formData.description
-    );
-
-    if (error) {
-      if ((error as PostgrestError).message) {
-        setServerError((error as PostgrestError).message);
-      } else {
-        setServerError(error as string);
-      }
-
-      setTimeout(() => {
-        setServerError('');
-      }, 7000);
-      return;
-    }
-
-    const fileExt = serverImage?.name.split('.').pop();
-    const fileName = `${data?.id}.${fileExt}`;
-    const filePath = `${fileName}`;
-
-    if (serverImage) {
-      const { data: updatedServer, error: serverImgError } =
-        await addServerIcon(supabase, filePath, serverImage, data!.id);
-
-      if (serverImgError) {
-        if ((serverImgError as PostgrestError).message) {
-          setServerError((serverImgError as PostgrestError).message);
-        } else {
-          setServerError(error as string);
+        if (error) {
+          console.log(error);
+          return;
         }
 
-        setTimeout(() => {
-          setServerError('');
-        }, 7000);
-        return;
+        setRoles(data);
       }
-
-      addServerRef.current?.close();
-      setServerImage(null);
-      setSetShowDesc(false);
-      reset();
-      setShowModal(false);
-    } else {
-      addServerRef.current?.close();
-      setServerImage(null);
-      setSetShowDesc(false);
-      reset();
-      setShowModal(false);
     }
-  };
+    handleAsync();
+  }, [server, supabase]);
+
+  // const roleList: Role[] = [
+  //   {
+  //     id: 1,
+  //     name: 'OWNER',
+  //     color: 'bada55',
+  //     permissions: 1,
+  //     server_id: 1,
+  //     is_system: true,
+  //     created_at: new Date().toDateString(),
+  //     position: 32767
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Test Role',
+  //     color: '0000ff',
+  //     permissions: 1,
+  //     server_id: 1,
+  //     is_system: false,
+  //     created_at: new Date().toDateString(),
+  //     position: 32767
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'EVERYONE',
+  //     color: 'cc3344',
+  //     permissions: 256,
+  //     server_id: 1,
+  //     is_system: true,
+  //     created_at: new Date().toDateString(),
+  //     position: 0
+  //   },
+  // ];
 
   return (
     <Modal
-      modalRef={addServerRef}
+      modalRef={modalRef}
       showModal={showModal}
-      title={'Create a new Server'}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          handleSubmit(onSubmit)();
-        } else if (e.key === 'Escape') {
-          addServerRef.current?.close();
-          setServerImage(null);
-          setSetShowDesc(false);
-          reset();
-          setShowModal(false);
-        }
-      }}
+      title={`${server?.servers.name} - Server Settings`}
       buttons={
-        <>
-          <div
-            className="hover:underline hover:cursor-pointer"
-            onClick={() => {
-              setServerImage(null);
-              setShowModal(false);
-              setSetShowDesc(false);
-              reset();
-              addServerRef.current?.close();
-            }}
-          >
-            Cancel
-          </div>
-          <div
-            className="bg-frost-500 py-2 px-5 rounded-lg hover:cursor-pointer hover:bg-frost-700"
-            onClick={() => {
-              handleSubmit(onSubmit)();
-            }}
-          >
-            Submit
-          </div>
-        </>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            modalRef.current?.close();
+            setShowModal(false);
+          }}
+        >
+          Close
+        </button>
       }
     >
-      <AddServer
-        serverImage={serverImage}
-        setServerImage={setServerImage}
-        register={register}
-        errors={errors}
-        serverError={serverError}
-        showDesc={showDesc}
-        setShowDesc={setSetShowDesc}
-      />
+      <Tabs.Root className={tabRootClass} orientation='vertical'>
+        <Tabs.List className={tabListClass}>
+          <Tabs.Trigger
+            value='Overview'
+            className={tabTriggerClass}
+          >
+            Overview
+          </Tabs.Trigger>
+          <Tabs.Trigger
+            value='Roles'
+            className={tabTriggerClass}
+          >
+            Roles
+          </Tabs.Trigger>
+        </Tabs.List>
+        <div className="TabContent flex-grow flex-1">
+          <Tabs.Content value='Overview' className={tabContentClass}>
+            General server mgmt stuff
+          </Tabs.Content>
+          <Tabs.Content value="Roles" className={tabContentClass}>
+            <span className="w-full flex flex-row">
+              <h1 className="text-2xl p-2 flex-grow">Roles</h1>
+              <button
+                className=""
+                onClick={() => {
+                }}
+              >
+                <PlusIcon width={5} height={5} />
+              </button>
+            </span>
+
+            <Tabs.Root className={tabRootClass} orientation='vertical'>
+              <Tabs.List className={tabListClass}>
+                {roles.sort((first, second) => second.position - first.position).map((role) => (
+                  <Tabs.Trigger
+                    key={role.id}
+                    value={role.id.toString()}
+                    className={tabTriggerClass}
+                    style={{
+                      color: `#${role.color}`
+                    }}
+                  >
+                    {role.name}
+                  </Tabs.Trigger>
+                ))}
+              </Tabs.List>
+              {roles.sort((first, second) => second.position - first.position).map((role) => (
+                <Tabs.Content
+                  key={role.id}
+                  value={role.id.toString()}
+                  className={`${tabContentClass} p-2`}
+                >
+                  <RoleEditForm role={role} server={server?.servers!} />
+                </Tabs.Content>
+              ))}
+            </Tabs.Root>
+          </Tabs.Content>
+        </div>
+      </Tabs.Root>
     </Modal>
   );
 }
