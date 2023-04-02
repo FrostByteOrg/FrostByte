@@ -16,7 +16,7 @@ import {
 import { ConnectionQuality, ConnectionState, Track } from 'livekit-client';
 import { ConnectionQuality as _ConnQual } from 'livekit-server-sdk/dist/proto/livekit_models';
 import { useEffect } from 'react';
-import mediaStyle from '@/styles/Components.module.css';
+import mediaStyle from '@/styles/Livekit.module.css';
 import ConnectionIcon from '../../icons/ConnectionIcon';
 import CameraOffIcon from '../../icons/CameraOffIcon';
 import CameraIcon from '../../icons/CameraIcon';
@@ -34,13 +34,13 @@ export default function MobileCallControls() {
   const settingsRef = useSetUserSettings();
   const userSettings = useUserSettings();
 
-
-
   const connectionQualityColor = () => {
-    if (connectionState === ConnectionState.Connecting || connectionState === ConnectionState.Reconnecting) {
+    if (
+      connectionState === ConnectionState.Connecting ||
+      connectionState === ConnectionState.Reconnecting
+    ) {
       return 'text-yellow-400';
     }
-
     else if (connectionState === ConnectionState.Disconnected) {
       return 'text-red-400';
     }
@@ -64,7 +64,9 @@ export default function MobileCallControls() {
   }, [currentRoom.server_id, setServerName, servers]);
 
   return (
-    <div className={`h-auto rounded-b-lg bottom-8 bg-grey-950 w-full mx-auto py-1 ${mediaStyle.appear}`}>
+    <div
+      className={`h-auto rounded-b-lg bottom-8 bg-grey-950 w-full mx-auto py-1 ${mediaStyle.appear}`}
+    >
       <div className="flex flex-row items-center justify-between py-1">
         <div className="flex flex-col">
           <div className=" flex flex-row ml-2 items-center">
@@ -73,29 +75,32 @@ export default function MobileCallControls() {
               height={5}
               className={`${connectionQualityColor()} `}
             />
-            <span className={`${connectionQualityColor()} text-md font-semibold mx-1`}>
-              { connectionState.charAt(0).toUpperCase() + connectionState.slice(1) }
+            <span
+              className={`${connectionQualityColor()} text-md font-semibold mx-1`}
+            >
+              {connectionState.charAt(0).toUpperCase() +
+                connectionState.slice(1)}
             </span>
             <span className="text-xs text-grey-300 italic ml-1">
               {currentRoom.server_name}/{currentRoom.name}
             </span>
           </div>
         </div>
-        <div className='flex flex-row justify-between items-center h-auto w-10 mr-4'>
+        <div className="flex flex-row justify-between items-center h-auto w-10 mr-4">
           {connectionState !== ConnectionState.Connected ? (
             <>
               {' '}
               {userSettings ? (
                 <button
                   onClick={() => settingsRef(false)}
-                  className='w-auto h-6 p-1 rounded-full bg-frost-600'
+                  className="w-auto h-6 p-1 rounded-full bg-frost-600"
                 >
-                  <MicrophoneIcon width={5} height={5}/>
+                  <MicrophoneIcon width={5} height={5} />
                 </button>
               ) : (
                 <button
                   onClick={() => settingsRef(true)}
-                  className='w-auto h-6 p-1 rounded-full bg-frost-600'
+                  className="w-auto h-6 p-1 rounded-full bg-frost-600"
                 >
                   <MicrophoneOff width={5} height={5} />
                 </button>
@@ -105,11 +110,11 @@ export default function MobileCallControls() {
             <TrackToggle
               showIcon={false}
               source={Track.Source.Microphone}
-              onClick={() => settingsRef(false)} 
-              className='w-auto h-6 p-1 rounded-full bg-frost-600'
+              onClick={() => settingsRef(false)}
+              className="w-auto h-6 p-1 rounded-full bg-frost-600"
             >
               {currentParticipant.isMicrophoneEnabled ? (
-                <MicrophoneIcon width={5} height={5}/>
+                <MicrophoneIcon width={5} height={5} />
               ) : (
                 <MicrophoneOff width={5} height={5} />
               )}
@@ -132,8 +137,13 @@ export default function MobileCallControls() {
               </div>
             )}
           </TrackToggle>
-          <DisconnectButton className='rounded-full p-1 bg-red-500' onClick={() => {setConnectionState(false); }}>
-            <HangUpIcon width={5} height={5} className=''/>
+          <DisconnectButton
+            className="rounded-full p-1 bg-red-500"
+            onClick={() => {
+              setConnectionState(false);
+            }}
+          >
+            <HangUpIcon width={5} height={5} className="" />
           </DisconnectButton>
         </div>
       </div>
