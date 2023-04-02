@@ -1,22 +1,20 @@
-import { useUserServerPerms } from '@/lib/store';
+import { useUserHighestRolePosition, useUserServerPerms } from '@/lib/store';
 import { createRole, decrementRolePosition, deleteRole, incrementRolePosition, updateRole } from '@/services/roles.service';
 import { Role, Server } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useForm } from 'react-hook-form';
 
-const permissionEnumToNameMap = new Map([
-  [ServerPermissions.OWNER, 'Owner'],
-  [ServerPermissions.ADMINISTRATOR, 'Administrator'],
-  [ServerPermissions.MANAGE_CHANNELS, 'Manage Channels'],
-  [ServerPermissions.MANAGE_ROLES, 'Manage Roles'],
-  [ServerPermissions.MANAGE_SERVER, 'Manage Server'],
-  [ServerPermissions.MANAGE_CHANNELS, 'Manage Channels'],
-  [ServerPermissions.MANAGE_USERS, 'Manage Users'],
-  [ServerPermissions.MANAGE_ROLES, 'Manage Roles'],
-  [ServerPermissions.MANAGE_MESSAGES, 'Manage Messages'],
-  [ServerPermissions.MANAGE_INVITES, 'Manage Invites'],
-  [ServerPermissions.CREATE_INVITES, 'Create Invites'],
+const permissionEnumToInfoMap = new Map([
+  [ServerPermissions.OWNER, ['Owner', '']],
+  [ServerPermissions.ADMINISTRATOR, ['Administrator', 'Grants all permissions in the server (assign this with caution!)']],
+  [ServerPermissions.MANAGE_CHANNELS, ['Manage Channels', 'Allows the user to create, edit, and delete channels']],
+  [ServerPermissions.MANAGE_ROLES, ['Manage Roles', 'Allows the user to create, edit, and delete roles']],
+  [ServerPermissions.MANAGE_SERVER, ['Manage Server', 'Allows the user to edit server settings like name, descripion, and icon']],
+  [ServerPermissions.MANAGE_USERS, ['Manage Users', 'Allows the user to kick and ban users']],
+  [ServerPermissions.MANAGE_MESSAGES, ['Manage Messages', 'Allows the user to delete and pin messages']],
+  [ServerPermissions.MANAGE_INVITES, ['Manage Invites', 'Allows the user to edit, and delete invites']],
+  [ServerPermissions.CREATE_INVITES, ['Create Invites', 'Allows the user to create invites']],
 ]);
 
 type RoleEditFormResult = {
@@ -28,16 +26,24 @@ type RoleEditFormResult = {
 
 export function RoleEditForm({role, server, roles_length }: {role: Role, server: Server, roles_length: number }) {
   const { register, handleSubmit, formState: { errors } } = useForm<RoleEditFormResult>();
-
+  const userHighestRolePosition = useUserHighestRolePosition();
   const supabase = useSupabaseClient();
-  const isFormDisabled = (role && role.is_system) || false;
+  const isFormDisabled = role.is_system || role.position <= userHighestRolePosition;
+  const userPerms = useUserServerPerms();
+
+  console.log(userHighestRolePosition);
   const serverPermissions = Object.entries(ServerPermissions).filter(
     ([key, value]) => typeof value === 'number' && key !== 'NONE' && key !== 'OWNER'
   );
 
   const onSubmit = async (formData: RoleEditFormResult) => {
+    console.log(formData);
     if (typeof formData.permissions === 'string') {
-      formData.permissions = [formData.permissions];
+      formData.permissions = [ formData.permissions ];
+    }
+
+    else if (typeof formData.permissions === 'boolean') {
+      formData.permissions = [ '0' ];
     }
 
     const perms = formData.permissions.reduce((acc, cur) => acc | parseInt(cur), 0);
@@ -63,8 +69,6 @@ export function RoleEditForm({role, server, roles_length }: {role: Role, server:
       console.error(error);
     }
   };
-
-  const userPerms = useUserServerPerms();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -96,7 +100,7 @@ export function RoleEditForm({role, server, roles_length }: {role: Role, server:
             console.log('up');
             await incrementRolePosition(supabase, role.id);
           }}
-          disabled={isFormDisabled || role.position === 1}
+          disabled={isFormDisabled || role.position === 1 || role.position - 1 <= userHighestRolePosition}
         >
           Up
         </button>
@@ -114,10 +118,10 @@ export function RoleEditForm({role, server, roles_length }: {role: Role, server:
       </div>
       <p className="text-base text-gray-400 text-left w-full">Permissions</p>
       {serverPermissions.map(([permission, value]) => (
-        <div key={permission}>
+        <div key={permission} className="flex flex-row w-full">
           <input
             type="checkbox"
-            className="w-5 h-5"
+            className="w-5 h-5 mr-2 checked:accent-green-600 disabled:accent-green-600/50"
             value={value}
             defaultChecked={(
               !role
@@ -132,13 +136,18 @@ export function RoleEditForm({role, server, roles_length }: {role: Role, server:
             }
             {...register('permissions')}
           />
-          {/* @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown */}
-          <label> {permissionEnumToNameMap.get(ServerPermissions[permission])}</label>
+          <div>
+            {/* @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown */}
+            <label> {permissionEnumToInfoMap.get(ServerPermissions[permission])[0]}</label>
+            {/* @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown */}
+            <p className="text-sm text-gray-400 text-left w-full">{permissionEnumToInfoMap.get(ServerPermissions[permission])[1]}</p>
+          </div>
+
         </div>
       ))}
-      <div className="flex flex-row space-x-2">
+      <div className="flex flex-row space-x-2 w-full">
         <button
-          className="bg-red-500 hover:bg-red-700 disabled:bg-red-900 rounded-md h-6 w-8 mt-2"
+          className="bg-red-500 hover:bg-red-700 disabled:bg-grey-600 rounded-md h-6 mt-2 w-full"
           type="button"
           disabled={isFormDisabled}
           onClick={async () => {
@@ -149,7 +158,7 @@ export function RoleEditForm({role, server, roles_length }: {role: Role, server:
           Delete
         </button>
         <button
-          className="bg-green-500 hover:bg-green-700 disabled:bg-green-900 rounded-md h-6 w-8 mt-2"
+          className="bg-green-500 hover:bg-green-700 disabled:bg-grey-600 rounded-md h-6 mt-2 w-full"
           disabled={isFormDisabled}
           type="submit"
         >

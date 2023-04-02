@@ -32,9 +32,7 @@ export default function AddChannelModal({
   const [channelType, setChannelType] = useState<'media' | 'text'>('text');
 
   const supabase = useSupabaseClient();
-
   const user = useUser();
-
   const getUserServerPerms = useGetUserPermsForServer();
 
   const {
@@ -73,7 +71,9 @@ export default function AddChannelModal({
     if (error) {
       if ((error as PostgrestError).message) {
         setServerError((error as PostgrestError).message);
-      } else {
+      }
+
+      else {
         setServerError(error as string);
       }
 
@@ -81,7 +81,9 @@ export default function AddChannelModal({
         setServerError('');
       }, 7000);
       return;
-    } else {
+    }
+
+    else {
       addChannelRef.current?.close();
       setChannelType('text');
       setSetShowDesc(false);

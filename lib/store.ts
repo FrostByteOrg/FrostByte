@@ -28,7 +28,7 @@ import {
   getAllDMChannels,
 } from '@/services/directmessage.service';
 import { Room } from '@/types/client/room';
-import { getRolesFromAllServersUserIsIn, getServerRoles } from '@/services/roles.service';
+import { getRolesFromAllServersUserIsIn, getServerRoles, getHighestRolePositionForUser } from '@/services/roles.service';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 
 export interface ServerState {
@@ -181,17 +181,28 @@ const useMessagesStore = create<MessagesState>()((set) => ({
 export interface UserPermsState {
   userPerms: ChannelPermissions;
   userServerPerms: ServerPermissions;
+  userHighestRolePosition: number;
+
   getUserPerms: (supabase: SupabaseClient<Database>, channelId: number) => void;
   getUserPermsForServer: (
     supabase: SupabaseClient<Database>,
     server_id: number,
     userId?: string
   ) => void;
+
+  getHighestRolePositionForUser: (
+    supabase: SupabaseClient<Database>,
+    serverId: number,
+    userId: string
+  ) => void;
+
 }
 
 const useUserPermsStore = create<UserPermsState>()((set) => ({
   userPerms: 0,
   userServerPerms: 0,
+  userHighestRolePosition: 36767, // Max value for a role position
+
   getUserPerms: async (supabase, channelId) => {
     const { data, error } = await getCurrentUserChannelPermissions(
       supabase,
@@ -221,6 +232,24 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
       set({ userServerPerms: data });
     }
   },
+
+  getHighestRolePositionForUser: async (supabase, serverId, userId) => {
+    const { data, error } = await getHighestRolePositionForUser(
+      supabase,
+      serverId,
+      userId
+    );
+
+    if (error) {
+      console.log(error);
+    }
+
+    console.log('highestRolePosSet ', data);
+
+    if (data) {
+      set({ userHighestRolePosition: data });
+    }
+  }
 }));
 
 export interface ChannelState {
@@ -649,8 +678,12 @@ export const useFlagUserOffline = () =>
   useOnlineStore((state) => state.flagUserOffline);
 export const useGetUserPermsForServer = () =>
   useUserPermsStore((state) => state.getUserPermsForServer);
+export const useGetUserHighestRolePosition = () =>
+  useUserPermsStore((state) => state.getHighestRolePositionForUser);
 export const useUserServerPerms = () =>
   useUserPermsStore((state) => state.userServerPerms);
+export const useUserHighestRolePosition = () =>
+  useUserPermsStore((state) => state.userHighestRolePosition);
 export const useAddDMChannel = () =>
   useDMChannelsStore((state) => state.addDMChannel);
 export const useDMChannels = () =>

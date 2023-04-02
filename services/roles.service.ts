@@ -105,3 +105,14 @@ export async function decrementRolePosition(
 type DecrementRolePositionResponse = Awaited<ReturnType<typeof decrementRolePosition>>;
 export type DecrementRolePositionResponseSuccess = DecrementRolePositionResponse['data'];
 export type DecrementRolePositionResponseError = DecrementRolePositionResponse['error'];
+
+export async function getHighestRolePositionForUser(
+  supabase: SupabaseClient<Database>,
+  server_id: number,
+  user_id: string
+) {
+  return await supabase
+    .rpc('get_highest_role_position_for_user', { s_id: server_id, p_id: user_id })
+    .returns<number>()
+    .single();
+}
