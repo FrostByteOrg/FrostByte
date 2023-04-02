@@ -1,6 +1,7 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
-import mediaStyle from '@/styles/Components.module.css';
+import mediaStyle from '@/styles/Livekit.module.css';
+import modalStyle from '@styles/Modal.module.css';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';

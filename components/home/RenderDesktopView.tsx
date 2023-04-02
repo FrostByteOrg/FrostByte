@@ -1,4 +1,5 @@
 import styles from '@/styles/DesktopView.module.css';
+import modal from '@/styles/Modal.module.css';
 import NavBar from '@/components/home/NavBar';
 import { useSideBarOptionValue } from '@/context/SideBarOptionCtx';
 import FriendsList from '@/components/home/FriendsList';
@@ -10,6 +11,7 @@ import {
   useChannel,
   useSetUser,
   useSetUserSettings,
+  useUserRef,
   useUserSettings,
 } from '@/lib/store';
 import { Channel, User } from '@/types/dbtypes';
@@ -21,17 +23,16 @@ import {
   useLocalParticipant,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
-import UserIcon from '../icons/UserIcon';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';
+import UserIcon from '../icons/UserIcon';
 import GearIcon from '../icons/GearIcon';
 import MicrophoneIcon from '../icons/MicrophoneIcon';
 import MicrophoneOff from '../icons/MicroPhoneOff';
 import HeadPhonesIcon from '../icons/HeadPhonesIcon';
 import HeadPhonesOffIcon from '../icons/HeadPhonesOffIcon';
 import EditUserModal from './EditUserModal';
-import { Tooltip } from 'react-tooltip';
 
 export default function RenderDesktopView() {
   const supabase = useSupabaseClient();
@@ -48,6 +49,7 @@ export default function RenderDesktopView() {
   const [showEditUser, setShowEditUser] = useState(false);
 
   const userRef = useSetUser();
+  const editUser = useUserRef();
 
   const settingsRef = useSetUserSettings();
   const userSettings = useUserSettings();
@@ -145,14 +147,17 @@ export default function RenderDesktopView() {
                 )}
               </TrackToggle>
             )}
+            <div>
+              
+            </div>
             <EditUserModal 
               showModal={showEditUser} 
-              setShowModal={setShowEditUser}
-              user={user!}/>
+              setShowModal={setShowEditUser} 
+              user={editUser}/>
             <button 
               className="w-7 h-7 hover:text-grey-400"
               onClick={() => {setShowEditUser(true);}}>
-              <BsGear size={22} />
+              <GearIcon width={6} height={6}/>
             </button>
           </div>
         </div>

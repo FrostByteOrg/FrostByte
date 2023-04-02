@@ -7,7 +7,7 @@ import {
   useUserRef,
 } from '@/lib/store';
 import styles from '@/styles/Chat.module.css';
-import mediaStyle from '@/styles/Components.module.css';
+import mediaStyle from '@/styles/Livekit.module.css';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useUser } from '@supabase/auth-helpers-react';

@@ -13,17 +13,14 @@ import { User } from '@/types/dbtypes';
 export default function EditUserModal({
   showModal,
   setShowModal,
-  user
+  user,
 } : {
   showModal: boolean;
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  user: User
+  user?: User;
 }){
   const supabase = useSupabaseClient();
   const updateUserRef = useRef<HTMLDialogElement>(null);
-  const [editUser, setEditUser] = useState<User>();
-
-  setEditUser(user);
 
   const {
     handleSubmit,
@@ -37,18 +34,17 @@ export default function EditUserModal({
   const onSubmit = async(formData: UpdateUserInput) => {
     const {data, error} = await updateUserProfile(
       supabase,
-      user.id,
+      user!.id,
       formData.full_name,
       formData.website,
       formData.avatarUrl,
-      formData.password,
     );
   };
   return(
     <Modal
       modalRef={updateUserRef}
       showModal={showModal}
-      title={'User Settings'}
+      title={'User Profile'}
       buttons={
         <>
           <div

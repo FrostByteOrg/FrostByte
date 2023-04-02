@@ -28,7 +28,6 @@ export async function updateUserProfile(
   full_name: string,
   avatar_url: string | null,
   website: string | null,
-  password: string,
 ) {
   return await supabase
     .from('profiles')
@@ -36,7 +35,6 @@ export async function updateUserProfile(
       full_name,
       avatar_url,
       website,
-      password
     })
     .eq('id', id)
     .select('*')

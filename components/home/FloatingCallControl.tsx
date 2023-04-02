@@ -1,12 +1,12 @@
 import { DisconnectButton, TrackToggle, useConnectionState, useLocalParticipant } from '@livekit/components-react';
 import ScreenShareOff from '../icons/ScreenShareOff';
 import ScreenShareIcon from '../icons/ScreenShareIcon';
-import mediaStyle from '@/styles/Components.module.css';
+import mediaStyle from '@/styles/Livekit.module.css';
 import { ConnectionState, Track } from 'livekit-client';
 import { useSetConnectionState, useSetCurrentRoomId, useSetCurrentRoomName, useSetCurrentRoomServerId, useSetToken, useConnectionRef, useSetUserSettings, useUserSettings } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import CameraOffIcon from '../icons/CameraOffIcon';
-import CameraIcon from '../icons/CameraIcon';
+import CameraIcon from '../icons/VideoCameraIcon';
 import JoinCallIcon from '../icons/JoinCallIcon';
 import HangUpIcon from '../icons/HangUpIcon';
 import MicrophoneIcon from '../icons/MicrophoneIcon';
