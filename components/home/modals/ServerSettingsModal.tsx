@@ -9,7 +9,7 @@ import {
   addServerIcon,
   getServer,
 } from '@/services/server.service';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { PostgrestError } from '@supabase/supabase-js';
 import { Role, ServersForUser } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
@@ -18,7 +18,7 @@ import 'styles/TabNav.module.css';
 import { RoleEditForm } from '@/components/forms/RoleEditForm';
 import { useServerRoles, useUserServerPerms } from '@/lib/store';
 import PlusIcon from '@/components/icons/PlusIcon';
-import { createRole } from '@/services/roles.service';
+import { createRole, getHighestRolePositionForUser } from '@/services/roles.service';
 
 
 const tabRootClass = 'flex flex-row';
@@ -39,7 +39,25 @@ export default function ServerSettingsModal({
   const userServerPerms = useUserServerPerms();
   const supabase = useSupabaseClient();
   const roles = useServerRoles(server?.server_id!);
+  const user = useUser();
+  // HACK: Workaround for the weird state bug where the user's max role is not correct
+  const [maxRole, setMaxRole] = useState<number>(30676);
 
+  useEffect(() => {
+    async function handleAsync() {
+      const { data, error } = await getHighestRolePositionForUser(supabase, server!.server_id, user?.id!);
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      else {
+        setMaxRole(data);
+      }
+    }
+
+    handleAsync();
+  }, [server?.server_id, supabase, user?.id, maxRole, server]);
   return (
     <Modal
       modalRef={modalRef}
@@ -83,7 +101,7 @@ export default function ServerSettingsModal({
               <button
                 className=""
                 onClick={async () => {
-                  const { data, error } = await createRole(
+                  await createRole(
                     supabase,
                     server?.server_id!,
                     'New Role',
@@ -118,7 +136,7 @@ export default function ServerSettingsModal({
                   value={role.id.toString()}
                   className={`${tabContentClass} p-2`}
                 >
-                  <RoleEditForm role={role} server={server?.servers!} roles_length={roles.length}/>
+                  <RoleEditForm role={role} roles_length={roles.length} max_role_position={maxRole}/>
                 </Tabs.Content>
               ))}
             </Tabs.Root>

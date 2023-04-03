@@ -24,20 +24,18 @@ type RoleEditFormResult = {
   color: string;
 }
 
-export function RoleEditForm({role, server, roles_length }: {role: Role, server: Server, roles_length: number }) {
+export function RoleEditForm({role, roles_length, max_role_position }: {role: Role, roles_length: number, max_role_position: number }) {
   const { register, handleSubmit, formState: { errors } } = useForm<RoleEditFormResult>();
-  const userHighestRolePosition = useUserHighestRolePosition();
   const supabase = useSupabaseClient();
-  const isFormDisabled = role.is_system || role.position <= userHighestRolePosition;
   const userPerms = useUserServerPerms();
+  const userHighestRolePosition = max_role_position; // useUserHighestRolePosition();
 
-  console.log(userHighestRolePosition);
+  const isFormDisabled = role.is_system || role.position <= userHighestRolePosition;
   const serverPermissions = Object.entries(ServerPermissions).filter(
     ([key, value]) => typeof value === 'number' && key !== 'NONE' && key !== 'OWNER'
   );
 
   const onSubmit = async (formData: RoleEditFormResult) => {
-    console.log(formData);
     if (typeof formData.permissions === 'string') {
       formData.permissions = [ formData.permissions ];
     }
@@ -48,15 +46,8 @@ export function RoleEditForm({role, server, roles_length }: {role: Role, server:
 
     const perms = formData.permissions.reduce((acc, cur) => acc | parseInt(cur), 0);
 
-    console.log({
-      ...formData,
-      name: formData.name,
-      permissions: perms,
-      id: role.id
-    });
-
     // If a role is being edited, update it
-    const { data, error } = await updateRole(
+    const { error } = await updateRole(
       supabase,
       role.id,
       formData.name,
@@ -76,7 +67,7 @@ export function RoleEditForm({role, server, roles_length }: {role: Role, server:
       <div className="w-full space-x-2 mb-2 flex flex-row">
         <input
           type="text"
-          className="text-xl rounded-md h-7 p-2"
+          className="text-xl rounded-md h-7 p-2 bg-grey-900 w-full"
           disabled={isFormDisabled}
           defaultValue={role.name}
           placeholder='Role Name'
