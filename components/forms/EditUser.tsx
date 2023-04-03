@@ -47,7 +47,7 @@ export default function EditUser(){
   }
   return(
     <div className={`flex flex-row ${modalStyle.userSettings}`}>
-      <div className='w-auto mr-4 flex flex-col justify-between'>
+      <div className='w-10 mr-4 flex flex-col justify-between items-start'>
         <div>
           <div className='flex flex-row'>
             <button 
@@ -56,7 +56,7 @@ export default function EditUser(){
               Edit Profile
             </button>
           </div>
-          <div className='flex flex-row'>
+          <div className='flex flex-row '>
             <button 
               className='rounded-lg mb-1 h-6 text-sm tracking-wide hover:text-frost-400'
               onClick={() => setFormSwitch('changePassword')}>

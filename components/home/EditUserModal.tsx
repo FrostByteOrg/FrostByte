@@ -57,14 +57,6 @@ export default function EditUserModal({
           >
             Cancel
           </div>
-          <div
-            className="bg-frost-500 py-2 px-5 rounded-lg hover:cursor-pointer hover:bg-frost-700"
-            onClick={() => {
-              handleSubmit(onSubmit)();
-            }}
-          >
-            Submit
-          </div>
         </>
       }
     >

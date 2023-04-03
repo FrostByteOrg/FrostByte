@@ -3,7 +3,7 @@ import modalStyle from '@/styles/Modal.module.css';
 
 export default function ChangePassword() {
   return(
-    <div className='flex flex-col w-13 mx-auto'>
+    <div className='flex flex-col w-12 ml-5'>
       <div className='flex flex-row'>
         <h1 className='text-2xl font-semibold'>Change Password</h1>
       </div>
@@ -16,7 +16,7 @@ export default function ChangePassword() {
             </label>
             <input 
               type='text' 
-              className='w-13 text-medium bg-grey-800 rounded-lg focus:bg-slate-600 focus:outline-grey-100 py-1 pl-2' 
+              className='w-12 text-medium bg-grey-800 rounded-lg focus:bg-slate-600 focus:outline-grey-100 py-1 pl-2' 
               placeholder='Enter Current Password'></input>
           </div>
         </div>
@@ -27,7 +27,7 @@ export default function ChangePassword() {
             </label>
             <input 
               type='text' 
-              className='w-13 text-medium bg-grey-800 rounded-lg focus:bg-slate-600 focus:outline-grey-100 py-1 pl-2' 
+              className='w-12 text-medium bg-grey-800 rounded-lg focus:bg-slate-600 focus:outline-grey-100 py-1 pl-2' 
               placeholder='Enter New Password'></input>
           </div>
         </div>
@@ -38,7 +38,7 @@ export default function ChangePassword() {
             </label>
             <input 
               type='text' 
-              className='w-13 text-medium bg-grey-800 rounded-lg focus:bg-slate-600 focus:outline-grey-100 py-1 pl-2' 
+              className='w-12 text-medium bg-grey-800 rounded-lg focus:bg-slate-600 focus:outline-grey-100 py-1 pl-2' 
               placeholder='Enter New Password'/>
           </div>
         </div>

@@ -121,18 +121,6 @@ export default function Home() {
             <div>
               <div className={'bg-grey-800'}>
                 <RenderMobileView />
-                <div>
-                  {!user ? (
-                    ''
-                  ) : (
-                    <button
-                      className="bg-grey-600 hover:bg-grey-700 font-bold py-2 px-4 fixed right-[20px] top-[20px] rounded-xl tracking-wide text-frost-100"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </button>
-                  )}
-                </div>
               </div>
             </div>
           ) : (

@@ -17,7 +17,7 @@ export default function EditUserForm() {
   };
 
   return(
-    <div className='flex flex-row mx-auto'>
+    <div className='flex flex-row ml-5'>
       <div className='flex flex-col w-12 '>
         <div className='flex flex-row'>
           <h1 className='text-2xl font-semibold'>User Profile</h1>
