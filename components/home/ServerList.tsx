@@ -38,7 +38,7 @@ export default function ServerList() {
 
 
   const servers = useServers();
-  const [ filteredServers, setFilteredServers ] = useState(servers);
+  const [filteredServers, setFilteredServers] = useState(servers);
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
@@ -55,6 +55,13 @@ export default function ServerList() {
       }
     }
   }, [getServers, supabase, user, getUserServerPerms, expanded]);
+
+  // HACK: At the time of component render, the servers are not yet loaded into the store.
+  useEffect(() => {
+    if (servers) {
+      setFilteredServers(servers);
+    }
+  }, [servers]);
 
   //TODO: add isServer check
 
@@ -122,7 +129,9 @@ export default function ServerList() {
 
             // Filter servers
             const filteredServers = servers.filter((server) => {
-              return server.servers.name.toLowerCase().includes(value.toLowerCase());
+              return server.servers.name
+                .toLowerCase()
+                .includes(value.toLowerCase());
             });
 
             setFilteredServers(filteredServers);
@@ -160,8 +169,8 @@ export default function ServerList() {
               }
             })}
       </div>
-      { isInVoice && (
-        <div className={`w-full self-end mb-7 ${mediaStyle.disappear}` }>
+      {isInVoice && (
+        <div className={`w-full self-end mb-7 ${mediaStyle.disappear}`}>
           <SidebarCallControl />
         </div>
       )}
