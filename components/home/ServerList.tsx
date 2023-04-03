@@ -1,14 +1,16 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
 import mediaStyle from '@/styles/Livekit.module.css';
+import mediaStyle from '@/styles/Livekit.module.css';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import AddServerModal from '@/components/home/AddServerModal';
-import AddChannelModal from '@/components/home/AddChannelModal';
+import AddServerModal from '@/components/home/modals/AddServerModal';
+import AddChannelModal from '@/components/home/modals/AddChannelModal';
 import {
   useConnectionRef,
   useGetServers,
+  useGetUserHighestRolePosition,
   useGetUserPermsForServer,
   useServers,
   useUserRef,
@@ -16,7 +18,11 @@ import {
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import PlusIcon from '@/components/icons/PlusIcon';
+import GearIcon from '@/components/icons/GearIcon';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
+import ServerSettingsModal from './modals/ServerSettingsModal';
+import { ServersForUser } from '@/types/dbtypes';
+
 import SidebarCallControl from '@/components/home/SidebarCallControl';
 import { ConnectionState } from 'livekit-client';
 import { useConnectionState } from '@livekit/components-react';
@@ -28,9 +34,13 @@ export default function ServerList() {
 
   const [showAddServer, setShowAddServer] = useState(false);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
+  const [showServerSettingsModal, setShowServerSettingsModal] = useState(false);
   const [expanded, setExpanded] = useState(0);
   const [showEditUser, setShowEditUser] = useState(false);
 
+  const [currentServer, setCurrentServer] = useState<ServersForUser | null>(
+    null
+  );
 
   const user = useUser();
   const supabase = useSupabaseClient();
@@ -38,10 +48,11 @@ export default function ServerList() {
 
 
   const servers = useServers();
-  const [ filteredServers, setFilteredServers ] = useState(servers);
+  const [filteredServers, setFilteredServers] = useState(servers);
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
+  const getUserHighestRolePosition = useGetUserHighestRolePosition();
   const userServerPerms = useUserServerPerms();
   const isInVoice = useConnectionRef();
 
@@ -51,10 +62,18 @@ export default function ServerList() {
     if (getServers) {
       if (user) {
         getUserServerPerms(supabase, expanded, user.id);
+        getUserHighestRolePosition(supabase, expanded, user.id);
         getServers(supabase, user.id);
       }
     }
-  }, [getServers, supabase, user, getUserServerPerms, expanded]);
+  }, [getServers, supabase, user, getUserServerPerms, expanded, getUserHighestRolePosition]);
+
+  // HACK: At the time of component render, the servers are not yet loaded into the store.
+  useEffect(() => {
+    if (servers) {
+      setFilteredServers(servers);
+    }
+  }, [servers]);
 
   //TODO: add isServer check
 
@@ -68,6 +87,11 @@ export default function ServerList() {
         showModal={showAddChannelModal}
         setShowModal={setShowAddChannelModal}
         serverId={expanded}
+      />
+      <ServerSettingsModal
+        showModal={showServerSettingsModal}
+        setShowModal={setShowServerSettingsModal}
+        server={currentServer}
       />
       <div className="flex pb-3 items-center justify-between border-b-2 border-grey-700">
         <div className='flex flex-row'>
@@ -122,7 +146,9 @@ export default function ServerList() {
 
             // Filter servers
             const filteredServers = servers.filter((server) => {
-              return server.servers.name.toLowerCase().includes(value.toLowerCase());
+              return server.servers.name
+                .toLowerCase()
+                .includes(value.toLowerCase());
             });
 
             setFilteredServers(filteredServers);
@@ -145,7 +171,8 @@ export default function ServerList() {
                     key={server.server_id}
                     onClick={() => {
                       return expanded !== server.server_id
-                        ? setExpanded(server.server_id)
+                        ? (setExpanded(server.server_id),
+                        setCurrentServer(server))
                         : '';
                     }}
                   >
@@ -160,14 +187,17 @@ export default function ServerList() {
               }
             })}
       </div>
-      { isInVoice && (
-        <div className={`w-full self-end mb-7 ${mediaStyle.disappear}` }>
+      {isInVoice && (
+        <div className={`w-full self-end mb-7 ${mediaStyle.disappear}`}>
           <SidebarCallControl />
         </div>
       )}
       {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
       userServerPerms & ServerPermissions.OWNER ||
-      userServerPerms & ServerPermissions.ADMINISTRATOR ? (
+      userServerPerms &
+        ServerPermissions.ADMINISTRATOR &
+        userServerPerms &
+        ServerPermissions.MANAGE_SERVER ? (
           <Tooltip
             className="z-20 !opacity-100 font-semibold "
             style={{
@@ -180,14 +210,29 @@ export default function ServerList() {
             clickable
             openOnClick={true}
           >
-            <div
-              className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-              onClick={() => {
-                setShowAddChannelModal(true);
-              }}
-            >
-              <PlusIcon width={5} height={5} />
-              <span className="ml-1">New channel</span>
+            <div className="flex flex-col items-start">
+              <div
+                className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                onClick={() => {
+                  setShowAddChannelModal(true);
+                }}
+              >
+                <PlusIcon width={5} height={5} />
+                <span className="ml-1">New channel</span>
+              </div>
+              {userServerPerms & ServerPermissions.MANAGE_SERVER ? (
+                <div
+                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                  onClick={() => {
+                    setShowServerSettingsModal(true);
+                  }}
+                >
+                  <GearIcon width={5} height={5} />
+                  <span className="ml-1">Server Settings</span>
+                </div>
+              ) : (
+                ''
+              )}
             </div>
           </Tooltip>
         ) : (

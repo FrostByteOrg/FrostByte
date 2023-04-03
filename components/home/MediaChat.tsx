@@ -22,12 +22,16 @@ import { Channel, User } from '@/types/dbtypes';
 import { FloatingCallControl } from './FloatingCallControl';
 import { MediaDispTrack } from './MediaDispTrack';
 import { TrackBundle } from '@livekit/components-core';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import { useEffect, useRef, useState } from 'react';
 import LoadingIcon from '../icons/LoadingIcon';
 import { MediaPlaceholderTrack } from './MediaPlaceholderTrack';
 
-export default function MediaChat({ channel: visibleChannel }: { channel: Channel }) {
+export default function MediaChat({
+  channel: visibleChannel,
+}: {
+  channel: Channel;
+}) {
   const channel = useChannel();
   const userID: User | any = useUser();
   const user = useUserRef();
@@ -37,8 +41,8 @@ export default function MediaChat({ channel: visibleChannel }: { channel: Channe
   const setRoomName = useSetCurrentRoomName();
   const currentRoom = useCurrentRoomRef();
   const tracks = useTracks([
-    {source: Track.Source.Camera, withPlaceholder: true },
-    {source: Track.Source.ScreenShare, withPlaceholder: false }
+    { source: Track.Source.Camera, withPlaceholder: true },
+    { source: Track.Source.ScreenShare, withPlaceholder: false },
   ]);
 
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -56,9 +60,9 @@ export default function MediaChat({ channel: visibleChannel }: { channel: Channe
 
   useEffect(() => {
     if (
-      !modalRef.current?.open
-      && currentRoom.channel_id !== channel?.channel_id
-      && connectionState === ConnectionState.Connected
+      !modalRef.current?.open &&
+      currentRoom.channel_id !== channel?.channel_id &&
+      connectionState === ConnectionState.Connected
     ) {
       modalRef.current?.showModal();
     }
@@ -102,7 +106,9 @@ export default function MediaChat({ channel: visibleChannel }: { channel: Channe
           <p>
             {`Looks like you're already connected to ${currentRoom.name}...`}
 
-            {'You\'ll need to end your current call before you can join another.'}
+            {
+              'You\'ll need to end your current call before you can join another.'
+            }
           </p>
         </div>
       </Modal>
@@ -124,28 +130,33 @@ export default function MediaChat({ channel: visibleChannel }: { channel: Channe
       <div className={`${mediaStyle.gridContainer} overflow-y-auto`}>
         <div className={'bg-grey-800'}>
           {connectionState === ConnectionState.Connecting ? (
-            <div className={`flex flex-row items-center relative top-11 mx-auto h-auto ${mediaStyle.channelLoad}`}>
-              <LoadingIcon className='w-7 h-7 stroke-frost-300 mr-2' />
+            <div
+              className={`flex flex-row items-center relative top-11 mx-auto h-auto ${mediaStyle.channelLoad}`}
+            >
+              <LoadingIcon className="w-7 h-7 stroke-frost-300 mr-2" />
               <span>Connecting...</span>
             </div>
           ) : (
-            <div
-              className={`grid ${mediaStyle.mediaGrid}`}
-            >
-              { currentRoom.channel_id === channel?.channel_id && connectionState === ConnectionState.Connected && (
+            <div className={`grid ${mediaStyle.mediaGrid}`}>
+              {currentRoom.channel_id === channel?.channel_id &&
+                connectionState === ConnectionState.Connected &&
                 tracks.map((track) => {
                   if (
-                    (
+                    // @ts-expect-error Fck you livekit
+                    (!!track.publication &&
                       // @ts-expect-error Fck you livekit
-                      !!track.publication
-                      // @ts-expect-error Fck you livekit
-                      && track.publication.source == Track.Source.Camera
-                      && !track.participant.isCameraEnabled
-                      // @ts-expect-error Fck you livekit
-                    ) || track.publication === undefined) {
+                      track.publication.source == Track.Source.Camera &&
+                      !track.participant.isCameraEnabled) ||
+                    // @ts-expect-error Fck you livekit
+                    track.publication === undefined
+                  ) {
                     return (
                       <>
-                        {connectionState === ConnectionState.Connected && <MediaPlaceholderTrack participant={track.participant}/>}
+                        {connectionState === ConnectionState.Connected && (
+                          <MediaPlaceholderTrack
+                            participant={track.participant}
+                          />
+                        )}
                       </>
                     );
                   }
@@ -157,13 +168,13 @@ export default function MediaChat({ channel: visibleChannel }: { channel: Channe
                       />
                     );
                   }
-                }))}
+                })}
             </div>
           )}
         </div>
       </div>
-      <div className='w-full h-auto mb-1'>
-        <FloatingCallControl visibleChannel={visibleChannel} token={token}/>
+      <div className="w-full h-auto mb-1">
+        <FloatingCallControl visibleChannel={visibleChannel} token={token} />
       </div>
     </>
   );

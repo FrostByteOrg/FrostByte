@@ -5,7 +5,7 @@ import MessageContent from '@/components/home/MessageContent';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Components.module.css';
 import { useEffect } from 'react';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import { MessageWithServerProfile } from '@/types/dbtypes';
 
 export default function DeleteMsgModal({
