@@ -46,7 +46,9 @@ export default function ServerSettingsModal({
 
   useEffect(() => {
     async function handleAsync() {
-      const { data, error } = await getHighestRolePositionForUser(supabase, server!.server_id, user?.id!);
+      if (!server?.server_id || !user?.id) return;
+
+      const { data, error } = await getHighestRolePositionForUser(supabase, server?.server_id, user?.id!);
       if (error) {
         console.log(error);
         return;
@@ -92,11 +94,11 @@ export default function ServerSettingsModal({
             Roles
           </Tabs.Trigger>
         </Tabs.List>
-        <div className="TabContent flex-grow flex-1">
+        <div className="TabContent flex-grow flex-1 w-15 h-15 ">
           <Tabs.Content value='Overview' className={tabContentClass}>
             General server mgmt stuff
           </Tabs.Content>
-          <Tabs.Content value="Roles" className={tabContentClass}>
+          <Tabs.Content value="Roles" className={`${tabContentClass}`}>
             <span className="w-full flex flex-row">
               <h1 className="text-2xl p-2 flex-grow">Roles</h1>
               <button
@@ -125,7 +127,7 @@ export default function ServerSettingsModal({
             </span>
 
             <Tabs.Root className={tabRootClass} orientation='vertical'>
-              <Tabs.List className={tabListClass} defaultValue={roles[0].id.toString()}>
+              <Tabs.List className={tabListClass}>
                 {roles.sort((first, second) => first.position - second.position).map((role) => (
                   <Tabs.Trigger
                     key={role.id}
