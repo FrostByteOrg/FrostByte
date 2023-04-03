@@ -19,6 +19,7 @@ import { RoleEditForm } from '@/components/forms/RoleEditForm';
 import { useServerRoles, useUserServerPerms } from '@/lib/store';
 import PlusIcon from '@/components/icons/PlusIcon';
 import { createRole, getHighestRolePositionForUser } from '@/services/roles.service';
+import { toast } from 'react-toastify';
 
 
 const tabRootClass = 'flex flex-row';
@@ -101,7 +102,7 @@ export default function ServerSettingsModal({
               <button
                 className=""
                 onClick={async () => {
-                  await createRole(
+                  const { error } = await createRole(
                     supabase,
                     server?.server_id!,
                     'New Role',
@@ -109,6 +110,14 @@ export default function ServerSettingsModal({
                     0,
                     'a9aaab'
                   );
+
+                  if (error) {
+                    console.error(error);
+                    toast.error('Failed to create role');
+                    return;
+                  }
+
+                  toast.success('Created role');
                 }}
               >
                 <PlusIcon width={5} height={5} />
@@ -116,7 +125,7 @@ export default function ServerSettingsModal({
             </span>
 
             <Tabs.Root className={tabRootClass} orientation='vertical'>
-              <Tabs.List className={tabListClass}>
+              <Tabs.List className={tabListClass} defaultValue={roles[0].id.toString()}>
                 {roles.sort((first, second) => first.position - second.position).map((role) => (
                   <Tabs.Trigger
                     key={role.id}

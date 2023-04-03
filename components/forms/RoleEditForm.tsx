@@ -1,9 +1,10 @@
 import { useUserHighestRolePosition, useUserServerPerms } from '@/lib/store';
-import { createRole, decrementRolePosition, deleteRole, incrementRolePosition, updateRole } from '@/services/roles.service';
-import { Role, Server } from '@/types/dbtypes';
+import { decrementRolePosition, deleteRole, incrementRolePosition, updateRole } from '@/services/roles.service';
+import { Role } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const permissionEnumToInfoMap = new Map([
   [ServerPermissions.OWNER, ['Owner', '']],
@@ -58,7 +59,11 @@ export function RoleEditForm({role, roles_length, max_role_position }: {role: Ro
 
     if (error) {
       console.error(error);
+      toast.error('Failed to update role');
+      return;
     }
+
+    toast.success('Role saved');
   };
 
   return (
@@ -143,7 +148,15 @@ export function RoleEditForm({role, roles_length, max_role_position }: {role: Ro
           disabled={isFormDisabled}
           onClick={async () => {
             console.log('delete role');
-            deleteRole(supabase, role.id);
+            const { error } = await deleteRole(supabase, role.id);
+
+            if (error) {
+              console.error(error);
+              toast.error('Failed to delete role');
+              return;
+            }
+
+            toast.success('Role deleted');
           }}
         >
           Delete

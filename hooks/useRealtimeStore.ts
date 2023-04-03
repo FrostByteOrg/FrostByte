@@ -200,7 +200,6 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Server role delete event');
-            console.table(payload.old);
             deleteRole(payload.old.id as number);
           }
         )
