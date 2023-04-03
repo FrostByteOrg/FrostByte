@@ -13,6 +13,7 @@ export default function PlusIcon({
       viewBox="0 0 24 24"
       fill={color}
       className={`w-${width} h-${height}`}
+      strokeWidth={1}
     >
       <path
         fillRule="evenodd"

@@ -1,7 +1,6 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
 import mediaStyle from '@/styles/Livekit.module.css';
-import modalStyle from '@styles/Modal.module.css';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
@@ -12,6 +11,7 @@ import {
   useGetServers,
   useGetUserPermsForServer,
   useServers,
+  useUserRef,
   useUserServerPerms,
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
@@ -21,15 +21,21 @@ import SidebarCallControl from '@/components/home/SidebarCallControl';
 import { ConnectionState } from 'livekit-client';
 import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
+import GearIcon from '../icons/GearIcon';
+import EditUserModal from './EditUserModal';
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
   const [showAddServer, setShowAddServer] = useState(false);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [expanded, setExpanded] = useState(0);
+  const [showEditUser, setShowEditUser] = useState(false);
+
 
   const user = useUser();
   const supabase = useSupabaseClient();
+  const editUser = useUserRef();
+
 
   const servers = useServers();
   const [ filteredServers, setFilteredServers ] = useState(servers);
@@ -63,32 +69,45 @@ export default function ServerList() {
         setShowModal={setShowAddChannelModal}
         serverId={expanded}
       />
-      <div className="flex pb-3 items-center border-b-2 border-grey-700">
-        <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
-        <div className="pt-2 ml-3  relative">
-          <span
-            className="hover:cursor-pointer"
-            onClick={() => {
-              setShowAddServer(true);
-            }}
-          >
-            <span data-tooltip-id="addServer" data-tooltip-place="right">
-              <AddServerIcon />
+      <div className="flex pb-3 items-center justify-between border-b-2 border-grey-700">
+        <div className='flex flex-row'>
+          <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
+          <div className="pt-2 ml-3  relative">
+            <span
+              className="hover:cursor-pointer"
+              onClick={() => {
+                setShowAddServer(true);
+              }}
+            >
+              <span data-tooltip-id="addServer" data-tooltip-place="right">
+                <AddServerIcon />
+              </span>
             </span>
-          </span>
-          <Tooltip
-            className="z-20 !opacity-100 font-semibold text-base"
-            style={{
-              backgroundColor: '#21282b',
-              borderRadius: '0.5rem',
-              fontSize: '1.125rem',
-              lineHeight: '1.75rem',
-            }}
-            id="addServer"
-            clickable
-          >
+            <Tooltip
+              className="z-20 !opacity-100 font-semibold text-base"
+              style={{
+                backgroundColor: '#21282b',
+                borderRadius: '0.5rem',
+                fontSize: '1.125rem',
+                lineHeight: '1.75rem',
+              }}
+              id="addServer"
+              clickable
+            >
             Add a server
-          </Tooltip>
+            </Tooltip>
+          </div>
+        </div>
+        <div className={`${mediaStyle.appear}`}>
+          <EditUserModal 
+            showModal={showEditUser} 
+            setShowModal={setShowEditUser} 
+            user={editUser}/>
+          <button 
+            className="w-7 h-7 hover:text-grey-400"
+            onClick={() => {setShowEditUser(true);}}>
+            <GearIcon width={6} height={6}/>
+          </button>
         </div>
       </div>
       {connectionState === ConnectionState.Connected && <MobileCallControls />}

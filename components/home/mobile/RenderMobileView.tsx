@@ -5,13 +5,20 @@ import ServerList from '@/components/home/ServerList';
 import DMessageList from '@/components/home/DMessageList';
 import NavBar from '../NavBar';
 import styles from '@/styles/Home.module.css';
-import { useChannel } from '@/lib/store';
+import { useChannel, useUserRef } from '@/lib/store';
 import MediaChat from '../MediaChat';
+import GearIcon from '@/components/icons/GearIcon';
+import EditUserModal from '../EditUserModal';
+import { useState } from 'react';
 
 export default function RenderMobileView() {
   const sideBarOption = useSideBarOptionValue();
 
   const channel = useChannel();
+  const editUser = useUserRef();
+
+
+  const [showEditUser, setShowEditUser] = useState(false);
 
   if (channel) {
     if(channel.is_media){
