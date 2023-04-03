@@ -5,7 +5,7 @@ export default function ServersIcon({
   hovered = false,
   className = 'w-6 h-6',
 }: {
-  hovered: boolean;
+  hovered?: boolean;
   server?: Server;
   width?: number;
   height?: number;

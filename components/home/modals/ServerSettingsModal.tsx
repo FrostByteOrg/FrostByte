@@ -19,15 +19,16 @@ import 'styles/TabNav.module.css';
 import { RoleEditForm } from '@/components/forms/RoleEditForm';
 import { useUserServerPerms } from '@/lib/store';
 import PlusIcon from '@/components/icons/PlusIcon';
-
+import EditServer from '@/components/forms/EditServer';
 
 const tabRootClass = 'flex flex-row';
 const tabListClass = 'flex flex-col flex-shrink border-r border-gray-600';
-const tabTriggerClass = 'px-3 py-2 focus:border-r focus:border-r-white focus:z-10 focus:outline-none focus-visible:ring text-left focus:bg-gray-500';
+const tabTriggerClass =
+  'px-3 py-2 focus:border-r focus:border-r-white focus:z-10 focus:outline-none focus-visible:ring text-left focus:bg-gray-500';
 const tabContentClass = 'flex flex-col';
 
 interface EnumIterator<T> {
-  [key: string]: T
+  [key: string]: T;
 }
 
 export default function ServerSettingsModal({
@@ -43,11 +44,29 @@ export default function ServerSettingsModal({
   const userServerPerms = useUserServerPerms();
   const supabase = useSupabaseClient();
   const [roles, setRoles] = useState<Role[]>([]);
+  const [serverImage, setServerImage] = useState<File | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CreateServerInput>({
+    resolver: zodResolver(createServerSchema),
+    defaultValues: {
+      name: server?.servers.name,
+      description: server?.servers.description as string | undefined,
+    },
+    mode: 'onSubmit',
+  });
 
   useEffect(() => {
     async function handleAsync() {
       if (server) {
-        const { data, error } = await getServerRoles(supabase, server.servers.id);
+        const { data, error } = await getServerRoles(
+          supabase,
+          server.servers.id
+        );
 
         if (error) {
           console.log(error);
@@ -55,10 +74,14 @@ export default function ServerSettingsModal({
         }
 
         setRoles(data);
+        reset({
+          name: server.servers.name,
+          description: server.servers.description,
+        });
       }
     }
     handleAsync();
-  }, [server, supabase]);
+  }, [reset, server, supabase]);
 
   // const roleList: Role[] = [
   //   {
@@ -104,67 +127,70 @@ export default function ServerSettingsModal({
           onClick={() => {
             modalRef.current?.close();
             setShowModal(false);
+            reset();
+            setServerImage(null);
           }}
         >
           Close
         </button>
       }
     >
-      <Tabs.Root className={tabRootClass} orientation='vertical'>
+      <Tabs.Root className={tabRootClass} orientation="vertical">
         <Tabs.List className={tabListClass}>
-          <Tabs.Trigger
-            value='Overview'
-            className={tabTriggerClass}
-          >
+          <Tabs.Trigger value="Overview" className={tabTriggerClass}>
             Overview
           </Tabs.Trigger>
-          <Tabs.Trigger
-            value='Roles'
-            className={tabTriggerClass}
-          >
+          <Tabs.Trigger value="Roles" className={tabTriggerClass}>
             Roles
           </Tabs.Trigger>
         </Tabs.List>
         <div className="TabContent flex-grow flex-1">
-          <Tabs.Content value='Overview' className={tabContentClass}>
-            General server mgmt stuff
+          <Tabs.Content value="Overview" className={tabContentClass}>
+            <EditServer
+              server={server}
+              register={register}
+              handleSubmit={handleSubmit}
+              errors={errors}
+              serverImage={serverImage}
+              setServerImage={setServerImage}
+            />
           </Tabs.Content>
           <Tabs.Content value="Roles" className={tabContentClass}>
             <span className="w-full flex flex-row">
               <h1 className="text-2xl p-2 flex-grow">Roles</h1>
-              <button
-                className=""
-                onClick={() => {
-                }}
-              >
+              <button className="" onClick={() => {}}>
                 <PlusIcon width={5} height={5} />
               </button>
             </span>
 
-            <Tabs.Root className={tabRootClass} orientation='vertical'>
+            <Tabs.Root className={tabRootClass} orientation="vertical">
               <Tabs.List className={tabListClass}>
-                {roles.sort((first, second) => second.position - first.position).map((role) => (
-                  <Tabs.Trigger
+                {roles
+                  .sort((first, second) => second.position - first.position)
+                  .map((role) => (
+                    <Tabs.Trigger
+                      key={role.id}
+                      value={role.id.toString()}
+                      className={tabTriggerClass}
+                      style={{
+                        color: `#${role.color}`,
+                      }}
+                    >
+                      {role.name}
+                    </Tabs.Trigger>
+                  ))}
+              </Tabs.List>
+              {roles
+                .sort((first, second) => second.position - first.position)
+                .map((role) => (
+                  <Tabs.Content
                     key={role.id}
                     value={role.id.toString()}
-                    className={tabTriggerClass}
-                    style={{
-                      color: `#${role.color}`
-                    }}
+                    className={`${tabContentClass} p-2`}
                   >
-                    {role.name}
-                  </Tabs.Trigger>
+                    <RoleEditForm role={role} server={server?.servers!} />
+                  </Tabs.Content>
                 ))}
-              </Tabs.List>
-              {roles.sort((first, second) => second.position - first.position).map((role) => (
-                <Tabs.Content
-                  key={role.id}
-                  value={role.id.toString()}
-                  className={`${tabContentClass} p-2`}
-                >
-                  <RoleEditForm role={role} server={server?.servers!} />
-                </Tabs.Content>
-              ))}
             </Tabs.Root>
           </Tabs.Content>
         </div>

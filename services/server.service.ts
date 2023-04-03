@@ -49,7 +49,7 @@ export async function updateServer(
   supabase: SupabaseClient<Database>,
   id: number,
   name: string,
-  description: string | null
+  description: string | null | undefined
 ) {
   return await supabase
     .from('servers')
@@ -304,3 +304,13 @@ export async function addServerIcon(
 type AddServerIconResponse = Awaited<ReturnType<typeof addServerIcon>>;
 export type AddServerIconResponseSuccess = AddServerIconResponse['data'];
 export type AddServerIconResponseError = AddServerIconResponse['error'];
+
+export async function updateServerIcon(
+  supabase: SupabaseClient<Database>,
+  filePath: string,
+  image: any
+) {
+  return await supabase.storage.from('avatars').update(filePath, image, {
+    upsert: true,
+  });
+}

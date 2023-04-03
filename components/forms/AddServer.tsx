@@ -78,7 +78,7 @@ export default function AddServer({
                 UPLOAD
               </span>
               <span className="absolute -top-3 -right-3">
-                <PlusIcon color="#4abfe8" />
+                <PlusIcon color="#4abfe8" outline={false} />
               </span>
             </>
           )}

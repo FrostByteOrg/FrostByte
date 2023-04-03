@@ -57,8 +57,13 @@ export default function ServerList() {
     }
   }, [getServers, supabase, user, getUserServerPerms, expanded]);
 
+  useEffect(() => {
+    if (servers) {
+      setFilteredServers(servers);
+    }
+  }, [servers]);
+
   //TODO: add isServer check
-  console.log(userServerPerms);
 
   return (
     <div className=" p-4 flex-col flex h-screen">
@@ -162,12 +167,8 @@ export default function ServerList() {
           <SidebarCallControl />
         </div>
       )}
-      {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
-      userServerPerms & ServerPermissions.OWNER ||
-      userServerPerms &
-        ServerPermissions.ADMINISTRATOR &
-        userServerPerms &
-        ServerPermissions.MANAGE_SERVER ? (
+      {userServerPerms & ServerPermissions.MANAGE_SERVER ||
+      userServerPerms & ServerPermissions.MANAGE_CHANNELS ? (
         <Tooltip
           className="z-20 !opacity-100 font-semibold "
           style={{
