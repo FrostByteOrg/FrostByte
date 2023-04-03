@@ -1,7 +1,6 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
 import mediaStyle from '@/styles/Livekit.module.css';
-import mediaStyle from '@/styles/Livekit.module.css';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
@@ -27,7 +26,6 @@ import SidebarCallControl from '@/components/home/SidebarCallControl';
 import { ConnectionState } from 'livekit-client';
 import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
-import GearIcon from '../icons/GearIcon';
 import EditUserModal from './EditUserModal';
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)

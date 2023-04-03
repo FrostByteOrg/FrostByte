@@ -1,4 +1,4 @@
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import EditUser from '@/components/forms/EditUser';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
