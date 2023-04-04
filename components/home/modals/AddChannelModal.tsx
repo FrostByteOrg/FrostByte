@@ -1,5 +1,5 @@
 import AddChannel from '@/components/forms/AddChannel';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import {
   CreateChannelInput,
   createChannelSchema,
@@ -32,9 +32,7 @@ export default function AddChannelModal({
   const [channelType, setChannelType] = useState<'media' | 'text'>('text');
 
   const supabase = useSupabaseClient();
-
   const user = useUser();
-
   const getUserServerPerms = useGetUserPermsForServer();
 
   const {
@@ -74,6 +72,7 @@ export default function AddChannelModal({
       if ((error as PostgrestError).message) {
         setServerError((error as PostgrestError).message);
       }
+
       else {
         setServerError(error as string);
       }
@@ -83,6 +82,7 @@ export default function AddChannelModal({
       }, 7000);
       return;
     }
+
     else {
       addChannelRef.current?.close();
       setChannelType('text');

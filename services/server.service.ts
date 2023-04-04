@@ -132,39 +132,6 @@ type IsUserInServerResponse = Awaited<ReturnType<typeof isUserInServer>>;
 export type IsUserInServerResponseSuccess = IsUserInServerResponse['data'];
 export type IsUserInServerResponseError = IsUserInServerResponse['error'];
 
-export async function createRole(
-  supabase: SupabaseClient<Database>,
-  server_id: number,
-  name: string,
-  position: number,
-  permissions: ServerPermissions,
-  color: string
-) {
-  return await supabase
-    .from('roles')
-    .insert({ name, color, server_id, position, permissions })
-    .select()
-    .single();
-}
-
-type CreateRoleResponse = Awaited<ReturnType<typeof createRole>>;
-export type CreateRoleResponseSuccess = CreateRoleResponse['data'];
-export type CreateRoleResponseError = CreateRoleResponse['error'];
-
-export async function getServerRoles(
-  supabase: SupabaseClient<Database>,
-  server_id: number
-) {
-  return await supabase
-    .from('server_roles')
-    .select('*')
-    .eq('server_id', server_id);
-}
-
-type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
-export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
-export type GetServerRolesResponseError = GetServerRolesResponse['error'];
-
 export async function getRolesForUser(
   supabase: SupabaseClient<Database>,
   user_id: string,
@@ -238,7 +205,7 @@ export async function getCurrentUserServerPermissions(
   return await supabase.rpc('get_permission_flags_for_server_user', {
     s_id: server_id,
     p_id: userId ? userId : (await supabase.auth.getUser()).data.user?.id!,
-  });
+  }).single();
 }
 
 type GetCurrentUserServerPermissionsResponse = Awaited<

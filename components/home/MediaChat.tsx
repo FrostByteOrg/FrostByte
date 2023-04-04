@@ -22,7 +22,7 @@ import { Channel, User } from '@/types/dbtypes';
 import { FloatingCallControl } from './FloatingCallControl';
 import { MediaDispTrack } from './MediaDispTrack';
 import { TrackBundle } from '@livekit/components-core';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import { useEffect, useRef, useState } from 'react';
 import LoadingIcon from '../icons/LoadingIcon';
 import { MediaPlaceholderTrack } from './MediaPlaceholderTrack';

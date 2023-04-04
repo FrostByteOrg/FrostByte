@@ -14,7 +14,7 @@ import styles from '@/styles/Servers.module.css';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { ServerMemberStats } from './ServerMemberStats';
 import { OverflowMarquee } from './OverflowMarquee';
-import { useSetChannel } from '@/lib/store';
+import { useChannel, useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import { Tooltip } from 'react-tooltip';
 import ChannelName from './ChannelName';
@@ -35,6 +35,7 @@ export default function Server({
   const [isSettingsHovered, setIsSettingsHovered] = useState(false);
   const setChannel = useSetChannel();
   const [channels, setChannels] = useState<Channel[]>([]);
+  const currentChannel = useChannel();
 
   useEffect(() => {
     const handleAsync = async () => {
@@ -87,7 +88,11 @@ export default function Server({
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
           {channels.map((channel: Channel, idx: number) => (
             <div
-              className={`channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px] ${
+              className={`${
+                currentChannel?.channel_id == channel.channel_id
+                  ? 'bg-grey-600'
+                  : 'hover:bg-grey-600'
+              } flex whitespace-nowrap items-center pt-2 pb-1 px-4 mt-1 hover:cursor-pointer rounded-lg max-w-[192px] ${
                 idx === 0 ? 'mt-2' : ''
               }`}
               onClick={(e) => {
@@ -128,7 +133,11 @@ export default function Server({
       <div
         className={`${
           !isLast ? 'border-b-2 border-grey-700' : ''
-        }   py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center`}
+        }   py-2 px-3 flex justify-between ${
+          currentChannel?.server_id == server.id
+            ? 'bg-grey-700 rounded-xl'
+            : 'hover:bg-grey-700 hover:rounded-xl'
+        }   items-center`}
       >
         <div className="flex items-center">
           <div className={`${styles.serverIcon}  p-[6px] rounded-xl`}>

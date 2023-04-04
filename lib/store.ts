@@ -3,6 +3,7 @@ import {
   Channel,
   DetailedProfileRelation,
   MessageWithServerProfile,
+  Role,
   ServersForUser,
   User,
 } from '@/types/dbtypes';
@@ -27,6 +28,8 @@ import {
   getAllDMChannels,
 } from '@/services/directmessage.service';
 import { Room } from '@/types/client/room';
+import { getRolesFromAllServersUserIsIn, getServerRoles, getHighestRolePositionForUser } from '@/services/roles.service';
+import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -173,20 +176,33 @@ const useMessagesStore = create<MessagesState>()((set) => ({
   },
 }));
 
+// TODO: Expand this to include more than just the current server
+// As we can edit a server's permissions even if we're not focused on it
 export interface UserPermsState {
-  userPerms: any;
-  userServerPerms: any;
+  userPerms: ChannelPermissions;
+  userServerPerms: ServerPermissions;
+  userHighestRolePosition: number;
+
   getUserPerms: (supabase: SupabaseClient<Database>, channelId: number) => void;
   getUserPermsForServer: (
     supabase: SupabaseClient<Database>,
     server_id: number,
     userId?: string
   ) => void;
+
+  getHighestRolePositionForUser: (
+    supabase: SupabaseClient<Database>,
+    serverId: number,
+    userId: string
+  ) => void;
+
 }
 
 const useUserPermsStore = create<UserPermsState>()((set) => ({
-  userPerms: [],
-  userServerPerms: [],
+  userPerms: 0,
+  userServerPerms: 0,
+  userHighestRolePosition: 36767, // Max value for a role position
+
   getUserPerms: async (supabase, channelId) => {
     const { data, error } = await getCurrentUserChannelPermissions(
       supabase,
@@ -216,6 +232,24 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
       set({ userServerPerms: data });
     }
   },
+
+  getHighestRolePositionForUser: async (supabase, serverId, userId) => {
+    const { data, error } = await getHighestRolePositionForUser(
+      supabase,
+      serverId,
+      userId
+    );
+
+    if (error) {
+      console.log(error);
+    }
+
+    console.log('highestRolePosSet ', data);
+
+    if (data) {
+      set({ userHighestRolePosition: data });
+    }
+  }
 }));
 
 export interface ChannelState {
@@ -487,6 +521,97 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
   },
 }));
 
+export interface ServerRolesState {
+  serverRoles: Map<number, Role[]>; // Map of serverId -> Role[]
+
+  addRole: (role: Role) => void;
+  updateRole: (role: Role) => void;
+  removeRole: (role: number) => void;
+
+  getRolesForAllServers: (supabase: SupabaseClient<Database>) => void;
+  getRolesForServer: (supabase: SupabaseClient<Database>, serverId: number) => void;
+}
+
+const useServerRolesStore = create<ServerRolesState>()((set) => ({
+  serverRoles: new Map(),
+
+  addRole: async (role) => {
+    set((state) => ({
+      serverRoles: new Map(
+        state.serverRoles.set(
+          role.server_id,
+          [...state.serverRoles.get(role.server_id) || [], role]
+        )
+      ),
+    }));
+  },
+
+  updateRole: async (role) => {
+    set((state) => ({
+      serverRoles: new Map(
+        state.serverRoles.set(
+          role.server_id,
+          (state.serverRoles
+            .get(role.server_id) || [])
+            .map((r) => (r.id === role.id ? role : r))
+        )
+      ),
+    }));
+  },
+
+  removeRole: async (roleId) => {
+    set((state) => {
+      const rv = new Map();
+
+      for (const [serverId, roles] of state.serverRoles) {
+        rv.set(serverId, roles.filter((r) => r.id !== roleId));
+      }
+
+      return {
+        serverRoles: rv,
+      };
+    });
+  },
+
+  // NOTE: This should be run on app launch and at no other time
+  getRolesForAllServers: async (supabase) => {
+    const { data, error } = await getRolesFromAllServersUserIsIn(supabase);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => {
+      const rv = new Map();
+
+      for (const role of data) {
+        if (!rv.has(role.server_id)) {
+          rv.set(role.server_id, []);
+        }
+
+        rv.set(role.server_id, [...rv.get(role.server_id), role]);
+      }
+
+      return { serverRoles: rv };
+    });
+  },
+
+  getRolesForServer: async (supabase, serverId) => {
+    const { data, error } = await getServerRoles(supabase, serverId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => ({
+      serverRoles: new Map(state.serverRoles.set(serverId, data)),
+    }));
+  }
+}));
+
+
 export const useServers = () => useServerStore((state) => state.servers);
 export const useAddServer = () => useServerStore((state) => state.addServer);
 export const useRemoveServer = () =>
@@ -553,11 +678,21 @@ export const useFlagUserOffline = () =>
   useOnlineStore((state) => state.flagUserOffline);
 export const useGetUserPermsForServer = () =>
   useUserPermsStore((state) => state.getUserPermsForServer);
+export const useGetUserHighestRolePosition = () =>
+  useUserPermsStore((state) => state.getHighestRolePositionForUser);
 export const useUserServerPerms = () =>
   useUserPermsStore((state) => state.userServerPerms);
+export const useUserHighestRolePosition = () =>
+  useUserPermsStore((state) => state.userHighestRolePosition);
 export const useAddDMChannel = () =>
   useDMChannelsStore((state) => state.addDMChannel);
 export const useDMChannels = () =>
   useDMChannelsStore((state) => state.dmChannels);
 export const useGetDMChannels = () =>
   useDMChannelsStore((state) => state.getDMChannels);
+export const useServerRoles = (server_id: number) => useServerRolesStore((state) => state.serverRoles.get(server_id) || []);
+export const useAddServerRole = () => useServerRolesStore((state) => state.addRole);
+export const useUpdateServerRole = () => useServerRolesStore((state) => state.updateRole);
+export const useRemoveServerRole = () => useServerRolesStore((state) => state.removeRole);
+export const useGetAllServerRoles = () => useServerRolesStore((state) => state.getRolesForAllServers);
+export const useGetRolesForServer = () => useServerRolesStore((state) => state.getRolesForServer);

@@ -26,7 +26,7 @@ export default function Modal({
   return (
     <dialog
       ref={modalRef}
-      className={`${styles.modal} rounded-lg `}
+      className={`${styles.modal} rounded-lg`}
       onKeyDown={onKeyDown}
     >
       <div className="bg-grey-900 p-4 rounded-lg  z-50 ">

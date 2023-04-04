@@ -1,5 +1,5 @@
 import AddServer from '@/components/forms/AddServer';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import { CreateServerInput, createServerSchema } from '@/types/client/server';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
@@ -102,6 +102,13 @@ export default function AddServerModal({
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           handleSubmit(onSubmit)();
+        }
+        else if (e.key === 'Escape') {
+          addServerRef.current?.close();
+          setServerImage(null);
+          setSetShowDesc(false);
+          reset();
+          setShowModal(false);
         }
       }}
       buttons={
