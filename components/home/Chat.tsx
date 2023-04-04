@@ -60,7 +60,7 @@ export default function Chat() {
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
-              const previousMessage: MessageWithServerProfile | null =
+              const previousMessage: MessageType | null =
                 index > 0 ? array[index - 1] : null;
 
               return (
@@ -69,7 +69,7 @@ export default function Chat() {
                   message={value}
                   collapse_user={
                     !!previousMessage &&
-                    previousMessage.profile.id === value.profile.id
+                    previousMessage.profile_id === value.profile_id
                   }
                   hasDeletePerms={
                     (userPerms & ChannelPermissions.MANAGE_MESSAGES) !== 0

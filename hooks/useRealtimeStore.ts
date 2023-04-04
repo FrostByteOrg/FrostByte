@@ -257,7 +257,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('New message event');
-            addMessage(supabase, (payload.new as MessageType).id);
+            addMessage(payload.new);
           }
         )
         .on<MessageType>(
@@ -270,7 +270,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Message update event');
-            updateMessage(supabase, (payload.new as MessageType).id);
+            updateMessage(payload.new);
           }
         )
         .on<MessageType>(

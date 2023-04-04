@@ -506,7 +506,16 @@ export interface Database {
           p_id: string
           s_id: number
         }
-        Returns: undefined
+        Returns: {
+          color: string | null
+          created_at: string | null
+          id: number
+          is_system: boolean
+          name: string
+          permissions: number
+          position: number
+          server_id: number
+        }[]
       }
       get_server_id_of_message: {
         Args: {
@@ -518,6 +527,22 @@ export interface Database {
         Args: {
           s_id: number
           p_id: string
+        }
+        Returns: {
+          id: string
+          updated_at: string
+          username: string
+          full_name: string
+          avatar_url: string
+          website: string
+          email: string
+          server_user: Json
+          roles: Json
+        }[]
+      }
+      get_server_profiles_for_all_users_in_server: {
+        Args: {
+          s_id: number
         }
         Returns: {
           id: string

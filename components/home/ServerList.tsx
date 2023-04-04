@@ -8,6 +8,7 @@ import AddServerModal from '@/components/home/modals/AddServerModal';
 import AddChannelModal from '@/components/home/modals/AddChannelModal';
 import {
   useConnectionRef,
+  useGetAllServerUserProfiles,
   useGetServers,
   useGetUserHighestRolePosition,
   useGetUserPermsForServer,
@@ -45,6 +46,7 @@ export default function ServerList() {
 
   const getUserServerPerms = useGetUserPermsForServer();
   const getUserHighestRolePosition = useGetUserHighestRolePosition();
+  const getAllServerProfiles = useGetAllServerUserProfiles();
   const userServerPerms = useUserServerPerms();
   const isInVoice = useConnectionRef();
 
@@ -56,9 +58,10 @@ export default function ServerList() {
         getUserServerPerms(supabase, expanded, user.id);
         getUserHighestRolePosition(supabase, expanded, user.id);
         getServers(supabase, user.id);
+        getAllServerProfiles(supabase, expanded);
       }
     }
-  }, [getServers, supabase, user, getUserServerPerms, expanded, getUserHighestRolePosition]);
+  }, [getServers, supabase, user, getUserServerPerms, expanded, getUserHighestRolePosition, getAllServerProfiles]);
 
   // HACK: At the time of component render, the servers are not yet loaded into the store.
   useEffect(() => {
