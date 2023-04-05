@@ -540,6 +540,22 @@ export interface Database {
           roles: Json
         }[]
       }
+      get_server_profile_for_user_by_server_user: {
+        Args: {
+          su_id: number
+        }
+        Returns: {
+          id: string
+          updated_at: string
+          username: string
+          full_name: string
+          avatar_url: string
+          website: string
+          email: string
+          server_user: Json
+          roles: Json
+        }[]
+      }
       get_server_profiles_for_all_users_in_server: {
         Args: {
           s_id: number

@@ -6,6 +6,7 @@ export type Server = Database['public']['Tables']['servers']['Row'];
 export type User = Database['public']['Tables']['profiles']['Row'];
 export type Invite = Database['public']['Tables']['server_invites']['Row'];
 export type ServerUser = Database['public']['Tables']['server_users']['Row'];
+export type ServerUserRole = Database['public']['Tables']['server_user_roles']['Row'];
 export type ChannelPermissions = Database['public']['Tables']['channel_permissions']['Row'];
 export type Role = Database['public']['Tables']['server_roles']['Row'];
 export type ProfileRelation = Database['public']['Tables']['profile_relations']['Row'];

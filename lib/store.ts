@@ -20,7 +20,7 @@ import {
 } from '@/services/server.service';
 import { getMessagesInChannel, getMessagesInChannelWithUser } from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
-import { getMessageWithServerProfile, getProfile, getServerProfileForUser } from '@/services/profile.service';
+import { getMessageWithServerProfile, getProfile, getServerProfileForUser, getServerProfileForUserByServerUser } from '@/services/profile.service';
 import {
   getRelationships,
   relationToDetailedRelation,
@@ -589,6 +589,7 @@ export interface ServerProfilesState {
 
   addServerProfiles: (supabase: SupabaseClient<Database>, server_id: number) => void;
   updateServerProfile: (supabase: SupabaseClient<Database>, profile_id: string, server_id: number) => void;
+  updateServerProfileByServerUser: (supabase: SupabaseClient<Database>, server_user_id: number) => void;
   removeServerProfile: (profile_id: string, server_id: number) => void;
 }
 
@@ -638,6 +639,29 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
       }
 
       rv.get(server_id)!.set(profile_id, data);
+
+      return {
+        serverProfiles: rv,
+      };
+    });
+  },
+
+  updateServerProfileByServerUser: async (supabase, server_user_id) => {
+    const { data, error } = await getServerProfileForUserByServerUser(supabase, server_user_id);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    set((state) => {
+      const rv = new Map(state.serverProfiles);
+
+      if (!rv.has(data.server_user.server_id)) {
+        rv.set(data.server_user.server_id, new Map());
+      }
+
+      rv.get(data.server_user.server_id)!.set(data.id, data);
 
       return {
         serverProfiles: rv,
@@ -748,6 +772,7 @@ export const useGetAllServerRoles = () => useServerRolesStore((state) => state.g
 export const useGetRolesForServer = () => useServerRolesStore((state) => state.getRolesForServer);
 export const useGetAllServerUserProfiles = () => useServerProfilesStore((state) => state.addServerProfiles);
 export const useUpateServerUserProfile = () => useServerProfilesStore((state) => state.updateServerProfile);
+export const useUpdateServerUserProfileByServerId = () => useServerProfilesStore((state) => state.updateServerProfileByServerUser);
 export const useServerUserProfile = (server_id: number, profile_id: string) => useServerProfilesStore(
   (state) => state.serverProfiles.get(server_id)?.get(profile_id)
 );
