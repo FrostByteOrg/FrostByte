@@ -661,6 +661,8 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
         rv.set(data.server_user.server_id, new Map());
       }
 
+      console.log('updating by server user');
+      console.table(data);
       rv.get(data.server_user.server_id)!.set(data.id, data);
 
       return {
@@ -773,6 +775,7 @@ export const useGetRolesForServer = () => useServerRolesStore((state) => state.g
 export const useGetAllServerUserProfiles = () => useServerProfilesStore((state) => state.addServerProfiles);
 export const useUpateServerUserProfile = () => useServerProfilesStore((state) => state.updateServerProfile);
 export const useUpdateServerUserProfileByServerId = () => useServerProfilesStore((state) => state.updateServerProfileByServerUser);
+export const useAllServerProfiles = () => useServerProfilesStore((state) => state.serverProfiles);
 export const useServerUserProfile = (server_id: number, profile_id: string) => useServerProfilesStore(
   (state) => state.serverProfiles.get(server_id)?.get(profile_id)
 );
