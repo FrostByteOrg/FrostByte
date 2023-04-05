@@ -26,6 +26,7 @@ import SidebarCallControl from '@/components/home/SidebarCallControl';
 import { ConnectionState } from 'livekit-client';
 import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
+import { ServerSettingsTooltip } from '@/components/Tooltips/ServerSettingsTooltip';
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
@@ -46,7 +47,6 @@ export default function ServerList() {
 
   const getUserServerPerms = useGetUserPermsForServer();
   const getAllServerProfiles = useGetAllServerUserProfiles();
-  const userServerPerms = useUserServerPerms();
   const isInVoice = useConnectionRef();
 
   const connectionState = useConnectionState();
@@ -54,12 +54,11 @@ export default function ServerList() {
   useEffect(() => {
     if (getServers) {
       if (user) {
-        getUserServerPerms(supabase, expanded, user.id);
         getServers(supabase, user.id);
         getAllServerProfiles(supabase, expanded);
       }
     }
-  }, [getServers, supabase, user, getUserServerPerms, expanded, getAllServerProfiles]);
+  }, [getServers, supabase, user, expanded, getAllServerProfiles]);
 
   // HACK: At the time of component render, the servers are not yet loaded into the store.
   useEffect(() => {
@@ -162,6 +161,11 @@ export default function ServerList() {
                       isLast={idx == serverList.length - 1}
                       setExpanded={setExpanded}
                     />
+                    <ServerSettingsTooltip
+                      server_id={server.server_id}
+                      setShowAddChannelModal={setShowAddChannelModal}
+                      setShowServerSettingsModal={setShowServerSettingsModal}
+                    />
                   </span>
                 );
               }
@@ -172,52 +176,6 @@ export default function ServerList() {
           <SidebarCallControl />
         </div>
       )}
-      {userServerPerms & ServerPermissions.MANAGE_MESSAGES ||
-      userServerPerms & ServerPermissions.OWNER ||
-      userServerPerms &
-        ServerPermissions.ADMINISTRATOR &
-        userServerPerms &
-        ServerPermissions.MANAGE_SERVER ? (
-          <Tooltip
-            className="z-20 !opacity-100 font-semibold "
-            style={{
-              backgroundColor: '#21282b',
-              borderRadius: '0.5rem',
-              fontSize: '1.125rem',
-              lineHeight: '1.75rem',
-            }}
-            id="serverSettings"
-            clickable
-            openOnClick={true}
-          >
-            <div className="flex flex-col items-start">
-              <div
-                className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-                onClick={() => {
-                  setShowAddChannelModal(true);
-                }}
-              >
-                <PlusIcon width={5} height={5} />
-                <span className="ml-1">New channel</span>
-              </div>
-              {userServerPerms & ServerPermissions.MANAGE_SERVER ? (
-                <div
-                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-                  onClick={() => {
-                    setShowServerSettingsModal(true);
-                  }}
-                >
-                  <GearIcon width={5} height={5} />
-                  <span className="ml-1">Server Settings</span>
-                </div>
-              ) : (
-                ''
-              )}
-            </div>
-          </Tooltip>
-        ) : (
-          ''
-        )}
     </div>
   );
 }

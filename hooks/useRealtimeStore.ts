@@ -187,6 +187,9 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           async (payload) => {
             console.log('DM server insert event');
             addDMChannel(supabase, payload.new.id);
+
+            // Fetch the profiles for the server
+            getAllServerProfiles(supabase, payload.new.id);
           }
         )
         .on<Role>(

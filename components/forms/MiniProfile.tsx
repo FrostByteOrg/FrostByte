@@ -64,7 +64,11 @@ function WrappedComponent({ server_user_profile }: { server_user_profile: Server
             }}
           >
             <p className="flex-grow">{role.name}</p>
-            {(currentUserPerms & ServerPermissions.MANAGE_ROLES && role.position > userHighestRole && role.position !== serverRoles.length - 1) && (
+            {(
+              (currentUserPerms & ServerPermissions.MANAGE_ROLES) === ServerPermissions.MANAGE_ROLES
+              && role.position > userHighestRole
+              && role.position !== serverRoles.length - 1
+            ) && (
               <button
                 type="button"
                 className="align-middle self-end"
@@ -93,7 +97,10 @@ function WrappedComponent({ server_user_profile }: { server_user_profile: Server
           </span>
         ))}
 
-        {((currentUserPerms & ServerPermissions.MANAGE_ROLES) && filteredRoles.length > 0) && (
+        {(
+          (currentUserPerms & ServerPermissions.MANAGE_ROLES) === ServerPermissions.MANAGE_ROLES
+          && filteredRoles.length > 0
+        ) && (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
               asChild
