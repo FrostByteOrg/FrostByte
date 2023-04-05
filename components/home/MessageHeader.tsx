@@ -49,6 +49,7 @@ export function MessageHeader({
             style={{ backgroundColor: '#21282b', borderRadius: '0.5rem' }}
             clickable
             noArrow
+            openOnClick
           >
             <MiniProfile server_user_profile={server_user_profile} />
           </Tooltip>
