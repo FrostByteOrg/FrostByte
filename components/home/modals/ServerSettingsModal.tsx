@@ -10,6 +10,7 @@ import { useServerRoles, useServerUserProfileHighestRolePosition, useServerUserP
 import PlusIcon from '@/components/icons/PlusIcon';
 import { createRole } from '@/services/roles.service';
 import { toast } from 'react-toastify';
+import { ServerInviteList } from '@/components/home/ServerInviteList';
 
 
 const tabRootClass = 'flex flex-row';
@@ -65,6 +66,13 @@ export default function ServerSettingsModal({
           >
             Roles
           </Tabs.Trigger>
+          {/* <Tabs.Trigger
+            value="Invites"
+            className={tabTriggerClass}
+            disabled={(userServerPerms & ServerPermissions.MANAGE_INVITES) === 0}
+          >
+            Invites
+          </Tabs.Trigger> */}
         </Tabs.List>
         <div className="TabContent flex-grow flex-1 w-15 h-15 ">
           <Tabs.Content value='Overview' className={tabContentClass}>
@@ -124,6 +132,12 @@ export default function ServerSettingsModal({
               ))}
             </Tabs.Root>
           </Tabs.Content>
+          {/* <Tabs.Content value="Invites" className={tabContentClass}>
+            <span className="w-full flex flex-row">
+              <h1 className="text-2xl p-2 flex-grow">Invites</h1>
+            </span>
+            <ServerInviteList server={server?.servers!} />
+          </Tabs.Content> */}
         </div>
       </Tabs.Root>
     </Modal>

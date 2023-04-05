@@ -1,0 +1,65 @@
+import { CopyLinkIcon } from '@/components/icons/CopyLinkIcon';
+import TrashIcon from '@/components/icons/TrashIcon';
+import { formatDateStr } from '@/lib/dateManagement';
+import { getInvitesForServer } from '@/services/invites.service';
+import { Invite, Server } from '@/types/dbtypes';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { supabase } from '@supabase/auth-ui-react/dist/esm/common/theming';
+import { useEffect, useState } from 'react';
+
+export function ServerInviteList({ server }: { server: Server }) {
+  const supabase = useSupabaseClient();
+  const [ serverInvites, setServerInvites ] = useState<Invite[]>([]);
+
+  useEffect(() => {
+    async function handleAsync() {
+      const { data, error } = await getInvitesForServer(supabase, server.id);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setServerInvites(data);
+    }
+
+    handleAsync();
+  }, [server, supabase]);
+
+  return (
+    <table className="text-center font-light">
+      <thead>
+        <tr className="text-lg">
+          <th className="font-light">Invite Code</th>
+          <th className="font-light">Created At</th>
+          <th className="font-light">Expires At</th>
+          <th className="font-light">Uses Remaining</th>
+          <th className="font-light">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {serverInvites.map((invite) => (
+          <tr key={invite.id}>
+            <td><code className="p-1 bg-slate-800 rounded-md">{invite.url_id}</code></td>
+            <td>{formatDateStr(invite.created_at!)}</td>
+            <td>{!!invite.expires_at ? formatDateStr(invite.expires_at!) : 'Never'}</td>
+            <td>{invite.uses_remaining}</td>
+            <td className="flex flex-row space-x-2">
+              <button
+                className="p-1 hover:bg-slate-600 transition-colors rounded-md"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${location.origin}/invite/${invite.url_id}`);
+                }}
+              >
+                <CopyLinkIcon className="w-5 h-5"/>
+              </button>
+              <button className="p-1 hover:bg-slate-600 transition-colors rounded-md">
+                <TrashIcon styles="stroke-red-500"/>
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}

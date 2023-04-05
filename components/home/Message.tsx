@@ -11,6 +11,7 @@ import DeleteMsgModal from '@/components/home/DeleteMsgModal';
 import { Message as MessageType, MessageWithServerProfile } from '@/types/dbtypes';
 import { MessageHeader } from './MessageHeader';
 import { useChannel, useServerUserProfile } from '@/lib/store';
+import { formatDateStr } from '@/lib/dateManagement';
 
 export default function Message({
   message,
@@ -21,14 +22,7 @@ export default function Message({
   collapse_user: boolean;
   hasDeletePerms?: boolean;
 }) {
-  const pastDate = moment(message.sent_time).format('MM/DD/YYYY h:mm A');
-  const todayDate = moment(message.sent_time).format('h:mm A');
-  const displayTime =
-    moment(moment(message.sent_time)).isSame(moment(), 'day') &&
-    moment(moment(message.sent_time)).isSame(moment(), 'year') &&
-    moment(moment(message.sent_time)).isSame(moment(), 'month')
-      ? `Today at ${todayDate}`
-      : pastDate;
+  const displayTime = formatDateStr(message.sent_time);
 
   const supabase = useSupabaseClient();
   const user = useUser();
