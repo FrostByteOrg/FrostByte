@@ -149,8 +149,9 @@ const useMessagesStore = create<MessagesState>()((set) => ({
   },
 }));
 
-// TODO: Expand this to include more than just the current server
-// As we can edit a server's permissions even if we're not focused on it
+/**
+ * @deprecated Use ServerProfilesState instead
+ */
 export interface UserPermsState {
   userPerms: ChannelPermissions;
   userServerPerms: ServerPermissions;
@@ -171,6 +172,9 @@ export interface UserPermsState {
 
 }
 
+/**
+ * @deprecated Use useServerProfilesStore instead
+ */
 const useUserPermsStore = create<UserPermsState>()((set) => ({
   userPerms: 0,
   userServerPerms: 0,
@@ -754,15 +758,22 @@ export const useFlagUserOffline = () =>
   useOnlineStore((state) => state.flagUserOffline);
 export const useGetUserPermsForServer = () =>
   useUserPermsStore((state) => state.getUserPermsForServer);
-export const useGetUserHighestRolePosition = () =>
-  useUserPermsStore((state) => state.getHighestRolePositionForUser);
-  /**
-   * @deprecated use useServerUserProfilePermissions
-   */
-export const useUserServerPerms = () =>
-  useUserPermsStore((state) => state.userServerPerms);
-export const useUserHighestRolePosition = () =>
-  useUserPermsStore((state) => state.userHighestRolePosition);
+
+/**
+ * @deprecated inconsistent behaviour.
+ */
+export const useGetUserHighestRolePosition = () => useUserPermsStore((state) => state.getHighestRolePositionForUser);
+
+/**
+ * @deprecated use useServerUserProfilePermissions
+ */
+export const useUserServerPerms = () => useUserPermsStore((state) => state.userServerPerms);
+
+/**
+ * @deprecated use useServerUserProfileHighestRolePosition
+ */
+export const useUserHighestRolePosition = () => useUserPermsStore((state) => state.userHighestRolePosition);
+
 export const useAddDMChannel = () =>
   useDMChannelsStore((state) => state.addDMChannel);
 export const useDMChannels = () =>

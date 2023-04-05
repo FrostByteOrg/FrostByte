@@ -10,15 +10,10 @@ import {
   useConnectionRef,
   useGetAllServerUserProfiles,
   useGetServers,
-  useGetUserHighestRolePosition,
   useGetUserPermsForServer,
   useServers,
-  useUserServerPerms,
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
-import PlusIcon from '@/components/icons/PlusIcon';
-import GearIcon from '@/components/icons/GearIcon';
-import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 import ServerSettingsModal from './modals/ServerSettingsModal';
 import { ServersForUser } from '@/types/dbtypes';
 
