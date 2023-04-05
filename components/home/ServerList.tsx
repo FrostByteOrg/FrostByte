@@ -45,7 +45,6 @@ export default function ServerList() {
   const getServers = useGetServers();
 
   const getUserServerPerms = useGetUserPermsForServer();
-  const getUserHighestRolePosition = useGetUserHighestRolePosition();
   const getAllServerProfiles = useGetAllServerUserProfiles();
   const userServerPerms = useUserServerPerms();
   const isInVoice = useConnectionRef();
@@ -56,12 +55,11 @@ export default function ServerList() {
     if (getServers) {
       if (user) {
         getUserServerPerms(supabase, expanded, user.id);
-        getUserHighestRolePosition(supabase, expanded, user.id);
         getServers(supabase, user.id);
         getAllServerProfiles(supabase, expanded);
       }
     }
-  }, [getServers, supabase, user, getUserServerPerms, expanded, getUserHighestRolePosition, getAllServerProfiles]);
+  }, [getServers, supabase, user, getUserServerPerms, expanded, getAllServerProfiles]);
 
   // HACK: At the time of component render, the servers are not yet loaded into the store.
   useEffect(() => {

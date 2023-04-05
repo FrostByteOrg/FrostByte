@@ -756,6 +756,9 @@ export const useGetUserPermsForServer = () =>
   useUserPermsStore((state) => state.getUserPermsForServer);
 export const useGetUserHighestRolePosition = () =>
   useUserPermsStore((state) => state.getHighestRolePositionForUser);
+  /**
+   * @deprecated use useServerUserProfilePermissions
+   */
 export const useUserServerPerms = () =>
   useUserPermsStore((state) => state.userServerPerms);
 export const useUserHighestRolePosition = () =>
