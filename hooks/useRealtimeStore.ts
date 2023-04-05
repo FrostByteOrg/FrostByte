@@ -224,8 +224,19 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Server role delete event');
-            // TODO: update here getAllServerProfiles(supabase, payload.new.server_id);
             deleteRole(payload.old.id as number);
+
+            for (const [server_id, profiles] of allServerProfiles) {
+              for (const [profile_id, profile] of profiles) {
+                for (const role of profile.roles) {
+                  // As soon as we find the role that was deleted, we trigger a server-wide profile update
+                  if (role.id === payload.old.id) {
+                    getAllServerProfiles(supabase, server_id);
+                    return;
+                  }
+                }
+              }
+            }
           }
         )
         .on<ServerUserRole>(
