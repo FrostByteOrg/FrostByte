@@ -777,7 +777,7 @@ export const useGetAllServerRoles = () => useServerRolesStore((state) => state.g
 export const useGetRolesForServer = () => useServerRolesStore((state) => state.getRolesForServer);
 export const useGetAllServerUserProfiles = () => useServerProfilesStore((state) => state.addServerProfiles);
 export const useUpateServerUserProfile = () => useServerProfilesStore((state) => state.updateServerProfile);
-export const useUpdateServerUserProfileByServerId = () => useServerProfilesStore((state) => state.updateServerProfileByServerUser);
+export const useUpdateServerUserProfileByServerUserId = () => useServerProfilesStore((state) => state.updateServerProfileByServerUser);
 export const useAllServerProfiles = () => useServerProfilesStore((state) => state.serverProfiles);
 export const useServerUserProfile = (server_id: number, profile_id: string) => useServerProfilesStore(
   (state) => state.serverProfiles.get(server_id)?.get(profile_id)

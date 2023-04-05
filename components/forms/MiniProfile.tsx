@@ -1,20 +1,27 @@
 import { useSideBarOptionSetter } from '@/context/SideBarOptionCtx';
 import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
-import { useChannel, useDMChannels, useServerRoles, useServerUserProfileHighestRolePosition, useServerUserProfilePermissions, useServerUserProfileRoles, useSetChannel, useUserHighestRolePosition, useUserServerPerms } from '@/lib/store';
+import {
+  useChannel,
+  useDMChannels,
+  useGetAllServerUserProfiles,
+  useServerRoles,
+  useServerUserProfileHighestRolePosition,
+  useServerUserProfilePermissions,
+  useSetChannel
+} from '@/lib/store';
 import { createMessage } from '@/services/message.service';
-import { Role, ServerUser, ServerUserProfile, User } from '@/types/dbtypes';
+import { ServerUserProfile } from '@/types/dbtypes';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import { memo, useEffect, useState, } from 'react';
 import UserIcon from '../icons/UserIcon';
 import { SearchBar } from './Styles';
 import { ServerPermissions } from '@/types/permissions';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { getHighestRolePositionForUser, grantRoleToUser, revokeRoleFromUser } from '@/services/roles.service';
+import { grantRoleToUser, revokeRoleFromUser } from '@/services/roles.service';
 import { toast } from 'react-toastify';
 import { XIcon } from '@/components/icons/XIcon';
 
-// TODO: Once DMs are implemented, this component will need to be updated to handle DMs as well.
-function WrappedComponent({ server_user_profile }: { server_user_profile: ServerUserProfile }) {
+
+export function MiniProfile({ server_user_profile }: { server_user_profile: ServerUserProfile }) {
   const user = useUser();
   const supabase = useSupabaseClient();
   const dmChannels = useDMChannels();
@@ -31,6 +38,8 @@ function WrappedComponent({ server_user_profile }: { server_user_profile: Server
     server_user_profile.server_user.server_id,
     user!.id
   );
+
+  const getAllServerProfiles = useGetAllServerUserProfiles();
 
   const filteredRoles = serverRoles
     .filter(
@@ -174,6 +183,7 @@ function WrappedComponent({ server_user_profile }: { server_user_profile: Server
                   }
                 );
 
+                getAllServerProfiles(supabase, dmChannel.server_id);
                 setSideBarOption('friends');
                 setChannel(dmChannel);
               }
@@ -184,5 +194,3 @@ function WrappedComponent({ server_user_profile }: { server_user_profile: Server
     </div>
   );
 }
-
-export const MiniProfile = memo(WrappedComponent);

@@ -25,7 +25,7 @@ import {
   useGetAllServerUserProfiles,
   useAllServerProfiles,
   useUpateServerUserProfile,
-  useUpdateServerUserProfileByServerId,
+  useUpdateServerUserProfileByServerUserId,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -65,7 +65,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
   const getAllServerProfiles = useGetAllServerUserProfiles();
   const updateServerUserProfile = useUpateServerUserProfile();
-  const updateServerUserProfileByServerUserId = useUpdateServerUserProfileByServerId();
+  const updateServerUserProfileByServerUserId = useUpdateServerUserProfileByServerUserId();
   const allServerProfiles = useAllServerProfiles();
   const user = useUser();
 
