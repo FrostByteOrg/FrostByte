@@ -15,7 +15,7 @@ import { ServerInviteList } from '@/components/home/ServerInviteList';
 
 const tabRootClass = 'flex flex-row';
 const tabListClass = 'flex flex-col flex-shrink border-r border-gray-600';
-const tabTriggerClass = 'px-3 py-2 focus:border-r focus:border-r-white focus:z-10 focus:outline-none focus-visible:ring text-left focus:bg-gray-500';
+const tabTriggerClass = 'px-3 py-2 aria-[selected=true]:border-r aria-[selected=true]:border-r-white focus:z-10 aria-[selected=true]:outline-none focus-visible:ring text-left aria-[selected=true]:bg-gray-500';
 const tabContentClass = 'flex flex-col';
 
 export default function ServerSettingsModal({
@@ -66,13 +66,13 @@ export default function ServerSettingsModal({
           >
             Roles
           </Tabs.Trigger>
-          {/* <Tabs.Trigger
+          <Tabs.Trigger
             value="Invites"
             className={tabTriggerClass}
             disabled={(userServerPerms & ServerPermissions.MANAGE_INVITES) === 0}
           >
             Invites
-          </Tabs.Trigger> */}
+          </Tabs.Trigger>
         </Tabs.List>
         <div className="TabContent flex-grow flex-1 w-15 h-15 ">
           <Tabs.Content value='Overview' className={tabContentClass}>
@@ -132,12 +132,12 @@ export default function ServerSettingsModal({
               ))}
             </Tabs.Root>
           </Tabs.Content>
-          {/* <Tabs.Content value="Invites" className={tabContentClass}>
+          <Tabs.Content value="Invites" className={tabContentClass}>
             <span className="w-full flex flex-row">
               <h1 className="text-2xl p-2 flex-grow">Invites</h1>
             </span>
             <ServerInviteList server={server?.servers!} />
-          </Tabs.Content> */}
+          </Tabs.Content>
         </div>
       </Tabs.Root>
     </Modal>

@@ -3,17 +3,18 @@ import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
 import ChannelMessageIcon from '@/components/icons/ChannelMessageIcon';
 import { useChannel, useServerUserProfilePermissions, useSetChannel } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
-import { SyntheticEvent } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { useUser } from '@supabase/auth-helpers-react';
 import { ServerPermissions } from '@/types/permissions';
-
+import CreateInviteModal from '@/components/home/modals/CreateInviteModal';
 
 export function ChannelListItem({ channel, idx }: { channel: Channel, idx: number }) {
   const currentUser = useUser();
   const currentChannel = useChannel();
   const setChannel = useSetChannel();
   const currentUserPermissions = useServerUserProfilePermissions(channel.server_id, currentUser?.id!);
+  const [showCreateInviteModal, setShowCreateInviteModal] = useState(false);
 
   function joinTextChannel(e: SyntheticEvent, channel: Channel) {
     e.stopPropagation();
@@ -45,6 +46,11 @@ export function ChannelListItem({ channel, idx }: { channel: Channel, idx: numbe
       }}
       key={channel.channel_id}
     >
+      <CreateInviteModal
+        showModal={showCreateInviteModal}
+        setShowModal={setShowCreateInviteModal}
+        channel={channel}
+      />
       <div className="w-auto">
         {channel && channel.is_media ? (
           <div className="flex flex-col">
@@ -71,6 +77,7 @@ export function ChannelListItem({ channel, idx }: { channel: Channel, idx: numbe
                 className="ContextMenuItem"
                 onSelect={() => {
                   console.log('Open invite modal using channel id', channel.channel_id);
+                  setShowCreateInviteModal(true);
                 }}
               >
                 Create invite

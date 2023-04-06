@@ -1,11 +1,12 @@
 import { CopyLinkIcon } from '@/components/icons/CopyLinkIcon';
 import TrashIcon from '@/components/icons/TrashIcon';
 import { formatDateStr } from '@/lib/dateManagement';
-import { getInvitesForServer } from '@/services/invites.service';
+import { deleteInvite, getInvitesForServer } from '@/services/invites.service';
 import { Invite, Server } from '@/types/dbtypes';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { supabase } from '@supabase/auth-ui-react/dist/esm/common/theming';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export function ServerInviteList({ server }: { server: Server }) {
   const supabase = useSupabaseClient();
@@ -31,16 +32,16 @@ export function ServerInviteList({ server }: { server: Server }) {
       <thead>
         <tr className="text-lg">
           <th className="font-light">Invite Code</th>
-          <th className="font-light">Created At</th>
-          <th className="font-light">Expires At</th>
+          <th className="font-light">Created</th>
+          <th className="font-light">Expires</th>
           <th className="font-light">Uses Remaining</th>
           <th className="font-light">Actions</th>
         </tr>
       </thead>
       <tbody>
         {serverInvites.map((invite) => (
-          <tr key={invite.id}>
-            <td><code className="p-1 bg-slate-800 rounded-md">{invite.url_id}</code></td>
+          <tr key={invite.id} className="border-b border-gray-600 space-y-2 p-2">
+            <td><code className="p-1 bg-slate-800 rounded-md text-sm">{invite.url_id}</code></td>
             <td>{formatDateStr(invite.created_at!)}</td>
             <td>{!!invite.expires_at ? formatDateStr(invite.expires_at!) : 'Never'}</td>
             <td>{invite.uses_remaining}</td>
@@ -53,7 +54,21 @@ export function ServerInviteList({ server }: { server: Server }) {
               >
                 <CopyLinkIcon className="w-5 h-5"/>
               </button>
-              <button className="p-1 hover:bg-slate-600 transition-colors rounded-md">
+              <button
+                className="p-1 hover:bg-slate-600 transition-colors rounded-md"
+                onClick={async () => {
+                  const { error } = await deleteInvite(supabase, invite.id);
+
+                  if (error) {
+                    console.error(error);
+                    toast.error('Failed to delete invite');
+                    return;
+                  }
+
+                  setServerInvites((invites) => invites.filter((i) => i.id !== invite.id));
+                  toast.success('Invite deleted');
+                }}
+              >
                 <TrashIcon styles="stroke-red-500"/>
               </button>
             </td>

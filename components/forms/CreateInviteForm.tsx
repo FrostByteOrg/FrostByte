@@ -1,53 +1,43 @@
-import { Channel } from '@/types/dbtypes';
-import { InviteExpiry } from '@/types/inviteExpiry';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { useForm } from 'react-hook-form';
+import { Input } from './Styles';
+import { CreateInviteFormInput } from '@/types/forms/CreateInviteFormData';
+import { UseFormRegister } from 'react-hook-form';
+import styles from '@/styles/Livekit.module.css';
 
-interface CreateInviteFormInput {
-  numUses: number | null;
-  expiresAt: InviteExpiry | null;
-}
-
-export function CreateInviteform({ channel }: { channel: Channel }) {
-  const supabase = useSupabaseClient();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<CreateInviteFormInput>({
-    mode: 'onSubmit',
-    defaultValues: {
-      numUses: null,
-      expiresAt: '1 week',
-    },
-  });
-
-  const onSubmit = async (formData: CreateInviteFormInput) => {
-    console.log(formData);
-  };
+export function CreateInviteform({ register }: { register: UseFormRegister<CreateInviteFormInput> }) {
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="numUses">Number of uses</label>
-      <input
-        type="number"
-        id="numUses"
-        {...register('numUses')}
-        className="border border-gray-300 rounded-md"
-      />
+    <form className="flex flex-col space-y-4">
+      <div className="flex flex-col">
+        <label htmlFor="numUses">Max number of uses</label>
+        <select
+          id="numUses"
+          {...register('numUses')}
+          className={`${Input('bg-grey-700')} mt-2 ${styles.input}`}
+        >
+          <option value="null" selected>Unlimited</option>
+          <option value="1">1</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
 
-      <label htmlFor="expiresAt">Expires at</label>
-      <select
-        id="expiresAt"
-        {...register('expiresAt')}
-        className="border border-gray-300 rounded-md"
-      >
-        <option value="1 week">1 week</option>
-        <option value="1 day">1 day</option>
-        <option value="1 hour">1 hour</option>
-        <option value="30 minutes">30 minutes</option>
-        <option value="null">Never</option>
-      </select>
+      <div className="flex flex-col">
+        <label htmlFor="expiresAt">Expires in...</label>
+        <select
+          id="expiresAt"
+          {...register('expiresAt')}
+          className={`${Input('bg-grey-700')} mt-2 ${styles.input}`}
+        >
+          <option value="1 week">1 week</option>
+          <option value="1 day">1 day</option>
+          <option value="1 hour">1 hour</option>
+          <option value="30 minutes">30 minutes</option>
+          <option value="null">Never</option>
+        </select>
+      </div>
     </form>
   );
 }

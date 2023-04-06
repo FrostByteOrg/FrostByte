@@ -22,12 +22,14 @@ import { ConnectionState } from 'livekit-client';
 import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
 import { ServerSettingsTooltip } from '@/components/Tooltips/ServerSettingsTooltip';
+import CreateInviteModal from '@/components/home/modals/CreateInviteModal';
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
   const [showAddServer, setShowAddServer] = useState(false);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [showServerSettingsModal, setShowServerSettingsModal] = useState(false);
+
   const [expanded, setExpanded] = useState(0);
   const [currentServer, setCurrentServer] = useState<ServersForUser | null>(
     null
