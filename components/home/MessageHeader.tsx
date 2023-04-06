@@ -5,10 +5,13 @@ import UserIcon from '../icons/UserIcon';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { acceptFriendRequest, removeFriendOrRequest, sendFriendRequest } from '@/services/friends.service';
-import { useChannel, useDMChannels, useRelations, useServerUserProfile, useServerUserProfileRoles, useSetChannel } from '@/lib/store';
+import { useChannel, useDMChannels, useRelations, useServerUserProfile, useServerUserProfileHighestRolePosition, useServerUserProfilePermissions, useServerUserProfileRoles, useSetChannel } from '@/lib/store';
 import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
 import { useSideBarOptionSetter } from '@/context/SideBarOptionCtx';
 import { useEffect, useState } from 'react';
+import { ServerPermissions } from '@/types/permissions';
+import { banUser, kickUser } from '@/services/server.service';
+import { toast } from 'react-toastify';
 
 export function MessageHeader({
   server_user_profile,
@@ -28,6 +31,13 @@ export function MessageHeader({
   const directMessages = useDMChannels();
   const setSideBarOption = useSideBarOptionSetter();
   const [ headerColor, setHeaderColor ] = useState<string>('white');
+
+  const currentUserPermissions = useServerUserProfilePermissions(server_user_profile.server_user.server_id, currentUser?.id!);
+
+  const currentUserHighestRolePosition = useServerUserProfileHighestRolePosition(server_user_profile.server_user.server_id, currentUser?.id!);
+  const targetUserHighestRolePosition = useServerUserProfileHighestRolePosition(server_user_profile.server_user.server_id, server_user_profile.id);
+
+  const currentUserOutranksTarget = currentUserHighestRolePosition < targetUserHighestRolePosition;
 
   useEffect(() => {
     const color = server_user_profile.roles
@@ -123,6 +133,51 @@ export function MessageHeader({
           >
             Message {server_user_profile.username}
           </ContextMenu.Item>
+          { (currentUserOutranksTarget && (currentUserPermissions & ServerPermissions.MANAGE_USERS) === ServerPermissions.MANAGE_USERS) && (
+            <>
+              <ContextMenu.Separator className="ContextMenuSeparator" />
+              <ContextMenu.Item
+                className='ContextMenuItem text-red-500'
+                onClick={async () => {
+                  const { error } = await kickUser(
+                    supabase,
+                    server_user_profile.id,
+                    server_user_profile.server_user.server_id
+                  );
+
+                  if (error) {
+                    console.error(error);
+                    toast.error('Failed to kick user');
+                    return;
+                  }
+
+                  toast.success('User kicked');
+                }}
+              >
+                Kick {server_user_profile.username}
+              </ContextMenu.Item>
+              <ContextMenu.Item
+                className='ContextMenuItem text-red-500'
+                onClick={async () => {
+                  const { error } = await banUser(
+                    supabase,
+                    server_user_profile.id,
+                    server_user_profile.server_user.server_id
+                  );
+
+                  if (error) {
+                    console.error(error);
+                    toast.error('Failed to ban user');
+                    return;
+                  }
+
+                  toast.success('User banned');
+                }}
+              >
+                Ban {server_user_profile.username}
+              </ContextMenu.Item>
+            </>
+          )}
         </ContextMenu.Content>
       )}
     </ContextMenu.Root>
