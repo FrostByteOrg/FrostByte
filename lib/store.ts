@@ -689,7 +689,11 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
 
       for (const [server_id, profiles] of rv) {
         for (const [profile_id, profile] of profiles) {
-          if (profile.server_user!.id === server_user_id) {
+          if (!profile.server_user) {
+            continue;
+          }
+
+          if (profile.server_user.id === server_user_id) {
             rv.get(server_id)!.get(profile_id)!.server_user = null;
             rv.get(server_id)!.get(profile_id)!.roles = null;
           }

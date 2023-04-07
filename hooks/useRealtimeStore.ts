@@ -246,7 +246,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             for (const [server_id, profiles] of allServerProfiles) {
               for (const [profile_id, profile] of profiles) {
                 if (!profile.roles) {
-                  return;
+                  continue;
                 }
 
                 for (const role of profile.roles) {
@@ -285,7 +285,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             for (const [server_id, profiles] of allServerProfiles) {
               for (const [profile_id, profile] of profiles) {
                 if (!profile.roles) {
-                  return;
+                  continue;
                 }
 
                 for (const role of profile.roles) {
