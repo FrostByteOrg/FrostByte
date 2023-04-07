@@ -60,7 +60,7 @@ export interface Database {
       }
       messages: {
         Row: {
-          author_id: number
+          author_id: number | null
           channel_id: number
           content: string
           edited_time: string | null
@@ -71,7 +71,7 @@ export interface Database {
           sent_time: string
         }
         Insert: {
-          author_id: number
+          author_id?: number | null
           channel_id: number
           content: string
           edited_time?: string | null
@@ -82,7 +82,7 @@ export interface Database {
           sent_time?: string
         }
         Update: {
-          author_id?: number
+          author_id?: number | null
           channel_id?: number
           content?: string
           edited_time?: string | null
@@ -352,7 +352,7 @@ export interface Database {
           content: string
         }
         Returns: {
-          author_id: number
+          author_id: number | null
           channel_id: number
           content: string
           edited_time: string | null
@@ -543,6 +543,22 @@ export interface Database {
       get_server_profile_for_user_by_server_user: {
         Args: {
           su_id: number
+        }
+        Returns: {
+          id: string
+          updated_at: string
+          username: string
+          full_name: string
+          avatar_url: string
+          website: string
+          email: string
+          server_user: Json
+          roles: Json
+        }[]
+      }
+      get_server_profile_for_user_by_server_user_role: {
+        Args: {
+          sur_id: number
         }
         Returns: {
           id: string
