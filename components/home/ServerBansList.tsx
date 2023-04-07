@@ -29,7 +29,7 @@ export function ServerBansList({ serverId }: { serverId: number }) {
   return (
     <div className="flex flex-col w-full h-full">
       {bans.map((ban) => (
-        <BanListItem profile={ban.profiles} serverId={serverId} key={ban.id}/>
+        <BanListItem ban={ban} serverId={serverId} key={ban.id} setServerBans={setBans}/>
       ))}
     </div>
   );
