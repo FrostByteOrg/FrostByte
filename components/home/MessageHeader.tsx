@@ -32,14 +32,22 @@ export function MessageHeader({
   const setSideBarOption = useSideBarOptionSetter();
   const [ headerColor, setHeaderColor ] = useState<string>('white');
 
-  const currentUserPermissions = useServerUserProfilePermissions(server_user_profile.server_user.server_id, currentUser?.id!);
+  const serverId = server_user_profile.server_user?.server_id || null;
 
-  const currentUserHighestRolePosition = useServerUserProfileHighestRolePosition(server_user_profile.server_user.server_id, currentUser?.id!);
-  const targetUserHighestRolePosition = useServerUserProfileHighestRolePosition(server_user_profile.server_user.server_id, server_user_profile.id);
+  const currentUserPermissions = useServerUserProfilePermissions(serverId, currentUser?.id!);
+  const currentUserHighestRolePosition = useServerUserProfileHighestRolePosition(serverId, currentUser?.id!);
+  const targetUserHighestRolePosition = useServerUserProfileHighestRolePosition(serverId, server_user_profile.id);
 
   const currentUserOutranksTarget = currentUserHighestRolePosition < targetUserHighestRolePosition;
+  const targetUserDisplayName = server_user_profile.server_user ?
+    (server_user_profile.server_user.nickname || server_user_profile.username)
+    : server_user_profile.username;
 
   useEffect(() => {
+    if (!server_user_profile.roles) {
+      return;
+    }
+
     const color = server_user_profile.roles
       .sort((a, b) => a.position - b.position)
       .filter((role) => role.color !== null);
@@ -73,7 +81,7 @@ export function MessageHeader({
                 color: headerColor,
               }}
             >
-              {server_user_profile.server_user.nickname || server_user_profile.username}
+              {targetUserDisplayName}
             </div>
             <div className="text-xs tracking-wider text-grey-300 mt-1">
               {display_time}{' '}
@@ -131,9 +139,12 @@ export function MessageHeader({
             }}
             hidden={directMessages.get(server_user_profile.id) && directMessages.get(server_user_profile.id)!.channel_id === _currentChannel?.channel_id}
           >
-            Message {server_user_profile.username}
+            Message {targetUserDisplayName}
           </ContextMenu.Item>
-          { (currentUserOutranksTarget && (currentUserPermissions & ServerPermissions.MANAGE_USERS) === ServerPermissions.MANAGE_USERS) && (
+          { (
+            server_user_profile.server_user !== null
+            && currentUserOutranksTarget && (currentUserPermissions & ServerPermissions.MANAGE_USERS) === ServerPermissions.MANAGE_USERS
+          ) && (
             <>
               <ContextMenu.Separator className="ContextMenuSeparator" />
               <ContextMenu.Item
@@ -142,7 +153,7 @@ export function MessageHeader({
                   const { error } = await kickUser(
                     supabase,
                     server_user_profile.id,
-                    server_user_profile.server_user.server_id
+                    server_user_profile.server_user!.server_id
                   );
 
                   if (error) {
@@ -154,7 +165,7 @@ export function MessageHeader({
                   toast.success('User kicked');
                 }}
               >
-                Kick {server_user_profile.username}
+                Kick {targetUserDisplayName}
               </ContextMenu.Item>
               <ContextMenu.Item
                 className='ContextMenuItem text-red-500'
@@ -162,7 +173,7 @@ export function MessageHeader({
                   const { error } = await banUser(
                     supabase,
                     server_user_profile.id,
-                    server_user_profile.server_user.server_id
+                    server_user_profile.server_user!.server_id
                   );
 
                   if (error) {

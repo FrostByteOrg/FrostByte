@@ -659,6 +659,13 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
     }
 
     set((state) => {
+      // Sanity check
+      if (!data.server_user) {
+        return {
+          serverProfiles: state.serverProfiles,
+        };
+      }
+
       const rv = new Map(state.serverProfiles);
 
       if (!rv.has(data.server_user.server_id)) {
@@ -794,11 +801,15 @@ export const useServerUserProfile = (server_id: number, profile_id: string) => u
   (state) => state.serverProfiles.get(server_id)?.get(profile_id)
 );
 export const useRemoveServerUserProfile = () => useServerProfilesStore((state) => state.removeServerProfile);
-export const useServerUserProfileHighestRolePosition = (server_id: number, profile_id: string) => useServerProfilesStore(
+export const useServerUserProfileHighestRolePosition = (server_id: number | null, profile_id: string) => useServerProfilesStore(
   (state) => {
+    if (!server_id) {
+      return 32767; // Highest possible role position, smallint maxsize in postgres
+    }
+
     const profile = state.serverProfiles.get(server_id)?.get(profile_id);
 
-    if (!profile) {
+    if (!profile || !profile.roles) {
       return 32767; // Highest possible role position, smallint maxsize in postgres
     }
 
@@ -812,7 +823,7 @@ export const useServerUserProfileRoles = (server_id: number, profile_id: string)
   (state) => {
     const profile = state.serverProfiles.get(server_id)?.get(profile_id);
 
-    if (!profile) {
+    if (!profile || !profile.roles) {
       return [];
     }
 
@@ -822,11 +833,19 @@ export const useServerUserProfileRoles = (server_id: number, profile_id: string)
     return profile.roles;
   }
 );
-export const useServerUserProfilePermissions = (server_id: number, profile_id: string) => useServerProfilesStore(
+export const useServerUserProfilePermissions = (server_id: number | null, profile_id: string) => useServerProfilesStore(
   (state) => {
+    if (!server_id) {
+      return 0;
+    }
+
     const profile = state.serverProfiles.get(server_id)?.get(profile_id);
 
     if (!profile) {
+      return 0;
+    }
+
+    if (!profile.roles) {
       return 0;
     }
 

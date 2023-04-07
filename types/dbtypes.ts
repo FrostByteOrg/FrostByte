@@ -17,7 +17,7 @@ export type ProfileRelationshipType = Database['public']['Enums']['relationship'
 export type UnsavedMessage = Omit<Message, 'id' | 'created_at' | 'sent_time' | 'is_edited' | 'is_pinned' | 'edited_time' | 'author_id'>;
 export type MessageWithServerProfile = Omit<Message, 'profile_id' | 'author_id'> & { profile: User, author: ServerUser, roles: Role[], };
 export type ServersForUser =  { server_id: number } & { servers: Server };
-export type ServerUserProfile = User & { server_user: ServerUser, roles: (Role & {server_user_role_id: number})[]; };
+export type ServerUserProfile = User & { server_user: ServerUser | null, roles: (Role & {server_user_role_id: number})[] | null; };
 export type ServerInvite = Invite & { servers: Server };
 export type DMChannelWithRecipient = { channel_id: number, server_id: number, recipient: User };
 
