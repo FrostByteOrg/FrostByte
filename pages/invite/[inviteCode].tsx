@@ -9,6 +9,7 @@ import ServersIcon from '@/components/icons/ServersIcon';
 import { OverflowMarquee } from '@/components/home/OverflowMarquee';
 import { getServersForUser } from '@/services/server.service';
 import { useMediaQuery } from 'react-responsive';
+import { toast } from 'react-toastify';
 
 export default function InviteSplash() {
   const user = useUser();
@@ -108,7 +109,13 @@ export default function InviteSplash() {
                         "
                         disabled={userInServer}
                         onClick={async () => {
-                          await addUserToServer(supabase, invite.servers.id);
+                          const { error } = await addUserToServer(supabase, invite.servers.id);
+
+                          if (error) {
+                            toast.error('You cannot join this server.');
+                            return;
+                          }
+
                           router.push(`/?c=${invite.channel_id}`, '/');
                         }}
                       >
