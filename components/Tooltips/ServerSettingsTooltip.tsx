@@ -28,6 +28,7 @@ export function ServerSettingsTooltip({ server_id, setShowAddChannelModal, setSh
         id="serverSettings"
         clickable
         openOnClick={true}
+        place='top'
       >
         <div className="flex flex-col items-start">
           <div

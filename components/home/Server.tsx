@@ -18,6 +18,9 @@ import { useChannel, useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import { Tooltip } from 'react-tooltip';
 import ChannelName from './ChannelName';
+import ServerSettingsModal from '@/components/home/modals/ServerSettingsModal';
+import { ServerSettingsTooltip } from '@/components/Tooltips/ServerSettingsTooltip';
+import AddChannelModal from '@/components/home/modals/AddChannelModal';
 
 export default function Server({
   server,
@@ -36,6 +39,9 @@ export default function Server({
   const setChannel = useSetChannel();
   const [channels, setChannels] = useState<Channel[]>([]);
   const currentChannel = useChannel();
+
+  const [showServerSettingsModal, setShowServerSettingsModal] = useState(false);
+  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
 
   useEffect(() => {
     const handleAsync = async () => {
@@ -60,6 +66,21 @@ export default function Server({
   if (expand) {
     return (
       <div className="relative overflow-x-visible">
+        <ServerSettingsModal
+          showModal={showServerSettingsModal}
+          setShowModal={setShowServerSettingsModal}
+          server={server}
+        />
+        <ServerSettingsTooltip
+          server_id={server.id}
+          setShowAddChannelModal={setShowAddChannelModal}
+          setShowServerSettingsModal={setShowServerSettingsModal}
+        />
+        <AddChannelModal
+          showModal={showAddChannelModal}
+          setShowModal={setShowAddChannelModal}
+          serverId={expanded}
+        />
         <div className="border-b-2 border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div
