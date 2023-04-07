@@ -594,6 +594,7 @@ export interface ServerProfilesState {
   addServerProfiles: (supabase: SupabaseClient<Database>, server_id: number) => void;
   updateServerProfile: (supabase: SupabaseClient<Database>, profile_id: string, server_id: number) => void;
   updateServerProfileByServerUser: (supabase: SupabaseClient<Database>, server_user_id: number) => void;
+  stripServerUserAndRoles: (server_user_id: number) => void;
   removeServerProfile: (profile_id: string, server_id: number) => void;
 }
 
@@ -675,6 +676,25 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
       console.log('updating by server user');
       console.table(data);
       rv.get(data.server_user.server_id)!.set(data.id, data);
+
+      return {
+        serverProfiles: rv,
+      };
+    });
+  },
+
+  stripServerUserAndRoles: (server_user_id) => {
+    set((state) => {
+      const rv = new Map(state.serverProfiles);
+
+      for (const [server_id, profiles] of rv) {
+        for (const [profile_id, profile] of profiles) {
+          if (profile.server_user!.id === server_user_id) {
+            rv.get(server_id)!.get(profile_id)!.server_user = null;
+            rv.get(server_id)!.get(profile_id)!.roles = null;
+          }
+        }
+      }
 
       return {
         serverProfiles: rv,
@@ -801,6 +821,7 @@ export const useServerUserProfile = (server_id: number, profile_id: string) => u
   (state) => state.serverProfiles.get(server_id)?.get(profile_id)
 );
 export const useRemoveServerUserProfile = () => useServerProfilesStore((state) => state.removeServerProfile);
+export const useStripServerUserAndRoles = () => useServerProfilesStore((state) => state.stripServerUserAndRoles);
 export const useServerUserProfileHighestRolePosition = (server_id: number | null, profile_id: string) => useServerProfilesStore(
   (state) => {
     if (!server_id) {

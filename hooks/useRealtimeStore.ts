@@ -26,6 +26,7 @@ import {
   useAllServerProfiles,
   useUpateServerUserProfile,
   useUpdateServerUserProfileByServerUserId,
+  useStripServerUserAndRoles,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -66,6 +67,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const getAllServerProfiles = useGetAllServerUserProfiles();
   const updateServerUserProfile = useUpateServerUserProfile();
   const updateServerUserProfileByServerUserId = useUpdateServerUserProfileByServerUserId();
+  const stripServerUserAndRoles = useStripServerUserAndRoles();
   const allServerProfiles = useAllServerProfiles();
   const user = useUser();
 
@@ -122,6 +124,18 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             if (user) {
               getServers(supabase, user.id);
             }
+          }
+        )
+        .on<ServerUser>(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'server_users',
+          },
+          async (payload) => {
+            console.log('delete server user (user leaves)');
+            stripServerUserAndRoles(payload.old.id!);
           }
         )
         .subscribe();
@@ -231,6 +245,10 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
             for (const [server_id, profiles] of allServerProfiles) {
               for (const [profile_id, profile] of profiles) {
+                if (!profile.roles) {
+                  return;
+                }
+
                 for (const role of profile.roles) {
                   // As soon as we find the role that was deleted, we trigger a server-wide profile update
                   if (role.id === payload.old.id) {
@@ -266,6 +284,10 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
             for (const [server_id, profiles] of allServerProfiles) {
               for (const [profile_id, profile] of profiles) {
+                if (!profile.roles) {
+                  return;
+                }
+
                 for (const role of profile.roles) {
                   if (role.server_user_role_id === payload.old.id) {
                     updateServerUserProfile(supabase, profile_id, server_id);
