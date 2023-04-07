@@ -180,6 +180,16 @@ type UnbanUserResponse = Awaited<ReturnType<typeof unbanUser>>;
 export type UnbanUserResponseSuccess = UnbanUserResponse['data'];
 export type UnbanUserResponseError = UnbanUserResponse['error'];
 
+export async function getServerBans(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  return await supabase
+    .from('server_bans')
+    .select('*, profiles(*)')
+    .eq('server_id', server_id);
+}
+
 export async function kickUser(
   supabase: SupabaseClient<Database>,
   user_id: string,
