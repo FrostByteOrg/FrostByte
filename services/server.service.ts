@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.supabase';
-import { ServerUserProfile, ServersForUser, User } from '@/types/dbtypes';
+import { ServerBanWithProfile, ServerUserProfile, ServersForUser, User } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -187,7 +187,8 @@ export async function getServerBans(
   return await supabase
     .from('server_bans')
     .select('*, profiles(*)')
-    .eq('server_id', server_id);
+    .eq('server_id', server_id)
+    .returns<ServerBanWithProfile>();
 }
 
 export async function kickUser(
