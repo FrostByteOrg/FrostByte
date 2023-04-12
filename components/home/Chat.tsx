@@ -9,10 +9,10 @@ import type {
 } from '@/types/dbtypes';
 import { createMessage } from '@/services/message.service';
 import Message from '@/components/home/Message';
-import { useChannel, useMessages, useUserPerms } from '@/lib/store';
+import { useChannel, useMessages, useServerUserProfilePermissions, useUserPerms } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
-import { ChannelPermissions } from '@/types/permissions';
+import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 import MobileCallControls from './mobile/MobileCallControls';
 import { useConnectionState } from '@livekit/components-react';
 import { ConnectionState } from 'livekit-client';
@@ -24,6 +24,7 @@ export default function Chat() {
   const messages = useMessages();
   const channel = useChannel();
   const userPerms = useUserPerms();
+  const serverPermissions = useServerUserProfilePermissions(channel?.server_id!, user?.id!);
   const connectionState = useConnectionState();
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export default function Chat() {
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
-              const previousMessage: MessageWithServerProfile | null =
+              const previousMessage: MessageType | null =
                 index > 0 ? array[index - 1] : null;
 
               return (
@@ -69,10 +70,10 @@ export default function Chat() {
                   message={value}
                   collapse_user={
                     !!previousMessage &&
-                    previousMessage.profile.id === value.profile.id
+                    previousMessage.profile_id === value.profile_id
                   }
                   hasDeletePerms={
-                    (userPerms & ChannelPermissions.MANAGE_MESSAGES) !== 0
+                    (serverPermissions & ServerPermissions.MANAGE_MESSAGES) !== 0
                   }
                 />
               );

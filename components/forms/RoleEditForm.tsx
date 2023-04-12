@@ -1,8 +1,8 @@
-import { useUserHighestRolePosition, useUserServerPerms } from '@/lib/store';
+import { useServerUserProfilePermissions } from '@/lib/store';
 import { decrementRolePosition, deleteRole, incrementRolePosition, updateRole } from '@/services/roles.service';
 import { Role } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -28,10 +28,9 @@ type RoleEditFormResult = {
 export function RoleEditForm({role, roles_length, max_role_position }: {role: Role, roles_length: number, max_role_position: number }) {
   const { register, handleSubmit, formState: { errors } } = useForm<RoleEditFormResult>();
   const supabase = useSupabaseClient();
-  const userPerms = useUserServerPerms();
-  const userHighestRolePosition = max_role_position; // useUserHighestRolePosition();
-
-  const isFormDisabled = role.is_system || role.position <= userHighestRolePosition;
+  const user = useUser();
+  const userPerms = useServerUserProfilePermissions(role.server_id, user?.id!);
+  const isFormDisabled = role.is_system || role.position <= max_role_position;
   const serverPermissions = Object.entries(ServerPermissions).filter(
     ([key, value]) => typeof value === 'number' && key !== 'NONE' && key !== 'OWNER'
   );
@@ -96,7 +95,7 @@ export function RoleEditForm({role, roles_length, max_role_position }: {role: Ro
             console.log('up');
             await incrementRolePosition(supabase, role.id);
           }}
-          disabled={isFormDisabled || role.position === 1 || role.position - 1 <= userHighestRolePosition}
+          disabled={isFormDisabled || role.position === 1 || role.position - 1 <= max_role_position}
         >
           Up
         </button>

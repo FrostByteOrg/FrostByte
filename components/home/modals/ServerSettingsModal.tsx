@@ -1,24 +1,14 @@
-import AddServer from '@/components/forms/AddServer';
 import Modal from '@/components/home/modals/Modal';
-import { CreateServerInput, createServerSchema } from '@/types/client/server';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import {
-  createServer,
-  addServerIcon,
-  getServer,
-} from '@/services/server.service';
+import { Dispatch, SetStateAction, useRef } from 'react';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import { PostgrestError } from '@supabase/supabase-js';
-import { Role, ServersForUser } from '@/types/dbtypes';
+import { Server, ServersForUser } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import * as Tabs from '@radix-ui/react-tabs';
 import 'styles/TabNav.module.css';
 import { RoleEditForm } from '@/components/forms/RoleEditForm';
-import { useServerRoles, useUserServerPerms } from '@/lib/store';
+import { useServerRoles, useServerUserProfileHighestRolePosition, useServerUserProfilePermissions } from '@/lib/store';
 import PlusIcon from '@/components/icons/PlusIcon';
-import { createRole, getHighestRolePositionForUser } from '@/services/roles.service';
+import { createRole } from '@/services/roles.service';
 import { toast } from 'react-toastify';
 
 
@@ -34,38 +24,20 @@ export default function ServerSettingsModal({
 }: {
   showModal: boolean;
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  server: ServersForUser | null;
+  server: Server | null;
 }) {
   const modalRef = useRef<HTMLDialogElement>(null);
-  const userServerPerms = useUserServerPerms();
   const supabase = useSupabaseClient();
-  const roles = useServerRoles(server?.server_id!);
+  const roles = useServerRoles(server?.id!);
   const user = useUser();
-  // HACK: Workaround for the weird state bug where the user's max role is not correct
-  const [maxRole, setMaxRole] = useState<number>(30676);
+  const userServerPerms = useServerUserProfilePermissions(server?.id!, user?.id!);
+  const maxRole = useServerUserProfileHighestRolePosition(server?.id!, user?.id!);
 
-  useEffect(() => {
-    async function handleAsync() {
-      if (!server?.server_id || !user?.id) return;
-
-      const { data, error } = await getHighestRolePositionForUser(supabase, server?.server_id, user?.id!);
-      if (error) {
-        console.log(error);
-        return;
-      }
-
-      else {
-        setMaxRole(data);
-      }
-    }
-
-    handleAsync();
-  }, [server?.server_id, supabase, user?.id, maxRole, server]);
   return (
     <Modal
       modalRef={modalRef}
       showModal={showModal}
-      title={`${server?.servers.name} - Server Settings`}
+      title={`${server?.name} - Server Settings`}
       buttons={
         <button
           className="btn btn-primary"
@@ -106,7 +78,7 @@ export default function ServerSettingsModal({
                 onClick={async () => {
                   const { error } = await createRole(
                     supabase,
-                    server?.server_id!,
+                    server?.id!,
                     'New Role',
                     roles.length - 1,
                     0,

@@ -116,3 +116,41 @@ export async function getHighestRolePositionForUser(
     .returns<number>()
     .single();
 }
+
+type GetHighestRolePositionForUserResponse = Awaited<ReturnType<typeof getHighestRolePositionForUser>>;
+export type GetHighestRolePositionForUserResponseSuccess = GetHighestRolePositionForUserResponse['data'];
+export type GetHighestRolePositionForUserResponseError = GetHighestRolePositionForUserResponse['error'];
+
+export async function grantRoleToUser(
+  supabase: SupabaseClient<Database>,
+  role_id: number,
+  server_user_id: number
+) {
+  return await supabase
+    .from('server_user_roles')
+    .insert({ role_id, server_user_id })
+    .select()
+    .single();
+}
+
+type GrantRoleToUserResponse = Awaited<ReturnType<typeof grantRoleToUser>>;
+export type GrantRoleToUserResponseSuccess = GrantRoleToUserResponse['data'];
+export type GrantRoleToUserResponseError = GrantRoleToUserResponse['error'];
+
+export async function revokeRoleFromUser(
+  supabase: SupabaseClient<Database>,
+  role_id: number,
+  server_user_id: number
+) {
+  return await supabase
+    .from('server_user_roles')
+    .delete()
+    .eq('role_id', role_id)
+    .eq('server_user_id', server_user_id)
+    .select()
+    .single();
+}
+
+type RevokeRoleFromUserResponse = Awaited<ReturnType<typeof revokeRoleFromUser>>;
+export type RevokeRoleFromUserResponseSuccess = RevokeRoleFromUserResponse['data'];
+export type RevokeRoleFromUserResponseError = RevokeRoleFromUserResponse['error'];

@@ -10,11 +10,7 @@ import { useForm } from 'react-hook-form';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { createChannel } from '@/services/channels.service';
 import { PostgrestError } from '@supabase/supabase-js';
-import {
-  useGetUserPermsForServer,
-  useUserPerms,
-  useUserServerPerms,
-} from '@/lib/store';
+import { useGetUserPermsForServer } from '@/lib/store';
 
 export default function AddChannelModal({
   showModal,

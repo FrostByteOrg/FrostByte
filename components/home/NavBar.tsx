@@ -3,14 +3,16 @@ import FriendsIcon from '@/components/icons/FriendsIcon';
 import ServersIcon from '@/components/icons/ServersIcon';
 import { useState } from 'react';
 import { useSetChannel } from '@/lib/store';
+import MessagesIcon from '@/components/icons/MessagesIcon';
 
 export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
   const setSideBarOption = useSideBarOptionSetter();
 
   const setChannel = useSetChannel();
 
-  const [friendsHover, setFriendsHover] = useState(false);
-  const [serversHover, setServersHover] = useState(false);
+  const [ friendsHover, setFriendsHover ] = useState(false);
+  const [ serversHover, setServersHover ] = useState(false);
+  const [ messagesHover, setMessagesHover ] = useState(false);
   const bottomStyles = 'hover:cursor-pointer flex justify-center items-center';
   const verticalStyles = 'hover:cursor-pointer flex justify-center py-5';
 
@@ -50,7 +52,7 @@ export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
           height={6}
         />
       </div>
-      {/* <div
+      { type === 'bottom' && <div
         className={`${
           type == 'bottom'
             ? `${bottomStyles} col-start-8 col-end-10`
@@ -64,7 +66,7 @@ export default function NavBar({ type }: { type: 'vertical' | 'bottom' }) {
         onMouseLeave={() => setMessagesHover(false)}
       >
         <MessagesIcon hovered={messagesHover} width={6} height={6} />
-      </div> */}
+      </div>}
     </>
   );
 }

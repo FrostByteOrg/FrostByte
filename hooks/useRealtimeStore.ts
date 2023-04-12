@@ -1,4 +1,4 @@
-import { ServerUser, Server, ProfileRelation, Channel, Role } from '@/types/dbtypes';
+import { ServerUser, Server, ProfileRelation, Channel, Role, ServerUserRole } from '@/types/dbtypes';
 import {
   useAddMessage,
   useAddRelation,
@@ -22,6 +22,10 @@ import {
   useRemoveServerRole,
   useGetAllServerRoles,
   useGetRolesForServer,
+  useGetAllServerUserProfiles,
+  useAllServerProfiles,
+  useUpateServerUserProfile,
+  useUpdateServerUserProfileByServerUserId,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -59,6 +63,10 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const getAllServerRoles = useGetAllServerRoles();
   const getRolesForServer = useGetRolesForServer();
 
+  const getAllServerProfiles = useGetAllServerUserProfiles();
+  const updateServerUserProfile = useUpateServerUserProfile();
+  const updateServerUserProfileByServerUserId = useUpdateServerUserProfileByServerUserId();
+  const allServerProfiles = useAllServerProfiles();
   const user = useUser();
 
   //TODO: CASCADE DELETE ICONS
@@ -82,6 +90,20 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
             addServer(supabase, (payload.new as ServerUser).id);
             getRolesForServer(supabase, payload.new.server_id);
+            updateServerUserProfileByServerUserId(supabase, payload.new.server_id);
+          }
+        )
+        .on<ServerUser>(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'server_users',
+            filter: `profile_id=eq.${user?.id}`,
+          },
+          async (payload) => {
+            console.log('update');
+            updateServerUserProfileByServerUserId(supabase, payload.new.server_id);
           }
         )
         .on<ServerUser>(
@@ -165,6 +187,9 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           async (payload) => {
             console.log('DM server insert event');
             addDMChannel(supabase, payload.new.id);
+
+            // Fetch the profiles for the server
+            getAllServerProfiles(supabase, payload.new.id);
           }
         )
         .on<Role>(
@@ -176,6 +201,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Server role insert event');
+            getAllServerProfiles(supabase, payload.new.server_id);
             addRole(payload.new);
           }
         )
@@ -188,6 +214,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Server role update event');
+            getAllServerProfiles(supabase, payload.new.server_id);
             updateRole(payload.new);
           }
         )
@@ -201,6 +228,52 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           async (payload) => {
             console.log('Server role delete event');
             deleteRole(payload.old.id as number);
+
+            for (const [server_id, profiles] of allServerProfiles) {
+              for (const [profile_id, profile] of profiles) {
+                for (const role of profile.roles) {
+                  // As soon as we find the role that was deleted, we trigger a server-wide profile update
+                  if (role.id === payload.old.id) {
+                    getAllServerProfiles(supabase, server_id);
+                    return;
+                  }
+                }
+              }
+            }
+          }
+        )
+        .on<ServerUserRole>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'server_user_roles',
+          },
+          async (payload) => {
+            console.log('Server user role insert event');
+            updateServerUserProfileByServerUserId(supabase, payload.new.server_user_id);
+          }
+        )
+        .on<ServerUserRole>(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'server_user_roles',
+          },
+          async (payload) => {
+            console.log('Server user role delete event', payload);
+
+            for (const [server_id, profiles] of allServerProfiles) {
+              for (const [profile_id, profile] of profiles) {
+                for (const role of profile.roles) {
+                  if (role.server_user_role_id === payload.old.id) {
+                    updateServerUserProfile(supabase, profile_id, server_id);
+                    return;
+                  }
+                }
+              }
+            }
           }
         )
         .subscribe();
@@ -240,7 +313,11 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     addRole,
     updateRole,
     deleteRole,
-    getRolesForServer
+    getRolesForServer,
+    updateServerUserProfileByServerUserId,
+    getAllServerProfiles,
+    allServerProfiles,
+    updateServerUserProfile,
   ]);
 
   useEffect(() => {
@@ -257,7 +334,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('New message event');
-            addMessage(supabase, (payload.new as MessageType).id);
+            addMessage(payload.new);
           }
         )
         .on<MessageType>(
@@ -270,7 +347,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Message update event');
-            updateMessage(supabase, (payload.new as MessageType).id);
+            updateMessage(payload.new);
           }
         )
         .on<MessageType>(

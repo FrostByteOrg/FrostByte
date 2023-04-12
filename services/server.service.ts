@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.supabase';
-import { ServersForUser, User } from '@/types/dbtypes';
+import { ServerUserProfile, ServersForUser, User } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -290,3 +290,16 @@ export async function addServerIcon(
 type AddServerIconResponse = Awaited<ReturnType<typeof addServerIcon>>;
 export type AddServerIconResponseSuccess = AddServerIconResponse['data'];
 export type AddServerIconResponseError = AddServerIconResponse['error'];
+
+export async function getAllProfilesForServer(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  return await supabase
+    .rpc('get_server_profiles_for_all_users_in_server', { s_id: server_id })
+    .returns<ServerUserProfile>();
+}
+
+type GetAllProfilesForServerResponse = Awaited<ReturnType<typeof getAllProfilesForServer>>;
+export type GetAllProfilesForServerResponseSuccess = GetAllProfilesForServerResponse['data'];
+export type GetAllProfilesForServerResponseError = GetAllProfilesForServerResponse['error'];
