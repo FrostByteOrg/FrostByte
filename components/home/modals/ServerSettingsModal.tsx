@@ -136,7 +136,7 @@ export default function ServerSettingsModal({
             <span className="w-full flex flex-row">
               <h1 className="text-2xl p-2 flex-grow">Invites</h1>
             </span>
-            <ServerInviteList server={server?.servers!} />
+            <ServerInviteList server={server!} />
           </Tabs.Content>
         </div>
       </Tabs.Root>
