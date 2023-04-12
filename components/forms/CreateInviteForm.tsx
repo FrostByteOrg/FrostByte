@@ -14,7 +14,7 @@ export function CreateInviteform({ register }: { register: UseFormRegister<Creat
           {...register('numUses')}
           className={`${Input('bg-grey-700')} mt-2 ${styles.input}`}
         >
-          <option value="null" selected>Unlimited</option>
+          <option value="null">Unlimited</option>
           <option value="1">1</option>
           <option value="5">5</option>
           <option value="10">10</option>

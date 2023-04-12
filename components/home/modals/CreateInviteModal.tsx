@@ -29,7 +29,7 @@ export default function CreateInviteModal({
   } = useForm<CreateInviteFormInput>({
     mode: 'onSubmit',
     defaultValues: {
-      numUses: null,
+      numUses: 'null',
       expiresAt: '1 week',
     },
   });
