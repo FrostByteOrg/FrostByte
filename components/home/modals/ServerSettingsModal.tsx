@@ -1,7 +1,7 @@
 import Modal from '@/components/home/modals/Modal';
 import { Dispatch, SetStateAction, useRef } from 'react';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import { ServersForUser } from '@/types/dbtypes';
+import { Server, ServersForUser } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import * as Tabs from '@radix-ui/react-tabs';
 import 'styles/TabNav.module.css';
@@ -25,20 +25,20 @@ export default function ServerSettingsModal({
 }: {
   showModal: boolean;
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  server: ServersForUser | null;
+  server: Server | null;
 }) {
   const modalRef = useRef<HTMLDialogElement>(null);
   const supabase = useSupabaseClient();
-  const roles = useServerRoles(server?.server_id!);
+  const roles = useServerRoles(server?.id!);
   const user = useUser();
-  const userServerPerms = useServerUserProfilePermissions(server?.server_id!, user?.id!);
-  const maxRole = useServerUserProfileHighestRolePosition(server?.server_id!, user?.id!);
+  const userServerPerms = useServerUserProfilePermissions(server?.id!, user?.id!);
+  const maxRole = useServerUserProfileHighestRolePosition(server?.id!, user?.id!);
 
   return (
     <Modal
       modalRef={modalRef}
       showModal={showModal}
-      title={`${server?.servers.name} - Server Settings`}
+      title={`${server?.name} - Server Settings`}
       buttons={
         <button
           className="btn btn-primary"
@@ -86,7 +86,7 @@ export default function ServerSettingsModal({
                 onClick={async () => {
                   const { error } = await createRole(
                     supabase,
-                    server?.server_id!,
+                    server?.id!,
                     'New Role',
                     roles.length - 1,
                     0,

@@ -9,15 +9,20 @@ import {
 } from 'react';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { ServerMemberStats } from './ServerMemberStats';
 import { OverflowMarquee } from './OverflowMarquee';
-import { useChannel, useSetChannel } from '@/lib/store';
+import { useChannel, useServerUserProfilePermissions, useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
-import { Tooltip } from 'react-tooltip';
 import ChannelName from './ChannelName';
+import ServerSettingsModal from '@/components/home/modals/ServerSettingsModal';
+import AddChannelModal from '@/components/home/modals/AddChannelModal';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { ServerPermissions } from '@/types/permissions';
+import PlusIcon from '@/components/icons/PlusIcon';
+import GearIcon from '@/components/icons/GearIcon';
 
 export default function Server({
   server,
@@ -37,6 +42,11 @@ export default function Server({
   const [channels, setChannels] = useState<Channel[]>([]);
   const currentChannel = useChannel();
 
+  const [showServerSettingsModal, setShowServerSettingsModal] = useState(false);
+  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
+
+  const user = useUser();
+  const serverPermissions = useServerUserProfilePermissions(server.id, user?.id!);
   useEffect(() => {
     const handleAsync = async () => {
       if (server) {
@@ -60,6 +70,16 @@ export default function Server({
   if (expand) {
     return (
       <div className="relative overflow-x-visible">
+        <ServerSettingsModal
+          showModal={showServerSettingsModal}
+          setShowModal={setShowServerSettingsModal}
+          server={server}
+        />
+        <AddChannelModal
+          showModal={showAddChannelModal}
+          setShowModal={setShowAddChannelModal}
+          serverId={expanded}
+        />
         <div className="border-b-2 border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div
@@ -75,15 +95,51 @@ export default function Server({
               <ServerMemberStats server={server} />
             </div>
           </div>
-          <div
-            onMouseEnter={() => setIsSettingsHovered(true)}
-            onMouseLeave={() => setIsSettingsHovered(false)}
-            className="hover:cursor-pointer"
-            data-tooltip-id="serverSettings"
-            data-tooltip-place="right"
-          >
-            <VerticalSettingsIcon hovered={isSettingsHovered} />
-          </div>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger
+              asChild
+              disabled={
+                !((serverPermissions & ServerPermissions.MANAGE_MESSAGES) > 0 ||
+                (serverPermissions & ServerPermissions.OWNER) > 0 ||
+                (serverPermissions & ServerPermissions.MANAGE_SERVER) > 0)
+              }
+            >
+              <div
+                onMouseEnter={() => setIsSettingsHovered(true)}
+                onMouseLeave={() => setIsSettingsHovered(false)}
+                className="hover:cursor-pointer"
+              >
+                <VerticalSettingsIcon hovered={isSettingsHovered} />
+              </div>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content className="ContextMenuContent" side='right'>
+                <DropdownMenu.Item asChild
+                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                  onClick={() => {
+                    setShowAddChannelModal(true);
+                  }}
+                >
+                  <div className="flex flex-row w-full">
+                    <PlusIcon width={5} height={5}/>
+                    <span className="ml-2 w-full">New channel</span>
+                  </div>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item asChild
+                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                  onClick={() => {
+                    setShowServerSettingsModal(true);
+                  }}
+                  hidden={(serverPermissions & ServerPermissions.MANAGE_SERVER) === 0}
+                >
+                  <div className="flex flex-row w-full">
+                    <GearIcon width={5} height={5} />
+                    <span className="ml-2 w-full">Server Settings</span>
+                  </div>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
           {channels.map((channel: Channel, idx: number) => (
