@@ -21,15 +21,11 @@ import SidebarCallControl from '@/components/home/SidebarCallControl';
 import { ConnectionState } from 'livekit-client';
 import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
-import { ServerSettingsTooltip } from '@/components/Tooltips/ServerSettingsTooltip';
-import CreateInviteModal from '@/components/home/modals/CreateInviteModal';
+
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
   const [showAddServer, setShowAddServer] = useState(false);
-  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
-  const [showServerSettingsModal, setShowServerSettingsModal] = useState(false);
-
   const [expanded, setExpanded] = useState(0);
   const [currentServer, setCurrentServer] = useState<ServersForUser | null>(
     null
@@ -71,16 +67,6 @@ export default function ServerList() {
       <AddServerModal
         showModal={showAddServer}
         setShowModal={setShowAddServer}
-      />
-      <AddChannelModal
-        showModal={showAddChannelModal}
-        setShowModal={setShowAddChannelModal}
-        serverId={expanded}
-      />
-      <ServerSettingsModal
-        showModal={showServerSettingsModal}
-        setShowModal={setShowServerSettingsModal}
-        server={currentServer}
       />
       <div className="flex pb-3 items-center border-b-2 border-grey-700">
         <h1 className=" text-5xl font-bold tracking-wide">Servers</h1>
@@ -157,11 +143,6 @@ export default function ServerList() {
                       expanded={expanded}
                       isLast={idx == serverList.length - 1}
                       setExpanded={setExpanded}
-                    />
-                    <ServerSettingsTooltip
-                      server_id={server.server_id}
-                      setShowAddChannelModal={setShowAddChannelModal}
-                      setShowServerSettingsModal={setShowServerSettingsModal}
                     />
                   </span>
                 );
