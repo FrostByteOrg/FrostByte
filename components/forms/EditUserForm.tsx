@@ -97,13 +97,13 @@ export default function EditUserForm() {
   };
 
   return (
-    <div className='flex flex-row ml-5 overflow-y-scroll'>
+    <div className='flex flex-row ml-5 '>
       <div className='flex flex-col w-12 '>
         <div className='flex flex-row'>
           <h1 className='text-2xl font-semibold'>User Profile</h1>
         </div>
         <div className=' border-t-2 my-1 border-grey-700'></div>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form className='h-[17.5rem]' onSubmit={handleSubmit(onSubmit)}>
           <div className='flex flex-row justify-between items-center mb-2'>
             <div className='flex flex-col justify-start '>
               <label className='font-semibold text-xl mb-1'>Name</label>
@@ -152,8 +152,8 @@ export default function EditUserForm() {
                       <Image
                         alt='userIcon'
                         src={previewImage}
-                        width={50}
-                        height={50}
+                        width={35}
+                        height={5}
                       />
                     ) : (
                       <>
@@ -176,26 +176,15 @@ export default function EditUserForm() {
                 className='hidden'
                 accept='image/*'
               />
-              {/* <div className='flex flex-row mt-5 items-center'>
-                <h1 className='text-md font-semibold mb-1 mr-2'>
-                  Avatar Preview
-                </h1>
-                {user && (
-                  <UserIcon user={user} className='h-6 w-6' indicator={false} />
-                )}
-              </div> */}
             </div>
           </div>
-          <div className='flex flex-row justify-end items-center mb-2'>
-            <div className='flex flex-row mt-3'>
-              <button type='submit'>Submit</button>
+          <div className='flex flex-row justify-end items-center'>
+            <div className='flex flex-row'>
+              <button className=' hover:text-frost-500 px-2 py-1 rounded-lg' type='submit'>Submit</button>
             </div>
           </div>
         </form>
       </div>
     </div>
   );
-}
-function userRef<T>(arg0: null) {
-  throw new Error('Function not implemented.');
 }
