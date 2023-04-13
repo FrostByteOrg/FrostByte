@@ -1,20 +1,23 @@
 import { Input } from './Styles';
-import { CreateInviteFormInput } from '@/types/forms/CreateInviteFormData';
 import { UseFormRegister } from 'react-hook-form';
 import styles from '@/styles/Livekit.module.css';
+import { CreateInviteFormInput } from '@/types/client/forms/createInvite';
 
-export function CreateInviteform({ register }: { register: UseFormRegister<CreateInviteFormInput> }) {
-
+export function CreateInviteform({
+  register,
+}: {
+  register: UseFormRegister<CreateInviteFormInput>;
+}) {
   return (
     <form className="flex flex-col space-y-4">
       <div className="flex flex-col">
         <label htmlFor="numUses">Max number of uses</label>
         <select
           id="numUses"
-          {...register('numUses')}
+          {...(register('numUses'), { valueAsNumber: true })}
           className={`${Input('bg-grey-700')} mt-2 ${styles.input}`}
         >
-          <option value="null">Unlimited</option>
+          <option value="-1">Unlimited</option>
           <option value="1">1</option>
           <option value="5">5</option>
           <option value="10">10</option>

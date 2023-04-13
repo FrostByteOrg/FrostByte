@@ -2,13 +2,11 @@ import { CreateInviteform } from '@/components/forms/CreateInviteForm';
 import Modal from '@/components/home/modals/Modal';
 import { createInvite } from '@/services/invites.service';
 import { Channel } from '@/types/dbtypes';
-import { CreateInviteFormInput } from '@/types/forms/CreateInviteFormData';
+import { CreateInviteFormInput } from '@/types/client/forms/createInvite';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Dispatch, SetStateAction, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-
-
 
 export default function CreateInviteModal({
   showModal,
@@ -29,7 +27,7 @@ export default function CreateInviteModal({
   } = useForm<CreateInviteFormInput>({
     mode: 'onSubmit',
     defaultValues: {
-      numUses: 'null',
+      numUses: -1,
       expiresAt: '1 week',
     },
   });
@@ -37,22 +35,12 @@ export default function CreateInviteModal({
   const onSubmit = async (formData: CreateInviteFormInput) => {
     console.log(formData);
 
-    // Try to parse values
-    let numUses: number | null = null;
-    if (formData.numUses) {
-      numUses = parseInt(formData.numUses);
-
-      if (isNaN(numUses)) {
-        numUses = null;
-      }
-    }
-
     const { data, error } = await createInvite(
       supabase,
       channel.server_id,
       channel.channel_id,
       formData.expiresAt,
-      numUses
+      formData.numUses < 1 ? null : formData.numUses
     );
 
     if (error) {
@@ -62,7 +50,9 @@ export default function CreateInviteModal({
     }
 
     toast.success('Invite copied to clipboard');
-    navigator.clipboard.writeText(`${window.location.origin}/invite/${data?.url_id}`);
+    navigator.clipboard.writeText(
+      `${window.location.origin}/invite/${data?.url_id}`
+    );
 
     // Finally, close the modal
     setShowModal(false);
@@ -101,7 +91,7 @@ export default function CreateInviteModal({
         </>
       }
     >
-      <CreateInviteform register={register}/>
+      <CreateInviteform register={register} />
     </Modal>
   );
 }
