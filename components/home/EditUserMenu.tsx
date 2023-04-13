@@ -12,13 +12,12 @@ import { useUserRef } from '@/lib/store';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import router from 'next/router';
 import LogOutIcon from '@/components/icons/LogOutIcon';
-import EditUserForm from './EditUserForm';
-import MediaPick from '../home/MediaPick';
+import EditUserForm from '../forms/EditUserForm';
+import MediaPick from './MediaPick';
 import modalStyle from '@/styles/Modal.module.css';
-import ChangePassword from './SettingsUpdatePassword';
+import ChangePassword from '../forms/SettingsUpdatePassword';
 
-
-export default function EditUser(){
+export default function EditUser() {
   const supabase = useSupabaseClient();
 
   const [formSwitch, setFormSwitch] = useState('editUser');
@@ -29,9 +28,9 @@ export default function EditUser(){
     router.push('/login');
   };
 
-  let settingView = <EditUserForm/>;
+  let settingView = <EditUserForm />;
 
-  switch(formSwitch){
+  switch (formSwitch) {
     case 'editUser':
       settingView = <EditUserForm />;
       break;
@@ -45,26 +44,26 @@ export default function EditUser(){
       settingView = <EditUserForm />;
       break;
   }
-  return(
+  return (
     <div className={`flex flex-row ${modalStyle.userSettings}`}>
       <div className='w-10 mr-4 flex flex-col justify-between items-start'>
         <div>
           <div className='flex flex-row'>
-            <button 
+            <button
               className='rounded-lg mb-1 h-6 text-sm tracking-wide hover:text-frost-400'
               onClick={() => setFormSwitch('editUser')}>
               Edit Profile
             </button>
           </div>
           <div className='flex flex-row '>
-            <button 
+            <button
               className='rounded-lg mb-1 h-6 text-sm tracking-wide hover:text-frost-400'
               onClick={() => setFormSwitch('changePassword')}>
               Change Password
             </button>
           </div>
           <div className='flex flex-row'>
-            <button 
+            <button
               className='rounded-lg mb-1 h-6 text-sm tracking-wide hover:text-frost-400'
               onClick={() => setFormSwitch('setMedia')}>
               Media Settings
@@ -73,7 +72,7 @@ export default function EditUser(){
         </div>
         <div className='flex flex-row mb-1'>
           <button
-            className="
+            className='
             tracking-wide 
             text-md mb-1 
             text-frost-100 
@@ -82,11 +81,10 @@ export default function EditUser(){
             items-center 
             justify-evenly
              w-9
-             hover:text-frost-400"
-            onClick={handleLogout}
-          >
+             hover:text-frost-400'
+            onClick={handleLogout}>
             Logout
-            <LogOutIcon width={5} height={5}/>
+            <LogOutIcon width={5} height={5} />
           </button>
         </div>
       </div>
