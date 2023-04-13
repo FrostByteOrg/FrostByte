@@ -17,6 +17,7 @@ import { OverflowMarquee } from './OverflowMarquee';
 import { useChannel, useServerUserProfilePermissions, useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelName from './ChannelName';
+import { ChannelListItem } from '@/components/home/ChannelListItem';
 import ServerSettingsModal from '@/components/home/modals/ServerSettingsModal';
 import AddChannelModal from '@/components/home/modals/AddChannelModal';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -38,7 +39,6 @@ export default function Server({
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
   const [isSettingsHovered, setIsSettingsHovered] = useState(false);
-  const setChannel = useSetChannel();
   const [channels, setChannels] = useState<Channel[]>([]);
   const currentChannel = useChannel();
 
@@ -56,16 +56,6 @@ export default function Server({
     };
     handleAsync();
   }, [server, supabase]);
-
-  function joinTextChannel(e: SyntheticEvent, channel: Channel) {
-    e.stopPropagation();
-    setChannel(channel);
-  }
-
-  function joinVideoChannel(e: SyntheticEvent, channel: Channel) {
-    e.stopPropagation();
-    setChannel(channel);
-  }
 
   if (expand) {
     return (
@@ -143,41 +133,7 @@ export default function Server({
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
           {channels.map((channel: Channel, idx: number) => (
-            <div
-              className={`${
-                currentChannel?.channel_id == channel.channel_id
-                  ? 'bg-grey-600'
-                  : 'hover:bg-grey-600'
-              } flex whitespace-nowrap items-center pt-2 pb-1 px-4 mt-1 hover:cursor-pointer rounded-lg max-w-[192px] ${
-                idx === 0 ? 'mt-2' : ''
-              }`}
-              onClick={(e) => {
-                if (channel.is_media) {
-                  joinVideoChannel(e, channel);
-                }
-
-                else {
-                  joinTextChannel(e, channel);
-                }
-              }}
-              key={channel.channel_id}
-            >
-              <div className="w-auto">
-                {channel && channel.is_media ? (
-                  <div className="flex flex-col">
-                    <div className="flex flex-row items-center">
-                      <ChannelMediaIcon />
-                      <ChannelName {...channel} />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-row items-center">
-                    <ChannelMessageIcon />
-                    <ChannelName {...channel} />
-                  </div>
-                )}
-              </div>
-            </div>
+            <ChannelListItem channel={channel} idx={idx} key={channel.channel_id}/>
           ))}
         </div>
       </div>

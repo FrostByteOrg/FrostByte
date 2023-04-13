@@ -5,7 +5,7 @@ import FriendsList from '@/components/home/FriendsList';
 import Chat from '@/components/home/Chat';
 import DMessageList from '@/components/home/DMessageList';
 import ServerList from '@/components/home/ServerList';
-import DefaultTest from '@/components/home/DefaultTest';
+import DefaultSplash from '@/components/home/DefaultSplash';
 import {
   useChannel,
   useSetUser,
@@ -133,7 +133,7 @@ export default function RenderDesktopView() {
                 showIcon={false}
                 className={'w-7 h-7 hover:text-grey-400'}
                 source={Track.Source.Microphone}
-                onClick={() => settingsRef(false)} 
+                onClick={() => settingsRef(false)}
               >
                 {audioTrack.isMicrophoneEnabled ? (
                   <MicrophoneIcon width={5} height={5}/>
@@ -169,8 +169,8 @@ export function renderContent(
             <MediaChat channel={channel} key={2} />,
           ];
         else return [<ServerList key={1} />, <Chat key={2} />];
-      return [<ServerList key={1} />, <DefaultTest key={2} />];
+      return [<ServerList key={1} />, <DefaultSplash key={2} />];
     default:
-      return [<FriendsList key={1} />, <DefaultTest key={2} />];
+      return [<FriendsList key={1} />, <DefaultSplash key={2} />];
   }
 }
