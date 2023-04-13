@@ -21,7 +21,7 @@ import SidebarCallControl from '@/components/home/SidebarCallControl';
 import { ConnectionState } from 'livekit-client';
 import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
-import { ServerSettingsTooltip } from '@/components/Tooltips/ServerSettingsTooltip';
+
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
 
