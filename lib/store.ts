@@ -596,6 +596,7 @@ export interface ServerProfilesState {
   updateServerProfileByServerUser: (supabase: SupabaseClient<Database>, server_user_id: number) => void;
   stripServerUserAndRoles: (server_user_id: number) => void;
   removeServerProfile: (profile_id: string, server_id: number) => void;
+  removeProfilesForServerByServerUserId: (server_user_id: number) => void;
 }
 
 const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
@@ -696,6 +697,7 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
           if (profile.server_user.id === server_user_id) {
             rv.get(server_id)!.get(profile_id)!.server_user = null;
             rv.get(server_id)!.get(profile_id)!.roles = null;
+            break;
           }
         }
       }
@@ -719,6 +721,39 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
       return {
         serverProfiles: rv,
       };
+    });
+  },
+
+  removeProfilesForServerByServerUserId: async (server_user_id) => {
+    set((state) => {
+      const rv = new Map(state.serverProfiles);
+      let _server_id;
+
+      // Find the server user
+      for (const [server_id, profiles] of rv) {
+        for (const [profile_id, profile] of profiles) {
+          if (!profile.server_user) {
+            continue;
+          }
+
+          if (profile.server_user.id === server_user_id) {
+            _server_id = server_id;
+            const currChannel = useChannelStore.getState().channel;
+
+            if (currChannel && currChannel.server_id === server_id) {
+              useChannelStore.getState().setChannel(null);
+            }
+
+            break;
+          }
+        }
+      }
+
+      if (_server_id) {
+        rv.delete(_server_id);
+      }
+
+      return { serverProfiles: rv };
     });
   },
 }));
@@ -826,6 +861,7 @@ export const useServerUserProfile = (server_id: number, profile_id: string) => u
 );
 export const useRemoveServerUserProfile = () => useServerProfilesStore((state) => state.removeServerProfile);
 export const useStripServerUserAndRoles = () => useServerProfilesStore((state) => state.stripServerUserAndRoles);
+export const useRemoveProfilesForServerByServerUserId = () => useServerProfilesStore((state) => state.removeProfilesForServerByServerUserId);
 export const useServerUserProfileHighestRolePosition = (server_id: number | null, profile_id: string) => useServerProfilesStore(
   (state) => {
     if (!server_id) {
