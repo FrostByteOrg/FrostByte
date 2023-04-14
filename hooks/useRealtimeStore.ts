@@ -344,6 +344,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     allServerProfiles,
     updateServerUserProfile,
     stripServerUserAndRoles,
+    removeProfilesforServerByServerUserId
   ]);
 
   useEffect(() => {
