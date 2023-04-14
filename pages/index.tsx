@@ -13,6 +13,7 @@ import {
   useConnectionRef,
   useUserSettings,
   useSetConnectionState,
+  useGetAllServerUserProfiles,
 } from '@/lib/store';
 import { useSetChannel } from '@/lib/store';
 import { getChannelById } from '@/services/channels.service';
@@ -25,7 +26,7 @@ export default function Home() {
   const token = useTokenRef();
   const userSettings = useUserSettings();
   const setChannel = useSetChannel();
-  const { c: channel_id } = router.query;
+  const { c: channel_id, s: server_id } = router.query;
 
   useRealtimeStore(supabase);
   const [isMobile, setIsMobile] = useState(false);
@@ -35,7 +36,7 @@ export default function Home() {
   const tryConnect = useConnectionRef();
   const setConnectionState = useSetConnectionState();
   const [livekitError, setLivekitError] = useState<Error | null>(null);
-
+  const getAllServerProfilesForServer = useGetAllServerUserProfiles();
   const modalRef = useRef<HTMLDialogElement>(null);
 
   const checkMobile = useMediaQuery({ query: '(max-width: 940px)' });
@@ -65,23 +66,27 @@ export default function Home() {
     async function handleAsync() {
       // First, try parsing the channel_id as a number. If that fails, we're done
       const channel_id_as_number = parseInt(channel_id as string);
+      const server_id_as_number = parseInt(server_id as string);
 
-      if (isNaN(channel_id_as_number)) {
-        return;
+      if (!isNaN(channel_id_as_number)) {
+        const { data: _channel } = await getChannelById(
+          supabase,
+          channel_id_as_number
+        );
+
+        if (_channel) {
+          setChannel(_channel);
+        }
       }
 
-      const { data: _channel } = await getChannelById(
-        supabase,
-        channel_id_as_number
-      );
-
-      if (_channel) {
-        setChannel(_channel);
+      if (!isNaN(server_id_as_number)) {
+        getAllServerProfilesForServer(supabase, server_id_as_number);
       }
+
     }
 
     handleAsync();
-  }, [channel_id, setChannel, supabase]);
+  }, [channel_id, setChannel, supabase, server_id, getAllServerProfilesForServer]);
 
   return (
     <>

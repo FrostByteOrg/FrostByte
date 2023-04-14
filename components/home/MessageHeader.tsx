@@ -5,10 +5,13 @@ import UserIcon from '../icons/UserIcon';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { acceptFriendRequest, removeFriendOrRequest, sendFriendRequest } from '@/services/friends.service';
-import { useChannel, useDMChannels, useRelations, useServerUserProfile, useServerUserProfileRoles, useSetChannel } from '@/lib/store';
+import { useChannel, useDMChannels, useRelations, useServerUserProfile, useServerUserProfileHighestRolePosition, useServerUserProfilePermissions, useServerUserProfileRoles, useSetChannel } from '@/lib/store';
 import { getOrCreateDMChannel } from '@/lib/DMChannelHelper';
 import { useSideBarOptionSetter } from '@/context/SideBarOptionCtx';
 import { useEffect, useState } from 'react';
+import { ServerPermissions } from '@/types/permissions';
+import { banUser, kickUser } from '@/services/server.service';
+import { toast } from 'react-toastify';
 
 export function MessageHeader({
   server_user_profile,
@@ -29,7 +32,22 @@ export function MessageHeader({
   const setSideBarOption = useSideBarOptionSetter();
   const [ headerColor, setHeaderColor ] = useState<string>('white');
 
+  const serverId = server_user_profile.server_user?.server_id || null;
+
+  const currentUserPermissions = useServerUserProfilePermissions(serverId, currentUser?.id!);
+  const currentUserHighestRolePosition = useServerUserProfileHighestRolePosition(serverId, currentUser?.id!);
+  const targetUserHighestRolePosition = useServerUserProfileHighestRolePosition(serverId, server_user_profile.id);
+
+  const currentUserOutranksTarget = currentUserHighestRolePosition < targetUserHighestRolePosition;
+  const targetUserDisplayName = server_user_profile.server_user ?
+    (server_user_profile.server_user.nickname || server_user_profile.username)
+    : server_user_profile.username;
+
   useEffect(() => {
+    if (!server_user_profile.roles) {
+      return;
+    }
+
     const color = server_user_profile.roles
       .sort((a, b) => a.position - b.position)
       .filter((role) => role.color !== null);
@@ -63,7 +81,7 @@ export function MessageHeader({
                 color: headerColor,
               }}
             >
-              {server_user_profile.server_user.nickname || server_user_profile.username}
+              {targetUserDisplayName}
             </div>
             <div className="text-xs tracking-wider text-grey-300 mt-1">
               {display_time}{' '}
@@ -121,8 +139,56 @@ export function MessageHeader({
             }}
             hidden={directMessages.get(server_user_profile.id) && directMessages.get(server_user_profile.id)!.channel_id === _currentChannel?.channel_id}
           >
-            Message {server_user_profile.username}
+            Message {targetUserDisplayName}
           </ContextMenu.Item>
+          { (
+            server_user_profile.server_user !== null
+            && currentUserOutranksTarget && (currentUserPermissions & ServerPermissions.MANAGE_USERS) === ServerPermissions.MANAGE_USERS
+          ) && (
+            <>
+              <ContextMenu.Separator className="ContextMenuSeparator" />
+              <ContextMenu.Item
+                className='ContextMenuItem text-red-500'
+                onClick={async () => {
+                  const { error } = await kickUser(
+                    supabase,
+                    server_user_profile.id,
+                    server_user_profile.server_user!.server_id
+                  );
+
+                  if (error) {
+                    console.error(error);
+                    toast.error('Failed to kick user');
+                    return;
+                  }
+
+                  toast.success('User kicked');
+                }}
+              >
+                Kick {targetUserDisplayName}
+              </ContextMenu.Item>
+              <ContextMenu.Item
+                className='ContextMenuItem text-red-500'
+                onClick={async () => {
+                  const { error } = await banUser(
+                    supabase,
+                    server_user_profile.id,
+                    server_user_profile.server_user!.server_id
+                  );
+
+                  if (error) {
+                    console.error(error);
+                    toast.error('Failed to ban user');
+                    return;
+                  }
+
+                  toast.success('User banned');
+                }}
+              >
+                Ban {server_user_profile.username}
+              </ContextMenu.Item>
+            </>
+          )}
         </ContextMenu.Content>
       )}
     </ContextMenu.Root>

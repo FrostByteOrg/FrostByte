@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.supabase';
-import { ServerUserProfile, ServersForUser, User } from '@/types/dbtypes';
+import { ServerBanWithProfile, ServerUserProfile, ServersForUser, User } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -179,6 +179,17 @@ export async function unbanUser(
 type UnbanUserResponse = Awaited<ReturnType<typeof unbanUser>>;
 export type UnbanUserResponseSuccess = UnbanUserResponse['data'];
 export type UnbanUserResponseError = UnbanUserResponse['error'];
+
+export async function getServerBans(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  return await supabase
+    .from('server_bans')
+    .select('*, profiles(*)')
+    .eq('server_id', server_id)
+    .returns<ServerBanWithProfile>();
+}
 
 export async function kickUser(
   supabase: SupabaseClient<Database>,

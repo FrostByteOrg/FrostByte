@@ -10,6 +10,7 @@ import { useServerRoles, useServerUserProfileHighestRolePosition, useServerUserP
 import PlusIcon from '@/components/icons/PlusIcon';
 import { createRole } from '@/services/roles.service';
 import { toast } from 'react-toastify';
+import { ServerBansList } from '@/components/home/ServerBansList';
 import { ServerInviteList } from '@/components/home/ServerInviteList';
 
 
@@ -65,6 +66,13 @@ export default function ServerSettingsModal({
             disabled={(userServerPerms & ServerPermissions.MANAGE_ROLES) === 0}
           >
             Roles
+          </Tabs.Trigger>
+          <Tabs.Trigger
+            value='Bans'
+            className={tabTriggerClass}
+            disabled={(userServerPerms & ServerPermissions.MANAGE_USERS) === 0}
+          >
+            Bans
           </Tabs.Trigger>
           <Tabs.Trigger
             value="Invites"
@@ -131,6 +139,14 @@ export default function ServerSettingsModal({
                 </Tabs.Content>
               ))}
             </Tabs.Root>
+          </Tabs.Content>
+          <Tabs.Content value='Bans' className={tabContentClass}>
+            <span className="w-full flex flex-row">
+              <h1 className="text-2xl p-2 flex-grow">Bans</h1>
+            </span>
+            <div className="p-2">
+              <ServerBansList serverId={server?.id!} />
+            </div>
           </Tabs.Content>
           <Tabs.Content value="Invites" className={tabContentClass}>
             <span className="w-full flex flex-row">

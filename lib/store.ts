@@ -594,7 +594,9 @@ export interface ServerProfilesState {
   addServerProfiles: (supabase: SupabaseClient<Database>, server_id: number) => void;
   updateServerProfile: (supabase: SupabaseClient<Database>, profile_id: string, server_id: number) => void;
   updateServerProfileByServerUser: (supabase: SupabaseClient<Database>, server_user_id: number) => void;
+  stripServerUserAndRoles: (server_user_id: number) => void;
   removeServerProfile: (profile_id: string, server_id: number) => void;
+  removeProfilesForServerByServerUserId: (server_user_id: number) => void;
 }
 
 const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
@@ -659,6 +661,13 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
     }
 
     set((state) => {
+      // Sanity check
+      if (!data.server_user) {
+        return {
+          serverProfiles: state.serverProfiles,
+        };
+      }
+
       const rv = new Map(state.serverProfiles);
 
       if (!rv.has(data.server_user.server_id)) {
@@ -668,6 +677,30 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
       console.log('updating by server user');
       console.table(data);
       rv.get(data.server_user.server_id)!.set(data.id, data);
+
+      return {
+        serverProfiles: rv,
+      };
+    });
+  },
+
+  stripServerUserAndRoles: (server_user_id) => {
+    set((state) => {
+      const rv = new Map(state.serverProfiles);
+
+      for (const [server_id, profiles] of rv) {
+        for (const [profile_id, profile] of profiles) {
+          if (!profile.server_user) {
+            continue;
+          }
+
+          if (profile.server_user.id === server_user_id) {
+            rv.get(server_id)!.get(profile_id)!.server_user = null;
+            rv.get(server_id)!.get(profile_id)!.roles = null;
+            break;
+          }
+        }
+      }
 
       return {
         serverProfiles: rv,
@@ -688,6 +721,39 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
       return {
         serverProfiles: rv,
       };
+    });
+  },
+
+  removeProfilesForServerByServerUserId: async (server_user_id) => {
+    set((state) => {
+      const rv = new Map(state.serverProfiles);
+      let _server_id;
+
+      // Find the server user
+      for (const [server_id, profiles] of rv) {
+        for (const [profile_id, profile] of profiles) {
+          if (!profile.server_user) {
+            continue;
+          }
+
+          if (profile.server_user.id === server_user_id) {
+            _server_id = server_id;
+            const currChannel = useChannelStore.getState().channel;
+
+            if (currChannel && currChannel.server_id === server_id) {
+              useChannelStore.getState().setChannel(null);
+            }
+
+            break;
+          }
+        }
+      }
+
+      if (_server_id) {
+        rv.delete(_server_id);
+      }
+
+      return { serverProfiles: rv };
     });
   },
 }));
@@ -794,11 +860,17 @@ export const useServerUserProfile = (server_id: number, profile_id: string) => u
   (state) => state.serverProfiles.get(server_id)?.get(profile_id)
 );
 export const useRemoveServerUserProfile = () => useServerProfilesStore((state) => state.removeServerProfile);
-export const useServerUserProfileHighestRolePosition = (server_id: number, profile_id: string) => useServerProfilesStore(
+export const useStripServerUserAndRoles = () => useServerProfilesStore((state) => state.stripServerUserAndRoles);
+export const useRemoveProfilesForServerByServerUserId = () => useServerProfilesStore((state) => state.removeProfilesForServerByServerUserId);
+export const useServerUserProfileHighestRolePosition = (server_id: number | null, profile_id: string) => useServerProfilesStore(
   (state) => {
+    if (!server_id) {
+      return 32767; // Highest possible role position, smallint maxsize in postgres
+    }
+
     const profile = state.serverProfiles.get(server_id)?.get(profile_id);
 
-    if (!profile) {
+    if (!profile || !profile.roles) {
       return 32767; // Highest possible role position, smallint maxsize in postgres
     }
 
@@ -812,7 +884,7 @@ export const useServerUserProfileRoles = (server_id: number, profile_id: string)
   (state) => {
     const profile = state.serverProfiles.get(server_id)?.get(profile_id);
 
-    if (!profile) {
+    if (!profile || !profile.roles) {
       return [];
     }
 
@@ -822,11 +894,19 @@ export const useServerUserProfileRoles = (server_id: number, profile_id: string)
     return profile.roles;
   }
 );
-export const useServerUserProfilePermissions = (server_id: number, profile_id: string) => useServerProfilesStore(
+export const useServerUserProfilePermissions = (server_id: number | null, profile_id: string) => useServerProfilesStore(
   (state) => {
+    if (!server_id) {
+      return 0;
+    }
+
     const profile = state.serverProfiles.get(server_id)?.get(profile_id);
 
     if (!profile) {
+      return 0;
+    }
+
+    if (!profile.roles) {
       return 0;
     }
 
