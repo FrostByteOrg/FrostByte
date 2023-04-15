@@ -11,6 +11,7 @@ import LoadingIcon from '../icons/LoadingIcon';
 import ServersIcon from '../icons/ServersIcon';
 import { OverflowMarquee } from './OverflowMarquee';
 import { ServerMemberStats } from './ServerMemberStats';
+import { toast } from 'react-toastify';
 
 export function InviteEmbed({ invite_code }: { invite_code: string }) {
   const servers = useServers();
@@ -126,7 +127,13 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
             "
             disabled={userInServer}
             onClick={async () => {
-              await addUserToServer(supabase, invite.servers.id);
+              const { error } = await addUserToServer(supabase, invite.servers.id);
+
+              if (error) {
+                toast.error('You cannot join this server.');
+                return;
+              }
+
               router.push(`/?c=${invite.channel_id}`, '/');
             }}
           >

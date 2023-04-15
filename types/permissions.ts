@@ -6,18 +6,6 @@ export enum ServerPermissions {
   NONE = 0,
 
   /**
-   * 1
-   * The user is the owner of the server.
-   */
-  OWNER = 1 << 0,
-
-  /**
-   * 2
-   * Server administrator. Effectively contains all permissions aside from destructive operations such as delete server
-   */
-  ADMINISTRATOR = 1 << 1,
-
-  /**
    * 4
    * Manage server settings, including server name, description, and icon.
    */
@@ -58,6 +46,25 @@ export enum ServerPermissions {
    * Create invites, allowing the user to create invites.
    */
   CREATE_INVITES = 1 << 8,
+
+  /**
+   * 510
+   * Server administrator. Effectively contains all permissions aside from destructive operations such as delete server
+   */
+  ADMINISTRATOR = 2
+    | ServerPermissions.MANAGE_SERVER
+    | ServerPermissions.MANAGE_CHANNELS
+    | ServerPermissions.MANAGE_USERS
+    | ServerPermissions.MANAGE_ROLES
+    | ServerPermissions.MANAGE_MESSAGES
+    | ServerPermissions.MANAGE_INVITES
+    | ServerPermissions.CREATE_INVITES,
+
+  /**
+   * 511
+   * The user is the owner of the server.
+   */
+  OWNER = 1 | ServerPermissions.ADMINISTRATOR,
 }
 
 export enum ChannelPermissions {

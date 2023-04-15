@@ -9,15 +9,21 @@ import {
 } from 'react';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Servers.module.css';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { ServerMemberStats } from './ServerMemberStats';
 import { OverflowMarquee } from './OverflowMarquee';
-import { useSetChannel } from '@/lib/store';
+import { useChannel, useServerUserProfilePermissions, useSetChannel } from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
-import { Tooltip } from 'react-tooltip';
 import ChannelName from './ChannelName';
+import { ChannelListItem } from '@/components/home/ChannelListItem';
+import ServerSettingsModal from '@/components/home/modals/ServerSettingsModal';
+import AddChannelModal from '@/components/home/modals/AddChannelModal';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { ServerPermissions } from '@/types/permissions';
+import PlusIcon from '@/components/icons/PlusIcon';
+import GearIcon from '@/components/icons/GearIcon';
 
 export default function Server({
   server,
@@ -33,9 +39,14 @@ export default function Server({
   const expand = expanded == server.id;
   const supabase = useSupabaseClient();
   const [isSettingsHovered, setIsSettingsHovered] = useState(false);
-  const setChannel = useSetChannel();
   const [channels, setChannels] = useState<Channel[]>([]);
+  const currentChannel = useChannel();
 
+  const [showServerSettingsModal, setShowServerSettingsModal] = useState(false);
+  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
+
+  const user = useUser();
+  const serverPermissions = useServerUserProfilePermissions(server.id, user?.id!);
   useEffect(() => {
     const handleAsync = async () => {
       if (server) {
@@ -46,19 +57,19 @@ export default function Server({
     handleAsync();
   }, [server, supabase]);
 
-  function joinTextChannel(e: SyntheticEvent, channel: Channel) {
-    e.stopPropagation();
-    setChannel(channel);
-  }
-
-  function joinVideoChannel(e: SyntheticEvent, channel: Channel) {
-    e.stopPropagation();
-    setChannel(channel);
-  }
-
   if (expand) {
     return (
       <div className="relative overflow-x-visible">
+        <ServerSettingsModal
+          showModal={showServerSettingsModal}
+          setShowModal={setShowServerSettingsModal}
+          server={server}
+        />
+        <AddChannelModal
+          showModal={showAddChannelModal}
+          setShowModal={setShowAddChannelModal}
+          serverId={expanded}
+        />
         <div className="border-b-2 border-grey-700 py-2 px-3 flex bg-grey-600 justify-between rounded-xl items-center relative z-10">
           <div className="flex items-center">
             <div
@@ -74,49 +85,55 @@ export default function Server({
               <ServerMemberStats server={server} />
             </div>
           </div>
-          <div
-            onMouseEnter={() => setIsSettingsHovered(true)}
-            onMouseLeave={() => setIsSettingsHovered(false)}
-            className="hover:cursor-pointer"
-            data-tooltip-id="serverSettings"
-            data-tooltip-place="right"
-          >
-            <VerticalSettingsIcon hovered={isSettingsHovered} />
-          </div>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger
+              asChild
+              disabled={
+                !((serverPermissions & ServerPermissions.MANAGE_MESSAGES) > 0 ||
+                (serverPermissions & ServerPermissions.OWNER) > 0 ||
+                (serverPermissions & ServerPermissions.MANAGE_SERVER) > 0)
+              }
+            >
+              <div
+                onMouseEnter={() => setIsSettingsHovered(true)}
+                onMouseLeave={() => setIsSettingsHovered(false)}
+                className="hover:cursor-pointer"
+              >
+                <VerticalSettingsIcon hovered={isSettingsHovered} />
+              </div>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content className="ContextMenuContent" side='right'>
+                <DropdownMenu.Item asChild
+                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                  onClick={() => {
+                    setShowAddChannelModal(true);
+                  }}
+                >
+                  <div className="flex flex-row w-full">
+                    <PlusIcon width={5} height={5}/>
+                    <span className="ml-2 w-full">New channel</span>
+                  </div>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item asChild
+                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                  onClick={() => {
+                    setShowServerSettingsModal(true);
+                  }}
+                  hidden={(serverPermissions & ServerPermissions.MANAGE_SERVER) === 0}
+                >
+                  <div className="flex flex-row w-full">
+                    <GearIcon width={5} height={5} />
+                    <span className="ml-2 w-full">Server Settings</span>
+                  </div>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
           {channels.map((channel: Channel, idx: number) => (
-            <div
-              className={`channel flex whitespace-nowrap items-center pt-2 pb-1 px-4 hover:bg-grey-600 hover:cursor-pointer rounded-lg max-w-[192px] ${
-                idx === 0 ? 'mt-2' : ''
-              }`}
-              onClick={(e) => {
-                if (channel.is_media) {
-                  joinVideoChannel(e, channel);
-                }
-
-                else {
-                  joinTextChannel(e, channel);
-                }
-              }}
-              key={channel.channel_id}
-            >
-              <div className="w-auto">
-                {channel && channel.is_media ? (
-                  <div className="flex flex-col">
-                    <div className="flex flex-row items-center">
-                      <ChannelMediaIcon />
-                      <ChannelName {...channel} />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-row items-center">
-                    <ChannelMessageIcon />
-                    <ChannelName {...channel} />
-                  </div>
-                )}
-              </div>
-            </div>
+            <ChannelListItem channel={channel} idx={idx} key={channel.channel_id}/>
           ))}
         </div>
       </div>
@@ -128,7 +145,11 @@ export default function Server({
       <div
         className={`${
           !isLast ? 'border-b-2 border-grey-700' : ''
-        }   py-2 px-3 flex justify-between hover:bg-grey-700 hover:rounded-xl items-center`}
+        }   py-2 px-3 flex justify-between ${
+          currentChannel?.server_id == server.id
+            ? 'bg-grey-700 rounded-xl'
+            : 'hover:bg-grey-700 hover:rounded-xl'
+        }   items-center`}
       >
         <div className="flex items-center">
           <div className={`${styles.serverIcon}  p-[6px] rounded-xl`}>

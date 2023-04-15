@@ -5,17 +5,19 @@ import MessageContent from '@/components/home/MessageContent';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Components.module.css';
 import { useEffect } from 'react';
-import Modal from '@/components/home/Modal';
-import { MessageWithServerProfile } from '@/types/dbtypes';
+import Modal from '@/components/home/modals/Modal';
+import { Message, MessageWithServerProfile, ServerUserProfile } from '@/types/dbtypes';
 
 export default function DeleteMsgModal({
   showModal,
   message,
+  server_user_profile,
   displayTime,
   setMessageOptions,
 }: {
   showModal: boolean;
-  message: MessageWithServerProfile;
+  message: Message;
+  server_user_profile: ServerUserProfile;
   displayTime: string;
   setMessageOptions: Dispatch<SetStateAction<'delete' | 'edit' | null>>;
 }) {
@@ -54,10 +56,10 @@ export default function DeleteMsgModal({
     >
       <>
         <div className="flex-grow flex flex-row">
-          <UserIcon user={message.profile} />
+          <UserIcon user={server_user_profile} />
           <div className="flex-grow flex items-center">
             <div className="text-xl font-semibold tracking-wider mr-2">
-              {message.profile.username}
+              {server_user_profile.username}
             </div>
             <div className="text-xs tracking-wider text-grey-300 mt-1">
               {displayTime}{' '}

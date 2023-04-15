@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.supabase';
-import { ServersForUser, User } from '@/types/dbtypes';
+import { ServerBanWithProfile, ServerUserProfile, ServersForUser, User } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -132,39 +132,6 @@ type IsUserInServerResponse = Awaited<ReturnType<typeof isUserInServer>>;
 export type IsUserInServerResponseSuccess = IsUserInServerResponse['data'];
 export type IsUserInServerResponseError = IsUserInServerResponse['error'];
 
-export async function createRole(
-  supabase: SupabaseClient<Database>,
-  server_id: number,
-  name: string,
-  position: number,
-  permissions: ServerPermissions,
-  color: string
-) {
-  return await supabase
-    .from('roles')
-    .insert({ name, color, server_id, position, permissions })
-    .select()
-    .single();
-}
-
-type CreateRoleResponse = Awaited<ReturnType<typeof createRole>>;
-export type CreateRoleResponseSuccess = CreateRoleResponse['data'];
-export type CreateRoleResponseError = CreateRoleResponse['error'];
-
-export async function getServerRoles(
-  supabase: SupabaseClient<Database>,
-  server_id: number
-) {
-  return await supabase
-    .from('server_roles')
-    .select('*')
-    .eq('server_id', server_id);
-}
-
-type GetServerRolesResponse = Awaited<ReturnType<typeof getServerRoles>>;
-export type GetServerRolesResponseSuccess = GetServerRolesResponse['data'];
-export type GetServerRolesResponseError = GetServerRolesResponse['error'];
-
 export async function getRolesForUser(
   supabase: SupabaseClient<Database>,
   user_id: string,
@@ -213,6 +180,17 @@ type UnbanUserResponse = Awaited<ReturnType<typeof unbanUser>>;
 export type UnbanUserResponseSuccess = UnbanUserResponse['data'];
 export type UnbanUserResponseError = UnbanUserResponse['error'];
 
+export async function getServerBans(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  return await supabase
+    .from('server_bans')
+    .select('*, profiles(*)')
+    .eq('server_id', server_id)
+    .returns<ServerBanWithProfile>();
+}
+
 export async function kickUser(
   supabase: SupabaseClient<Database>,
   user_id: string,
@@ -238,7 +216,7 @@ export async function getCurrentUserServerPermissions(
   return await supabase.rpc('get_permission_flags_for_server_user', {
     s_id: server_id,
     p_id: userId ? userId : (await supabase.auth.getUser()).data.user?.id!,
-  });
+  }).single();
 }
 
 type GetCurrentUserServerPermissionsResponse = Awaited<
@@ -323,3 +301,16 @@ export async function addServerIcon(
 type AddServerIconResponse = Awaited<ReturnType<typeof addServerIcon>>;
 export type AddServerIconResponseSuccess = AddServerIconResponse['data'];
 export type AddServerIconResponseError = AddServerIconResponse['error'];
+
+export async function getAllProfilesForServer(
+  supabase: SupabaseClient<Database>,
+  server_id: number
+) {
+  return await supabase
+    .rpc('get_server_profiles_for_all_users_in_server', { s_id: server_id })
+    .returns<ServerUserProfile>();
+}
+
+type GetAllProfilesForServerResponse = Awaited<ReturnType<typeof getAllProfilesForServer>>;
+export type GetAllProfilesForServerResponseSuccess = GetAllProfilesForServerResponse['data'];
+export type GetAllProfilesForServerResponseError = GetAllProfilesForServerResponse['error'];

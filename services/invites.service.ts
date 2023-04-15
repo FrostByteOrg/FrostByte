@@ -3,7 +3,6 @@ import { Database } from '@/types/database.supabase';
 import { Invite, ServerInvite } from '@/types/dbtypes';
 import { InviteExpiry } from '@/types/inviteExpiry';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function getInviteByCode(supabase: SupabaseClient<Database>, inviteCode: string) {
   return await supabase
@@ -21,21 +20,10 @@ export async function createInvite(
   supabase: SupabaseClient<Database>,
   serverId: number,
   channelId: number,
-  expiresAt: InviteExpiry = '1 week',
+  expiresAt: InviteExpiry | null = '1 week',
   numUses: number | null = null,
-  urlId: string | null = null
+  urlId: string | undefined = undefined
 ) {
-  // Firsly, we need to check if the server exists
-  const { data: server, error } = await supabase
-    .from('servers')
-    .select('*')
-    .eq('id', serverId)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
   // We also need to parse the expiry time
   let parsedExpiresAt = null;
 
@@ -55,25 +43,6 @@ export async function createInvite(
     default:
       // We'll treat invalid values as simply null
       parsedExpiresAt = null;
-  }
-
-  // If the urlId is null, we need to generate a random uuid for one
-  if (!urlId) {
-    // TODO: Move this to postgres
-    urlId = uuidv4();
-  }
-
-  // If it isn't, however, we also need to make sure it is unique
-  else {
-    const { data: existingInvite } = await supabase
-      .from('server_invites')
-      .select('*')
-      .eq('url_id', urlId)
-      .single();
-
-    if (existingInvite) {
-      throw new Error('Invite code already exists!');
-    }
   }
 
   return await supabase
@@ -130,3 +99,21 @@ export async function getInviteAndServer(
     .returns<ServerInvite>()
     .single();
 }
+
+type GetInviteAndServerResponse = Awaited<ReturnType<typeof getInviteAndServer>>;
+export type GetInviteAndServerResponseSuccess = GetInviteAndServerResponse['data'];
+export type GetInviteAndServerResponseError = GetInviteAndServerResponse['error'];
+
+export async function getInvitesForServer(
+  supabase: SupabaseClient<Database>,
+  serverId: number
+) {
+  return await supabase
+    .from('server_invites')
+    .select('*')
+    .eq('server_id', serverId);
+}
+
+type GetInvitesForServerResponse = Awaited<ReturnType<typeof getInvitesForServer>>;
+export type GetInvitesForServerResponseSuccess = GetInvitesForServerResponse['data'];
+export type GetInvitesForServerResponseError = GetInvitesForServerResponse['error'];

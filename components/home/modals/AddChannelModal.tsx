@@ -1,5 +1,5 @@
 import AddChannel from '@/components/forms/AddChannel';
-import Modal from '@/components/home/Modal';
+import Modal from '@/components/home/modals/Modal';
 import {
   CreateChannelInput,
   createChannelSchema,
@@ -10,11 +10,7 @@ import { useForm } from 'react-hook-form';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { createChannel } from '@/services/channels.service';
 import { PostgrestError } from '@supabase/supabase-js';
-import {
-  useGetUserPermsForServer,
-  useUserPerms,
-  useUserServerPerms,
-} from '@/lib/store';
+import { useGetUserPermsForServer } from '@/lib/store';
 
 export default function AddChannelModal({
   showModal,
@@ -32,9 +28,7 @@ export default function AddChannelModal({
   const [channelType, setChannelType] = useState<'media' | 'text'>('text');
 
   const supabase = useSupabaseClient();
-
   const user = useUser();
-
   const getUserServerPerms = useGetUserPermsForServer();
 
   const {
@@ -74,6 +68,7 @@ export default function AddChannelModal({
       if ((error as PostgrestError).message) {
         setServerError((error as PostgrestError).message);
       }
+
       else {
         setServerError(error as string);
       }
@@ -83,6 +78,7 @@ export default function AddChannelModal({
       }, 7000);
       return;
     }
+
     else {
       addChannelRef.current?.close();
       setChannelType('text');

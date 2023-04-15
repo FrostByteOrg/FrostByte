@@ -60,7 +60,7 @@ export interface Database {
       }
       messages: {
         Row: {
-          author_id: number
+          author_id: number | null
           channel_id: number
           content: string
           edited_time: string | null
@@ -71,7 +71,7 @@ export interface Database {
           sent_time: string
         }
         Insert: {
-          author_id: number
+          author_id?: number | null
           channel_id: number
           content: string
           edited_time?: string | null
@@ -82,7 +82,7 @@ export interface Database {
           sent_time?: string
         }
         Update: {
-          author_id?: number
+          author_id?: number | null
           channel_id?: number
           content?: string
           edited_time?: string | null
@@ -352,7 +352,7 @@ export interface Database {
           content: string
         }
         Returns: {
-          author_id: number
+          author_id: number | null
           channel_id: number
           content: string
           edited_time: string | null
@@ -362,6 +362,12 @@ export interface Database {
           profile_id: string
           sent_time: string
         }[]
+      }
+      decrement_role_position: {
+        Args: {
+          role_id: number
+        }
+        Returns: undefined
       }
       detailed_profile_relations: {
         Args: Record<PropertyKey, never>
@@ -482,12 +488,34 @@ export interface Database {
           user2: string
         }[]
       }
+      get_roles_for_servers: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          color: string | null
+          created_at: string | null
+          id: number
+          is_system: boolean
+          name: string
+          permissions: number
+          position: number
+          server_id: number
+        }[]
+      }
       get_roles_for_user_in_server: {
         Args: {
           p_id: string
           s_id: number
         }
-        Returns: undefined
+        Returns: {
+          color: string | null
+          created_at: string | null
+          id: number
+          is_system: boolean
+          name: string
+          permissions: number
+          position: number
+          server_id: number
+        }[]
       }
       get_server_id_of_message: {
         Args: {
@@ -499,6 +527,54 @@ export interface Database {
         Args: {
           s_id: number
           p_id: string
+        }
+        Returns: {
+          id: string
+          updated_at: string
+          username: string
+          full_name: string
+          avatar_url: string
+          website: string
+          email: string
+          server_user: Json
+          roles: Json
+        }[]
+      }
+      get_server_profile_for_user_by_server_user: {
+        Args: {
+          su_id: number
+        }
+        Returns: {
+          id: string
+          updated_at: string
+          username: string
+          full_name: string
+          avatar_url: string
+          website: string
+          email: string
+          server_user: Json
+          roles: Json
+        }[]
+      }
+      get_server_profile_for_user_by_server_user_role: {
+        Args: {
+          sur_id: number
+        }
+        Returns: {
+          id: string
+          updated_at: string
+          username: string
+          full_name: string
+          avatar_url: string
+          website: string
+          email: string
+          server_user: Json
+          roles: Json
+        }[]
+      }
+      get_server_profiles_for_all_users_in_server: {
+        Args: {
+          s_id: number
         }
         Returns: {
           id: string
@@ -536,6 +612,12 @@ export interface Database {
           username: string
           website: string | null
         }[]
+      }
+      increment_role_position: {
+        Args: {
+          role_id: number
+        }
+        Returns: undefined
       }
       is_user_in_server: {
         Args: {

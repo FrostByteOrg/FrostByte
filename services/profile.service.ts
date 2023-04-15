@@ -123,3 +123,20 @@ export async function getMessageWithServerProfile(supabase: SupabaseClient<Datab
 
   return data;
 }
+
+type GetMessageWithServerProfileResponse = Awaited<ReturnType<typeof getMessageWithServerProfile>>;
+export type GetMessageWithServerProfileResponseSuccess = GetMessageWithServerProfileResponse['data'];
+export type GetMessageWithServerProfileResponseError = GetMessageWithServerProfileResponse['error'];
+
+export async function getServerProfileForUserByServerUser(supabase: SupabaseClient<Database>, serverUserId: number) {
+  return await supabase
+    .rpc('get_server_profile_for_user_by_server_user', {
+      su_id: serverUserId,
+    })
+    .returns<ServerUserProfile>()
+    .single();
+}
+
+type GetServerProfileForUserByServerUserResponse = Awaited<ReturnType<typeof getServerProfileForUserByServerUser>>;
+export type GetServerProfileForUserByServerUserResponseSuccess = GetServerProfileForUserByServerUserResponse['data'];
+export type GetServerProfileForUserByServerUserResponseError = GetServerProfileForUserByServerUserResponse['error'];
