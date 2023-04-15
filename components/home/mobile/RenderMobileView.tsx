@@ -8,7 +8,7 @@ import styles from '@/styles/Home.module.css';
 import { useChannel, useUserRef } from '@/lib/store';
 import MediaChat from '../MediaChat';
 import GearIcon from '@/components/icons/GearIcon';
-import EditUserModal from '../EditUserModal';
+import EditUserModal from '../modals/EditUserModal';
 import { useState } from 'react';
 
 export default function RenderMobileView() {
@@ -17,29 +17,28 @@ export default function RenderMobileView() {
   const channel = useChannel();
   const editUser = useUserRef();
 
-
   const [showEditUser, setShowEditUser] = useState(false);
 
   if (channel) {
-    if(channel.is_media){
+    if (channel.is_media) {
       return (
-        <div className=" flex flex-col h-screen">
-          <div className=" grow overflow-y-clip flex flex-col h-full ">
-            <MediaChat channel={channel}/>
+        <div className=' flex flex-col h-screen'>
+          <div className=' grow overflow-y-clip flex flex-col h-full '>
+            <MediaChat channel={channel} />
           </div>
           <div className={`${styles.bottomNav} bg-grey-950 shrink-0`}>
-            <NavBar type="bottom" />
+            <NavBar type='bottom' />
           </div>
         </div>
       );
     }
     return (
-      <div className=" flex flex-col h-screen">
-        <div className=" grow overflow-y-clip flex flex-col h-full ">
+      <div className=' flex flex-col h-screen'>
+        <div className=' grow overflow-y-clip flex flex-col h-full '>
           <Chat />
         </div>
         <div className={`${styles.bottomNav} bg-grey-950 shrink-0`}>
-          <NavBar type="bottom" />
+          <NavBar type='bottom' />
         </div>
       </div>
     );
@@ -62,12 +61,12 @@ export default function RenderMobileView() {
   }
 
   return (
-    <div className=" flex flex-col h-screen">
-      <div className=" grow overflow-y-scroll flex flex-col h-full ">
+    <div className=' flex flex-col h-screen'>
+      <div className=' grow overflow-y-scroll flex flex-col h-full '>
         {mainView}
       </div>
       <div className={`${styles.bottomNav} bg-grey-950 shrink-0`}>
-        <NavBar type="bottom" />
+        <NavBar type='bottom' />
       </div>
     </div>
   );

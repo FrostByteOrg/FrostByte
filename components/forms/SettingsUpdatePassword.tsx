@@ -36,7 +36,7 @@ export default function ChangePassword() {
     }
   };
   return(
-    <div className='flex flex-col w-12 ml-5'>
+    <div className='flex flex-col w-12 ml-5 '>
       <div className='flex flex-row'>
         <h1 className='text-2xl font-semibold'>Change Password</h1>
       </div>

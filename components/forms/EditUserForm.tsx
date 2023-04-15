@@ -97,13 +97,55 @@ export default function EditUserForm() {
   };
 
   return (
-    <div className='flex flex-row ml-5 '>
-      <div className='flex flex-col w-12 '>
+    <div className='flex flex-row ml-5 overflow-y-scroll'>
+      <div className='flex flex-col w-12'>
         <div className='flex flex-row'>
           <h1 className='text-2xl font-semibold'>User Profile</h1>
         </div>
         <div className=' border-t-2 my-1 border-grey-700'></div>
-        <form className='h-[17.5rem]' onSubmit={handleSubmit(onSubmit)}>
+        <form className='h-[17.5rem] ' onSubmit={handleSubmit(onSubmit)}>
+          <div className='flex flex-row justify-center items-center mb-2 '>
+            <div className='flex flex-col'>
+              <label className='font-semibold text-xl mb-1 mx-auto'>Avatar</label>
+              <div className='flex flex-col items-center'>
+                <div
+                  className={`${
+                    userImage
+                      ? 'p-4'
+                      : 'w-8 py-4 px-6 border-dashed border-2 border-grey-600'
+                  }  flex items-center rounded-lg justify-center relative hover:cursor-pointer`}
+                  onClick={() => imageRef?.current?.click()}>
+                  <div className='flex flex-col justify-center items-center'>
+                    {userImage ? (
+                      <Image
+                        alt='userIcon'
+                        src={previewImage}
+                        width={40}
+                        height={2}
+                      />
+                    ) : (
+                      <>
+                        <CameraIcon width={5} />
+                        <span className='absolute -top-3 -right-3'>
+                          <PlusIcon color='#4abfe8' />
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <span className='text-xs font-semibold text-center tracking-wider mt-2'>
+                  UPLOAD IMAGE
+                </span>
+              </div>
+              <input
+                type='file'
+                ref={imageRef}
+                onChange={handleFileChange}
+                className='hidden'
+                accept='image/*'
+              />
+            </div>
+          </div>
           <div className='flex flex-row justify-between items-center mb-2'>
             <div className='flex flex-col justify-start '>
               <label className='font-semibold text-xl mb-1'>Name</label>
@@ -134,48 +176,6 @@ export default function EditUserForm() {
                   {...register('website')}
                 />
               )}
-            </div>
-          </div>
-          <div className='flex flex-row justify-between items-center mb-2'>
-            <div className='flex flex-col justify-start'>
-              <label className='font-semibold text-xl mb-1'>Avatar</label>
-              <div className='flex flex-col items-center'>
-                <div
-                  className={`${
-                    userImage
-                      ? 'p-4'
-                      : 'w-8 py-4 px-6 border-dashed border-2 border-grey-600'
-                  }  flex items-center rounded-lg justify-center relative hover:cursor-pointer`}
-                  onClick={() => imageRef?.current?.click()}>
-                  <div className='flex flex-col justify-center items-center'>
-                    {userImage ? (
-                      <Image
-                        alt='userIcon'
-                        src={previewImage}
-                        width={35}
-                        height={5}
-                      />
-                    ) : (
-                      <>
-                        <CameraIcon width={5} />
-                        <span className='absolute -top-3 -right-3'>
-                          <PlusIcon color='#4abfe8' />
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <span className='text-xs font-semibold text-center tracking-wider mt-2'>
-                  UPLOAD IMAGE
-                </span>
-              </div>
-              <input
-                type='file'
-                ref={imageRef}
-                onChange={handleFileChange}
-                className='hidden'
-                accept='image/*'
-              />
             </div>
           </div>
           <div className='flex flex-row justify-end items-center'>

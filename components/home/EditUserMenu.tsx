@@ -46,27 +46,27 @@ export default function EditUser() {
   }
   return (
     <div className={`flex flex-row ${modalStyle.userSettings}`}>
-      <div className='w-10 mr-4 flex flex-col justify-between items-start'>
+      <div className='w-10 mr-4 flex flex-col justify-between items-start border-r border-grey-700'>
         <div>
-          <div className='flex flex-row'>
+          <div className={`flex flex-row w-10 px-3 py-1 items-center ${formSwitch === 'editUser' && 'border-r border-r-white bg-gray-500'}`}>
             <button
-              className='rounded-lg mb-1 h-6 text-sm tracking-wide hover:text-frost-400'
+              className='h-6 text-sm tracking-wide hover:text-frost-400'
               onClick={() => setFormSwitch('editUser')}>
               Edit Profile
             </button>
           </div>
-          <div className='flex flex-row '>
+          <div className={`flex flex-row w-10 px-3 py-1 items-center ${formSwitch === 'changePassword' && 'border-r border-r-white bg-gray-500'}`}>
             <button
-              className='rounded-lg mb-1 h-6 text-sm tracking-wide hover:text-frost-400'
+              className='h-6 text-sm tracking-wide hover:text-frost-400'
               onClick={() => setFormSwitch('changePassword')}>
-              Change Password
+              Edit Password
             </button>
           </div>
-          <div className='flex flex-row'>
+          <div className={`flex flex-row w-10 px-3 py-1 items-center ${formSwitch === 'setMedia' && 'border-r border-r-white bg-gray-500'}`}>
             <button
-              className='rounded-lg mb-1 h-6 text-sm tracking-wide hover:text-frost-400'
+              className='h-6 text-sm tracking-wide hover:text-frost-400'
               onClick={() => setFormSwitch('setMedia')}>
-              Media Settings
+              Device Settings
             </button>
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function EditUser() {
             items-center 
             justify-evenly
              w-9
-             hover:text-frost-400'
+             hover:text-red-500'
             onClick={handleLogout}>
             Logout
             <LogOutIcon width={5} height={5} />

@@ -1,3 +1,4 @@
+
 .modal {
   max-width: fit-content;
   border: 0;
@@ -22,3 +23,21 @@
 .mediaSelect{
   width: 11rem;
 }
+
+/* @layer components{
+  .tabRoot{
+    @apply flex flex-row
+  }
+
+  .tabList{
+    @apply flex flex-col flex-shrink border-r border-gray-600
+  }
+
+  .tabTrigger{
+    @apply px-3 py-2 aria-[selected=true]:border-r aria-[selected=true]:border-r-white focus:z-10 aria-[selected=true]:outline-none focus-visible:ring text-left aria-[selected=true]:bg-gray-500
+  }
+
+  .tabContent{
+    @apply flex flex-col
+  }
+} */
