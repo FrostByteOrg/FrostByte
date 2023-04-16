@@ -33,9 +33,7 @@ import {
 import { Room } from '@/types/client/room';
 import { getRolesFromAllServersUserIsIn, getServerRoles, getHighestRolePositionForUser } from '@/services/roles.service';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
-import { useUser } from '@supabase/auth-helpers-react';
 
-const getCurrentUser = useUser;
 export interface ServerState {
   servers: ServersForUser[];
   addServer: (supabase: SupabaseClient<Database>, serverUserId: number) => void;
