@@ -1,4 +1,4 @@
-import { useUserRef } from '@/lib/store';
+import { useSetUser, useUserRef } from '@/lib/store';
 import { User } from '@/types/dbtypes';
 import UserIcon from '@/components/icons/UserIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
@@ -9,7 +9,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UpdateUserInput, updateUserSchema } from '@/types/client/user';
 import { useForm } from 'react-hook-form';
-import { useState, useRef, ChangeEvent} from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import CameraIcon from '@/components/icons/CameraIcon';
 import PlusIcon from '@/components/icons/PlusIcon';
@@ -20,7 +20,7 @@ export default function EditUserForm() {
   const [serverError, setServerError] = useState<string>('');
   const imageRef = useRef<HTMLInputElement | null>(null);
   const previewImage = userImage ? URL.createObjectURL(userImage) : '';
-
+  const updateUser = useSetUser();
   const user = useUserRef();
   const supabase = useSupabaseClient();
 
@@ -47,15 +47,12 @@ export default function EditUserForm() {
   });
 
   const onSubmit = async (formData: UpdateUserInput) => {
-    
-
     const { data, error } = await updateUserProfile(
       supabase,
       user?.id!,
       formData.full_name!,
-      formData.website!,
+      formData.website!
     );
-
 
     const fileExt = userImage?.name.split('.').pop();
     const fileName = `${data?.id}.${fileExt}`;
@@ -106,7 +103,9 @@ export default function EditUserForm() {
         <form className='h-[17.5rem] ' onSubmit={handleSubmit(onSubmit)}>
           <div className='flex flex-row justify-center items-center mb-2 '>
             <div className='flex flex-col'>
-              <label className='font-semibold text-xl mb-1 mx-auto'>Avatar</label>
+              <label className='font-semibold text-xl mb-1 mx-auto'>
+                Avatar
+              </label>
               <div className='flex flex-col items-center'>
                 <div
                   className={`${
@@ -180,7 +179,11 @@ export default function EditUserForm() {
           </div>
           <div className='flex flex-row justify-end items-center'>
             <div className='flex flex-row'>
-              <button className=' hover:text-frost-500 px-2 py-1 rounded-lg' type='submit'>Submit</button>
+              <button
+                className=' hover:text-frost-500 px-2 py-1 rounded-lg'
+                type='submit'>
+                Submit
+              </button>
             </div>
           </div>
         </form>
