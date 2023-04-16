@@ -1,4 +1,4 @@
-import { ServerUser, Server, ProfileRelation, Channel, Role, ServerUserRole } from '@/types/dbtypes';
+import { ServerUser, Server, ProfileRelation, Channel, Role, ServerUserRole, User } from '@/types/dbtypes';
 import {
   useAddMessage,
   useAddRelation,
@@ -191,6 +191,22 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           async (payload) => {
             console.log('Profile relation delete event');
             removeRelation(supabase, payload.old.id as number);
+          }
+        )
+        .on<User>(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+          },
+          async (payload) => {
+            console.log('Profile update event');
+            console.table(payload.new);
+            // This is cursed but it'll do lol
+            for (const [ server_id, profiles ] of allServerProfiles) {
+              updateServerUserProfile(supabase, payload.new.id, server_id);
+            }
           }
         )
         .on<Server>(
