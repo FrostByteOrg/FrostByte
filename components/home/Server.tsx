@@ -26,6 +26,7 @@ import PlusIcon from '@/components/icons/PlusIcon';
 import GearIcon from '@/components/icons/GearIcon';
 import { deleteServer, leaveServer } from '@/services/server.service';
 import TrashIcon from '@/components/icons/TrashIcon';
+import { LeaveIcon } from '@/components/icons/LeaveIcon';
 
 export default function Server({
   server,
@@ -141,7 +142,7 @@ export default function Server({
                     hidden={(serverPermissions & 1) === 1}
                   >
                     <div className="flex flex-row w-full">
-                      <GearIcon width={5} height={5} />
+                      <LeaveIcon className='!w-5 !h-5' />
                       <span className="ml-2 w-full">Leave Server</span>
                     </div>
                   </DropdownMenu.Item>
