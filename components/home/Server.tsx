@@ -60,7 +60,14 @@ export default function Server({
     handleAsync();
   }, [server, supabase]);
 
-  console.log((serverPermissions & 1) === 0 ? 'Not owner' : 'Owner' );
+  const showServerSettingsOption = (
+    (serverPermissions & ServerPermissions.MANAGE_INVITES) > 0
+    || (serverPermissions & ServerPermissions.MANAGE_ROLES) > 0
+    || (serverPermissions & ServerPermissions.MANAGE_USERS) > 0
+    || (serverPermissions & ServerPermissions.MANAGE_SERVER) > 0
+  );
+
+  const showAddChannelOption = (serverPermissions & ServerPermissions.MANAGE_CHANNELS) > 0;
 
   if (expand) {
     return (
@@ -91,14 +98,7 @@ export default function Server({
             </div>
           </div>
           <DropdownMenu.Root>
-            <DropdownMenu.Trigger
-              asChild
-              disabled={
-                !((serverPermissions & ServerPermissions.MANAGE_MESSAGES) > 0 ||
-                (serverPermissions & ServerPermissions.OWNER) > 0 ||
-                (serverPermissions & ServerPermissions.MANAGE_SERVER) > 0)
-              }
-            >
+            <DropdownMenu.Trigger asChild>
               <div
                 onMouseEnter={() => setIsSettingsHovered(true)}
                 onMouseLeave={() => setIsSettingsHovered(false)}
@@ -109,37 +109,41 @@ export default function Server({
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <DropdownMenu.Content className="ContextMenuContent" side='right'>
-                <DropdownMenu.Item asChild
-                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-                  onClick={() => {
-                    setShowAddChannelModal(true);
-                  }}
-                >
-                  <div className="flex flex-row w-full">
-                    <PlusIcon width={5} height={5}/>
-                    <span className="ml-2 w-full">New channel</span>
-                  </div>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item asChild
-                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-                  onClick={() => {
-                    setShowServerSettingsModal(true);
-                  }}
-                  hidden={(serverPermissions & ServerPermissions.MANAGE_SERVER) === 0}
-                >
-                  <div className="flex flex-row w-full">
-                    <GearIcon width={5} height={5} />
-                    <span className="ml-2 w-full">Server Settings</span>
-                  </div>
-                </DropdownMenu.Item>
-                <DropdownMenu.Separator className="ContextMenuSeparator" />
+                { showAddChannelOption && (
+                  <DropdownMenu.Item asChild
+                    className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                    onClick={() => {
+                      setShowAddChannelModal(true);
+                    }}
+                  >
+                    <div className="flex flex-row w-full">
+                      <PlusIcon width={5} height={5}/>
+                      <span className="ml-2 w-full">New channel</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
+                {showServerSettingsOption && (
+                  <DropdownMenu.Item asChild
+                    className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                    onClick={() => {
+                      setShowServerSettingsModal(true);
+                    }}
+                  >
+                    <div className="flex flex-row w-full">
+                      <GearIcon width={5} height={5} />
+                      <span className="ml-2 w-full">Server Settings</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
+
+                {(showAddChannelOption || showServerSettingsOption) && <DropdownMenu.Separator className="ContextMenuSeparator" />}
                 {(serverPermissions & 1) === 0 && (
                   <DropdownMenu.Item asChild
                     className="flex justify-center items-center text-red-500 hover:text-grey-300 cursor-pointer"
                     onClick={async () => {
+                      // TODO: Add confirmation modal
                       await leaveServer(supabase, user!.id, server.id);
                     }}
-                    hidden={(serverPermissions & 1) === 1}
                   >
                     <div className="flex flex-row w-full">
                       <LeaveIcon className='!w-5 !h-5' />
