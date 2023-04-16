@@ -132,7 +132,7 @@ export default function Server({
                     <span className="ml-2 w-full">Server Settings</span>
                   </div>
                 </DropdownMenu.Item>
-                <DropdownMenu.Separator className="DropdownMenuSeparator" />
+                <DropdownMenu.Separator className="ContextMenuSeparator" />
                 {(serverPermissions & 1) === 0 && (
                   <DropdownMenu.Item asChild
                     className="flex justify-center items-center text-red-500 hover:text-grey-300 cursor-pointer"
