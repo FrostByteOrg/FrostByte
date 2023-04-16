@@ -65,18 +65,36 @@ export type UpdateServerResponseError = UpdateServerResponse['error'];
 
 export async function deleteServer(
   supabase: SupabaseClient<Database>,
-  user_id: string,
   server_id: number
 ) {
   // NOTE: only the owner should be able to delete a server. This is enforced by RLS
   // NOTE: Supabase has been set up to cascade delete all items related to a server (roles/invites/channels/messages)
   // So we can delete the server itself
-  return await supabase.from('servers').delete().eq('id', server_id);
+  return await supabase
+    .from('servers')
+    .delete()
+    .eq('id', server_id);
 }
 
 type DeleteServerResponse = Awaited<ReturnType<typeof deleteServer>>;
 export type DeleteServerResponseSuccess = DeleteServerResponse['data'];
 export type DeleteServerResponseError = DeleteServerResponse['error'];
+
+export async function leaveServer(
+  supabase: SupabaseClient<Database>,
+  user_id: string,
+  server_id: number
+) {
+  return await supabase
+    .from('server_users')
+    .delete()
+    .eq('profile_id', user_id)
+    .eq('server_id', server_id);
+}
+
+type LeaveServerResponse = Awaited<ReturnType<typeof leaveServer>>;
+export type LeaveServerResponseSuccess = LeaveServerResponse['data'];
+export type LeaveServerResponseError = LeaveServerResponse['error'];
 
 export async function getServersForUser(
   supabase: SupabaseClient<Database>,

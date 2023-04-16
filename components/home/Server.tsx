@@ -24,6 +24,8 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ServerPermissions } from '@/types/permissions';
 import PlusIcon from '@/components/icons/PlusIcon';
 import GearIcon from '@/components/icons/GearIcon';
+import { deleteServer, leaveServer } from '@/services/server.service';
+import TrashIcon from '@/components/icons/TrashIcon';
 
 export default function Server({
   server,
@@ -56,6 +58,8 @@ export default function Server({
     };
     handleAsync();
   }, [server, supabase]);
+
+  console.log((serverPermissions & 1) === 0 ? 'Not owner' : 'Owner' );
 
   if (expand) {
     return (
@@ -127,6 +131,35 @@ export default function Server({
                     <span className="ml-2 w-full">Server Settings</span>
                   </div>
                 </DropdownMenu.Item>
+                <DropdownMenu.Separator className="DropdownMenuSeparator" />
+                {(serverPermissions & 1) === 0 && (
+                  <DropdownMenu.Item asChild
+                    className="flex justify-center items-center text-red-500 hover:text-grey-300 cursor-pointer"
+                    onClick={async () => {
+                      await leaveServer(supabase, user!.id, server.id);
+                    }}
+                    hidden={(serverPermissions & 1) === 1}
+                  >
+                    <div className="flex flex-row w-full">
+                      <GearIcon width={5} height={5} />
+                      <span className="ml-2 w-full">Leave Server</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
+                {(serverPermissions & 1) === 1 && (
+                  <DropdownMenu.Item asChild
+                    className="flex justify-center items-center text-red-500 hover:text-grey-300 cursor-pointer"
+                    onClick={async () => {
+                      // TODO: Add confirmation modal
+                      await deleteServer(supabase, server.id);
+                    }}
+                  >
+                    <div className="flex flex-row w-full">
+                      <TrashIcon />
+                      <span className="ml-2 w-full">Delete Server</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
