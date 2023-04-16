@@ -84,22 +84,6 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         .on<ServerUser>(
           'postgres_changes',
           {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'server_users',
-            filter: `profile_id=eq.${user?.id}`,
-          },
-          async (payload) => {
-            console.log('current user joined a server');
-
-            addServer(supabase, (payload.new as ServerUser).id);
-            getRolesForServer(supabase, payload.new.server_id);
-            getAllServerProfilesForServer(supabase, payload.new.id);
-          }
-        )
-        .on<ServerUser>(
-          'postgres_changes',
-          {
             event: 'UPDATE',
             schema: 'public',
             table: 'server_users'
@@ -124,9 +108,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             // on the payload is payload.old.id which is the server_user id and not the server id
             if (user) {
               getServers(supabase, user.id);
+              removeProfilesforServerByServerUserId(supabase, payload.old.id!);
             }
-
-            removeProfilesforServerByServerUserId(payload.old.id!);
           }
         )
         .on<ServerUser>(
@@ -139,6 +122,22 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           async (payload) => {
             console.log('Any user left a server');
             stripServerUserAndRoles(payload.old.id!);
+          }
+        )
+        .on<ServerUser>(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'server_users',
+            filter: `profile_id=eq.${user?.id}`,
+          },
+          async (payload) => {
+            console.log('current user joined a server');
+
+            addServer(supabase, (payload.new as ServerUser).id);
+            getRolesForServer(supabase, payload.new.server_id);
+            getAllServerProfilesForServer(supabase, payload.new.id);
           }
         )
         .subscribe();

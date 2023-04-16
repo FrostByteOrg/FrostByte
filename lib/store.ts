@@ -33,7 +33,9 @@ import {
 import { Room } from '@/types/client/room';
 import { getRolesFromAllServersUserIsIn, getServerRoles, getHighestRolePositionForUser } from '@/services/roles.service';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
+import { useUser } from '@supabase/auth-helpers-react';
 
+const getCurrentUser = useUser;
 export interface ServerState {
   servers: ServersForUser[];
   addServer: (supabase: SupabaseClient<Database>, serverUserId: number) => void;
@@ -596,7 +598,7 @@ export interface ServerProfilesState {
   updateServerProfileByServerUser: (supabase: SupabaseClient<Database>, server_user_id: number) => void;
   stripServerUserAndRoles: (server_user_id: number) => void;
   removeServerProfile: (profile_id: string, server_id: number) => void;
-  removeProfilesForServerByServerUserId: (server_user_id: number) => void;
+  removeProfilesForServerByServerUserId: (supabase: SupabaseClient<Database>, server_user_id: number) => void;
 }
 
 const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
@@ -724,24 +726,34 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
     });
   },
 
-  removeProfilesForServerByServerUserId: async (server_user_id) => {
+  removeProfilesForServerByServerUserId: async (supabase, server_user_id) => {
+    const { data: user } = await supabase.auth.getUser();
     set((state) => {
       const rv = new Map(state.serverProfiles);
       let _server_id;
 
+      console.log('User: ', user);
       // Find the server user
       for (const [server_id, profiles] of rv) {
+        console.log('Searching for server user', server_user_id, 'in server', server_id, '...');
         for (const [profile_id, profile] of profiles) {
+          console.log('Checking profile', profile_id, 'with server_user_id', profile.server_user?.id, '...');
+
           if (!profile.server_user) {
             continue;
           }
 
           if (profile.server_user.id === server_user_id) {
+            console.log('Found server user', server_user_id, 'in server', server_id, '...');
             _server_id = server_id;
-            const currChannel = useChannelStore.getState().channel;
 
-            if (currChannel && currChannel.server_id === server_id) {
-              useChannelStore.getState().setChannel(null);
+            console.table(user.user);
+            if (user.user && profile_id === user.user.id) {
+              const currChannel = useChannelStore.getState().channel;
+
+              if (currChannel && currChannel.server_id === server_id) {
+                useChannelStore.getState().setChannel(null);
+              }
             }
 
             break;
