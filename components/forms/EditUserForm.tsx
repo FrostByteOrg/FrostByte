@@ -9,7 +9,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UpdateUserInput, updateUserSchema } from '@/types/client/user';
 import { useForm } from 'react-hook-form';
-import { useState, useRef, ChangeEvent, SyntheticEvent } from 'react';
+import { useState, useRef, ChangeEvent} from 'react';
 import { toast } from 'react-toastify';
 import CameraIcon from '@/components/icons/CameraIcon';
 import PlusIcon from '@/components/icons/PlusIcon';
