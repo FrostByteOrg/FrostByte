@@ -91,6 +91,7 @@ export default function RenderDesktopView() {
               <UserIcon
                 user={user}
                 indicator={true}
+                isStatic={true}
                 className='!mr-1 !h-6 !w-6'
               />
             )}

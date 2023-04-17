@@ -20,7 +20,6 @@ export default function EditUserForm() {
   const [serverError, setServerError] = useState<string>('');
   const imageRef = useRef<HTMLInputElement | null>(null);
   const previewImage = userImage ? URL.createObjectURL(userImage) : '';
-  const updateUser = useSetUser();
   const user = useUserRef();
   const supabase = useSupabaseClient();
 
@@ -46,6 +45,8 @@ export default function EditUserForm() {
     },
   });
 
+
+
   const onSubmit = async (formData: UpdateUserInput) => {
     const { data, error } = await updateUserProfile(
       supabase,
@@ -56,11 +57,13 @@ export default function EditUserForm() {
 
     const fileExt = userImage?.name.split('.').pop();
     const fileName = `${data?.id}.${fileExt}`;
-    const filePath = `${fileName}`;
+    const filePath = `${fileName}?updated=${Date.now()}`;
 
     if (userImage) {
       await updateUserAvatar(supabase, filePath, userImage, data!.id);
     }
+
+    console.log(filePath);
 
     if (error) {
       setServerError(error.message);

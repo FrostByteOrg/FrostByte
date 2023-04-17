@@ -51,7 +51,7 @@ export async function updateUserAvatar(
 ){
   const {data, error} = await supabase.storage
     .from('avatars')
-    .upload(filePath, image, {upsert: true});
+    .update(filePath, image, {cacheControl: '0',upsert: true});
 
   const publicURL = supabase.storage.from('avatars').getPublicUrl(filePath);
 
@@ -59,7 +59,6 @@ export async function updateUserAvatar(
     .from('profiles')
     .update({avatar_url: publicURL.data.publicUrl})
     .eq('id', id)
-    .select()
     .single();
 }
 
