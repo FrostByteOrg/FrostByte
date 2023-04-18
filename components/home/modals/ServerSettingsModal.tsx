@@ -1,22 +1,31 @@
 import Modal from '@/components/home/modals/Modal';
-import { Dispatch, SetStateAction, useRef } from 'react';
+import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { Server, ServersForUser } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import * as Tabs from '@radix-ui/react-tabs';
 import 'styles/TabNav.module.css';
 import { RoleEditForm } from '@/components/forms/RoleEditForm';
-import { useServerRoles, useServerUserProfileHighestRolePosition, useServerUserProfilePermissions } from '@/lib/store';
+import {
+  useServerRoles,
+  useServerUserProfileHighestRolePosition,
+  useServerUserProfilePermissions,
+} from '@/lib/store';
 import PlusIcon from '@/components/icons/PlusIcon';
 import { createRole } from '@/services/roles.service';
 import { toast } from 'react-toastify';
 import { ServerBansList } from '@/components/home/ServerBansList';
 import { ServerInviteList } from '@/components/home/ServerInviteList';
-
+import AddServerModal from './AddServerModal';
+import { useForm } from 'react-hook-form';
+import { CreateServerInput, createServerSchema } from '@/types/client/server';
+import { zodResolver } from '@hookform/resolvers/zod';
+import AddServer from '@/components/forms/AddServer';
 
 const tabRootClass = 'flex flex-row';
 const tabListClass = 'flex flex-col flex-shrink border-r border-gray-600';
-const tabTriggerClass = 'px-3 py-2 aria-[selected=true]:border-r aria-[selected=true]:border-r-white focus:z-10 aria-[selected=true]:outline-none focus-visible:ring text-left aria-[selected=true]:bg-gray-500';
+const tabTriggerClass =
+  'px-3 py-2 aria-[selected=true]:border-r aria-[selected=true]:border-r-white focus:z-10 aria-[selected=true]:outline-none focus-visible:ring text-left aria-[selected=true]:bg-gray-500';
 const tabContentClass = 'flex flex-col';
 
 export default function ServerSettingsModal({
@@ -28,12 +37,36 @@ export default function ServerSettingsModal({
   setShowModal: Dispatch<SetStateAction<boolean>>;
   server: Server | null;
 }) {
+  const [serverImage, setServerImage] = useState<File | null>(null);
+  const [serverError, setServerError] = useState<string>('');
+  const [showDesc, setSetShowDesc] = useState<boolean>(false);
+
   const modalRef = useRef<HTMLDialogElement>(null);
   const supabase = useSupabaseClient();
   const roles = useServerRoles(server?.id!);
   const user = useUser();
-  const userServerPerms = useServerUserProfilePermissions(server?.id!, user?.id!);
-  const maxRole = useServerUserProfileHighestRolePosition(server?.id!, user?.id!);
+  const userServerPerms = useServerUserProfilePermissions(
+    server?.id!,
+    user?.id!
+  );
+  const maxRole = useServerUserProfileHighestRolePosition(
+    server?.id!,
+    user?.id!
+  );
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CreateServerInput>({
+    resolver: zodResolver(createServerSchema),
+    mode: 'onSubmit',
+    defaultValues: {
+      name: server?.name,
+      description: server?.description as string | undefined,
+    },
+  });
 
   return (
     <Modal
@@ -52,23 +85,20 @@ export default function ServerSettingsModal({
         </button>
       }
     >
-      <Tabs.Root className={tabRootClass} orientation='vertical'>
+      <Tabs.Root className={tabRootClass} orientation="vertical">
         <Tabs.List className={tabListClass}>
-          <Tabs.Trigger
-            value='Overview'
-            className={tabTriggerClass}
-          >
+          <Tabs.Trigger value="Overview" className={tabTriggerClass}>
             Overview
           </Tabs.Trigger>
           <Tabs.Trigger
-            value='Roles'
+            value="Roles"
             className={tabTriggerClass}
             disabled={(userServerPerms & ServerPermissions.MANAGE_ROLES) === 0}
           >
             Roles
           </Tabs.Trigger>
           <Tabs.Trigger
-            value='Bans'
+            value="Bans"
             className={tabTriggerClass}
             disabled={(userServerPerms & ServerPermissions.MANAGE_USERS) === 0}
           >
@@ -77,14 +107,27 @@ export default function ServerSettingsModal({
           <Tabs.Trigger
             value="Invites"
             className={tabTriggerClass}
-            disabled={(userServerPerms & ServerPermissions.MANAGE_INVITES) === 0}
+            disabled={
+              (userServerPerms & ServerPermissions.MANAGE_INVITES) === 0
+            }
           >
             Invites
           </Tabs.Trigger>
         </Tabs.List>
         <div className="TabContent flex-grow flex-1 w-15 h-15 ">
-          <Tabs.Content value='Overview' className={tabContentClass}>
-            General server mgmt stuff
+          <Tabs.Content value="Overview" className={tabContentClass}>
+            <AddServer
+              serverImage={serverImage}
+              setServerImage={setServerImage}
+              register={register}
+              errors={errors}
+              serverError={serverError}
+              showDesc={showDesc}
+              setShowDesc={setSetShowDesc}
+              server={server}
+              handleSubmit={handleSubmit}
+              setServerError={setServerError}
+            />
           </Tabs.Content>
           <Tabs.Content value="Roles" className={`${tabContentClass}`}>
             <span className="w-full flex flex-row">
@@ -114,33 +157,41 @@ export default function ServerSettingsModal({
               </button>
             </span>
 
-            <Tabs.Root className={tabRootClass} orientation='vertical'>
+            <Tabs.Root className={tabRootClass} orientation="vertical">
               <Tabs.List className={tabListClass}>
-                {roles.sort((first, second) => first.position - second.position).map((role) => (
-                  <Tabs.Trigger
+                {roles
+                  .sort((first, second) => first.position - second.position)
+                  .map((role) => (
+                    <Tabs.Trigger
+                      key={role.id}
+                      value={role.id.toString()}
+                      className={tabTriggerClass}
+                      style={{
+                        color: `#${role.color}`,
+                      }}
+                    >
+                      {role.name}
+                    </Tabs.Trigger>
+                  ))}
+              </Tabs.List>
+              {roles
+                .sort((first, second) => first.position - second.position)
+                .map((role) => (
+                  <Tabs.Content
                     key={role.id}
                     value={role.id.toString()}
-                    className={tabTriggerClass}
-                    style={{
-                      color: `#${role.color}`
-                    }}
+                    className={`${tabContentClass} p-2`}
                   >
-                    {role.name}
-                  </Tabs.Trigger>
+                    <RoleEditForm
+                      role={role}
+                      roles_length={roles.length}
+                      max_role_position={maxRole}
+                    />
+                  </Tabs.Content>
                 ))}
-              </Tabs.List>
-              {roles.sort((first, second) => first.position - second.position).map((role) => (
-                <Tabs.Content
-                  key={role.id}
-                  value={role.id.toString()}
-                  className={`${tabContentClass} p-2`}
-                >
-                  <RoleEditForm role={role} roles_length={roles.length} max_role_position={maxRole}/>
-                </Tabs.Content>
-              ))}
             </Tabs.Root>
           </Tabs.Content>
-          <Tabs.Content value='Bans' className={tabContentClass}>
+          <Tabs.Content value="Bans" className={tabContentClass}>
             <span className="w-full flex flex-row">
               <h1 className="text-2xl p-2 flex-grow">Bans</h1>
             </span>

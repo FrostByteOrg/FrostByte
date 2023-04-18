@@ -10,7 +10,17 @@ import {
   useEffect,
 } from 'react';
 import Image from 'next/image';
-import { FieldErrorsImpl, useForm, UseFormRegister } from 'react-hook-form';
+import {
+  FieldErrorsImpl,
+  useForm,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from 'react-hook-form';
+import { Server } from '@/types/dbtypes';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { CreateServerInput } from '@/types/client/server';
+import { updateServer } from '@/services/server.service';
+import { PostgrestError } from '@supabase/supabase-js';
 
 export default function AddServer({
   serverImage,
@@ -20,6 +30,9 @@ export default function AddServer({
   serverError,
   showDesc,
   setShowDesc,
+  server,
+  handleSubmit,
+  setServerError,
 }: {
   serverImage: File | null;
   setServerImage: Dispatch<SetStateAction<File | null>>;
@@ -36,6 +49,12 @@ export default function AddServer({
   serverError: string;
   showDesc: boolean;
   setShowDesc: Dispatch<SetStateAction<boolean>>;
+  server?: Server | null;
+  handleSubmit?: UseFormHandleSubmit<{
+    description?: string | undefined | null;
+    name: string;
+  }>;
+  setServerError?: Dispatch<SetStateAction<string>>;
 }) {
   const imageRef = useRef<HTMLInputElement | null>(null);
 
@@ -46,7 +65,53 @@ export default function AddServer({
 
     setServerImage(e.target.files[0]);
   };
-  const previewImage = serverImage ? URL.createObjectURL(serverImage) : '';
+  let previewImage = serverImage ? URL.createObjectURL(serverImage) : '';
+
+  if (server?.image_url) previewImage = server.image_url;
+
+  const supabase = useSupabaseClient();
+
+  const onSubmit = async (formData: CreateServerInput) => {
+    const { data, error } = await updateServer(
+      supabase,
+      server!.id,
+      formData.name,
+      formData.description as string | null
+    );
+
+    // if (error) {
+    //   if ((error as PostgrestError).message) {
+    //     setServerError((error as PostgrestError).message);
+    //   } else {
+    //     setServerError(error as unknown as string);
+    //   }
+
+    //   setTimeout(() => {
+    //     setServerError('');
+    //   }, 7000);
+    //   return;
+    // }
+
+    const fileExt = serverImage
+      ? serverImage.name.split('.').pop()
+      : previewImage.split('.').pop();
+    const fileName = `${data?.id}.${fileExt}`;
+    const filePath = `${fileName}`;
+    console.log(fileExt);
+
+    // if (serverImage) {
+    //   const { data: updatedServer, error: serverImgError } =
+    //     await updateServerIcon(supabase, filePath, serverImage);
+
+    //   if (serverImgError) {
+    //     setServerError(serverImgError.message);
+    //     setTimeout(() => {
+    //       setServerError('');
+    //     }, 7000);
+    //     return;
+    //   }
+    // }
+  };
 
   return (
     <form
@@ -62,14 +127,14 @@ export default function AddServer({
       )}
       <div
         className={`${
-          serverImage
+          serverImage || server?.image_url
             ? 'p-4'
             : 'w-9 py-4 px-7 border-dashed border-2 border-grey-600'
         }  flex items-center rounded-lg justify-center  self-center relative hover:cursor-pointer`}
         onClick={() => imageRef?.current?.click()}
       >
         <div className="flex flex-col justify-center items-center">
-          {serverImage ? (
+          {serverImage || server?.image_url ? (
             <Image alt="serverIcon" src={previewImage} width={50} height={50} />
           ) : (
             <>
