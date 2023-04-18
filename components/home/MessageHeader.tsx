@@ -52,9 +52,7 @@ export function MessageHeader({
       .sort((a, b) => a.position - b.position)
       .filter((role) => role.color !== null);
 
-    if (color.length > 0) {
-      setHeaderColor(`#${color[0].color!}`);
-    }
+    setHeaderColor(color.length > 0 ? `#${color[0].color!}` : 'white');
   }, [server_user_profile.roles]);
 
   return (
