@@ -5,7 +5,7 @@ export default function ChannelMessageIcon({ size = '4' }: { size?: string }) {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={2}
-      stroke="currentColor"
+      stroke="white"
       className={`w-${size} h-${size}`}
     >
       <path
