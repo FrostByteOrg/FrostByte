@@ -1,4 +1,4 @@
-import { Role, ServerUser, ServerUserProfile, User } from '@/types/dbtypes';
+import { Role, ServerUser, ServerUserProfile, Profile } from '@/types/dbtypes';
 import { Tooltip } from 'react-tooltip';
 import { MiniProfile } from '../forms/MiniProfile';
 import UserIcon from '../icons/UserIcon';
@@ -74,7 +74,7 @@ export function MessageHeader({
           <UserIcon user={server_user_profile} />
           <div className="flex-grow flex items-center">
             <div
-              className="text-xl font-semibold tracking-wider mr-2"
+              className="text-xl font-semibold tracking-wider mr-2 hover:cursor-pointer"
               data-tooltip-id={server_user_profile.id}
               style={{
                 // Check for the first role that has a non-null color and use that

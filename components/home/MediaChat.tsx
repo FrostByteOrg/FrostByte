@@ -4,7 +4,7 @@ import {
   useSetConnectionState,
   useSetCurrentRoomId,
   useSetCurrentRoomName,
-  useUserRef,
+  useProfile,
 } from '@/lib/store';
 import styles from '@/styles/Chat.module.css';
 import mediaStyle from '@/styles/Livekit.module.css';
@@ -18,7 +18,7 @@ import {
   useTracks,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
-import { Channel, User } from '@/types/dbtypes';
+import { Channel, Profile } from '@/types/dbtypes';
 import { FloatingCallControl } from './FloatingCallControl';
 import { MediaDispTrack } from './MediaDispTrack';
 import { TrackBundle } from '@livekit/components-core';
@@ -33,8 +33,8 @@ export default function MediaChat({
   channel: Channel;
 }) {
   const channel = useChannel();
-  const userID: User | any = useUser();
-  const user = useUserRef();
+  const userID: Profile | any = useUser();
+  const user = useProfile();
   const setConnectionState = useSetConnectionState();
   const connectionState = useConnectionState();
   const setRoomIdRef = useSetCurrentRoomId();

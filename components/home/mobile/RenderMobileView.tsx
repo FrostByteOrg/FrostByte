@@ -7,6 +7,7 @@ import NavBar from '../NavBar';
 import styles from '@/styles/Home.module.css';
 import { useChannel, useUserRef } from '@/lib/store';
 import MediaChat from '../MediaChat';
+import { RoomAudioRenderer } from '@livekit/components-react';
 import GearIcon from '@/components/icons/GearIcon';
 import EditUserModal from '../modals/EditUserModal';
 import { useState } from 'react';
@@ -22,9 +23,10 @@ export default function RenderMobileView() {
   if (channel) {
     if (channel.is_media) {
       return (
-        <div className=' flex flex-col h-screen'>
-          <div className=' grow overflow-y-clip flex flex-col h-full '>
-            <MediaChat channel={channel} />
+        <div className=" flex flex-col h-screen">
+          <RoomAudioRenderer />
+          <div className=" grow overflow-y-clip flex flex-col h-full ">
+            <MediaChat channel={channel}/>
           </div>
           <div className={`${styles.bottomNav} bg-grey-950 shrink-0`}>
             <NavBar type='bottom' />

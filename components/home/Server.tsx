@@ -24,6 +24,9 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ServerPermissions } from '@/types/permissions';
 import PlusIcon from '@/components/icons/PlusIcon';
 import GearIcon from '@/components/icons/GearIcon';
+import { deleteServer, leaveServer } from '@/services/server.service';
+import TrashIcon from '@/components/icons/TrashIcon';
+import { LeaveIcon } from '@/components/icons/LeaveIcon';
 
 export default function Server({
   server,
@@ -57,6 +60,15 @@ export default function Server({
     handleAsync();
   }, [server, supabase]);
 
+  const showServerSettingsOption = (
+    (serverPermissions & ServerPermissions.MANAGE_INVITES) > 0
+    || (serverPermissions & ServerPermissions.MANAGE_ROLES) > 0
+    || (serverPermissions & ServerPermissions.MANAGE_USERS) > 0
+    || (serverPermissions & ServerPermissions.MANAGE_SERVER) > 0
+  );
+
+  const showAddChannelOption = (serverPermissions & ServerPermissions.MANAGE_CHANNELS) > 0;
+
   if (expand) {
     return (
       <div className="relative overflow-x-visible">
@@ -86,14 +98,7 @@ export default function Server({
             </div>
           </div>
           <DropdownMenu.Root>
-            <DropdownMenu.Trigger
-              asChild
-              disabled={
-                !((serverPermissions & ServerPermissions.MANAGE_MESSAGES) > 0 ||
-                (serverPermissions & ServerPermissions.OWNER) > 0 ||
-                (serverPermissions & ServerPermissions.MANAGE_SERVER) > 0)
-              }
-            >
+            <DropdownMenu.Trigger asChild>
               <div
                 onMouseEnter={() => setIsSettingsHovered(true)}
                 onMouseLeave={() => setIsSettingsHovered(false)}
@@ -104,29 +109,62 @@ export default function Server({
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <DropdownMenu.Content className="ContextMenuContent" side='right'>
-                <DropdownMenu.Item asChild
-                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-                  onClick={() => {
-                    setShowAddChannelModal(true);
-                  }}
-                >
-                  <div className="flex flex-row w-full">
-                    <PlusIcon width={5} height={5}/>
-                    <span className="ml-2 w-full">New channel</span>
-                  </div>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item asChild
-                  className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
-                  onClick={() => {
-                    setShowServerSettingsModal(true);
-                  }}
-                  hidden={(serverPermissions & ServerPermissions.MANAGE_SERVER) === 0}
-                >
-                  <div className="flex flex-row w-full">
-                    <GearIcon width={5} height={5} />
-                    <span className="ml-2 w-full">Server Settings</span>
-                  </div>
-                </DropdownMenu.Item>
+                { showAddChannelOption && (
+                  <DropdownMenu.Item asChild
+                    className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                    onClick={() => {
+                      setShowAddChannelModal(true);
+                    }}
+                  >
+                    <div className="flex flex-row w-full">
+                      <PlusIcon width={5} height={5}/>
+                      <span className="ml-2 w-full">New channel</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
+                {showServerSettingsOption && (
+                  <DropdownMenu.Item asChild
+                    className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
+                    onClick={() => {
+                      setShowServerSettingsModal(true);
+                    }}
+                  >
+                    <div className="flex flex-row w-full">
+                      <GearIcon width={5} height={5} />
+                      <span className="ml-2 w-full">Server Settings</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
+
+                {(showAddChannelOption || showServerSettingsOption) && <DropdownMenu.Separator className="ContextMenuSeparator" />}
+                {(serverPermissions & 1) === 0 && (
+                  <DropdownMenu.Item asChild
+                    className="flex justify-center items-center text-red-500 hover:text-grey-300 cursor-pointer"
+                    onClick={async () => {
+                      // TODO: Add confirmation modal
+                      await leaveServer(supabase, user!.id, server.id);
+                    }}
+                  >
+                    <div className="flex flex-row w-full">
+                      <LeaveIcon className='!w-5 !h-5' />
+                      <span className="ml-2 w-full">Leave Server</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
+                {(serverPermissions & 1) === 1 && (
+                  <DropdownMenu.Item asChild
+                    className="flex justify-center items-center text-red-500 hover:text-grey-300 cursor-pointer"
+                    onClick={async () => {
+                      // TODO: Add confirmation modal
+                      await deleteServer(supabase, server.id);
+                    }}
+                  >
+                    <div className="flex flex-row w-full">
+                      <TrashIcon />
+                      <span className="ml-2 w-full">Delete Server</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>

@@ -1,8 +1,8 @@
-import { User } from '@/types/dbtypes';
+import { Profile } from '@/types/dbtypes';
 import { PresenceIndicator } from '../home/PresenceIndicator';
 import { DefaultUserIcon } from './DefaultUserIcon';
 
-export default function UserIcon({ user, className, indicator, isStatic }: { user: User, className?: string, indicator?: boolean, isStatic?: boolean }) {
+export default function UserIcon({ user, className, indicator }: { user: Profile, className?: string, indicator?: boolean }) {
 
   return (
     <div>
