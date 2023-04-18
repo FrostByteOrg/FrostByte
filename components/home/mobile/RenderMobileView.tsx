@@ -7,6 +7,7 @@ import NavBar from '../NavBar';
 import styles from '@/styles/Home.module.css';
 import { useChannel } from '@/lib/store';
 import MediaChat from '../MediaChat';
+import { RoomAudioRenderer } from '@livekit/components-react';
 
 export default function RenderMobileView() {
   const sideBarOption = useSideBarOptionValue();
@@ -57,6 +58,7 @@ export default function RenderMobileView() {
   return (
     <div className=" flex flex-col h-screen">
       <div className=" grow overflow-y-scroll flex flex-col h-full ">
+        <RoomAudioRenderer />
         {mainView}
       </div>
       <div className={`${styles.bottomNav} bg-grey-950 shrink-0`}>
