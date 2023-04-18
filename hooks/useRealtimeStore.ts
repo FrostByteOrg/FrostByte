@@ -1,4 +1,4 @@
-import { ServerUser, Server, ProfileRelation, Channel, Role, ServerUserRole, User } from '@/types/dbtypes';
+import { ServerUser, Server, ProfileRelation, Channel, Role, ServerUserRole, Profile } from '@/types/dbtypes';
 import {
   useAddMessage,
   useAddRelation,
@@ -29,6 +29,7 @@ import {
   useStripServerUserAndRoles,
   useRemoveProfilesForServerByServerUserId,
   useSetUserProfile,
+  useProfile,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
@@ -74,6 +75,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const removeProfilesforServerByServerUserId = useRemoveProfilesForServerByServerUserId();
   const allServerProfiles = useAllServerProfiles();
   const user = useUser();
+
+  const currProfile = useProfile();
   const setUserProfile = useSetUserProfile();
 
   //TODO: CASCADE DELETE ICONS
@@ -195,7 +198,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             removeRelation(supabase, payload.old.id as number);
           }
         )
-        .on<User>(
+        .on<Profile>(
           'postgres_changes',
           {
             event: 'UPDATE',
@@ -208,6 +211,10 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             // This is cursed but it'll do lol
             for (const [ server_id, profiles ] of allServerProfiles) {
               updateServerUserProfile(supabase, payload.new.id, server_id);
+            }
+
+            if (payload.new.id === currProfile?.id) {
+              setUserProfile(payload.new);
             }
           }
         )
