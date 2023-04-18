@@ -12,7 +12,7 @@ import {
   useGetServers,
   useGetUserPermsForServer,
   useServers,
-  useUserRef,
+  useProfile,
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import ServerSettingsModal from './modals/ServerSettingsModal';
@@ -36,7 +36,7 @@ export default function ServerList() {
 
   const user = useUser();
   const supabase = useSupabaseClient();
-  const editUser = useUserRef();
+  const editUser = useProfile();
 
 
   const servers = useServers();

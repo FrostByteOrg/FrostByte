@@ -12,7 +12,6 @@ import {
   useProfile,
   useSetUserProfile,
   useSetUserSettings,
-  useUserRef,
   useUserSettings,
 } from '@/lib/store';
 import { Channel, Profile } from '@/types/dbtypes';
@@ -46,6 +45,9 @@ export default function RenderDesktopView() {
 
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
   const [deafenRoom, setDeafenRoom] = useState(false);
+  const editUser = useProfile();
+
+  const [showEditUser, setShowEditUser] = useState(false);
 
   const setUserRef = useSetUserProfile();
 
@@ -79,7 +81,6 @@ export default function RenderDesktopView() {
               <UserIcon
                 user={userProfile}
                 indicator={true}
-                isStatic={true}
                 className='!mr-1 !h-6 !w-6'
               />
             )}

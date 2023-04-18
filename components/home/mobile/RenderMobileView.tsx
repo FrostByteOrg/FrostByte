@@ -5,7 +5,7 @@ import ServerList from '@/components/home/ServerList';
 import DMessageList from '@/components/home/DMessageList';
 import NavBar from '../NavBar';
 import styles from '@/styles/Home.module.css';
-import { useChannel, useUserRef } from '@/lib/store';
+import { useChannel, useProfile } from '@/lib/store';
 import MediaChat from '../MediaChat';
 import { RoomAudioRenderer } from '@livekit/components-react';
 import GearIcon from '@/components/icons/GearIcon';
@@ -16,7 +16,7 @@ export default function RenderMobileView() {
   const sideBarOption = useSideBarOptionValue();
 
   const channel = useChannel();
-  const editUser = useUserRef();
+  const editUser = useProfile();
 
   const [showEditUser, setShowEditUser] = useState(false);
 

@@ -1,5 +1,5 @@
-import { useSetUser, useUserRef } from '@/lib/store';
-import { User } from '@/types/dbtypes';
+import { useSetUserProfile, useProfile } from '@/lib/store';
+import { Profile } from '@/types/dbtypes';
 import UserIcon from '@/components/icons/UserIcon';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import {
@@ -20,7 +20,7 @@ export default function EditUserForm() {
   const [serverError, setServerError] = useState<string>('');
   const imageRef = useRef<HTMLInputElement | null>(null);
   const previewImage = userImage ? URL.createObjectURL(userImage) : '';
-  const user = useUserRef();
+  const user = useProfile();
   const supabase = useSupabaseClient();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
