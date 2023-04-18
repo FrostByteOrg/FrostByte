@@ -1,7 +1,7 @@
 import Modal from '@/components/home/modals/Modal';
 import EditUser from '@/components/home/EditUserMenu';
 import { Dispatch, SetStateAction, useRef} from 'react';
-import { User } from '@/types/dbtypes';
+import { Profile } from '@/types/dbtypes';
 
 export default function EditUserModal({
   showModal,
@@ -10,7 +10,7 @@ export default function EditUserModal({
 }: {
   showModal: boolean;
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  user?: User;
+  user?: Profile;
 }) {
   const updateUserRef = useRef<HTMLDialogElement>(null);
 
