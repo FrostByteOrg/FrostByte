@@ -26,7 +26,6 @@ export function MediaPlaceholderTrack({ participant }: { participant: Participan
           flex
           justify-center
           py-9
-          ${participant.isSpeaking ? 'border-green-600' : 'border-gray-800'}
         `}
       >
         { !!profiles.get(participant.identity) && (

@@ -8,11 +8,12 @@ import ServerList from '@/components/home/ServerList';
 import DefaultSplash from '@/components/home/DefaultSplash';
 import {
   useChannel,
-  useSetUser,
+  useProfile,
+  useSetUserProfile,
   useSetUserSettings,
   useUserSettings,
 } from '@/lib/store';
-import { Channel, User } from '@/types/dbtypes';
+import { Channel, Profile } from '@/types/dbtypes';
 import MediaChat from '@/components/home/MediaChat';
 import {
   RoomAudioRenderer,
@@ -42,26 +43,14 @@ export default function RenderDesktopView() {
 
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
   const [deafenRoom, setDeafenRoom] = useState(false);
-  const [user, setUser] = useState<User>();
 
-  const userRef = useSetUser();
+  const setUserRef = useSetUserProfile();
+
+  const userProfile = useProfile();
 
   const settingsRef = useSetUserSettings();
   const userSettings = useUserSettings();
 
-  useEffect(() => {
-    const handleAsync = async () => {
-      if (currentUser) {
-        const { data, error } = await getProfile(supabase, currentUser?.id);
-        if (error) {
-          console.log(error);
-        }
-        setUser(data!);
-        userRef(data!);
-      }
-    };
-    handleAsync();
-  }, [currentUser, supabase, userRef]);
 
   return (
     <div className={`${styles.container} `}>
@@ -83,14 +72,14 @@ export default function RenderDesktopView() {
       >
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row items-center ml-2 hover:bg-grey-800 py-1 px-2 rounded-lg">
-            {user && (
+            {userProfile && (
               <UserIcon
-                user={user}
+                user={userProfile}
                 indicator={true}
                 className="!mr-1 !h-6 !w-6"
               />
             )}
-            <span className="text-sm">{user?.username}</span>
+            <span className="text-sm">{userProfile?.username}</span>
           </div>
 
           <div className="flex flex-row w-9">

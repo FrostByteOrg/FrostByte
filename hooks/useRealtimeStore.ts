@@ -28,12 +28,14 @@ import {
   useUpdateServerUserProfileByServerUserId,
   useStripServerUserAndRoles,
   useRemoveProfilesForServerByServerUserId,
+  useSetUserProfile,
 } from '@/lib/store';
 import { useEffect } from 'react';
 import { Database } from '@/types/database.supabase';
 import { useUser } from '@supabase/auth-helpers-react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import type { Message as MessageType } from '@/types/dbtypes';
+import { getProfile } from '@/services/profile.service';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
 
 export function useRealtimeStore(supabase: SupabaseClient<Database>) {
@@ -72,6 +74,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const removeProfilesforServerByServerUserId = useRemoveProfilesForServerByServerUserId();
   const allServerProfiles = useAllServerProfiles();
   const user = useUser();
+  const setUserProfile = useSetUserProfile();
 
   //TODO: CASCADE DELETE ICONS
 
@@ -321,6 +324,19 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
         .subscribe();
     }
 
+
+    const handleAsync = async () => {
+      if (user) {
+        const { data, error } = await getProfile(supabase, user?.id);
+        if (error) {
+          console.log(error);
+        }
+        setUserProfile(data!);
+      }
+    };
+    handleAsync();
+
+
     // add return right here!
     // return serverUsersListener.unsubscribe();
   }, [
@@ -343,7 +359,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     allServerProfiles,
     updateServerUserProfile,
     stripServerUserAndRoles,
-    removeProfilesforServerByServerUserId
+    removeProfilesforServerByServerUserId,setUserProfile
   ]);
 
   useEffect(() => {

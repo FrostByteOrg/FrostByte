@@ -5,9 +5,9 @@ import { SideBarOptionProvider } from '@/context/SideBarOptionCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
 import RenderDesktopView from '@/components/home/RenderDesktopView';
 import { useMediaQuery } from 'react-responsive';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRealtimeStore } from '@/hooks/useRealtimeStore';
-import { LiveKitRoom } from '@livekit/components-react';
+import { LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
 import {
   useTokenRef,
   useConnectionRef,
@@ -130,10 +130,12 @@ export default function Home() {
           }}
         >
           {isMobile ? (
+
             <div>
               <div className={'bg-grey-800'}>
                 <RenderMobileView />
                 <div>
+
                   {!user ? (
                     ''
                   ) : (

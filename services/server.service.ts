@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.supabase';
-import { ServerBanWithProfile, ServerUserProfile, ServersForUser, User } from '@/types/dbtypes';
+import { ServerBanWithProfile, ServerUserProfile, ServersForUser, Profile } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -272,7 +272,7 @@ export async function getUsersInServer(
 ) {
   return await supabase
     .rpc('get_users_in_server', { s_id: server_id })
-    .returns<User>();
+    .returns<Profile>();
 }
 
 type GetUsersInServerResponse = Awaited<ReturnType<typeof getUsersInServer>>;

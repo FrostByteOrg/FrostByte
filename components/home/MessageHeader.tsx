@@ -1,4 +1,4 @@
-import { Role, ServerUser, ServerUserProfile, User } from '@/types/dbtypes';
+import { Role, ServerUser, ServerUserProfile, Profile } from '@/types/dbtypes';
 import { Tooltip } from 'react-tooltip';
 import { MiniProfile } from '../forms/MiniProfile';
 import UserIcon from '../icons/UserIcon';
