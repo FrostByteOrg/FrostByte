@@ -20,7 +20,7 @@ import {
 } from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import CameraOffIcon from '../icons/CameraOffIcon';
-import CameraIcon from '../icons/CameraIcon';
+import CameraIcon from '../icons/VideoCameraIcon';
 import JoinCallIcon from '../icons/JoinCallIcon';
 import HangUpIcon from '../icons/HangUpIcon';
 import MicrophoneIcon from '../icons/MicrophoneIcon';

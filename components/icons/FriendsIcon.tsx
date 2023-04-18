@@ -8,7 +8,7 @@ export default function FriendsIcon({
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
+      strokeWidth={1}
       stroke={hovered ? '#8aa0a8' : 'currentColor'}
       className={`w-${width} h-${height}`}
     >

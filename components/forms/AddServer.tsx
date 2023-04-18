@@ -1,6 +1,6 @@
 import CameraIcon from '@/components/icons/CameraIcon';
 import { Input } from './Styles';
-import styles from '@/styles/Livekit.module.css';
+import styles from '@/styles/Modal.module.css';
 import PlusIcon from '@/components/icons/PlusIcon';
 import {
   useRef,

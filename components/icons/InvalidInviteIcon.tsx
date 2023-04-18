@@ -3,7 +3,7 @@ export default function InvalidInviteIcon({ className = 'w-6 h-6' }: { className
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      strokeWidth={1.5}
+      strokeWidth={1}
       viewBox="0 0 256 256"
       className={`${className} rounded-xl`}
     >

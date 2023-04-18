@@ -10,7 +10,7 @@ import MessageContent from './MessageContent';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
 import { Message as MessageType, MessageWithServerProfile } from '@/types/dbtypes';
 import { MessageHeader } from './MessageHeader';
-import { useChannel, useServerUserProfile } from '@/lib/store';
+import { useChannel, useServerUserProfile, useSetUser } from '@/lib/store';
 import { formatDateStr } from '@/lib/dateManagement';
 
 export default function Message({

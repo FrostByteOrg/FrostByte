@@ -14,12 +14,12 @@ import {
 import { ConnectionQuality, ConnectionState, Track } from 'livekit-client';
 import { ConnectionQuality as _ConnQual } from 'livekit-server-sdk/dist/proto/livekit_models';
 import { useEffect } from 'react';
-import ConnectionIcon from '../icons/ConnectionIcon';
-import ScreenShareIcon from '../icons/ScreenShareIcon';
-import ScreenShareOff from '../icons/ScreenShareOff';
-import CameraOffIcon from '../icons/CameraOffIcon';
-import CameraIcon from '../icons/CameraIcon';
-import HangUpIcon from '../icons/HangUpIcon';
+import ConnectionIcon from '@/components/icons/ConnectionIcon';
+import ScreenShareIcon from '@/components/icons/ScreenShareIcon';
+import ScreenShareOff from '@/components/icons/ScreenShareOff';
+import CameraOffIcon from '@/components/icons/CameraOffIcon';
+import HangUpIcon from '@/components/icons/HangUpIcon';
+import VideoCameraIcon from '@/components/icons/VideoCameraIcon';
 
 export default function SidebarCallControl() {
   const currentParticipant = useLocalParticipant();
@@ -113,7 +113,7 @@ export default function SidebarCallControl() {
             </div>
           ) : (
             <div className="flex flex-row items-center">
-              <CameraIcon width={5} height={5} className="mr-2" />
+              <VideoCameraIcon width={5} height={5} className="mr-2" />
               <span className="text-sm">Video</span>
             </div>
           )}

@@ -1,4 +1,5 @@
 import styles from '@/styles/DesktopView.module.css';
+import modal from '@/styles/Modal.module.css';
 import NavBar from '@/components/home/NavBar';
 import { useSideBarOptionValue } from '@/context/SideBarOptionCtx';
 import FriendsList from '@/components/home/FriendsList';
@@ -22,15 +23,16 @@ import {
   useLocalParticipant,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
-import UserIcon from '../icons/UserIcon';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';
+import UserIcon from '../icons/UserIcon';
 import GearIcon from '../icons/GearIcon';
 import MicrophoneIcon from '../icons/MicrophoneIcon';
 import MicrophoneOff from '../icons/MicroPhoneOff';
 import HeadPhonesIcon from '../icons/HeadPhonesIcon';
 import HeadPhonesOffIcon from '../icons/HeadPhonesOffIcon';
+import EditUserModal from './modals/EditUserModal';
 
 export default function RenderDesktopView() {
   const supabase = useSupabaseClient();
@@ -43,6 +45,9 @@ export default function RenderDesktopView() {
 
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
   const [deafenRoom, setDeafenRoom] = useState(false);
+  const editUser = useProfile();
+
+  const [showEditUser, setShowEditUser] = useState(false);
 
   const setUserRef = useSetUserProfile();
 
@@ -55,14 +60,14 @@ export default function RenderDesktopView() {
   return (
     <div className={`${styles.container} `}>
       {deafenRoom ? <></> : <RoomAudioRenderer />}
-      <div className="col-start-1 col-end-2 row-start-1 row-end-4  bg-grey-950 flex-col justify-center ">
-        <NavBar type="vertical" />
+      <div className='col-start-1 col-end-2 row-start-1 row-end-4  bg-grey-950 flex-col justify-center '>
+        <NavBar type='vertical' />
       </div>
-      <div className="col-start-2 col-end-4 row-start-1 row-end-4  flex-col bg-grey-900 relative ">
+      <div className='col-start-2 col-end-4 row-start-1 row-end-4  flex-col bg-grey-900 relative '>
         {sideBarView}
       </div>
 
-      <div className="col-start-4 col-end-13 row-start-1 row-end-4  flex flex-col h-screen">
+      <div className='col-start-4 col-end-13 row-start-1 row-end-4  flex flex-col h-screen'>
         {mainView}
       </div>
 
@@ -76,26 +81,24 @@ export default function RenderDesktopView() {
               <UserIcon
                 user={userProfile}
                 indicator={true}
-                className="!mr-1 !h-6 !w-6"
+                className='!mr-1 !h-6 !w-6'
               />
             )}
             <span className="text-sm">{userProfile?.username}</span>
           </div>
 
-          <div className="flex flex-row w-9">
+          <div className='flex flex-row w-9'>
             {deafenRoom ? (
               <button
-                className="w-7 h-7 hover:text-grey-400"
-                onClick={() => setDeafenRoom(false)}
-              >
+                className='w-7 h-7 hover:text-grey-400'
+                onClick={() => setDeafenRoom(false)}>
                 <HeadPhonesOffIcon width={5} height={5} />
               </button>
             ) : (
               <button
-                className="w-7 h-7 hover:text-grey-400"
-                onClick={() => setDeafenRoom(true)}
-              >
-                <HeadPhonesIcon width={5} height={5}/>
+                className='w-7 h-7 hover:text-grey-400'
+                onClick={() => setDeafenRoom(true)}>
+                <HeadPhonesIcon width={5} height={5} />
               </button>
             )}
             {connectionState !== ConnectionState.Connected ? (
@@ -103,16 +106,14 @@ export default function RenderDesktopView() {
                 {' '}
                 {userSettings ? (
                   <button
-                    className="w-7 h-7 hover:text-grey-400"
-                    onClick={() => settingsRef(false)}
-                  >
-                    <MicrophoneIcon width={5} height={5}/>
+                    className='w-7 h-7 hover:text-grey-400'
+                    onClick={() => settingsRef(false)}>
+                    <MicrophoneIcon width={5} height={5} />
                   </button>
                 ) : (
                   <button
-                    className="w-7 h-7 hover:text-grey-400"
-                    onClick={() => settingsRef(true)}
-                  >
+                    className='w-7 h-7 hover:text-grey-400'
+                    onClick={() => settingsRef(true)}>
                     <MicrophoneOff width={5} height={5} />
                   </button>
                 )}
@@ -122,17 +123,25 @@ export default function RenderDesktopView() {
                 showIcon={false}
                 className={'w-7 h-7 hover:text-grey-400'}
                 source={Track.Source.Microphone}
-                onClick={() => settingsRef(false)}
-              >
+                onClick={() => settingsRef(false)}>
                 {audioTrack.isMicrophoneEnabled ? (
-                  <MicrophoneIcon width={5} height={5}/>
+                  <MicrophoneIcon width={5} height={5} />
                 ) : (
                   <MicrophoneOff width={5} height={5} />
                 )}
               </TrackToggle>
             )}
-
-            <button className="w-7 h-7 hover:text-grey-400">
+            <div></div>
+            <EditUserModal
+              showModal={showEditUser}
+              setShowModal={setShowEditUser}
+              user={editUser}
+            />
+            <button
+              className='w-7 h-7 hover:text-grey-400'
+              onClick={() => {
+                setShowEditUser(true);
+              }}>
               <GearIcon width={6} height={6} />
             </button>
           </div>

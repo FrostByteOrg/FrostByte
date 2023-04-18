@@ -4,7 +4,7 @@ export default function AddServerIcon() {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="-5 -5 34 34"
-      strokeWidth={1.7}
+      strokeWidth={1}
       stroke="currentColor"
       className="w-6 h-6 hover:bg-grey-950 rounded-xl transition ease-in-out delay-75"
     >
