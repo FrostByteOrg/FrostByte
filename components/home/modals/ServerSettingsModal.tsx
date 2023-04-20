@@ -20,7 +20,7 @@ import AddServerModal from './AddServerModal';
 import { useForm } from 'react-hook-form';
 import { CreateServerInput, createServerSchema } from '@/types/client/server';
 import { zodResolver } from '@hookform/resolvers/zod';
-import AddServer from '@/components/forms/AddServer';
+import AddServer from '@/components/forms/MutateServer';
 
 const tabRootClass = 'flex flex-row';
 const tabListClass = 'flex flex-col flex-shrink border-r border-gray-600';
@@ -71,6 +71,49 @@ export default function ServerSettingsModal({
     },
   });
 
+  const onSubmit = async (formData: CreateServerInput) => {
+    console.log('testt');
+    // const { data, error } = await updateServer(
+    //   supabase,
+    //   server!.id,
+    //   formData.name,
+    //   formData.description as string | null
+    // );
+
+    // if (error) {
+    //   if ((error as PostgrestError).message) {
+    //     setServerError((error as PostgrestError).message);
+    //   } else {
+    //     setServerError(error as unknown as string);
+    //   }
+
+    //   setTimeout(() => {
+    //     setServerError('');
+    //   }, 7000);
+    //   return;
+    // }
+
+    // const fileExt = serverImage
+    //   ? serverImage.name.split('.').pop()
+    //   : previewImage.split('.').pop();
+    // const fileName = `${data?.id}.${fileExt}`;
+    // const filePath = `${fileName}`;
+    // console.log(fileExt);
+
+    // if (serverImage) {
+    //   const { data: updatedServer, error: serverImgError } =
+    //     await updateServerIcon(supabase, filePath, serverImage);
+
+    //   if (serverImgError) {
+    //     setServerError(serverImgError.message);
+    //     setTimeout(() => {
+    //       setServerError('');
+    //     }, 7000);
+    //     return;
+    //   }
+    // }
+  };
+
   return (
     <Modal
       modalRef={modalRef}
@@ -119,18 +162,32 @@ export default function ServerSettingsModal({
         </Tabs.List>
         <div className="TabContent flex-grow flex-1 w-15 h-15 ">
           <Tabs.Content value="Overview" className={tabContentClass}>
-            <AddServer
-              serverImage={serverImage}
-              setServerImage={setServerImage}
-              register={register}
-              errors={errors}
-              serverError={serverError}
-              showDesc={showDesc}
-              setShowDesc={setSetShowDesc}
-              server={server}
-              handleSubmit={handleSubmit}
-              setServerError={setServerError}
-            />
+            <div className="flex flex-col">
+              <AddServer
+                serverImage={serverImage}
+                setServerImage={setServerImage}
+                register={register}
+                errors={errors}
+                serverError={serverError}
+                showDesc={showDesc}
+                setShowDesc={setSetShowDesc}
+                server={server}
+                handleSubmit={handleSubmit}
+                setServerError={setServerError}
+                type={'edit'}
+              />
+
+              <div className="flex ml-6">
+                <div
+                  className="bg-frost-500 py-2 px-5 rounded-lg hover:cursor-pointer hover:bg-frost-700 "
+                  onClick={() => {
+                    handleSubmit(onSubmit)();
+                  }}
+                >
+                  Update
+                </div>
+              </div>
+            </div>
           </Tabs.Content>
           <Tabs.Content value="Roles" className={`${tabContentClass}`}>
             <span className="w-full flex flex-row">

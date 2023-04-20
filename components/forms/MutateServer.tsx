@@ -22,8 +22,6 @@ import { CreateServerInput } from '@/types/client/server';
 import { updateServer } from '@/services/server.service';
 import { PostgrestError } from '@supabase/supabase-js';
 
-//TODO: change to generic mutateServer or something alike since we can leverage this form for both
-//add and edit server
 export default function AddServer({
   serverImage,
   setServerImage,
@@ -35,12 +33,13 @@ export default function AddServer({
   server,
   handleSubmit,
   setServerError,
+  type,
 }: {
   serverImage: File | null;
   setServerImage: Dispatch<SetStateAction<File | null>>;
   register: UseFormRegister<{
     name: string;
-    description?: string | undefined;
+    description?: string | undefined | null;
   }>;
   errors: Partial<
     FieldErrorsImpl<{
@@ -57,6 +56,7 @@ export default function AddServer({
     name: string;
   }>;
   setServerError?: Dispatch<SetStateAction<string>>;
+  type?: 'add' | 'edit';
 }) {
   const imageRef = useRef<HTMLInputElement | null>(null);
 
@@ -73,49 +73,6 @@ export default function AddServer({
 
   const supabase = useSupabaseClient();
 
-  const onSubmit = async (formData: CreateServerInput) => {
-    const { data, error } = await updateServer(
-      supabase,
-      server!.id,
-      formData.name,
-      formData.description as string | null
-    );
-
-    // if (error) {
-    //   if ((error as PostgrestError).message) {
-    //     setServerError((error as PostgrestError).message);
-    //   } else {
-    //     setServerError(error as unknown as string);
-    //   }
-
-    //   setTimeout(() => {
-    //     setServerError('');
-    //   }, 7000);
-    //   return;
-    // }
-
-    const fileExt = serverImage
-      ? serverImage.name.split('.').pop()
-      : previewImage.split('.').pop();
-    const fileName = `${data?.id}.${fileExt}`;
-    const filePath = `${fileName}`;
-    console.log(fileExt);
-
-    // if (serverImage) {
-    //   const { data: updatedServer, error: serverImgError } =
-    //     await updateServerIcon(supabase, filePath, serverImage);
-
-    //   if (serverImgError) {
-    //     setServerError(serverImgError.message);
-    //     setTimeout(() => {
-    //       setServerError('');
-    //     }, 7000);
-    //     return;
-    //   }
-    // }
-  };
-
-  //TODO: onSubmit, if its addServer => e.preventDefault else if its editServer => handleSubmit(onSubmit)
   return (
     <form
       className="flex flex-col w-12 my-4 mx-6"
