@@ -28,6 +28,9 @@ const tabTriggerClass =
   'px-3 py-2 aria-[selected=true]:border-r aria-[selected=true]:border-r-white focus:z-10 aria-[selected=true]:outline-none focus-visible:ring text-left aria-[selected=true]:bg-gray-500';
 const tabContentClass = 'flex flex-col';
 
+//TODO: add a 'delete server' button at the bottom of the overview section. Make this functionallity similar
+//to github delete repo i.e. prompt a modal and have the user spell out the servername and confirm the deletion
+
 export default function ServerSettingsModal({
   showModal,
   setShowModal,

@@ -22,6 +22,8 @@ import { CreateServerInput } from '@/types/client/server';
 import { updateServer } from '@/services/server.service';
 import { PostgrestError } from '@supabase/supabase-js';
 
+//TODO: change to generic mutateServer or something alike since we can leverage this form for both
+//add and edit server
 export default function AddServer({
   serverImage,
   setServerImage,
@@ -113,6 +115,7 @@ export default function AddServer({
     // }
   };
 
+  //TODO: onSubmit, if its addServer => e.preventDefault else if its editServer => handleSubmit(onSubmit)
   return (
     <form
       className="flex flex-col w-12 my-4 mx-6"
