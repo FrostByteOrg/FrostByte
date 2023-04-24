@@ -204,7 +204,7 @@ export default function ServerSettingsModal({
               </div>
             </div>
           </Tabs.Content>
-          <Tabs.Content value="Roles" className={`${tabContentClass}`}>
+          <Tabs.Content value="Roles" className={`${tabContentClass} `}>
             <span className="w-full flex flex-row">
               <h1 className="text-2xl p-2 flex-grow">Roles</h1>
               <button
@@ -232,15 +232,18 @@ export default function ServerSettingsModal({
               </button>
             </span>
 
-            <Tabs.Root className={tabRootClass} orientation="vertical">
-              <Tabs.List className={tabListClass}>
+            <Tabs.Root
+              className={`${tabRootClass} overflow-x-clip`}
+              orientation="vertical"
+            >
+              <Tabs.List className={`${tabListClass} h-14 overflow-y-auto `}>
                 {roles
                   .sort((first, second) => first.position - second.position)
                   .map((role) => (
                     <Tabs.Trigger
                       key={role.id}
                       value={role.id.toString()}
-                      className={tabTriggerClass}
+                      className={`${tabListClass} p-2 `}
                       style={{
                         color: `#${role.color}`,
                       }}
