@@ -182,8 +182,11 @@ export default function ServerSettingsModal({
           </Tabs.Trigger>
         </Tabs.List>
         <div className="TabContent flex-grow flex-1 w-15 h-15 ">
-          <Tabs.Content value="Overview" className={tabContentClass}>
-            <div className="flex flex-col">
+          <Tabs.Content
+            value="Overview"
+            className={`${tabContentClass} justify-center items-center`}
+          >
+            <div className="flex flex-col ">
               <MutateServer
                 serverImage={serverImage}
                 setServerImage={setServerImage}
