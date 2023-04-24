@@ -7,6 +7,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 import 'styles/TabNav.module.css';
 import { RoleEditForm } from '@/components/forms/RoleEditForm';
 import {
+  useGetServers,
   useServerRoles,
   useServerUserProfileHighestRolePosition,
   useServerUserProfilePermissions,
@@ -20,7 +21,9 @@ import AddServerModal from './AddServerModal';
 import { useForm } from 'react-hook-form';
 import { CreateServerInput, createServerSchema } from '@/types/client/server';
 import { zodResolver } from '@hookform/resolvers/zod';
-import AddServer from '@/components/forms/MutateServer';
+import MutateServer from '@/components/forms/MutateServer';
+import { updateServer, updateServerIcon } from '@/services/server.service';
+import { PostgrestError } from '@supabase/supabase-js';
 
 const tabRootClass = 'flex flex-row';
 const tabListClass = 'flex flex-col flex-shrink border-r border-gray-600';
@@ -57,14 +60,16 @@ export default function ServerSettingsModal({
     user?.id!
   );
 
+  const getServers = useGetServers();
+
   const {
     register,
     handleSubmit,
-    reset,
+    formState,
     formState: { errors },
   } = useForm<CreateServerInput>({
     resolver: zodResolver(createServerSchema),
-    mode: 'onSubmit',
+    mode: 'onChange',
     defaultValues: {
       name: server?.name,
       description: server?.description as string | undefined,
@@ -72,46 +77,50 @@ export default function ServerSettingsModal({
   });
 
   const onSubmit = async (formData: CreateServerInput) => {
-    console.log('testt');
-    // const { data, error } = await updateServer(
-    //   supabase,
-    //   server!.id,
-    //   formData.name,
-    //   formData.description as string | null
-    // );
+    const { data, error } = await updateServer(
+      supabase,
+      server!.id,
+      formData.name,
+      formData.description as string | null
+    );
 
-    // if (error) {
-    //   if ((error as PostgrestError).message) {
-    //     setServerError((error as PostgrestError).message);
-    //   } else {
-    //     setServerError(error as unknown as string);
-    //   }
+    if (error) {
+      if ((error as PostgrestError).message) {
+        setServerError((error as PostgrestError).message);
+      } else {
+        setServerError(error as unknown as string);
+      }
 
-    //   setTimeout(() => {
-    //     setServerError('');
-    //   }, 7000);
-    //   return;
-    // }
+      setTimeout(() => {
+        setServerError('');
+      }, 7000);
+      return;
+    }
 
-    // const fileExt = serverImage
-    //   ? serverImage.name.split('.').pop()
-    //   : previewImage.split('.').pop();
-    // const fileName = `${data?.id}.${fileExt}`;
-    // const filePath = `${fileName}`;
-    // console.log(fileExt);
+    const fileExt = serverImage?.name.split('.').pop();
+    const fileName = `${data?.id}.${fileExt}`;
+    const filePath = `${fileName}?updated=${Date.now()}`;
 
-    // if (serverImage) {
-    //   const { data: updatedServer, error: serverImgError } =
-    //     await updateServerIcon(supabase, filePath, serverImage);
+    if (serverImage) {
+      const { data: updatedServer, error: serverImgError } =
+        await updateServerIcon(supabase, filePath, serverImage, data!.id);
 
-    //   if (serverImgError) {
-    //     setServerError(serverImgError.message);
-    //     setTimeout(() => {
-    //       setServerError('');
-    //     }, 7000);
-    //     return;
-    //   }
-    // }
+      if (serverImgError) {
+        setServerError(serverImgError.message);
+        setTimeout(() => {
+          setServerError('');
+        }, 7000);
+        return;
+      }
+      if (updatedServer) {
+        getServers(supabase, user?.id!);
+      }
+    }
+    toast.success('Server updated successfully', {
+      position: 'top-right',
+      autoClose: 3000,
+      className: 'bg-blue-500',
+    });
   };
 
   return (
@@ -163,7 +172,7 @@ export default function ServerSettingsModal({
         <div className="TabContent flex-grow flex-1 w-15 h-15 ">
           <Tabs.Content value="Overview" className={tabContentClass}>
             <div className="flex flex-col">
-              <AddServer
+              <MutateServer
                 serverImage={serverImage}
                 setServerImage={setServerImage}
                 register={register}
@@ -179,9 +188,15 @@ export default function ServerSettingsModal({
 
               <div className="flex ml-6">
                 <div
-                  className="bg-frost-500 py-2 px-5 rounded-lg hover:cursor-pointer hover:bg-frost-700 "
+                  className={`${
+                    formState.isSubmitting
+                      ? 'bg-gray-500'
+                      : 'bg-frost-500 hover:cursor-pointer hover:bg-frost-700'
+                  } py-2 px-5 rounded-lg `}
                   onClick={() => {
-                    handleSubmit(onSubmit)();
+                    if (!formState.isSubmitting) {
+                      handleSubmit(onSubmit)();
+                    }
                   }}
                 >
                   Update

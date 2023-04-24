@@ -45,8 +45,6 @@ export default function EditUserForm() {
     },
   });
 
-
-
   const onSubmit = async (formData: UpdateUserInput) => {
     const { data, error } = await updateUserProfile(
       supabase,
@@ -74,11 +72,10 @@ export default function EditUserForm() {
     }
 
     if (data && !error) {
-      toast.success('Profile updated successfully'),
-      {
-        position: 'top-center',
+      toast.success('Profile updated successfully', {
+        position: 'top-right',
         autoClose: 3000,
-      };
+      });
     }
     setUserImage(null);
   };
@@ -89,38 +86,38 @@ export default function EditUserForm() {
   ) => {
     if (userString === null || userString.length === 0) {
       return emptyMessage;
-    } 
-    else if (userString.length >= 25) {
+    } else if (userString.length >= 25) {
       return `${userString.slice(0, 25)}...`;
     }
     return userString;
   };
 
   return (
-    <div className='flex flex-row ml-5 overflow-y-scroll'>
-      <div className='flex flex-col w-12'>
-        <div className='flex flex-row'>
-          <h1 className='text-2xl font-semibold'>User Profile</h1>
+    <div className="flex flex-row ml-5 overflow-y-scroll">
+      <div className="flex flex-col w-12">
+        <div className="flex flex-row">
+          <h1 className="text-2xl font-semibold">User Profile</h1>
         </div>
-        <div className=' border-t-2 my-1 border-grey-700'></div>
-        <form className='h-[17.5rem] ' onSubmit={handleSubmit(onSubmit)}>
-          <div className='flex flex-row justify-center items-center mb-2 '>
-            <div className='flex flex-col'>
-              <label className='font-semibold text-xl mb-1 mx-auto'>
+        <div className=" border-t-2 my-1 border-grey-700"></div>
+        <form className="h-[17.5rem] " onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-row justify-center items-center mb-2 ">
+            <div className="flex flex-col">
+              <label className="font-semibold text-xl mb-1 mx-auto">
                 Avatar
               </label>
-              <div className='flex flex-col items-center'>
+              <div className="flex flex-col items-center">
                 <div
                   className={`${
                     userImage
                       ? 'p-4'
                       : 'w-8 py-4 px-6 border-dashed border-2 border-grey-600'
                   }  flex items-center rounded-lg justify-center relative hover:cursor-pointer`}
-                  onClick={() => imageRef?.current?.click()}>
-                  <div className='flex flex-col justify-center items-center'>
+                  onClick={() => imageRef?.current?.click()}
+                >
+                  <div className="flex flex-col justify-center items-center">
                     {userImage ? (
                       <Image
-                        alt='userIcon'
+                        alt="userIcon"
                         src={previewImage}
                         width={40}
                         height={2}
@@ -128,33 +125,33 @@ export default function EditUserForm() {
                     ) : (
                       <>
                         <CameraIcon width={5} />
-                        <span className='absolute -top-3 -right-3'>
-                          <PlusIcon color='#4abfe8' />
+                        <span className="absolute -top-3 -right-3">
+                          <PlusIcon color="#4abfe8" />
                         </span>
                       </>
                     )}
                   </div>
                 </div>
-                <span className='text-xs font-semibold text-center tracking-wider mt-2'>
+                <span className="text-xs font-semibold text-center tracking-wider mt-2">
                   UPLOAD IMAGE
                 </span>
               </div>
               <input
-                type='file'
+                type="file"
                 ref={imageRef}
                 onChange={handleFileChange}
-                className='hidden'
-                accept='image/*'
+                className="hidden"
+                accept="image/*"
               />
             </div>
           </div>
-          <div className='flex flex-row justify-between items-center mb-2'>
-            <div className='flex flex-col justify-start '>
-              <label className='font-semibold text-xl mb-1'>Name</label>
+          <div className="flex flex-row justify-between items-center mb-2">
+            <div className="flex flex-col justify-start ">
+              <label className="font-semibold text-xl mb-1">Name</label>
               {user && (
                 <input
                   defaultValue={user.full_name!}
-                  className='w-12 text-grey-300 text-medium bg-grey-800 rounded-lg focus:bg-slate-600 focus:text-white focus:outline-grey-100 py-1 pl-2'
+                  className="w-12 text-grey-300 text-medium bg-grey-800 rounded-lg focus:bg-slate-600 focus:text-white focus:outline-grey-100 py-1 pl-2"
                   placeholder={handleStringDisplay(
                     user.full_name,
                     'Add your name to your profile'
@@ -164,13 +161,13 @@ export default function EditUserForm() {
               )}
             </div>
           </div>
-          <div className='flex flex-row justify-between items-center mb-2'>
-            <div className='flex flex-col justify-start'>
-              <label className='font-semibold text-xl mb-1'>Website</label>
+          <div className="flex flex-row justify-between items-center mb-2">
+            <div className="flex flex-col justify-start">
+              <label className="font-semibold text-xl mb-1">Website</label>
               {user && (
                 <input
                   defaultValue={user.website!}
-                  className='w-12 text-medium text-grey-300 bg-grey-800 rounded-lg focus:bg-slate-600 focus:text-white focus:outline-grey-100 py-1 pl-2'
+                  className="w-12 text-medium text-grey-300 bg-grey-800 rounded-lg focus:bg-slate-600 focus:text-white focus:outline-grey-100 py-1 pl-2"
                   placeholder={handleStringDisplay(
                     user.website,
                     'Add your website to your profile'
@@ -180,11 +177,12 @@ export default function EditUserForm() {
               )}
             </div>
           </div>
-          <div className='flex flex-row justify-end items-center'>
-            <div className='flex flex-row'>
+          <div className="flex flex-row justify-end items-center">
+            <div className="flex flex-row">
               <button
-                className=' hover:text-frost-500 px-2 py-1 rounded-lg'
-                type='submit'>
+                className=" hover:text-frost-500 px-2 py-1 rounded-lg"
+                type="submit"
+              >
                 Submit
               </button>
             </div>

@@ -14,7 +14,11 @@ import styles from '@/styles/Servers.module.css';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { ServerMemberStats } from './ServerMemberStats';
 import { OverflowMarquee } from './OverflowMarquee';
-import { useChannel, useServerUserProfilePermissions, useSetChannel } from '@/lib/store';
+import {
+  useChannel,
+  useServerUserProfilePermissions,
+  useSetChannel,
+} from '@/lib/store';
 import { ChannelMediaIcon } from '../icons/ChannelMediaIcon';
 import ChannelName from './ChannelName';
 import { ChannelListItem } from '@/components/home/ChannelListItem';
@@ -49,7 +53,10 @@ export default function Server({
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
 
   const user = useUser();
-  const serverPermissions = useServerUserProfilePermissions(server.id, user?.id!);
+  const serverPermissions = useServerUserProfilePermissions(
+    server.id,
+    user?.id!
+  );
   useEffect(() => {
     const handleAsync = async () => {
       if (server) {
@@ -60,14 +67,14 @@ export default function Server({
     handleAsync();
   }, [server, supabase]);
 
-  const showServerSettingsOption = (
-    (serverPermissions & ServerPermissions.MANAGE_INVITES) > 0
-    || (serverPermissions & ServerPermissions.MANAGE_ROLES) > 0
-    || (serverPermissions & ServerPermissions.MANAGE_USERS) > 0
-    || (serverPermissions & ServerPermissions.MANAGE_SERVER) > 0
-  );
+  const showServerSettingsOption =
+    (serverPermissions & ServerPermissions.MANAGE_INVITES) > 0 ||
+    (serverPermissions & ServerPermissions.MANAGE_ROLES) > 0 ||
+    (serverPermissions & ServerPermissions.MANAGE_USERS) > 0 ||
+    (serverPermissions & ServerPermissions.MANAGE_SERVER) > 0;
 
-  const showAddChannelOption = (serverPermissions & ServerPermissions.MANAGE_CHANNELS) > 0;
+  const showAddChannelOption =
+    (serverPermissions & ServerPermissions.MANAGE_CHANNELS) > 0;
 
   if (expand) {
     return (
@@ -108,22 +115,24 @@ export default function Server({
               </div>
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
-              <DropdownMenu.Content className="ContextMenuContent" side='right'>
-                { showAddChannelOption && (
-                  <DropdownMenu.Item asChild
+              <DropdownMenu.Content className="ContextMenuContent" side="right">
+                {showAddChannelOption && (
+                  <DropdownMenu.Item
+                    asChild
                     className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
                     onClick={() => {
                       setShowAddChannelModal(true);
                     }}
                   >
                     <div className="flex flex-row w-full">
-                      <PlusIcon width={5} height={5}/>
+                      <PlusIcon width={5} height={5} />
                       <span className="ml-2 w-full">New channel</span>
                     </div>
                   </DropdownMenu.Item>
                 )}
                 {showServerSettingsOption && (
-                  <DropdownMenu.Item asChild
+                  <DropdownMenu.Item
+                    asChild
                     className="flex justify-center items-center hover:text-grey-300 cursor-pointer"
                     onClick={() => {
                       setShowServerSettingsModal(true);
@@ -136,9 +145,12 @@ export default function Server({
                   </DropdownMenu.Item>
                 )}
 
-                {(showAddChannelOption || showServerSettingsOption) && <DropdownMenu.Separator className="ContextMenuSeparator" />}
+                {(showAddChannelOption || showServerSettingsOption) && (
+                  <DropdownMenu.Separator className="ContextMenuSeparator" />
+                )}
                 {(serverPermissions & 1) === 0 && (
-                  <DropdownMenu.Item asChild
+                  <DropdownMenu.Item
+                    asChild
                     className="flex justify-center items-center text-red-500 hover:text-grey-300 cursor-pointer"
                     onClick={async () => {
                       // TODO: Add confirmation modal
@@ -146,13 +158,14 @@ export default function Server({
                     }}
                   >
                     <div className="flex flex-row w-full">
-                      <LeaveIcon className='!w-5 !h-5' />
+                      <LeaveIcon className="!w-5 !h-5" />
                       <span className="ml-2 w-full">Leave Server</span>
                     </div>
                   </DropdownMenu.Item>
                 )}
                 {(serverPermissions & 1) === 1 && (
-                  <DropdownMenu.Item asChild
+                  <DropdownMenu.Item
+                    asChild
                     className="flex justify-center items-center text-red-500 hover:text-grey-300 cursor-pointer"
                     onClick={async () => {
                       // TODO: Add confirmation modal
@@ -171,7 +184,11 @@ export default function Server({
         </div>
         <div className="channels bg-grey-700 rounded-lg relative -top-3 py-4  px-7 ">
           {channels.map((channel: Channel, idx: number) => (
-            <ChannelListItem channel={channel} idx={idx} key={channel.channel_id}/>
+            <ChannelListItem
+              channel={channel}
+              idx={idx}
+              key={channel.channel_id}
+            />
           ))}
         </div>
       </div>

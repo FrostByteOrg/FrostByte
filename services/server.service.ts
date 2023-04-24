@@ -1,5 +1,10 @@
 import { Database } from '@/types/database.supabase';
-import { ServerBanWithProfile, ServerUserProfile, ServersForUser, Profile } from '@/types/dbtypes';
+import {
+  ServerBanWithProfile,
+  ServerUserProfile,
+  ServersForUser,
+  Profile,
+} from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
@@ -70,10 +75,7 @@ export async function deleteServer(
   // NOTE: only the owner should be able to delete a server. This is enforced by RLS
   // NOTE: Supabase has been set up to cascade delete all items related to a server (roles/invites/channels/messages)
   // So we can delete the server itself
-  return await supabase
-    .from('servers')
-    .delete()
-    .eq('id', server_id);
+  return await supabase.from('servers').delete().eq('id', server_id);
 }
 
 type DeleteServerResponse = Awaited<ReturnType<typeof deleteServer>>;
@@ -231,10 +233,12 @@ export async function getCurrentUserServerPermissions(
   server_id: number,
   userId?: string
 ) {
-  return await supabase.rpc('get_permission_flags_for_server_user', {
-    s_id: server_id,
-    p_id: userId ? userId : (await supabase.auth.getUser()).data.user?.id!,
-  }).single();
+  return await supabase
+    .rpc('get_permission_flags_for_server_user', {
+      s_id: server_id,
+      p_id: userId ? userId : (await supabase.auth.getUser()).data.user?.id!,
+    })
+    .single();
 }
 
 type GetCurrentUserServerPermissionsResponse = Awaited<
@@ -304,7 +308,7 @@ export async function addServerIcon(
 ) {
   const { data, error } = await supabase.storage
     .from('servericons')
-    .upload(filePath, image, { upsert: true });
+    .upload(filePath, image, { upsert: true, cacheControl: '1' });
 
   const publicURL = supabase.storage.from('servericons').getPublicUrl(filePath);
 
@@ -329,6 +333,36 @@ export async function getAllProfilesForServer(
     .returns<ServerUserProfile>();
 }
 
-type GetAllProfilesForServerResponse = Awaited<ReturnType<typeof getAllProfilesForServer>>;
-export type GetAllProfilesForServerResponseSuccess = GetAllProfilesForServerResponse['data'];
-export type GetAllProfilesForServerResponseError = GetAllProfilesForServerResponse['error'];
+type GetAllProfilesForServerResponse = Awaited<
+  ReturnType<typeof getAllProfilesForServer>
+>;
+export type GetAllProfilesForServerResponseSuccess =
+  GetAllProfilesForServerResponse['data'];
+export type GetAllProfilesForServerResponseError =
+  GetAllProfilesForServerResponse['error'];
+
+export async function updateServerIcon(
+  supabase: SupabaseClient<Database>,
+  filePath: string,
+  image: any,
+  server_id: number
+) {
+  const { data, error } = await supabase.storage
+    .from('servericons')
+    .update(filePath, image, { upsert: true, cacheControl: '1' });
+
+  const publicURL = supabase.storage
+    .from('servericons')
+    .getPublicUrl(data!.path);
+
+  return await supabase
+    .from('servers')
+    .update({ image_url: publicURL.data.publicUrl })
+    .eq('id', server_id)
+    .select()
+    .single();
+}
+
+type UpdateServerIconResponse = Awaited<ReturnType<typeof updateServerIcon>>;
+export type UpdateServerIconResponseSuccess = UpdateServerIconResponse['data'];
+export type UpdateServerIconResponseError = UpdateServerIconResponse['error'];

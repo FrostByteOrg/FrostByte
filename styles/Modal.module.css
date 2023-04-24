@@ -1,9 +1,9 @@
-
 .modal {
   max-width: fit-content;
   border: 0;
   padding: 0;
   box-shadow: 0 0 1.5em rgb(0 0 0 / 0.3);
+  z-index: 9;
 }
 
 .modal::backdrop {
@@ -15,12 +15,12 @@
   opacity: 0.4;
 }
 
-.userSettings{
+.userSettings {
   width: 35;
   height: 22rem;
 }
 
-.mediaSelect{
+.mediaSelect {
   width: 11rem;
 }
 

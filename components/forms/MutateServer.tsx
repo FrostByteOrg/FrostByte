@@ -67,11 +67,10 @@ export default function AddServer({
 
     setServerImage(e.target.files[0]);
   };
-  let previewImage = serverImage ? URL.createObjectURL(serverImage) : '';
 
-  if (server?.image_url) previewImage = server.image_url;
+  let previewImage = server?.image_url ? server.image_url : '';
 
-  const supabase = useSupabaseClient();
+  if (serverImage) previewImage = URL.createObjectURL(serverImage);
 
   return (
     <form
@@ -95,7 +94,7 @@ export default function AddServer({
       >
         <div className="flex flex-col justify-center items-center">
           {serverImage || server?.image_url ? (
-            <Image alt="serverIcon" src={previewImage} width={50} height={50} />
+            <img alt="serverIcon" src={previewImage} width={50} height={50} />
           ) : (
             <>
               <CameraIcon />
