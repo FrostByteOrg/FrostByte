@@ -9,6 +9,7 @@ export default function Modal({
   children: content,
   buttons,
   onKeyDown = undefined,
+  closeBtn = '',
 }: {
   modalRef: RefObject<HTMLDialogElement>;
   showModal: boolean;
@@ -16,6 +17,7 @@ export default function Modal({
   children: JSX.Element;
   buttons: JSX.Element;
   onKeyDown?: KeyboardEventHandler<HTMLDialogElement> | undefined;
+  closeBtn?: JSX.Element | '';
 }) {
   useEffect(() => {
     if (showModal && !modalRef.current?.open) {
@@ -30,7 +32,10 @@ export default function Modal({
       onKeyDown={onKeyDown}
     >
       <div className="bg-grey-900 p-4 rounded-lg  z-50 ">
-        <div className="text-2xl font-bold tracking-wider">{title}</div>
+        <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
+          {title}
+          {closeBtn}
+        </div>
         <div className="px-2 pt-4 pb-4 flex flex-col">{content}</div>
         <div className=" border-t-2 mx-5 border-grey-700"></div>
         <div className="flex justify-end space-x-5 items-center mt-4">

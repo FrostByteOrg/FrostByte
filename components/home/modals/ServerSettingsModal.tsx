@@ -24,6 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import MutateServer from '@/components/forms/MutateServer';
 import { updateServer, updateServerIcon } from '@/services/server.service';
 import { PostgrestError } from '@supabase/supabase-js';
+import { XIcon } from '@/components/icons/XIcon';
 
 const tabRootClass = 'flex flex-row';
 const tabListClass = 'flex flex-col flex-shrink border-r border-gray-600';
@@ -139,6 +140,17 @@ export default function ServerSettingsModal({
           Close
         </button>
       }
+      closeBtn={
+        <div
+          className="font-light hover:cursor-pointer"
+          onClick={() => {
+            modalRef.current?.close();
+            setShowModal(false);
+          }}
+        >
+          <XIcon className="fill-white" />
+        </div>
+      }
     >
       <Tabs.Root className={tabRootClass} orientation="vertical">
         <Tabs.List className={tabListClass}>
@@ -207,8 +219,8 @@ export default function ServerSettingsModal({
           <Tabs.Content value="Roles" className={`${tabContentClass} `}>
             <span className="w-full flex flex-row">
               <h1 className="text-2xl p-2 flex-grow">Roles</h1>
-              <button
-                className=""
+              <div
+                className="flex justify-center items-center hover:text-gray-400 hover:cursor-pointer"
                 onClick={async () => {
                   const { error } = await createRole(
                     supabase,
@@ -218,25 +230,24 @@ export default function ServerSettingsModal({
                     0,
                     'a9aaab'
                   );
-
                   if (error) {
                     console.error(error);
                     toast.error('Failed to create role');
                     return;
                   }
-
                   toast.success('Created role');
                 }}
               >
+                <p className="mr-1 font-light">New Role</p>
+
                 <PlusIcon width={5} height={5} />
-              </button>
+              </div>
             </span>
 
-            <Tabs.Root
-              className={`${tabRootClass} overflow-x-clip`}
-              orientation="vertical"
-            >
-              <Tabs.List className={`${tabListClass} h-14 overflow-y-auto `}>
+            <Tabs.Root className={`${tabRootClass} `} orientation="vertical">
+              <Tabs.List
+                className={`${tabListClass} h-14 overflow-y-auto overflow-x-clip`}
+              >
                 {roles
                   .sort((first, second) => first.position - second.position)
                   .map((role) => (
