@@ -12,6 +12,9 @@ import { Database } from '@/types/database.supabase';
 import { Input } from './Styles';
 import EmailIcon from '../icons/EmailIcon';
 import PasswordIcon from '../icons/PasswordIcon';
+import Image from 'next/image';
+import Google from '../../public/Google__G__Logo.svg.png';
+import Twitter from '../../public/twitter2.png';
 
 export default function Login({
   setServerError,
@@ -47,9 +50,15 @@ export default function Login({
       router.push('/');
     }
   };
+
+  async function signInWithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+  }
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <div className="relative mt-5">
+      <div className="relative mt-4">
         <div className={`${errors.email ? styles.iconError : styles.icon} `}>
           <EmailIcon />
         </div>
@@ -84,12 +93,12 @@ export default function Login({
       </div>
       <span
         onClick={() => setAuthType('resetPassword')}
-        className="text-sm mt-3 text-frost-800 font-bold hover:text-frost-600 hover:cursor-pointer"
+        className="text-sm mt-3 text-frost-800 font-bold hover:text-frost-600 hover:cursor-pointer ml-2"
       >
         Forgot password?
       </span>
 
-      <div className={`${errors.password ? 'mt-7' : 'mt-8'}  relative`}>
+      <div className={`${errors.password ? 'mt-6' : 'mt-7'}  relative`}>
         <button
           className={`
            ${styles.button} 
@@ -111,6 +120,67 @@ export default function Login({
         >
           Login
         </button>
+      </div>
+
+      <div className="relative flex mt-4  items-center">
+        <div className="flex-grow border-t border-frost-500"></div>
+        <span className="flex-shrink mx-4 text-frost-600 text-xs">
+          Or Login with
+        </span>
+        <div className="flex-grow border-t border-frost-500"></div>
+      </div>
+
+      <div className="mt-4 relative">
+        <div className="w-full flex justify-between">
+          <div
+            className={`
+           ${styles.button} 
+           bg-frost-600 
+           hover:bg-frost-700
+           disabled:bg-grey-600
+           active:shadow-sm
+           active:bg-frost-800
+           font-bold 
+           py-2 
+           w-9
+           rounded-2xl 
+           tracking-widest 
+           text-frost-100 
+           text-2xl
+           flex justify-center
+           hover:cursor-pointer
+          `}
+            onClick={() => signInWithGoogle()}
+          >
+            <Image
+              className="w-6 bg-white rounded-3xl p-1"
+              src={Google}
+              alt="Google"
+              priority
+            />
+          </div>
+          <div
+            className={`
+            ${styles.button} 
+            bg-frost-600 
+            hover:bg-frost-700
+            disabled:bg-grey-600
+            active:shadow-sm
+            active:bg-frost-800
+            font-bold 
+            py-2  
+            w-9 
+            rounded-2xl 
+            tracking-widest 
+            text-frost-100 
+            text-2xl
+            flex justify-center
+            hover:cursor-pointer
+           `}
+          >
+            <Image className="w-6 " src={Twitter} alt="Twitter" priority />
+          </div>
+        </div>
       </div>
     </form>
   );
