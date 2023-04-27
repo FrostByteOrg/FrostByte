@@ -14,7 +14,7 @@ import EmailIcon from '../icons/EmailIcon';
 import PasswordIcon from '../icons/PasswordIcon';
 import Image from 'next/image';
 import Google from '../../public/Google__G__Logo.svg.png';
-import Twitter from '../../public/twitter2.png';
+import Github from '../../public/github.png';
 
 export default function Login({
   setServerError,
@@ -54,6 +54,16 @@ export default function Login({
   async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+    });
+    if (error) console.log(error);
+  }
+
+  async function signInWithGitHub() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        scopes: 'user',
+      },
     });
   }
   return (
@@ -141,7 +151,7 @@ export default function Login({
            active:shadow-sm
            active:bg-frost-800
            font-bold 
-           py-2 
+           py-2
            w-9
            rounded-2xl 
            tracking-widest 
@@ -177,8 +187,14 @@ export default function Login({
             flex justify-center
             hover:cursor-pointer
            `}
+            onClick={() => signInWithGitHub()}
           >
-            <Image className="w-6 " src={Twitter} alt="Twitter" priority />
+            <Image
+              className="w-6 rounded-3xl"
+              src={Github}
+              alt="Github"
+              priority
+            />
           </div>
         </div>
       </div>
