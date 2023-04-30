@@ -2,6 +2,7 @@ import { useEffect, RefObject, useRef, useState } from 'react';
 import styles from '@/styles/Livekit.module.css';
 import { KeyboardEventHandler } from 'react';
 import { createPortal } from 'react-dom';
+import ReactPlayer from 'react-player/file';
 
 export default function Modal({
   modalRef,
@@ -28,10 +29,22 @@ export default function Modal({
 
   if (!showModal) return null;
 
+  //TODO: detect screen size with js and set min-h/w accordingly
+
   return mounted && ref.current
     ? createPortal(
         <>
-          <div className="fixed z-50 top-[0px] left-[0px] right-[0px] bottom-[0px] bg-frost-900 opacity-50"></div>
+          <ReactPlayer
+            url="./Render_4.mp4"
+            className="mix-blend-multiply fixed z-50 top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] min-w-[90%] min-h-[90%] w-full h-full opacity-95"
+            playing={true}
+          />
+          <ReactPlayer
+            url="./Render_5.mp4"
+            className="mix-blend-multiply fixed z-50 top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] min-w-[2920px] min-h-[2080px] w-full h-full"
+            playing={true}
+          />
+
           <div
             className="rounded-lg fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50"
             onKeyDown={onKeyDown}
