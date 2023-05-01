@@ -21,12 +21,13 @@ export default function Modal({
 }) {
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState(false);
-
+  const [render, setRender] = useState(showModal);
+  console.log(render);
   const ref2 = useRef(null);
 
   const [videoStatus, setVideoStatus] = useState<
-    'play' | 'pause' | 'playAfter'
-  >('play');
+    'play' | 'pause' | 'playAfter' | 'ended' | 'not started'
+  >('not started');
 
   useEffect(() => {
     ref.current = document.querySelector<HTMLElement>('#modalPortal');
@@ -34,16 +35,27 @@ export default function Modal({
   }, []);
 
   useEffect(() => {
-    if (!showModal) {
-      setVideoStatus('pause');
-    } else {
+    if (showModal && render) {
       setVideoStatus('play');
     }
-  }, [showModal]);
 
-  if (!showModal) return null;
+    if (showModal && !render) {
+      setRender(true);
+    }
 
-  //TODO: make both close via appropriate buttons, blur background. Start adding button frostpunk styles? Make smaller modal work (add graphic for it)
+    if (!showModal && render) {
+      setVideoStatus('playAfter');
+    }
+  }, [render, showModal]);
+
+  if (
+    videoStatus !== 'play' &&
+    videoStatus !== 'pause' &&
+    videoStatus !== 'playAfter'
+  )
+    return null;
+
+  //TODO:  blur background. Start adding button frostpunk styles? Make smaller modal work (add graphic for it)
 
   return mounted && ref.current
     ? createPortal(
@@ -59,6 +71,7 @@ export default function Modal({
               if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
                 setVideoStatus('pause');
             }}
+            onEnded={() => setVideoStatus('ended')}
           />
           <ReactPlayer
             url="./secondaryFull.mp4"
@@ -70,6 +83,7 @@ export default function Modal({
               if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
                 setVideoStatus('pause');
             }}
+            onEnded={() => setVideoStatus('ended')}
           />
 
           <div
@@ -79,7 +93,7 @@ export default function Modal({
             <div className="bg-grey-900 p-4 rounded-lg  z-50 ">
               <div className="text-2xl font-bold tracking-wider">{title}</div>
               <div className="px-2 pt-4 pb-4 flex flex-col">{content}</div>
-              <div onClick={() => setVideoStatus('playAfter')}>play</div>
+              <div onClick={() => setVideoStatus('play')}>play</div>
               <div className=" border-t-2 mx-5 border-grey-700"></div>
               <div className="flex justify-end space-x-5 items-center mt-4">
                 {buttons}
