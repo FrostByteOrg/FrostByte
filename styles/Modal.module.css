@@ -1,0 +1,55 @@
+@media only screen and (max-width: 1280px) {
+  .bigModal {
+    min-width: 1280px;
+    min-height: 1080px;
+  }
+
+  .bigModalSecondary {
+    min-width: 2580px;
+    min-height: 2080px;
+  }
+}
+
+@media only screen and (min-width: 1280px) {
+  .bigModal {
+    min-width: 1680px;
+    min-height: 1080px;
+  }
+  .bigModalSecondary {
+    min-width: 2980px;
+    min-height: 2280px;
+  }
+}
+
+@media only screen and (min-width: 1680px) {
+  .bigModal {
+    min-width: 1780px;
+    min-height: 1080px;
+  }
+  .bigModalSecondary {
+    min-width: 3580px;
+    min-height: 2580px;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .bigModal {
+    min-width: 1920px;
+    min-height: 1080px;
+  }
+  .bigModalSecondary {
+    min-width: 3980px;
+    min-height: 2580px;
+  }
+}
+
+@media only screen and (min-width: 2120px) {
+  .bigModal {
+    min-width: 2320px;
+    min-height: 1380px;
+  }
+  .bigModalSecondary {
+    min-width: 4480px;
+    min-height: 2580px;
+  }
+}
