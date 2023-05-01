@@ -349,7 +349,7 @@ export async function updateServerIcon(
 ) {
   const { data, error } = await supabase.storage
     .from('servericons')
-    .update(filePath, image, { upsert: true, cacheControl: '1' });
+    .upload(filePath, image, { upsert: true, cacheControl: '1' });
 
   const publicURL = supabase.storage
     .from('servericons')
