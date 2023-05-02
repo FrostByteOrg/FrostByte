@@ -22,9 +22,8 @@ export default function Modal({
 }) {
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [render, setRender] = useState(showModal);
-  console.log(render);
-  const ref2 = useRef(null);
+  const [firstRender, setFirstRender] = useState(showModal);
+
   const setIsModalOpen = useSetModalOpen();
 
   const [videoStatus, setVideoStatus] = useState<
@@ -37,21 +36,19 @@ export default function Modal({
   }, []);
 
   useEffect(() => {
-    if (showModal && render) {
+    if (showModal && firstRender) {
       setVideoStatus('play');
       setIsModalOpen(true);
     }
 
-    if (showModal && !render) {
-      setRender(true);
+    if (showModal && !firstRender) {
+      setFirstRender(true);
     }
 
-    if (!showModal && render) {
+    if (!showModal && firstRender) {
       setVideoStatus('playAfter');
     }
-  }, [render, setIsModalOpen, showModal]);
-
-  //if status == ended, setModalOpen
+  }, [firstRender, setIsModalOpen, showModal]);
 
   useEffect(() => {
     if (videoStatus == 'ended') {
@@ -66,12 +63,12 @@ export default function Modal({
   )
     return null;
 
-  //TODO:  blur background. Start adding button frostpunk styles? Make smaller modal work (add graphic for it)
+  //TODO: Start adding button frostpunk styles? Make smaller modal work (add graphic for it)
 
   return mounted && ref.current
     ? createPortal(
         <>
-          <ReactPlayer
+          {/* <ReactPlayer
             ref={ref2}
             url="./mainFull.mp4"
             className={`${styles.bigModal} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-95`}
@@ -95,6 +92,18 @@ export default function Modal({
                 setVideoStatus('pause');
             }}
             onEnded={() => setVideoStatus('ended')}
+          /> */}
+          <ReactPlayer
+            url="./smallFull.mp4"
+            className={`${styles.smallModal} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full  `}
+            playing={
+              videoStatus == 'play' || videoStatus == 'playAfter' ? true : false
+            }
+            onProgress={({ playedSeconds }) => {
+              if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
+                setVideoStatus('pause');
+            }}
+            onEnded={() => setVideoStatus('ended')}
           />
 
           <div
@@ -104,7 +113,6 @@ export default function Modal({
             <div className="bg-grey-900 p-4 rounded-lg  z-50 ">
               <div className="text-2xl font-bold tracking-wider">{title}</div>
               <div className="px-2 pt-4 pb-4 flex flex-col">{content}</div>
-              <div onClick={() => setVideoStatus('play')}>play</div>
               <div className=" border-t-2 mx-5 border-grey-700"></div>
               <div className="flex justify-end space-x-5 items-center mt-4">
                 {buttons}

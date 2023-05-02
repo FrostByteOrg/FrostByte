@@ -8,6 +8,11 @@
     min-width: 2580px;
     min-height: 2080px;
   }
+
+  .smallModal {
+    min-width: 1280px;
+    min-height: 1080px;
+  }
 }
 
 @media only screen and (min-width: 1280px) {

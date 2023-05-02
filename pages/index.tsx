@@ -18,6 +18,7 @@ import {
 import { useSetChannel } from '@/lib/store';
 import { getChannelById } from '@/services/channels.service';
 import Modal from '@/components/home/modals/Modal';
+import { useSetModalOpen } from '@/lib/store';
 
 export default function Home() {
   const user = useUser();
@@ -38,6 +39,7 @@ export default function Home() {
   const [livekitError, setLivekitError] = useState<Error | null>(null);
   const getAllServerProfilesForServer = useGetAllServerUserProfiles();
   const modalRef = useRef<HTMLDialogElement>(null);
+  const setIsModalOpen = useSetModalOpen();
 
   const checkMobile = useMediaQuery({ query: '(max-width: 940px)' });
   //TODO: Server list view, create server form, Server view, create server invite form, join server via invite
@@ -51,12 +53,17 @@ export default function Home() {
 
   useEffect(() => {
     setIsMobile(checkMobile);
-  }, [checkMobile]);
+    setIsModalOpen(false);
+  }, [checkMobile, setIsModalOpen]);
 
   const handleDisconnect = () => {
     setConnect(false);
     setConnected(false);
   };
+
+  useEffect(() => {
+    setIsModalOpen(false);
+  }, [isMobile, setIsModalOpen]);
 
   useEffect(() => {
     if (!channel_id) {
@@ -82,11 +89,16 @@ export default function Home() {
       if (!isNaN(server_id_as_number)) {
         getAllServerProfilesForServer(supabase, server_id_as_number);
       }
-
     }
 
     handleAsync();
-  }, [channel_id, setChannel, supabase, server_id, getAllServerProfilesForServer]);
+  }, [
+    channel_id,
+    setChannel,
+    supabase,
+    server_id,
+    getAllServerProfilesForServer,
+  ]);
 
   return (
     <>
