@@ -106,7 +106,7 @@ export default function RenderDesktopView() {
                 className="w-7 h-7 hover:text-grey-400"
                 onClick={() => setDeafenRoom(true)}
               >
-                <HeadPhonesIcon width={5} height={5}/>
+                <HeadPhonesIcon width={5} height={5} />
               </button>
             )}
             {connectionState !== ConnectionState.Connected ? (
@@ -117,7 +117,7 @@ export default function RenderDesktopView() {
                     className="w-7 h-7 hover:text-grey-400"
                     onClick={() => settingsRef(false)}
                   >
-                    <MicrophoneIcon width={5} height={5}/>
+                    <MicrophoneIcon width={5} height={5} />
                   </button>
                 ) : (
                   <button
@@ -136,7 +136,7 @@ export default function RenderDesktopView() {
                 onClick={() => settingsRef(false)}
               >
                 {audioTrack.isMicrophoneEnabled ? (
-                  <MicrophoneIcon width={5} height={5}/>
+                  <MicrophoneIcon width={5} height={5} />
                 ) : (
                   <MicrophoneOff width={5} height={5} />
                 )}

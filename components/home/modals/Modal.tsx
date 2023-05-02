@@ -3,6 +3,7 @@ import styles from '@/styles/Modal.module.css';
 import { KeyboardEventHandler } from 'react';
 import { createPortal } from 'react-dom';
 import ReactPlayer from 'react-player/file';
+import { useSetModalOpen } from '@/lib/store';
 
 export default function Modal({
   modalRef,
@@ -24,6 +25,7 @@ export default function Modal({
   const [render, setRender] = useState(showModal);
   console.log(render);
   const ref2 = useRef(null);
+  const setIsModalOpen = useSetModalOpen();
 
   const [videoStatus, setVideoStatus] = useState<
     'play' | 'pause' | 'playAfter' | 'ended' | 'not started'
@@ -37,6 +39,7 @@ export default function Modal({
   useEffect(() => {
     if (showModal && render) {
       setVideoStatus('play');
+      setIsModalOpen(true);
     }
 
     if (showModal && !render) {
@@ -46,7 +49,15 @@ export default function Modal({
     if (!showModal && render) {
       setVideoStatus('playAfter');
     }
-  }, [render, showModal]);
+  }, [render, setIsModalOpen, showModal]);
+
+  //if status == ended, setModalOpen
+
+  useEffect(() => {
+    if (videoStatus == 'ended') {
+      setIsModalOpen(false);
+    }
+  }, [setIsModalOpen, videoStatus]);
 
   if (
     videoStatus !== 'play' &&
@@ -87,7 +98,7 @@ export default function Modal({
           />
 
           <div
-            className="rounded-lg fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50"
+            className="rounded-lg fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50 "
             onKeyDown={onKeyDown}
           >
             <div className="bg-grey-900 p-4 rounded-lg  z-50 ">

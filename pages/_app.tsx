@@ -10,6 +10,7 @@ import { useState } from 'react';
 import 'highlight.js/styles/nord.css';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ChatCtxProvider } from '@/context/ChatCtx';
+import { useIsModalOpen } from '@/lib/store';
 
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
@@ -22,6 +23,7 @@ function App({
   const [supabaseClient] = useState(() =>
     createBrowserSupabaseClient<Database>()
   );
+  const isModalOpen = useIsModalOpen();
 
   return (
     <SessionContextProvider
@@ -30,7 +32,9 @@ function App({
     >
       <ToastContainer />
       <ChatCtxProvider>
-        <main className={sourceSans3.className}>
+        <main
+          className={`${sourceSans3.className} ${isModalOpen ? 'blur-sm' : ''}`}
+        >
           <Component {...pageProps} />
         </main>
       </ChatCtxProvider>
