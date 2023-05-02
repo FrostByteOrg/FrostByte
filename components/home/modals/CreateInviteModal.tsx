@@ -61,6 +61,7 @@ export default function CreateInviteModal({
 
   return (
     <Modal
+      size="small"
       modalRef={modalRef}
       showModal={showModal}
       title={'Create invite link'}

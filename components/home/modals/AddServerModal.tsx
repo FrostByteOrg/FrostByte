@@ -46,8 +46,7 @@ export default function AddServerModal({
     if (error) {
       if ((error as PostgrestError).message) {
         setServerError((error as PostgrestError).message);
-      }
-      else {
+      } else {
         setServerError(error as string);
       }
 
@@ -68,8 +67,7 @@ export default function AddServerModal({
       if (serverImgError) {
         if ((serverImgError as PostgrestError).message) {
           setServerError((serverImgError as PostgrestError).message);
-        }
-        else {
+        } else {
           setServerError(error as string);
         }
 
@@ -84,8 +82,7 @@ export default function AddServerModal({
       setSetShowDesc(false);
       reset();
       setShowModal(false);
-    }
-    else {
+    } else {
       addServerRef.current?.close();
       setServerImage(null);
       setSetShowDesc(false);
@@ -96,14 +93,14 @@ export default function AddServerModal({
 
   return (
     <Modal
+      size="big"
       modalRef={addServerRef}
       showModal={showModal}
       title={'Create a new Server'}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           handleSubmit(onSubmit)();
-        }
-        else if (e.key === 'Escape') {
+        } else if (e.key === 'Escape') {
           addServerRef.current?.close();
           setServerImage(null);
           setSetShowDesc(false);

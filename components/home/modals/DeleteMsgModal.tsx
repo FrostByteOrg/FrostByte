@@ -6,7 +6,11 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Components.module.css';
 import { useEffect } from 'react';
 import Modal from '@/components/home/modals/Modal';
-import { Message, MessageWithServerProfile, ServerUserProfile } from '@/types/dbtypes';
+import {
+  Message,
+  MessageWithServerProfile,
+  ServerUserProfile,
+} from '@/types/dbtypes';
 
 export default function DeleteMsgModal({
   showModal,
@@ -27,6 +31,7 @@ export default function DeleteMsgModal({
 
   return (
     <Modal
+      size="small"
       modalRef={modalRef}
       showModal={showModal}
       title="Are you sure you want to delete this message?"

@@ -10,7 +10,7 @@
   }
 
   .smallModal {
-    min-width: 1280px;
+    min-width: 1480px;
     min-height: 1080px;
   }
 }
@@ -23,6 +23,10 @@
   .bigModalSecondary {
     min-width: 2980px;
     min-height: 2280px;
+  }
+  .smallModal {
+    min-width: 1780px;
+    min-height: 1280px;
   }
 }
 

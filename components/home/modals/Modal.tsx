@@ -12,6 +12,7 @@ export default function Modal({
   children: content,
   buttons,
   onKeyDown = undefined,
+  size,
 }: {
   modalRef?: RefObject<HTMLDialogElement>;
   showModal: boolean;
@@ -19,6 +20,7 @@ export default function Modal({
   children: JSX.Element;
   buttons: JSX.Element;
   onKeyDown?: KeyboardEventHandler<HTMLDivElement> | undefined;
+  size: 'small' | 'big';
 }) {
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -68,43 +70,54 @@ export default function Modal({
   return mounted && ref.current
     ? createPortal(
         <>
-          {/* <ReactPlayer
-            ref={ref2}
-            url="./mainFull.mp4"
-            className={`${styles.bigModal} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-95`}
-            playing={
-              videoStatus == 'play' || videoStatus == 'playAfter' ? true : false
-            }
-            onProgress={({ playedSeconds }) => {
-              if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
-                setVideoStatus('pause');
-            }}
-            onEnded={() => setVideoStatus('ended')}
-          />
-          <ReactPlayer
-            url="./secondaryFull.mp4"
-            className={`${styles.bigModalSecondary} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-[0.9] `}
-            playing={
-              videoStatus == 'play' || videoStatus == 'playAfter' ? true : false
-            }
-            onProgress={({ playedSeconds }) => {
-              if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
-                setVideoStatus('pause');
-            }}
-            onEnded={() => setVideoStatus('ended')}
-          /> */}
-          <ReactPlayer
-            url="./smallFull.mp4"
-            className={`${styles.smallModal} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full  `}
-            playing={
-              videoStatus == 'play' || videoStatus == 'playAfter' ? true : false
-            }
-            onProgress={({ playedSeconds }) => {
-              if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
-                setVideoStatus('pause');
-            }}
-            onEnded={() => setVideoStatus('ended')}
-          />
+          {size == 'big' ? (
+            <>
+              <ReactPlayer
+                url="./mainFull.mp4"
+                className={`${styles.bigModal} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-95`}
+                playing={
+                  videoStatus == 'play' || videoStatus == 'playAfter'
+                    ? true
+                    : false
+                }
+                onProgress={({ playedSeconds }) => {
+                  if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
+                    setVideoStatus('pause');
+                }}
+                onEnded={() => setVideoStatus('ended')}
+              />
+              <ReactPlayer
+                url="./secondaryFull.mp4"
+                className={`${styles.bigModalSecondary} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-[0.9] `}
+                playing={
+                  videoStatus == 'play' || videoStatus == 'playAfter'
+                    ? true
+                    : false
+                }
+                onProgress={({ playedSeconds }) => {
+                  if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
+                    setVideoStatus('pause');
+                }}
+                onEnded={() => setVideoStatus('ended')}
+              />
+            </>
+          ) : null}
+          {size == 'small' ? (
+            <ReactPlayer
+              url="./smallFull.mp4"
+              className={`${styles.smallModal} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-52%]  w-full h-full  `}
+              playing={
+                videoStatus == 'play' || videoStatus == 'playAfter'
+                  ? true
+                  : false
+              }
+              onProgress={({ playedSeconds }) => {
+                if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
+                  setVideoStatus('pause');
+              }}
+              onEnded={() => setVideoStatus('ended')}
+            />
+          ) : null}
 
           <div
             className="rounded-lg fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50 "
