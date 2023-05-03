@@ -4,6 +4,7 @@ import { KeyboardEventHandler } from 'react';
 import { createPortal } from 'react-dom';
 import ReactPlayer from 'react-player/file';
 import { useSetModalOpen } from '@/lib/store';
+import Button from '@/components/svgs/Button';
 
 export default function Modal({
   modalRef,
@@ -65,7 +66,7 @@ export default function Modal({
   )
     return null;
 
-  //TODO: Start adding button frostpunk styles? Make smaller modal work (add graphic for it)
+  //TODO: Start adding button frostpunk styles?
 
   return mounted && ref.current
     ? createPortal(
@@ -123,13 +124,11 @@ export default function Modal({
             className="rounded-lg fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50 "
             onKeyDown={onKeyDown}
           >
-            <div className="bg-grey-900 p-4 rounded-lg  z-50 ">
+            <div className="p-4 rounded-lg z-50 ">
               <div className="text-2xl font-bold tracking-wider">{title}</div>
               <div className="px-2 pt-4 pb-4 flex flex-col">{content}</div>
               <div className=" border-t-2 mx-5 border-grey-700"></div>
-              <div className="flex justify-end space-x-5 items-center mt-4">
-                {buttons}
-              </div>
+              {buttons}
             </div>
           </div>
         </>,
