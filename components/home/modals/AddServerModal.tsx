@@ -113,18 +113,19 @@ export default function AddServerModal({
         <>
           <div className="flex flex-col justify-end items-center mt-4">
             <div
-              className=" py-2 px-5 rounded-lg hover:cursor-pointer "
+              className=" py-2 px-5 rounded-lg hover:cursor-pointer relative"
               onClick={() => {
                 handleSubmit(onSubmit)();
               }}
             >
               <Button
-                fill1="hsla(198, 80%, 45%,0.4)"
+                fill1="hsla(198, 80%, 45%,0.6)"
                 fill2="hsla(198, 80%, 45%,0.08)"
+                text="SUBMIT"
               />
             </div>
             <div
-              className="hover:underline hover:cursor-pointer"
+              className=" hover:cursor-pointer relative"
               onClick={() => {
                 setServerImage(null);
                 setShowModal(false);
@@ -134,9 +135,10 @@ export default function AddServerModal({
               }}
             >
               <Button
-                fill1="hsla(198, 70%, 55%,0.1)"
+                fill1="hsla(198, 70%, 55%,0.15)"
                 fill2="hsla(198, 70%, 55%,0.01)"
                 stroke2Opacity={0.8}
+                text="CANCEL"
               />
             </div>
           </div>

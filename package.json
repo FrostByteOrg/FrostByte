@@ -30,6 +30,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "eslint-config-next": "13.1.2",
+    "framer-motion": "^10.12.7",
     "highlight.js": "^11.7.0",
     "jsonwebtoken": "^9.0.0",
     "livekit": "^0.0.1",
