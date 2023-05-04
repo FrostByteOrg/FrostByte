@@ -111,9 +111,9 @@ export default function AddServerModal({
       }}
       buttons={
         <>
-          <div className="flex flex-col justify-end items-center mt-4">
+          <div className="flex flex-col justify-end items-center mt-4 space-y-4">
             <div
-              className=" py-2 px-5 rounded-lg hover:cursor-pointer relative"
+              className=" rounded-lg hover:cursor-pointer relative"
               onClick={() => {
                 handleSubmit(onSubmit)();
               }}
