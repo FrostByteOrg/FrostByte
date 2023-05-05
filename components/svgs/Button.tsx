@@ -10,12 +10,20 @@ export default function Button({
   stroke1Opacity = 0.6,
   stroke2Opacity = 1,
   text = '',
+  initX = 0,
+  initY = 0,
+  x = 0,
+  y = 0,
 }: {
   fill1?: string;
   fill2?: string;
   stroke1Opacity?: number;
   stroke2Opacity?: number;
   text?: string;
+  initX?: number;
+  initY?: number;
+  x?: number;
+  y?: number;
 }) {
   const [scope1, animate1] = useAnimate();
   const [scope2, animate2] = useAnimate();
@@ -33,7 +41,7 @@ export default function Button({
         animate2(scope2.current, { opacity: 1 }, { duration: 3 });
         animateParent(
           scopeParent.current,
-          { y: 0, x: 0, scale: 1 },
+          { y: y, x: x, scale: 1 },
           { duration: 3 }
         );
         animateText(
@@ -63,33 +71,35 @@ export default function Button({
     scope2,
     scopeParent,
     scopeText,
+    x,
+    y,
   ]);
-
-  //TODO: to fix hover color issue (over text its not doing it right)... wrap the svg and text in a parent div and apply the event listeners/callbacks on that div
 
   return (
     <>
-      <div className="relative z-50">
+      <motion.div
+        className="relative z-50"
+        onHoverStart={() => {
+          animate1(scope1.current, { fill: 'hsla(198, 80%, 45%,0.6)' });
+          animate2(scope2.current, { fill: 'hsla(198, 80%, 45%,0.1)' });
+          setIsHovered(true);
+        }}
+        onHoverEnd={() => {
+          animate1(scope1.current, { fill: 'hsla(198, 70%, 55%,0.15)' });
+          animate2(scope2.current, { fill: 'hsla(198, 70%, 55%,0.015)' });
+          setIsHovered(false);
+        }}
+        ref={scopeParent}
+        initial={{ x: initX, y: initY, scale: 0.9 }}
+      >
         <motion.svg
-          ref={scopeParent}
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
           viewBox="0 0 612 61"
           width={612}
           height={61}
-          onHoverStart={() => {
-            animate1(scope1.current, { fill: 'hsla(198, 80%, 45%,0.6)' });
-            animate2(scope2.current, { fill: 'hsla(198, 80%, 45%,0.1)' });
-            setIsHovered(true);
-          }}
-          onHoverEnd={() => {
-            animate1(scope1.current, { fill: 'hsla(198, 70%, 55%,0.15)' });
-            animate2(scope2.current, { fill: 'hsla(198, 70%, 55%,0.015)' });
-            setIsHovered(false);
-          }}
           className=" relative"
-          initial={{ x: 40, y: 40, scale: 0.8 }}
         >
           <motion.path
             className="st0 z-20"
@@ -110,42 +120,42 @@ export default function Button({
         </motion.svg>
         <motion.div
           ref={scopeText}
-          initial={{ x: 290, y: 0, scale: 0.9, opacity: 0 }}
+          initial={{ x: 290, y: -35, scale: 1, opacity: 0 }}
           className="absolute text-2xl tracking-widest "
         >
           {text}
         </motion.div>
         {isHovered ? (
           <div className="absolute z-10 ">
-            <Clover initY={-40} y={-40} initX={0} x={-40} rotate={180} />
+            <Clover initY={-40} y={-40} initX={0} x={-35} rotate={180} />
           </div>
         ) : null}
         {isHovered ? (
           <div className="absolute z-10 ">
-            <Clover initY={-40} y={-40} initX={590} x={630} />
+            <Clover initY={-40} y={-40} initX={590} x={625} />
           </div>
         ) : null}
-      </div>
-      <div className="absolute z-10 ">
-        <ButtonDetail
-          initX={60}
-          x={60}
-          initY={-76}
-          y={-76}
-          isHovered={isHovered}
-          hoveredX={110}
-        />
-      </div>
-      <div className="absolute z-10 ">
-        <ButtonDetail
-          initX={500}
-          x={500}
-          initY={-16}
-          y={-16}
-          isHovered={isHovered}
-          hoveredX={450}
-        />
-      </div>
+        <div className="absolute z-50 ">
+          <ButtonDetail
+            initX={110}
+            x={60}
+            initY={-75}
+            y={-76}
+            isHovered={isHovered}
+            hoveredX={110}
+          />
+        </div>
+        <div className="absolute z-50 ">
+          <ButtonDetail
+            initX={500}
+            x={500}
+            initY={-16}
+            y={-16}
+            isHovered={isHovered}
+            hoveredX={450}
+          />
+        </div>
+      </motion.div>
     </>
   );
 }

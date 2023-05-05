@@ -12,6 +12,11 @@ import {
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { PostgrestError } from '@supabase/supabase-js';
 import Button from '@/components/svgs/Button';
+import { Roboto_Slab } from 'next/font/google';
+
+const robotoSlab = Roboto_Slab({
+  subsets: ['latin'],
+});
 
 export default function AddServerModal({
   showModal,
@@ -111,7 +116,9 @@ export default function AddServerModal({
       }}
       buttons={
         <>
-          <div className="flex flex-col justify-end items-center mt-4 space-y-4">
+          <div
+            className={`${robotoSlab.className} flex flex-col justify-end items-center mt-4 space-y-4`}
+          >
             <div
               className=" rounded-lg hover:cursor-pointer relative"
               onClick={() => {
@@ -122,6 +129,8 @@ export default function AddServerModal({
                 fill1="hsla(198, 80%, 45%,0.6)"
                 fill2="hsla(198, 80%, 45%,0.08)"
                 text="SUBMIT"
+                initX={40}
+                initY={40}
               />
             </div>
             <div
@@ -139,6 +148,9 @@ export default function AddServerModal({
                 fill2="hsla(198, 70%, 55%,0.01)"
                 stroke2Opacity={0.8}
                 text="CANCEL"
+                initX={80}
+                initY={40}
+                x={60}
               />
             </div>
           </div>

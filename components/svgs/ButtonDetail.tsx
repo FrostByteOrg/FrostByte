@@ -22,7 +22,7 @@ export default function ButtonDetail({
   useEffect(() => {
     if (isPresent) {
       const enterAnimation = async () => {
-        animate(scope.current, { opacity: 1, x: x, y: y }, { duration: 0.5 });
+        animate(scope.current, { opacity: 1, x: x, y: y }, { duration: 3 });
       };
       enterAnimation();
     }

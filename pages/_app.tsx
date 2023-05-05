@@ -2,7 +2,7 @@ import '@/styles/globals.css';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider, Session } from '@supabase/auth-helpers-react';
 import { AppProps } from 'next/app';
-import { Source_Sans_3 } from '@next/font/google';
+import { Source_Sans_3 } from 'next/font/google';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Database } from '@/types/database.supabase';
