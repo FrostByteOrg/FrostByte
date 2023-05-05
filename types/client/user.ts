@@ -17,3 +17,10 @@ export const createUserSchema = object({
 });
 
 export type CreateUserInput = TypeOf<typeof createUserSchema>;
+
+export const updateUserSchema = object({
+  full_name: string().nullable(),
+  website: z.string().nullable(),
+});
+
+export type UpdateUserInput = TypeOf<typeof updateUserSchema>;

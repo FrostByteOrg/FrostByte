@@ -1,6 +1,6 @@
 import CameraIcon from '@/components/icons/CameraIcon';
 import { Input } from './Styles';
-import styles from '@/styles/Livekit.module.css';
+import styles from '@/styles/Modal.module.css';
 import PlusIcon from '@/components/icons/PlusIcon';
 import {
   useRef,
@@ -10,7 +10,17 @@ import {
   useEffect,
 } from 'react';
 import Image from 'next/image';
-import { FieldErrorsImpl, useForm, UseFormRegister } from 'react-hook-form';
+import {
+  FieldErrorsImpl,
+  useForm,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from 'react-hook-form';
+import { Server } from '@/types/dbtypes';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { CreateServerInput } from '@/types/client/server';
+import { updateServer } from '@/services/server.service';
+import { PostgrestError } from '@supabase/supabase-js';
 
 export default function AddServer({
   serverImage,
@@ -20,12 +30,16 @@ export default function AddServer({
   serverError,
   showDesc,
   setShowDesc,
+  server,
+  handleSubmit,
+  setServerError,
+  type,
 }: {
   serverImage: File | null;
   setServerImage: Dispatch<SetStateAction<File | null>>;
   register: UseFormRegister<{
     name: string;
-    description?: string | undefined;
+    description?: string | undefined | null;
   }>;
   errors: Partial<
     FieldErrorsImpl<{
@@ -36,6 +50,13 @@ export default function AddServer({
   serverError: string;
   showDesc: boolean;
   setShowDesc: Dispatch<SetStateAction<boolean>>;
+  server?: Server | null;
+  handleSubmit?: UseFormHandleSubmit<{
+    description?: string | undefined | null;
+    name: string;
+  }>;
+  setServerError?: Dispatch<SetStateAction<string>>;
+  type?: 'add' | 'edit';
 }) {
   const imageRef = useRef<HTMLInputElement | null>(null);
 
@@ -46,7 +67,10 @@ export default function AddServer({
 
     setServerImage(e.target.files[0]);
   };
-  const previewImage = serverImage ? URL.createObjectURL(serverImage) : '';
+
+  let previewImage = server?.image_url ? server.image_url : '';
+
+  if (serverImage) previewImage = URL.createObjectURL(serverImage);
 
   return (
     <form
@@ -62,15 +86,15 @@ export default function AddServer({
       )}
       <div
         className={`${
-          serverImage
+          serverImage || server?.image_url
             ? 'p-4'
             : 'w-9 py-4 px-7 border-dashed border-2 border-grey-600'
         }  flex items-center rounded-lg justify-center  self-center relative hover:cursor-pointer`}
         onClick={() => imageRef?.current?.click()}
       >
         <div className="flex flex-col justify-center items-center">
-          {serverImage ? (
-            <Image alt="serverIcon" src={previewImage} width={50} height={50} />
+          {serverImage || server?.image_url ? (
+            <img alt="serverIcon" src={previewImage} width={50} height={50} />
           ) : (
             <>
               <CameraIcon />

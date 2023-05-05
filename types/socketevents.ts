@@ -1,4 +1,4 @@
-import { Channel, Message, Server, UnsavedMessage, User } from './dbtypes';
+import { Channel, Message, Server, UnsavedMessage, Profile } from './dbtypes';
 
 export interface SocketClientEvents {
   // User online status events
@@ -27,8 +27,8 @@ export interface SocketServerEvents {
   // As servers are invite only
   serverBroadcastServerUpdated: (server: Server) => void;
   serverBroadcastServerDeleted: (server: Server) => void;
-  serverBroadcastUserJoin: (user: User, server: Server) => void;
-  serverBroadcastUserLeave: (user: User, server: Server) => void;
+  serverBroadcastUserJoin: (user: Profile, server: Server) => void;
+  serverBroadcastUserLeave: (user: Profile, server: Server) => void;
 
   // Channel events
   // Since channels can be created while other users are in the server, we need to broadcast creation as well
@@ -37,5 +37,5 @@ export interface SocketServerEvents {
   serverBroadcastChannelDeleted: (channel: Channel) => void;
 
   // User events
-  serverBroadcastUserUpdated: (user: User) => void;
+  serverBroadcastUserUpdated: (user: Profile) => void;
 }

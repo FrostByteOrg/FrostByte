@@ -3,7 +3,6 @@ import {
   useSetRoomServerName,
   useServers,
   useSetConnectionState,
-  useConnectionRef,
   useSetUserSettings,
   useUserSettings,
 } from '@/lib/store';
@@ -17,12 +16,12 @@ import { ConnectionQuality, ConnectionState, Track } from 'livekit-client';
 import { ConnectionQuality as _ConnQual } from 'livekit-server-sdk/dist/proto/livekit_models';
 import { useEffect } from 'react';
 import mediaStyle from '@/styles/Livekit.module.css';
-import ConnectionIcon from '../../icons/ConnectionIcon';
-import CameraOffIcon from '../../icons/CameraOffIcon';
-import CameraIcon from '../../icons/CameraIcon';
-import HangUpIcon from '../../icons/HangUpIcon';
+import ConnectionIcon from '@/components/icons/ConnectionIcon';
+import CameraOffIcon from '@/components/icons/CameraOffIcon';
+import HangUpIcon from '@/components/icons/HangUpIcon';
 import MicrophoneIcon from '@/components/icons/MicrophoneIcon';
 import MicrophoneOff from '@/components/icons/MicroPhoneOff';
+import VideoCameraIcon from '@/components/icons/VideoCameraIcon';
 
 export default function MobileCallControls() {
   const currentParticipant = useLocalParticipant();
@@ -133,7 +132,7 @@ export default function MobileCallControls() {
               </div>
             ) : (
               <div className="flex flex-row">
-                <CameraIcon width={5} height={5} className="" />
+                <VideoCameraIcon width={5} height={5} className="" />
               </div>
             )}
           </TrackToggle>

@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    domains: ['hmmdmicyvzwicpckacld.supabase.co'],
+  },
   // async rewrites() {
   //   return {
   //     //might need to change afterFiles => fallback

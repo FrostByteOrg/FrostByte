@@ -12,6 +12,7 @@ import {
   useGetServers,
   useGetUserPermsForServer,
   useServers,
+  useProfile,
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import ServerSettingsModal from './modals/ServerSettingsModal';
@@ -21,10 +22,12 @@ import SidebarCallControl from '@/components/home/SidebarCallControl';
 import { ConnectionState } from 'livekit-client';
 import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
+import EditUserModal from './modals/EditUserModal';
+import GearIcon from '../icons/GearIcon';
 
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
-
+  const [showEditUser, setShowEditUser] = useState(false);
   const [showAddServer, setShowAddServer] = useState(false);
   const [expanded, setExpanded] = useState(0);
   const [currentServer, setCurrentServer] = useState<ServersForUser | null>(
@@ -33,6 +36,8 @@ export default function ServerList() {
 
   const user = useUser();
   const supabase = useSupabaseClient();
+  const editUser = useProfile();
+
 
   const servers = useServers();
   const [filteredServers, setFilteredServers] = useState(servers);
@@ -96,8 +101,19 @@ export default function ServerList() {
           </Tooltip>
         </div>
       </div>
+      <div className={`${mediaStyle.appear}`}>
+        <EditUserModal 
+          showModal={showEditUser} 
+          setShowModal={setShowEditUser} 
+          user={editUser}/>
+        <button 
+          className="w-7 h-7 hover:text-grey-400"
+          onClick={() => {setShowEditUser(true);}}>
+          <GearIcon width={6} height={6}/>
+        </button>
+      </div>
       {connectionState === ConnectionState.Connected && <MobileCallControls />}
-
+       
       <div className="pt-4 pb-4">
         <input
           type="text"
@@ -117,37 +133,37 @@ export default function ServerList() {
           }}
         />
       </div>
-
+        
       <div className="flex-grow overflow-y-auto ">
         {filteredServers &&
-          filteredServers
-            .sort(function (a, b) {
-              var textA = a.servers.name.toUpperCase();
-              var textB = b.servers.name.toUpperCase();
-              return textA < textB ? -1 : textA > textB ? 1 : 0;
-            })
-            .map((server, idx, serverList) => {
-              if (server) {
-                return (
-                  <span
-                    key={server.server_id}
-                    onClick={() => {
-                      return expanded !== server.server_id
-                        ? (setExpanded(server.server_id),
-                        setCurrentServer(server))
-                        : '';
-                    }}
-                  >
-                    <Server
-                      server={server.servers}
-                      expanded={expanded}
-                      isLast={idx == serverList.length - 1}
-                      setExpanded={setExpanded}
-                    />
-                  </span>
-                );
-              }
-            })}
+        filteredServers
+          .sort(function (a, b) {
+            var textA = a.servers.name.toUpperCase();
+            var textB = b.servers.name.toUpperCase();
+            return textA < textB ? -1 : textA > textB ? 1 : 0;
+          })
+          .map((server, idx, serverList) => {
+            if (server) {
+              return (
+                <span
+                  key={server.server_id}
+                  onClick={() => {
+                    return expanded !== server.server_id
+                      ? (setExpanded(server.server_id),
+                      setCurrentServer(server))
+                      : '';
+                  }}
+                >
+                  <Server
+                    server={server.servers}
+                    expanded={expanded}
+                    isLast={idx == serverList.length - 1}
+                    setExpanded={setExpanded}
+                  />
+                </span>
+              );
+            }
+          })}
       </div>
       {isInVoice && (
         <div className={`w-full self-end mb-7 ${mediaStyle.disappear}`}>
@@ -156,4 +172,5 @@ export default function ServerList() {
       )}
     </div>
   );
+  
 }

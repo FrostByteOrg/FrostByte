@@ -1,4 +1,4 @@
-import AddServer from '@/components/forms/AddServer';
+import AddServer from '@/components/forms/MutateServer';
 import Modal from '@/components/home/modals/Modal';
 import { CreateServerInput, createServerSchema } from '@/types/client/server';
 import { zodResolver } from '@hookform/resolvers/zod';

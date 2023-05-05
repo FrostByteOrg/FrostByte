@@ -1,4 +1,5 @@
 import styles from '@/styles/DesktopView.module.css';
+import modal from '@/styles/Modal.module.css';
 import NavBar from '@/components/home/NavBar';
 import { useSideBarOptionValue } from '@/context/SideBarOptionCtx';
 import FriendsList from '@/components/home/FriendsList';
@@ -8,11 +9,12 @@ import ServerList from '@/components/home/ServerList';
 import DefaultSplash from '@/components/home/DefaultSplash';
 import {
   useChannel,
-  useSetUser,
+  useProfile,
+  useSetUserProfile,
   useSetUserSettings,
   useUserSettings,
 } from '@/lib/store';
-import { Channel, User } from '@/types/dbtypes';
+import { Channel, Profile } from '@/types/dbtypes';
 import MediaChat from '@/components/home/MediaChat';
 import {
   RoomAudioRenderer,
@@ -21,15 +23,16 @@ import {
   useLocalParticipant,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
-import UserIcon from '../icons/UserIcon';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';
+import UserIcon from '../icons/UserIcon';
 import GearIcon from '../icons/GearIcon';
 import MicrophoneIcon from '../icons/MicrophoneIcon';
 import MicrophoneOff from '../icons/MicroPhoneOff';
 import HeadPhonesIcon from '../icons/HeadPhonesIcon';
 import HeadPhonesOffIcon from '../icons/HeadPhonesOffIcon';
+import EditUserModal from './modals/EditUserModal';
 
 export default function RenderDesktopView() {
   const supabase = useSupabaseClient();
@@ -42,26 +45,16 @@ export default function RenderDesktopView() {
 
   const [sideBarView, mainView] = renderContent(sideBarOption, channel);
   const [deafenRoom, setDeafenRoom] = useState(false);
-  const [user, setUser] = useState<User>();
+  const editUser = useProfile();
 
-  const userRef = useSetUser();
+  const [showEditUser, setShowEditUser] = useState(false);
+
+  const setUserRef = useSetUserProfile();
+
+  const userProfile = useProfile();
 
   const settingsRef = useSetUserSettings();
   const userSettings = useUserSettings();
-
-  useEffect(() => {
-    const handleAsync = async () => {
-      if (currentUser) {
-        const { data, error } = await getProfile(supabase, currentUser?.id);
-        if (error) {
-          console.log(error);
-        }
-        setUser(data!);
-        userRef(data!);
-      }
-    };
-    handleAsync();
-  }, [currentUser, supabase, userRef]);
 
   return (
     <div className={`${styles.container} `}>
@@ -83,17 +76,17 @@ export default function RenderDesktopView() {
       >
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row items-center ml-2 hover:bg-grey-800 py-1 px-2 rounded-lg">
-            {user && (
+            {userProfile && (
               <UserIcon
-                user={user}
+                user={userProfile}
                 indicator={true}
                 className="!mr-1 !h-6 !w-6"
               />
             )}
-            <span className="text-sm">{user?.username}</span>
+            <span className="text-sm">{userProfile?.username}</span>
           </div>
 
-          <div className="flex flex-row w-9">
+          <div className="flex flex-row w-9 mr-2">
             {deafenRoom ? (
               <button
                 className="w-7 h-7 hover:text-grey-400"
@@ -106,7 +99,7 @@ export default function RenderDesktopView() {
                 className="w-7 h-7 hover:text-grey-400"
                 onClick={() => setDeafenRoom(true)}
               >
-                <HeadPhonesIcon width={5} height={5}/>
+                <HeadPhonesIcon width={5} height={5} />
               </button>
             )}
             {connectionState !== ConnectionState.Connected ? (
@@ -117,7 +110,7 @@ export default function RenderDesktopView() {
                     className="w-7 h-7 hover:text-grey-400"
                     onClick={() => settingsRef(false)}
                   >
-                    <MicrophoneIcon width={5} height={5}/>
+                    <MicrophoneIcon width={5} height={5} />
                   </button>
                 ) : (
                   <button
@@ -136,14 +129,24 @@ export default function RenderDesktopView() {
                 onClick={() => settingsRef(false)}
               >
                 {audioTrack.isMicrophoneEnabled ? (
-                  <MicrophoneIcon width={5} height={5}/>
+                  <MicrophoneIcon width={5} height={5} />
                 ) : (
                   <MicrophoneOff width={5} height={5} />
                 )}
               </TrackToggle>
             )}
 
-            <button className="w-7 h-7 hover:text-grey-400">
+            <EditUserModal
+              showModal={showEditUser}
+              setShowModal={setShowEditUser}
+              user={editUser}
+            />
+            <button
+              className="w-7 h-7 hover:text-grey-400"
+              onClick={() => {
+                setShowEditUser(true);
+              }}
+            >
               <GearIcon width={6} height={6} />
             </button>
           </div>
