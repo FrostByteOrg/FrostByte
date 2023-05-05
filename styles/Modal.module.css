@@ -62,3 +62,11 @@
     min-height: 2580px;
   }
 }
+.userSettings {
+  width: 35;
+  height: 22rem;
+}
+
+.mediaSelect {
+  width: 11rem;
+}

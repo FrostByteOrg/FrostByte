@@ -26,15 +26,13 @@ export async function updateUserProfile(
   supabase: SupabaseClient<Database>,
   id: string,
   full_name: string,
-  avatar_url: string,
-  website: string,
+  website: string | null,
 ) {
   return await supabase
     .from('profiles')
     .update({
       full_name,
-      avatar_url,
-      website
+      website,
     })
     .eq('id', id)
     .select('*')
@@ -44,6 +42,29 @@ export async function updateUserProfile(
 type UpdateUserProfileResponse = Awaited<ReturnType<typeof updateUserProfile>>;
 export type UpdateUserProfileResponseSuccess = UpdateUserProfileResponse['data'];
 export type UpdateUserProfileResponseError = UpdateUserProfileResponse['error'];
+
+export async function updateUserAvatar(
+  supabase: SupabaseClient<Database>,
+  filePath: string,
+  image: any,
+  id: string
+){
+  const {data, error} = await supabase.storage
+    .from('avatars')
+    .upload(filePath, image, {cacheControl: '0',upsert: true});
+
+  const publicURL = supabase.storage.from('avatars').getPublicUrl(filePath);
+
+  return await supabase
+    .from('profiles')
+    .update({avatar_url: publicURL.data.publicUrl})
+    .eq('id', id)
+    .single();
+}
+
+type UpdateUserAvatarResponse = Awaited<ReturnType<typeof updateUserAvatar>>;
+export type UpdateUserAvatarResponseSuccess = UpdateUserAvatarResponse['data'];
+export type UpdateUserAvatarResponseError = UpdateUserAvatarResponse['error'];
 
 export async function addUserToServer(
   supabase: SupabaseClient<Database>,

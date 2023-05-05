@@ -4,8 +4,8 @@ export default function ChannelMessageIcon({ size = '4' }: { size?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={2}
-      stroke="currentColor"
+      strokeWidth={1}
+      stroke="white"
       className={`w-${size} h-${size}`}
     >
       <path

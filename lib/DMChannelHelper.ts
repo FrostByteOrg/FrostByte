@@ -1,12 +1,12 @@
 import { Database } from '@/types/database.supabase';
 import { DMChannelWithRecipient } from '@/types/dbtypes';
-import { User } from '@/types/dbtypes';
+import { Profile } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { createDM } from '@/services/directmessage.service';
 
 export async function getOrCreateDMChannel(
   supabase: SupabaseClient<Database>,
-  profile: User,
+  profile: Profile,
   dmChannels: Map<string, DMChannelWithRecipient>
 ) {
   // First check if we already have a DM channel with this user

@@ -1,4 +1,5 @@
 import { FrostcordSnowflake } from '@/components/icons/FrostcordSnowflake';
+import anim from '@/styles/Default.module.css';
 import { useServers } from '@/lib/store';
 
 export default function DefaultSplash() {
@@ -6,7 +7,7 @@ export default function DefaultSplash() {
   return (
     <div className="w-full h-full flex flex-col items-center">
       <FrostcordSnowflake
-        className="fill-slate-600 w-full h-full"
+        className={`fill-slate-600 w-full h-full ${anim.snowFlakeAnim}`}
         fillColor="#8a94a633"
       />
       {servers.length === 0 && (

@@ -7,7 +7,7 @@ import {
   Role,
   ServerUserProfile,
   ServersForUser,
-  User,
+  Profile,
 } from '@/types/dbtypes';
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -282,7 +282,7 @@ const useConnectionStore = create<ConnectionState>()((set) => ({
 
 export interface CurrentRoomState {
   currentRoom: Room;
-  profileMap: Map<string, User>;
+  profileMap: Map<string, Profile>;
   setCurrentRoomId: (currentRoomId: number | undefined) => void;
   setCurrentRoomName: (currentRoomName: string | undefined) => void;
   setCurrentRoomServerId: (currentRoomServerId: number | undefined) => void;
@@ -294,7 +294,7 @@ export interface CurrentRoomState {
 }
 
 const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
-  profileMap: new Map<string, User>(),
+  profileMap: new Map<string, Profile>(),
   currentRoom: {
     channel_id: undefined,
     name: undefined,
@@ -323,7 +323,7 @@ const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
   },
 
   fetchProfile: async (supabase, userId) => {
-    const profile: User | undefined = useCurrentRoomStore
+    const profile: Profile | undefined = useCurrentRoomStore
       .getState()
       .profileMap.get(userId);
 
@@ -348,20 +348,19 @@ const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
   },
 }));
 
-export interface CurrentUserState {
+export interface CurrentProfileState {
   currentSetting: boolean | undefined;
-  currentUser: User | undefined;
+  currentUserProfile: Profile | undefined;
   setCurrentSetting: (currentSetting: boolean | undefined) => void;
-  setCurrentUser: (currentUser: User | undefined) => void;
+  setCurrentUserProfile: (currentUserProfile: Profile | undefined) => void;
 }
 
-const useUserStore = create<CurrentUserState>()((set) => ({
+const useUserStore = create<CurrentProfileState>()((set) => ({
   currentSetting: false,
-  currentUser: undefined,
-  setCurrentSetting: (currenSetting) =>
-    set((state) => ({ currentSetting: currenSetting })),
-  setCurrentUser: (currentUser) =>
-    set((state) => ({ currentUser: currentUser })),
+  currentUserProfile: undefined,
+  setCurrentSetting: (currentSetting) => set((state) => ({ currentSetting })),
+  setCurrentUserProfile: (currentUser) =>
+    set((state) => ({ currentUserProfile: currentUser })),
 }));
 
 export interface RelationsState {
@@ -632,7 +631,10 @@ export interface ServerProfilesState {
   ) => void;
   stripServerUserAndRoles: (server_user_id: number) => void;
   removeServerProfile: (profile_id: string, server_id: number) => void;
-  removeProfilesForServerByServerUserId: (server_user_id: number) => void;
+  removeProfilesForServerByServerUserId: (
+    supabase: SupabaseClient<Database>,
+    server_user_id: number
+  ) => void;
 }
 
 const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
@@ -766,24 +768,52 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
     });
   },
 
-  removeProfilesForServerByServerUserId: async (server_user_id) => {
+  removeProfilesForServerByServerUserId: async (supabase, server_user_id) => {
+    const { data: user } = await supabase.auth.getUser();
     set((state) => {
       const rv = new Map(state.serverProfiles);
       let _server_id;
 
+      console.log('User: ', user);
       // Find the server user
       for (const [server_id, profiles] of rv) {
+        console.log(
+          'Searching for server user',
+          server_user_id,
+          'in server',
+          server_id,
+          '...'
+        );
         for (const [profile_id, profile] of profiles) {
+          console.log(
+            'Checking profile',
+            profile_id,
+            'with server_user_id',
+            profile.server_user?.id,
+            '...'
+          );
+
           if (!profile.server_user) {
             continue;
           }
 
           if (profile.server_user.id === server_user_id) {
+            console.log(
+              'Found server user',
+              server_user_id,
+              'in server',
+              server_id,
+              '...'
+            );
             _server_id = server_id;
-            const currChannel = useChannelStore.getState().channel;
 
-            if (currChannel && currChannel.server_id === server_id) {
-              useChannelStore.getState().setChannel(null);
+            console.table(user.user);
+            if (user.user && profile_id === user.user.id) {
+              const currChannel = useChannelStore.getState().channel;
+
+              if (currChannel && currChannel.server_id === server_id) {
+                useChannelStore.getState().setChannel(null);
+              }
             }
 
             break;
@@ -846,8 +876,10 @@ export const useSetUserSettings = () =>
   useUserStore((state) => state.setCurrentSetting);
 export const useUserSettings = () =>
   useUserStore((state) => state.currentSetting);
-export const useSetUser = () => useUserStore((state) => state.setCurrentUser);
-export const useUserRef = () => useUserStore((state) => state.currentUser);
+export const useSetUserProfile = () =>
+  useUserStore((state) => state.setCurrentUserProfile);
+export const useProfile = () =>
+  useUserStore((state) => state.currentUserProfile);
 export const useIsModalOpen = () => useModalStore((state) => state.isOpen);
 export const useSetModalOpen = () => useModalStore((state) => state.setIsOpen);
 

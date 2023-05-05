@@ -1,7 +1,7 @@
 import { OverflowMarquee } from '@/components/home/OverflowMarquee';
 import UserIcon from '@/components/icons/UserIcon';
 import { unbanUser } from '@/services/server.service';
-import { ServerBanWithProfile, User } from '@/types/dbtypes';
+import { ServerBanWithProfile, Profile } from '@/types/dbtypes';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'react-toastify';

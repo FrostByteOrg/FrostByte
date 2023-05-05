@@ -119,8 +119,8 @@ a {
 
 ::-webkit-scrollbar-track {
   background: #354045;
-  border-radius: 100vw;
-  margin-block: 0.5em;
+  /* border-radius: 100vw; */
+  /* margin-block: 0.5em; */
 }
 
 ::-webkit-scrollbar-thumb {

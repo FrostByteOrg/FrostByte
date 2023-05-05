@@ -14,6 +14,7 @@ export default function Modal({
   buttons,
   onKeyDown = undefined,
   size,
+  closeBtn = '',
 }: {
   modalRef?: RefObject<HTMLDialogElement>;
   showModal: boolean;
@@ -22,6 +23,7 @@ export default function Modal({
   buttons: JSX.Element;
   onKeyDown?: KeyboardEventHandler<HTMLDivElement> | undefined;
   size: 'small' | 'big';
+  closeBtn?: JSX.Element | '';
 }) {
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -125,7 +127,9 @@ export default function Modal({
             onKeyDown={onKeyDown}
           >
             <div className="p-4 rounded-lg z-50 ">
-              <div className="text-2xl font-bold tracking-wider">{title}</div>
+              <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
+                {title} {closeBtn}
+              </div>
               <div className="px-2 pt-4 pb-4 flex flex-col">{content}</div>
               <div className=" border-t-2 mx-5 border-grey-700"></div>
               {buttons}
