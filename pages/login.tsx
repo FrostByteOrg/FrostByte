@@ -37,7 +37,7 @@ export default function Login() {
             <div
               className={`flex flex-col w-full  items-center xl:rounded-3xl ${styles.rightSide}`}
             >
-              <div className="basis-1/4 flex items-center relative mt-8">
+              <div className="basis-1/4 flex items-center relative mt-7">
                 <Image
                   className={`rounded-full  ${styles.logo}`}
                   src="/favicon.ico"

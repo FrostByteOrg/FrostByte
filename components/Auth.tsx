@@ -22,7 +22,7 @@ export default function Auth({
         {renderAuth(type, setServerError, setAuthType)}
       </div>
       {type == 'login' ? (
-        <div className=" flex justify-center mt-9">
+        <div className=" flex justify-center mt-7">
           <div className="text-frost-600 text-lg">
             Not registered?{'  '}
             <span
@@ -65,7 +65,12 @@ function renderAuth(
         <Register setServerError={setServerError} setAuthType={setAuthType} />
       );
     case 'resetPassword':
-      return <PasswordReset setServerError={setServerError} setAuthType={setAuthType} />;
+      return (
+        <PasswordReset
+          setServerError={setServerError}
+          setAuthType={setAuthType}
+        />
+      );
     default:
       return (
         <Login setServerError={setServerError} setAuthType={setAuthType} />

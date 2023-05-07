@@ -1,6 +1,9 @@
 import { Input } from './Styles';
 import styles from '@/styles/Auth.module.css';
-import { createUpdatePasswordSchema, CreateUpdatePasswordInput } from '@/types/client/updatePassword';
+import {
+  createUpdatePasswordSchema,
+  CreateUpdatePasswordInput,
+} from '@/types/client/updatePassword';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Database } from '@/types/database.supabase';
@@ -10,7 +13,11 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import PasswordIcon from '../icons/PasswordIcon';
 
-export default function UpdatePassword({setServerError} : {setServerError: Dispatch<SetStateAction<string | null>>;}) {
+export default function UpdatePassword({
+  setServerError,
+}: {
+  setServerError: Dispatch<SetStateAction<string | null>>;
+}) {
   const router = useRouter();
   const supabase = useSupabaseClient<Database>();
 
@@ -20,12 +27,12 @@ export default function UpdatePassword({setServerError} : {setServerError: Dispa
     formState: { errors, isSubmitting },
   } = useForm<CreateUpdatePasswordInput>({
     resolver: zodResolver(createUpdatePasswordSchema),
-    mode: 'onChange'
+    mode: 'onChange',
   });
 
   const onSubmit = async (formData: CreateUpdatePasswordInput) => {
     const { data, error } = await supabase.auth.updateUser({
-      password: formData.password
+      password: formData.password,
     });
 
     if (error) {
@@ -37,25 +44,24 @@ export default function UpdatePassword({setServerError} : {setServerError: Dispa
     if (data && !error) {
       toast.success('Password successfully updated', {
         position: 'top-center',
-        autoClose: 3000
+        autoClose: 3000,
       });
       router.push('/');
     }
   };
 
-
   return (
-    <form className="flex flex-col mt-7" onSubmit={handleSubmit(onSubmit)} >
+    <form className="flex flex-col mt-7" onSubmit={handleSubmit(onSubmit)}>
       <label htmlFor="email" className="mt-6">
         New Password:
       </label>
-      <div className='mt-3  relative'>
+      <div className="mt-3  relative">
         <div className={`${errors.password ? styles.iconError : styles.icon} `}>
-          <PasswordIcon/>
+          <PasswordIcon />
         </div>
         <input
           type="password"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Enter password"
           {...register('password')}
         ></input>
@@ -72,11 +78,11 @@ export default function UpdatePassword({setServerError} : {setServerError: Dispa
             errors.passwordConfirmation ? styles.iconError : styles.icon
           } `}
         >
-          <PasswordIcon/>
+          <PasswordIcon />
         </div>
         <input
           type="password"
-          className={`${Input} ${styles.input}`}
+          className={`${Input()} ${styles.input}`}
           placeholder="Confirm password"
           {...register('passwordConfirmation')}
         ></input>
