@@ -4,7 +4,14 @@ import { KeyboardEventHandler } from 'react';
 import { createPortal } from 'react-dom';
 import ReactPlayer from 'react-player/file';
 import { useSetModalOpen } from '@/lib/store';
-import Button from '@/components/svgs/Button';
+import TitleDetail from '@/components/svgs/TitleDetail';
+import { Roboto_Slab } from 'next/font/google';
+import TitleDetailBottom from '@/components/svgs/TitleDetailBottom';
+import { motion } from 'framer-motion';
+
+const robotoSlab = Roboto_Slab({
+  subsets: ['latin'],
+});
 
 export default function Modal({
   modalRef,
@@ -122,19 +129,31 @@ export default function Modal({
             />
           ) : null}
 
-          <div
-            className="rounded-lg fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50 "
+          <motion.div
+            className={`${robotoSlab.className} fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50 `}
             onKeyDown={onKeyDown}
+            initial={{ x: -225, y: -320 }}
           >
-            <div className="p-4 rounded-lg z-50 ">
+            <div className="p-4  z-50 ">
+              <div>
+                <TitleDetail />
+              </div>
               <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
                 {title} {closeBtn}
               </div>
-              <div className="px-2 pt-4 pb-4 flex flex-col">{content}</div>
-              <div className=" border-t-2 mx-5 border-grey-700"></div>
+              <div>
+                <TitleDetailBottom />
+              </div>
+              <motion.div
+                className="px-2 pt-4 pb-4 flex flex-col"
+                initial={{ x: -35, y: 0 }}
+              >
+                {content}
+              </motion.div>
+
               {buttons}
             </div>
-          </div>
+          </motion.div>
         </>,
         ref.current
       )

@@ -1,7 +1,6 @@
 import { FrostcordSnowflake } from '@/components/icons/FrostcordSnowflake';
 import anim from '@/styles/Default.module.css';
 import { useServers } from '@/lib/store';
-import TittleDetail from '../svgs/TittleDetail';
 // import TittleDetail from '../../public/tittleDetail.png';
 // import Image from 'next/image';
 
@@ -18,7 +17,6 @@ export default function DefaultSplash() {
         src={TittleDetail}
         alt="TittleDetail"
       /> */}
-      <TittleDetail />
       {servers.length === 0 && (
         <div className="w-full text-center text-gray-400 mb-8 italic animate-pulse">
           <h1 className="text-xl">

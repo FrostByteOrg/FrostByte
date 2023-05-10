@@ -1,6 +1,8 @@
-export default function TittleDetail() {
+import { motion } from 'framer-motion';
+
+export default function TitleDetail() {
   return (
-    <svg
+    <motion.svg
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -8,7 +10,8 @@ export default function TittleDetail() {
       y="0px"
       viewBox="0 0 730.5 57.4"
       xmlSpace="preserve"
-      // className="mix-blend-multiply"
+      className="mix-blend-screen"
+      initial={{ x: -180, y: -3, opacity: 0.7 }}
     >
       {/* <style type="text/css">
 	.st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;}
@@ -37,7 +40,7 @@ export default function TittleDetail() {
             <g>
               <line
                 className="st0"
-                stroke="#000000"
+                stroke="#b2c1c7"
                 strokeWidth={2}
                 x1="185.9"
                 y1="36.5"
@@ -47,13 +50,13 @@ export default function TittleDetail() {
               <path
                 className="st1"
                 d="M194.2,36.5c15.3,0,30.6,0.1,45.9,0.2"
-                stroke="#000000"
+                stroke="#b2c1c7"
                 strokeWidth={2}
-                strokeDasharray="8.3366"
+                strokeDasharray="2 5 0 7"
               />
               <line
                 className="st0"
-                stroke="#000000"
+                stroke="#b2c1c7"
                 strokeWidth={2}
                 x1="244.3"
                 y1="36.8"
@@ -72,15 +75,15 @@ export default function TittleDetail() {
                 y1="36.6"
                 x2="481.3"
                 y2="36.6"
-                stroke="#000000"
+                stroke="#b2c1c7"
                 strokeWidth={2}
               />
               <path
                 className="st1"
                 d="M489.6,36.6c15.3,0,30.6,0.1,45.9,0.2"
-                stroke="#000000"
+                stroke="#b2c1c7"
                 strokeWidth={2}
-                strokeDasharray="8.3366"
+                strokeDasharray="2 5 0 7"
               />
               <line
                 className="st0"
@@ -88,7 +91,7 @@ export default function TittleDetail() {
                 y1="36.9"
                 x2="539.6"
                 y2="36.9"
-                stroke="#000000"
+                stroke="#b2c1c7"
                 strokeWidth={2}
               />
             </g>
@@ -345,7 +348,16 @@ export default function TittleDetail() {
               <stop offset="0" stopColor="#FFFFFF" />
               <stop offset="1" stopColor="#000000" />
             </linearGradient>
-            <line className="st3" x1="710.6" y1="36.9" x2="710.6" y2="36.9" />
+            <line
+              className="st3"
+              x1="710.6"
+              y1="36.9"
+              x2="710.6"
+              y2="36.9"
+              stroke="black"
+              strokeWidth={2}
+              strokeLinecap="round"
+            />
 
             <linearGradient
               id="SVGID_00000157299694939801465300000003615804861919039389_"
@@ -355,15 +367,15 @@ export default function TittleDetail() {
               x2="547.7095"
               y2="36.87"
             >
-              <stop offset="0" stopColor="#FFFFFF" />
-              <stop offset="1" stopColor="#000000" />
+              <stop offset="0" stopColor="#000000" />
+              <stop offset="1" stopColor="#b2c1c7" />
             </linearGradient>
 
             <line
               // style="fill:none;stroke:url(#SVGID_00000157299694939801465300000003615804861919039389_);stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;stroke-dasharray:0,8.9938;"
               stroke="url(#SVGID_00000157299694939801465300000003615804861919039389_)"
               strokeWidth={2}
-              strokeDasharray="8.9938"
+              strokeDasharray="2 5 0 7"
               x1="701.6"
               y1="36.9"
               x2="553.2"
@@ -379,13 +391,15 @@ export default function TittleDetail() {
               y2="36.87"
             >
               <stop offset="0" stopColor="#FFFFFF" />
-              <stop offset="1" stopColor="#000000" />
+              <stop offset="1" stopColor="#FFFFFF" />
             </linearGradient>
 
             <line
               // style="fill:none;stroke:url(#SVGID_00000024003584933966769090000005980343379918519478_);stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;"
-              stroke="url(#SVGID_00000024003584933966769090000005980343379918519478_)"
+              stroke="#b2c1c7"
               strokeWidth={2}
+              strokeLinecap="round"
+              strokeDasharray="2 5 0 7"
               x1="548.7"
               y1="36.9"
               x2="548.7"
@@ -409,7 +423,7 @@ export default function TittleDetail() {
 
             <line
               // style="fill:none;stroke:url(#SVGID_00000115501900400573956070000009027368291606388098_);stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;"
-              stroke="url(#SVGID_00000115501900400573956070000009027368291606388098_)"
+              stroke="black"
               strokeWidth={2}
               x1="14.9"
               y1="36.5"
@@ -425,15 +439,15 @@ export default function TittleDetail() {
               x2="177.8336"
               y2="36.458"
             >
-              <stop offset="0" stopColor="#FFFFFF" />
-              <stop offset="1" stopColor="#000000" />
+              <stop offset="0" stopColor="#000000" />
+              <stop offset="1" stopColor="#b2c1c7" />
             </linearGradient>
 
             <line
               // style="fill:none;stroke:url(#SVGID_00000008831248129651221520000013773947126259935665_);stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;stroke-dasharray:0,8.9938;"
               stroke="url(#SVGID_00000008831248129651221520000013773947126259935665_)"
               strokeWidth={2}
-              strokeDasharray="8.9938"
+              strokeDasharray="2 5 0 7"
               x1="23.9"
               y1="36.5"
               x2="172.3"
@@ -454,8 +468,10 @@ export default function TittleDetail() {
 
             <line
               // style="fill:none;stroke:url(#SVGID_00000035533285482758486760000001474453728243601582_);stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;"
-              stroke="url(#SVGID_00000035533285482758486760000001474453728243601582_)"
+              stroke="#b2c1c7"
               strokeWidth={2}
+              strokeLinecap="round"
+              strokeDasharray="2 5 0 7"
               x1="176.8"
               y1="36.5"
               x2="176.8"
@@ -473,8 +489,8 @@ export default function TittleDetail() {
           x2="247.1069"
           y2="48.1111"
         >
-          <stop offset="0" stopColor="#FFFFFF" />
-          <stop offset="1" stopColor="#000000" />
+          <stop offset="0" stopColor="#000000" />
+          <stop offset="1" stopColor="#b2c1c7" />
         </linearGradient>
 
         <line
@@ -512,8 +528,8 @@ export default function TittleDetail() {
           y2="123.4323"
           gradientTransform="matrix(-1 0 0 -1 881.8573 171.5433)"
         >
-          <stop offset="0" stopColor="#FFFFFF" />
-          <stop offset="1" stopColor="#000000" />
+          <stop offset="0" stopColor="#000000" />
+          <stop offset="1" stopColor="#b2c1c7" />
         </linearGradient>
 
         <line
@@ -521,6 +537,7 @@ export default function TittleDetail() {
           stroke="url(#SVGID_00000137124733086503424250000017402949906510015369_)"
           fill="url(#SVGID_00000069382613070310312470000005693062756899660426_)"
           strokeWidth={2}
+          strokeLinecap="round"
           x1="477"
           y1="48.1"
           x2="730.2"
@@ -532,10 +549,10 @@ export default function TittleDetail() {
           y1="48.1"
           x2="476.4"
           y2="48.1"
-          stroke="#000000"
+          stroke="#b2c1c7"
           strokeWidth={2}
         />
       </g>
-    </svg>
+    </motion.svg>
   );
 }
