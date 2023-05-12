@@ -42,6 +42,8 @@ export default function Modal({
     'play' | 'pause' | 'playAfter' | 'ended' | 'not started'
   >('not started');
 
+  const [isPlaying, setIsPlaying] = useState(false);
+
   useEffect(() => {
     ref.current = document.querySelector<HTMLElement>('#modalPortal');
     setMounted(true);
@@ -95,6 +97,7 @@ export default function Modal({
                     setVideoStatus('pause');
                 }}
                 onEnded={() => setVideoStatus('ended')}
+                onStart={() => setIsPlaying(true)}
               />
               <ReactPlayer
                 url="./secondaryFull.mp4"
@@ -126,34 +129,37 @@ export default function Modal({
                   setVideoStatus('pause');
               }}
               onEnded={() => setVideoStatus('ended')}
+              onStart={() => setIsPlaying(true)}
             />
           ) : null}
 
-          <motion.div
-            className={`${robotoSlab.className} fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50 `}
-            onKeyDown={onKeyDown}
-            initial={{ x: -225, y: -320 }}
-          >
-            <div className="p-4  z-50 ">
-              <div>
-                <TitleDetail />
-              </div>
-              <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
-                {title} {closeBtn}
-              </div>
-              <div>
-                <TitleDetailBottom />
-              </div>
-              <motion.div
-                className="px-2 pt-4 pb-4 flex flex-col"
-                initial={{ x: -35, y: 0 }}
-              >
-                {content}
-              </motion.div>
+          {isPlaying ? (
+            <motion.div
+              className={`${robotoSlab.className} fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50 `}
+              onKeyDown={onKeyDown}
+              initial={{ x: -225, y: -320 }}
+            >
+              <div className="p-4  z-50 ">
+                <div>
+                  <TitleDetail />
+                </div>
+                <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
+                  {title} {closeBtn}
+                </div>
+                <div>
+                  <TitleDetailBottom />
+                </div>
+                <motion.div
+                  className="px-2 pt-4 pb-4 flex flex-col"
+                  initial={{ x: -35, y: 0 }}
+                >
+                  {content}
+                </motion.div>
 
-              {buttons}
-            </div>
-          </motion.div>
+                {buttons}
+              </div>
+            </motion.div>
+          ) : null}
         </>,
         ref.current
       )
