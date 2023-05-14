@@ -7,7 +7,7 @@ import { useSetModalOpen } from '@/lib/store';
 import TitleDetail from '@/components/svgs/TitleDetail';
 import { Roboto_Slab } from 'next/font/google';
 import TitleDetailBottom from '@/components/svgs/TitleDetailBottom';
-import { motion } from 'framer-motion';
+import { motion, useAnimate, usePresence } from 'framer-motion';
 
 const robotoSlab = Roboto_Slab({
   subsets: ['latin'],
@@ -36,13 +36,54 @@ export default function Modal({
   const [mounted, setMounted] = useState(false);
   const [firstRender, setFirstRender] = useState(showModal);
 
+  const [scopeTitle, animateTitle] = useAnimate();
+  const [scopeContent, animateContent] = useAnimate();
+  const [isPresent, safeToRemove] = usePresence();
+
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    console.log('TEST', isPlaying, isPresent);
+    if (isPresent && isPlaying) {
+      const enterAnimation = async () => {
+        animateTitle(
+          scopeTitle.current,
+          { y: 0, x: 0, scale: 1, opacity: 1 },
+          { duration: 3 }
+        );
+        setTimeout(() => {
+          animateContent(
+            scopeContent.current,
+            { scale: 1, opacity: 1, x: -35 },
+            { duration: 2.5 }
+          );
+        }, 1300);
+      };
+      enterAnimation();
+    } else if (!isPresent) {
+      const exitAnimation = async () => {
+        // await animate1(scope1.current, { opacity: 0 }, { duration: 2 });
+        // await animate2(scope2.current, { opacity: 0 }, { duration: 2 });
+        safeToRemove();
+      };
+
+      exitAnimation();
+    }
+  }, [
+    animateContent,
+    animateTitle,
+    isPlaying,
+    isPresent,
+    safeToRemove,
+    scopeContent,
+    scopeTitle,
+  ]);
+
   const setIsModalOpen = useSetModalOpen();
 
   const [videoStatus, setVideoStatus] = useState<
     'play' | 'pause' | 'playAfter' | 'ended' | 'not started'
   >('not started');
-
-  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     ref.current = document.querySelector<HTMLElement>('#modalPortal');
@@ -67,6 +108,7 @@ export default function Modal({
   useEffect(() => {
     if (videoStatus == 'ended') {
       setIsModalOpen(false);
+      setIsPlaying(false);
     }
   }, [setIsModalOpen, videoStatus]);
 
@@ -140,18 +182,25 @@ export default function Modal({
               initial={{ x: -225, y: -320 }}
             >
               <div className="p-4  z-50 ">
-                <div>
-                  <TitleDetail />
-                </div>
-                <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
-                  {title} {closeBtn}
-                </div>
-                <div>
-                  <TitleDetailBottom />
-                </div>
+                <motion.div
+                  className="tite"
+                  initial={{ x: -50, y: 50, scale: 0.8, opacity: 0.5 }}
+                  ref={scopeTitle}
+                >
+                  <div>
+                    <TitleDetail />
+                  </div>
+                  <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
+                    {title} {closeBtn}
+                  </div>
+                  <div>
+                    <TitleDetailBottom />
+                  </div>
+                </motion.div>
                 <motion.div
                   className="px-2 pt-4 pb-4 flex flex-col"
-                  initial={{ x: -35, y: 0 }}
+                  initial={{ x: -60, y: 0, opacity: 0, scale: 0.85 }}
+                  ref={scopeContent}
                 >
                   {content}
                 </motion.div>
