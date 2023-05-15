@@ -13,6 +13,8 @@ const robotoSlab = Roboto_Slab({
   subsets: ['latin'],
 });
 
+//TODO: pass params for x, y and scale to animate the content and title
+
 export default function Modal({
   modalRef,
   showModal,
@@ -43,7 +45,6 @@ export default function Modal({
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
-    console.log('TEST', isPlaying, isPresent);
     if (isPresent && isPlaying) {
       const enterAnimation = async () => {
         animateTitle(

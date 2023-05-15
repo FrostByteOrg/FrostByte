@@ -120,7 +120,7 @@ export default function AddServerModal({
             className={`${robotoSlab.className} flex flex-col justify-end items-center mt-4 space-y-4`}
           >
             <div
-              className=" rounded-lg hover:cursor-pointer relative"
+              className="  hover:cursor-pointer relative"
               onClick={() => {
                 handleSubmit(onSubmit)();
               }}

@@ -11,6 +11,7 @@ import {
   MessageWithServerProfile,
   ServerUserProfile,
 } from '@/types/dbtypes';
+import Button from '@/components/svgs/Button';
 
 export default function DeleteMsgModal({
   showModal,
@@ -38,23 +39,43 @@ export default function DeleteMsgModal({
       buttons={
         <>
           <div
-            className="hover:underline hover:cursor-pointer"
+            className=" hover:cursor-pointer"
             onClick={() => {
               setMessageOptions(null);
               modalRef.current?.close();
             }}
           >
-            Cancel
+            <Button
+              fill1="hsla(198, 80%, 45%,0.6)"
+              fill2="hsla(198, 80%, 45%,0.08)"
+              text="CANCEL"
+              initX={80}
+              initY={40}
+              y={110}
+            />
           </div>
           <div
-            className="bg-red-500 py-2 px-5 rounded-lg hover:cursor-pointer hover:bg-red-700"
+            className=" hover:cursor-pointer "
             onClick={() => {
               setMessageOptions(null);
+
               modalRef.current?.close();
-              deleteMessage(supabase, message.id);
+
+              setTimeout(() => {
+                deleteMessage(supabase, message.id);
+              }, 1500);
             }}
           >
-            Delete
+            <Button
+              fill1="hsla(198, 70%, 55%,0.15)"
+              fill2="hsla(198, 70%, 55%,0.01)"
+              stroke2Opacity={0.8}
+              text="DELETE"
+              initX={-80}
+              initY={40}
+              x={60}
+              y={125}
+            />
           </div>
         </>
       }
