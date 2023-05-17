@@ -8,12 +8,11 @@ import TitleDetail from '@/components/svgs/TitleDetail';
 import { Roboto_Slab } from 'next/font/google';
 import TitleDetailBottom from '@/components/svgs/TitleDetailBottom';
 import { motion, useAnimate, usePresence } from 'framer-motion';
+import { useMediaQuery } from 'react-responsive';
 
 const robotoSlab = Roboto_Slab({
   subsets: ['latin'],
 });
-
-//TODO: pass params for x, y and scale to animate the content and title
 
 export default function Modal({
   modalRef,
@@ -31,7 +30,14 @@ export default function Modal({
   initContentX = -60,
   initContentY = 0,
   contentX = -35,
-  contenty = 0,
+  contentY = 0,
+  titleScale = 1,
+  initTitleScale = 0.8,
+  initTitleOpacity = 0.5,
+  initTitleTextX = 0,
+  initTitleTextY = 0,
+  titleTextX = 0,
+  titleTextY = 0,
 }: {
   modalRef?: RefObject<HTMLDialogElement>;
   showModal: boolean;
@@ -48,30 +54,67 @@ export default function Modal({
   initContentX?: number;
   initContentY?: number;
   contentX?: number;
-  contenty?: number;
+  contentY?: number;
+  titleScale?: number;
+  initTitleScale?: number;
+  initTitleOpacity?: number;
+  initTitleTextX?: number;
+  initTitleTextY?: number;
+  titleTextX?: number;
+  titleTextY?: number;
 }) {
+  //TODO: Disable the buttons untill the videos have stopped playing
+  //TODO: Figure out how to do an exit animation when modal is closed
+  //TODO: Fix server settings modal
+
+  //TODO: Fix vertical sizing/responsiveness on big modal
+
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState(false);
   const [firstRender, setFirstRender] = useState(showModal);
 
+  const [scopeModal, animateModal] = useAnimate();
   const [scopeTitle, animateTitle] = useAnimate();
+  const [scopeTitleText, animateTitleText] = useAnimate();
   const [scopeContent, animateContent] = useAnimate();
   const [isPresent, safeToRemove] = usePresence();
 
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const checkSmallScreen = useMediaQuery({ query: '(max-width: 1280px)' });
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    setIsSmallScreen(checkSmallScreen);
+  }, [checkSmallScreen, setIsSmallScreen]);
 
   useEffect(() => {
     if (isPresent && isPlaying) {
       const enterAnimation = async () => {
         animateTitle(
           scopeTitle.current,
-          { y: titleY, x: titleX, scale: 1, opacity: 1 },
+          {
+            y: isSmallScreen && size == 'small' ? 100 : titleY,
+            x: titleX,
+            scale: isSmallScreen && size == 'small' ? 0.75 : titleScale,
+            opacity: 1,
+          },
+          { duration: 3 }
+        );
+        animateTitleText(
+          scopeTitleText.current,
+          { y: titleTextY, x: titleTextX },
           { duration: 3 }
         );
         setTimeout(() => {
           animateContent(
             scopeContent.current,
-            { scale: 1, opacity: 1, x: contentX },
+            {
+              scale: 1,
+              opacity: 1,
+              x: contentX,
+              y: isSmallScreen && size == 'small' ? 90 : contentY,
+            },
             { duration: 2.5 }
           );
         }, 1300);
@@ -79,7 +122,11 @@ export default function Modal({
       enterAnimation();
     } else if (!isPresent) {
       const exitAnimation = async () => {
-        // await animate1(scope1.current, { opacity: 0 }, { duration: 2 });
+        await animateContent(
+          scopeContent.current,
+          { opacity: 0 },
+          { duration: 2 }
+        );
         // await animate2(scope2.current, { opacity: 0 }, { duration: 2 });
         safeToRemove();
       };
@@ -89,11 +136,22 @@ export default function Modal({
   }, [
     animateContent,
     animateTitle,
+    animateTitleText,
+    contentX,
+    contentY,
     isPlaying,
     isPresent,
+    isSmallScreen,
     safeToRemove,
     scopeContent,
     scopeTitle,
+    scopeTitleText,
+    size,
+    titleScale,
+    titleTextX,
+    titleTextY,
+    titleX,
+    titleY,
   ]);
 
   const setIsModalOpen = useSetModalOpen();
@@ -119,8 +177,31 @@ export default function Modal({
 
     if (!showModal && firstRender) {
       setVideoStatus('playAfter');
+      setTimeout(() => {
+        animateModal(
+          scopeModal.current,
+          {
+            scale: isSmallScreen && size == 'small' ? 0.1 : 0.2,
+            opacity: 0.5,
+            x: -300,
+          },
+          { duration: isSmallScreen && size == 'small' ? 5 : 4 }
+        );
+      }, 500);
     }
-  }, [firstRender, setIsModalOpen, showModal]);
+  }, [
+    animateContent,
+    animateModal,
+    contentX,
+    contentY,
+    firstRender,
+    isSmallScreen,
+    scopeContent,
+    scopeModal,
+    setIsModalOpen,
+    showModal,
+    size,
+  ]);
 
   useEffect(() => {
     if (videoStatus == 'ended') {
@@ -194,27 +275,35 @@ export default function Modal({
 
           {isPlaying ? (
             <motion.div
-              className={`${robotoSlab.className} fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]  p-5 z-50 `}
+              className={`${robotoSlab.className} fixed top-[50%] left-[50%]   p-5 z-50 `}
               onKeyDown={onKeyDown}
-              initial={{ x: -225, y: -320 }}
+              ref={scopeModal}
+              initial={{ x: -200, y: -330 }}
             >
               <div className="p-4  z-50 ">
                 <motion.div
-                  className="tite"
+                  className="title"
                   initial={{
                     x: initTitleX,
                     y: initTitleY,
-                    scale: 0.8,
-                    opacity: 0.5,
+                    scale: initTitleScale,
+                    opacity: initTitleOpacity,
                   }}
                   ref={scopeTitle}
                 >
                   <div>
                     <TitleDetail />
                   </div>
-                  <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
+                  <motion.div
+                    className="text-2xl font-bold tracking-wider flex justify-between items-center"
+                    ref={scopeTitleText}
+                    initial={{
+                      x: initTitleTextX,
+                      y: initTitleTextY,
+                    }}
+                  >
                     {title} {closeBtn}
-                  </div>
+                  </motion.div>
                   <div>
                     <TitleDetailBottom />
                   </div>

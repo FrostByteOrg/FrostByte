@@ -32,7 +32,7 @@ export default function Button({
   const [isPresent, safeToRemove] = usePresence();
   const [isHovered, setIsHovered] = useState(false);
 
-  //NOTE: probably use usePresence in the modal and pass it as a prop in here, we wanna annimate and show this button only if that modal is up too (mainly because we need it to synch with the video). This may not work however, we may need to use a listener from the VideoPlayer for video start, once video starts it should trigger a callback and we can pass that in here as a prop and use that in the useEffect along with isPresent
+  //NOTE: probably use usePresence in the modal and pass it as a prop in here, we wanna annimate and show this button only if that modal is up too (mainly because we need it to sync with the video). This may not work however, we may need to use a listener from the VideoPlayer for video start, once video starts it should trigger a callback and we can pass that in here as a prop and use that in the useEffect along with isPresent
 
   useEffect(() => {
     if (isPresent) {

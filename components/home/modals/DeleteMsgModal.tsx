@@ -51,7 +51,7 @@ export default function DeleteMsgModal({
               text="CANCEL"
               initX={80}
               initY={40}
-              y={110}
+              y={135}
             />
           </div>
           <div
@@ -74,11 +74,21 @@ export default function DeleteMsgModal({
               initX={-80}
               initY={40}
               x={60}
-              y={125}
+              y={150}
             />
           </div>
         </>
       }
+      contentY={75}
+      initContentY={50}
+      titleY={75}
+      titleX={15}
+      initTitleX={-10}
+      titleScale={0.85}
+      titleTextX={-150}
+      initTitleTextX={-150}
+      initTitleScale={0.5}
+      initTitleOpacity={0.015}
     >
       <>
         <div className="flex-grow flex flex-row">

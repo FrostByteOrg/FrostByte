@@ -13,7 +13,7 @@ import {
   MessageWithServerProfile,
 } from '@/types/dbtypes';
 import { MessageHeader } from './MessageHeader';
-import { useChannel, useServerUserProfile, useSetUser } from '@/lib/store';
+import { useChannel, useServerUserProfile } from '@/lib/store';
 import { formatDateStr } from '@/lib/dateManagement';
 
 export default function Message({

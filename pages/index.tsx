@@ -123,6 +123,7 @@ export default function Home() {
             Close
           </button>
         }
+        size={'small'}
       >
         <p>{livekitError?.message}</p>
       </Modal>
@@ -142,7 +143,6 @@ export default function Home() {
           }}
         >
           {isMobile ? (
-
             <div>
               <div className={'bg-grey-800'}>
                 <RenderMobileView />
@@ -151,7 +151,7 @@ export default function Home() {
           ) : (
             <div>
               <div className={'bg-grey-800 '}>
-                <RenderDesktopView/>
+                <RenderDesktopView />
               </div>
             </div>
           )}
