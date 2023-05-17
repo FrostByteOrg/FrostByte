@@ -24,6 +24,14 @@ export default function Modal({
   onKeyDown = undefined,
   size,
   closeBtn = '',
+  initTitleX = -50,
+  initTitleY = 50,
+  titleX = 0,
+  titleY = 0,
+  initContentX = -60,
+  initContentY = 0,
+  contentX = -35,
+  contenty = 0,
 }: {
   modalRef?: RefObject<HTMLDialogElement>;
   showModal: boolean;
@@ -33,6 +41,14 @@ export default function Modal({
   onKeyDown?: KeyboardEventHandler<HTMLDivElement> | undefined;
   size: 'small' | 'big';
   closeBtn?: JSX.Element | '';
+  initTitleX?: number;
+  initTitleY?: number;
+  titleX?: number;
+  titleY?: number;
+  initContentX?: number;
+  initContentY?: number;
+  contentX?: number;
+  contenty?: number;
 }) {
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -49,13 +65,13 @@ export default function Modal({
       const enterAnimation = async () => {
         animateTitle(
           scopeTitle.current,
-          { y: 0, x: 0, scale: 1, opacity: 1 },
+          { y: titleY, x: titleX, scale: 1, opacity: 1 },
           { duration: 3 }
         );
         setTimeout(() => {
           animateContent(
             scopeContent.current,
-            { scale: 1, opacity: 1, x: -35 },
+            { scale: 1, opacity: 1, x: contentX },
             { duration: 2.5 }
           );
         }, 1300);
@@ -185,7 +201,12 @@ export default function Modal({
               <div className="p-4  z-50 ">
                 <motion.div
                   className="tite"
-                  initial={{ x: -50, y: 50, scale: 0.8, opacity: 0.5 }}
+                  initial={{
+                    x: initTitleX,
+                    y: initTitleY,
+                    scale: 0.8,
+                    opacity: 0.5,
+                  }}
                   ref={scopeTitle}
                 >
                   <div>
@@ -200,7 +221,12 @@ export default function Modal({
                 </motion.div>
                 <motion.div
                   className="px-2 pt-4 pb-4 flex flex-col"
-                  initial={{ x: -60, y: 0, opacity: 0, scale: 0.85 }}
+                  initial={{
+                    x: initContentX,
+                    y: initContentY,
+                    opacity: 0,
+                    scale: 0.85,
+                  }}
                   ref={scopeContent}
                 >
                   {content}
