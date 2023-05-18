@@ -9,7 +9,13 @@ import type {
 } from '@/types/dbtypes';
 import { createMessage } from '@/services/message.service';
 import Message from '@/components/home/Message';
-import { useChannel, useMessages, useServerUserProfilePermissions, useUserPerms } from '@/lib/store';
+import {
+  useChannel,
+  useIsModalOpen,
+  useMessages,
+  useServerUserProfilePermissions,
+  useUserPerms,
+} from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
@@ -24,8 +30,12 @@ export default function Chat() {
   const messages = useMessages();
   const channel = useChannel();
   const userPerms = useUserPerms();
-  const serverPermissions = useServerUserProfilePermissions(channel?.server_id!, user?.id!);
+  const serverPermissions = useServerUserProfilePermissions(
+    channel?.server_id!,
+    user?.id!
+  );
   const connectionState = useConnectionState();
+  const isModalOpen = useIsModalOpen();
 
   useEffect(() => {
     if (newestMessageRef && messages) {
@@ -38,7 +48,11 @@ export default function Chat() {
 
   return (
     <>
-      <div className={`${styles.chatHeader} px-5 pt-5 mb-3`}>
+      <div
+        className={`${styles.chatHeader} px-5 pt-5 mb-3 ${
+          isModalOpen ? 'blur-sm' : ''
+        }`}
+      >
         <div className="flex items-center  ">
           <div className="mr-2">
             {channel && channel.is_media ? (
@@ -55,7 +69,9 @@ export default function Chat() {
       <div className="border-t-2 mx-5 border-grey-700 flex "></div>
       {connectionState === ConnectionState.Connected && <MobileCallControls />}
       <div
-        className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-auto`}
+        className={`${styles.messagesParent} ${
+          isModalOpen ? 'blur-sm' : ''
+        }  flex flex-col p-5 bg-grey-800 overflow-y-auto`}
       >
         <div className={`${styles.messageList} flex flex-col `}>
           {messages &&
@@ -73,7 +89,8 @@ export default function Chat() {
                     previousMessage.profile_id === value.profile_id
                   }
                   hasDeletePerms={
-                    (serverPermissions & ServerPermissions.MANAGE_MESSAGES) !== 0
+                    (serverPermissions & ServerPermissions.MANAGE_MESSAGES) !==
+                    0
                   }
                 />
               );

@@ -1,5 +1,6 @@
 import { KeyboardEvent, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
+import { useIsModalOpen } from '@/lib/store';
 
 export default function MessageInput({
   onSubmit,
@@ -12,6 +13,8 @@ export default function MessageInput({
 }) {
   const [messageText, setMessageText] = useState('');
 
+  const isModalOpen = useIsModalOpen();
+
   const submitOnEnter = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     // Watch for enter key (exclude shift + enter)
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -23,7 +26,11 @@ export default function MessageInput({
   };
 
   return (
-    <div className={`${styles.messageInput} mt-1 p-3`}>
+    <div
+      className={`${styles.messageInput} mt-1 p-3 ${
+        isModalOpen ? 'blur-sm' : ''
+      }`}
+    >
       <textarea
         className={`
         w-full

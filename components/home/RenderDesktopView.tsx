@@ -9,6 +9,7 @@ import ServerList from '@/components/home/ServerList';
 import DefaultSplash from '@/components/home/DefaultSplash';
 import {
   useChannel,
+  useIsModalOpen,
   useProfile,
   useSetUserProfile,
   useSetUserSettings,
@@ -55,24 +56,36 @@ export default function RenderDesktopView() {
 
   const settingsRef = useSetUserSettings();
   const userSettings = useUserSettings();
+  const isModalOpen = useIsModalOpen();
 
   return (
     <div className={`${styles.container} `}>
       {deafenRoom ? <></> : <RoomAudioRenderer />}
-      <div className="col-start-1 col-end-2 row-start-1 row-end-4  bg-grey-950 flex-col justify-center ">
+      <div
+        className={`col-start-1 col-end-2 row-start-1 row-end-4  bg-grey-950 flex-col justify-center ${
+          isModalOpen ? 'blur-sm' : ''
+        }`}
+      >
         <NavBar type="vertical" />
       </div>
-      <div className="col-start-2 col-end-4 row-start-1 row-end-4  flex-col bg-grey-900 relative ">
+      <div
+        className={`col-start-2 col-end-4 row-start-1 row-end-4  flex-col bg-grey-900 relative  ${
+          isModalOpen ? 'blur-sm' : ''
+        }`}
+      >
         {sideBarView}
       </div>
 
-      <div className="col-start-4 col-end-13 row-start-1 row-end-4  flex flex-col h-screen">
+      <div className="col-start-4 col-end-13 row-start-1 row-end-4 flex flex-col h-screen relative overflow-y-auto ">
         {mainView}
+        <div id="modalPortal" />
       </div>
 
       <div
         id="sideBarControls"
-        className="col-start-1 col-end-4 z-10 row-start-2 row-end-4 w-full bg-grey-925  p-1 h-auto"
+        className={`col-start-1 col-end-4 z-10 row-start-2 row-end-4 w-full bg-grey-925  p-1 h-auto ${
+          isModalOpen ? 'blur-sm' : ''
+        }`}
       >
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row items-center ml-2 hover:bg-grey-800 py-1 px-2 rounded-lg">

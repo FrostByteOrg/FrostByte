@@ -63,9 +63,11 @@ export default function Modal({
   titleTextX?: number;
   titleTextY?: number;
 }) {
-  //TODO: Fix vertical sizing/responsiveness on big modal
   //TODO: Fix server settings modal
+  //TODO: Fix user settings modal (easy fix)
   //TODO: See if all is good on mobile
+  //TODO: at 640 height, scale down
+  //TODO: check for error when resizing modal
 
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -247,17 +249,15 @@ export default function Modal({
   )
     return null;
 
-  //TODO: Start adding button frostpunk styles?
-
   return mounted && ref.current
     ? createPortal(
         <>
-          <div className="overflow-y-scroll">
+          <div className="">
             {size == 'big' ? (
               <>
                 <ReactPlayer
                   url="./mainFull.mp4"
-                  className={`${styles.bigModal} mix-blend-multiply fixed z-30 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-95`}
+                  className={`${styles.bigModal} mix-blend-multiply fixed z-30 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  opacity-95`}
                   playing={
                     videoStatus == 'play' || videoStatus == 'playAfter'
                       ? true
@@ -272,7 +272,7 @@ export default function Modal({
                 />
                 <ReactPlayer
                   url="./secondaryFull.mp4"
-                  className={`${styles.bigModalSecondary} mix-blend-multiply fixed z-30 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-[0.9] `}
+                  className={`${styles.bigModalSecondary} mix-blend-multiply fixed z-30 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  opacity-[0.9] `}
                   playing={
                     videoStatus == 'play' || videoStatus == 'playAfter'
                       ? true
@@ -306,12 +306,12 @@ export default function Modal({
 
             {isPlaying ? (
               <motion.div
-                className={`${robotoSlab.className} absolute top-[50%] left-[50%]  p-5 z-50  `}
+                className={`${robotoSlab.className} absolute top-[52%] left-[40%] z-50`}
                 onKeyDown={onKeyDown}
                 ref={scopeModal}
                 initial={{ x: -150, y: -330 }}
               >
-                <div className="p-4 z-50 ">
+                <div className=" z-50 ">
                   <motion.div
                     className="title"
                     initial={{

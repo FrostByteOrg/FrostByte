@@ -32,9 +32,8 @@ function App({
     >
       <ToastContainer />
       <ChatCtxProvider>
-        <main
-          className={`${sourceSans3.className} ${isModalOpen ? 'blur-sm' : ''}`}
-        >
+        {/* ${isModalOpen ? 'blur-sm' : ''} */}
+        <main className={`${sourceSans3.className} `}>
           <Component {...pageProps} />
         </main>
       </ChatCtxProvider>

@@ -6,7 +6,7 @@ export default function Document() {
       <Head />
       <body>
         <Main />
-        <div id="modalPortal" />
+        {/* <div id="modalPortal" /> */}
         <NextScript />
       </body>
     </Html>
