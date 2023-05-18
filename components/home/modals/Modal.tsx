@@ -3,7 +3,7 @@ import styles from '@/styles/Modal.module.css';
 import { KeyboardEventHandler } from 'react';
 import { createPortal } from 'react-dom';
 import ReactPlayer from 'react-player/file';
-import { useSetModalOpen } from '@/lib/store';
+import { useSetButtonsEnabled, useSetModalOpen } from '@/lib/store';
 import TitleDetail from '@/components/svgs/TitleDetail';
 import { Roboto_Slab } from 'next/font/google';
 import TitleDetailBottom from '@/components/svgs/TitleDetailBottom';
@@ -63,11 +63,9 @@ export default function Modal({
   titleTextX?: number;
   titleTextY?: number;
 }) {
-  //TODO: Disable the buttons untill the videos have stopped playing
-  //TODO: Figure out how to do an exit animation when modal is closed
-  //TODO: Fix server settings modal
-
   //TODO: Fix vertical sizing/responsiveness on big modal
+  //TODO: Fix server settings modal
+  //TODO: See if all is good on mobile
 
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -84,6 +82,8 @@ export default function Modal({
   const checkSmallScreen = useMediaQuery({ query: '(max-width: 1280px)' });
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
+  const setButtonsEnabled = useSetButtonsEnabled();
+
   useEffect(() => {
     setIsSmallScreen(checkSmallScreen);
   }, [checkSmallScreen, setIsSmallScreen]);
@@ -91,43 +91,69 @@ export default function Modal({
   useEffect(() => {
     if (isPresent && isPlaying) {
       const enterAnimation = async () => {
-        animateTitle(
-          scopeTitle.current,
-          {
-            y: isSmallScreen && size == 'small' ? 100 : titleY,
-            x: titleX,
-            scale: isSmallScreen && size == 'small' ? 0.75 : titleScale,
-            opacity: 1,
-          },
-          { duration: 3 }
-        );
-        animateTitleText(
-          scopeTitleText.current,
-          { y: titleTextY, x: titleTextX },
-          { duration: 3 }
-        );
-        setTimeout(() => {
-          animateContent(
-            scopeContent.current,
+        if (size == 'small') {
+          setTimeout(() => {
+            animateTitle(
+              scopeTitle.current,
+              {
+                y: isSmallScreen && size == 'small' ? 100 : titleY,
+                x: titleX,
+                scale: isSmallScreen && size == 'small' ? 0.75 : titleScale,
+                opacity: 1,
+              },
+              { duration: 3 }
+            );
+            animateTitleText(
+              scopeTitleText.current,
+              { y: titleTextY, x: titleTextX },
+              { duration: 3 }
+            );
+            setTimeout(() => {
+              animateContent(
+                scopeContent.current,
+                {
+                  scale: 1,
+                  opacity: 1,
+                  x: contentX,
+                  y: isSmallScreen && size == 'small' ? 90 : contentY,
+                },
+                { duration: 2.5 }
+              );
+            }, 1300);
+          }, 500);
+        } else {
+          animateTitle(
+            scopeTitle.current,
             {
-              scale: 1,
+              y: titleY,
+              x: titleX,
+              scale: titleScale,
               opacity: 1,
-              x: contentX,
-              y: isSmallScreen && size == 'small' ? 90 : contentY,
             },
-            { duration: 2.5 }
+            { duration: 3 }
           );
-        }, 1300);
+          animateTitleText(
+            scopeTitleText.current,
+            { y: titleTextY, x: titleTextX },
+            { duration: 3 }
+          );
+          setTimeout(() => {
+            animateContent(
+              scopeContent.current,
+              {
+                scale: 1,
+                opacity: 1,
+                x: contentX,
+                y: contentY,
+              },
+              { duration: 2.5 }
+            );
+          }, 1300);
+        }
       };
       enterAnimation();
     } else if (!isPresent) {
       const exitAnimation = async () => {
-        await animateContent(
-          scopeContent.current,
-          { opacity: 0 },
-          { duration: 2 }
-        );
-        // await animate2(scope2.current, { opacity: 0 }, { duration: 2 });
         safeToRemove();
       };
 
@@ -165,6 +191,7 @@ export default function Modal({
     setMounted(true);
   }, []);
 
+  //The useEffect below is used to capture the different states of the Modal (Closed, Opened, Paused etc.)
   useEffect(() => {
     if (showModal && firstRender) {
       setVideoStatus('play');
@@ -208,7 +235,10 @@ export default function Modal({
       setIsModalOpen(false);
       setIsPlaying(false);
     }
-  }, [setIsModalOpen, videoStatus]);
+    if (videoStatus == 'pause') {
+      setButtonsEnabled(true);
+    }
+  }, [setButtonsEnabled, setIsModalOpen, videoStatus]);
 
   if (
     videoStatus !== 'play' &&
@@ -222,11 +252,44 @@ export default function Modal({
   return mounted && ref.current
     ? createPortal(
         <>
-          {size == 'big' ? (
-            <>
+          <div className="overflow-y-scroll">
+            {size == 'big' ? (
+              <>
+                <ReactPlayer
+                  url="./mainFull.mp4"
+                  className={`${styles.bigModal} mix-blend-multiply fixed z-30 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-95`}
+                  playing={
+                    videoStatus == 'play' || videoStatus == 'playAfter'
+                      ? true
+                      : false
+                  }
+                  onProgress={({ playedSeconds }) => {
+                    if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
+                      setVideoStatus('pause');
+                  }}
+                  onEnded={() => setVideoStatus('ended')}
+                  onStart={() => setIsPlaying(true)}
+                />
+                <ReactPlayer
+                  url="./secondaryFull.mp4"
+                  className={`${styles.bigModalSecondary} mix-blend-multiply fixed z-30 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-[0.9] `}
+                  playing={
+                    videoStatus == 'play' || videoStatus == 'playAfter'
+                      ? true
+                      : false
+                  }
+                  onProgress={({ playedSeconds }) => {
+                    if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
+                      setVideoStatus('pause');
+                  }}
+                  onEnded={() => setVideoStatus('ended')}
+                />
+              </>
+            ) : null}
+            {size == 'small' ? (
               <ReactPlayer
-                url="./mainFull.mp4"
-                className={`${styles.bigModal} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-95`}
+                url="./smallFull.mp4"
+                className={`${styles.smallModal} mix-blend-multiply fixed z-30 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-52%]  w-full h-full  `}
                 playing={
                   videoStatus == 'play' || videoStatus == 'playAfter'
                     ? true
@@ -239,92 +302,61 @@ export default function Modal({
                 onEnded={() => setVideoStatus('ended')}
                 onStart={() => setIsPlaying(true)}
               />
-              <ReactPlayer
-                url="./secondaryFull.mp4"
-                className={`${styles.bigModalSecondary} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-50%]  w-full h-full opacity-[0.9] `}
-                playing={
-                  videoStatus == 'play' || videoStatus == 'playAfter'
-                    ? true
-                    : false
-                }
-                onProgress={({ playedSeconds }) => {
-                  if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
-                    setVideoStatus('pause');
-                }}
-                onEnded={() => setVideoStatus('ended')}
-              />
-            </>
-          ) : null}
-          {size == 'small' ? (
-            <ReactPlayer
-              url="./smallFull.mp4"
-              className={`${styles.smallModal} mix-blend-multiply fixed z-50 top-[46%] left-[54%] translate-y-[-50%] translate-x-[-52%]  w-full h-full  `}
-              playing={
-                videoStatus == 'play' || videoStatus == 'playAfter'
-                  ? true
-                  : false
-              }
-              onProgress={({ playedSeconds }) => {
-                if (playedSeconds >= 2.6 && videoStatus !== 'playAfter')
-                  setVideoStatus('pause');
-              }}
-              onEnded={() => setVideoStatus('ended')}
-              onStart={() => setIsPlaying(true)}
-            />
-          ) : null}
+            ) : null}
 
-          {isPlaying ? (
-            <motion.div
-              className={`${robotoSlab.className} fixed top-[50%] left-[50%]   p-5 z-50 `}
-              onKeyDown={onKeyDown}
-              ref={scopeModal}
-              initial={{ x: -200, y: -330 }}
-            >
-              <div className="p-4  z-50 ">
-                <motion.div
-                  className="title"
-                  initial={{
-                    x: initTitleX,
-                    y: initTitleY,
-                    scale: initTitleScale,
-                    opacity: initTitleOpacity,
-                  }}
-                  ref={scopeTitle}
-                >
-                  <div>
-                    <TitleDetail />
-                  </div>
+            {isPlaying ? (
+              <motion.div
+                className={`${robotoSlab.className} absolute top-[50%] left-[50%]  p-5 z-50  `}
+                onKeyDown={onKeyDown}
+                ref={scopeModal}
+                initial={{ x: -150, y: -330 }}
+              >
+                <div className="p-4 z-50 ">
                   <motion.div
-                    className="text-2xl font-bold tracking-wider flex justify-between items-center"
-                    ref={scopeTitleText}
+                    className="title"
                     initial={{
-                      x: initTitleTextX,
-                      y: initTitleTextY,
+                      x: initTitleX,
+                      y: initTitleY,
+                      scale: initTitleScale,
+                      opacity: initTitleOpacity,
                     }}
+                    ref={scopeTitle}
                   >
-                    {title} {closeBtn}
+                    <div className="">
+                      <TitleDetail />
+                    </div>
+                    <motion.div
+                      className="text-2xl font-bold tracking-wider flex justify-between items-center"
+                      ref={scopeTitleText}
+                      initial={{
+                        x: initTitleTextX,
+                        y: initTitleTextY,
+                      }}
+                    >
+                      {title} {closeBtn}
+                    </motion.div>
+                    <div>
+                      <TitleDetailBottom />
+                    </div>
                   </motion.div>
-                  <div>
-                    <TitleDetailBottom />
-                  </div>
-                </motion.div>
-                <motion.div
-                  className="px-2 pt-4 pb-4 flex flex-col"
-                  initial={{
-                    x: initContentX,
-                    y: initContentY,
-                    opacity: 0,
-                    scale: 0.85,
-                  }}
-                  ref={scopeContent}
-                >
-                  {content}
-                </motion.div>
+                  <motion.div
+                    className="px-2 pt-4 pb-4 flex flex-col"
+                    initial={{
+                      x: initContentX,
+                      y: initContentY,
+                      opacity: 0,
+                      scale: 0.85,
+                    }}
+                    ref={scopeContent}
+                  >
+                    {content}
+                  </motion.div>
 
-                {buttons}
-              </div>
-            </motion.div>
-          ) : null}
+                  {buttons}
+                </div>
+              </motion.div>
+            ) : null}
+          </div>
         </>,
         ref.current
       )

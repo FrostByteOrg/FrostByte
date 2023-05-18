@@ -252,12 +252,16 @@ const useChannelStore = create<ChannelState>()((set) => ({
 
 export interface ModalState {
   isOpen: boolean;
+  areButtonsEnabled: boolean;
   setIsOpen: (state: boolean) => void;
+  setButtonsEnabled: (state: boolean) => void;
 }
 
 const useModalStore = create<ModalState>()((set) => ({
   isOpen: false,
+  areButtonsEnabled: false,
   setIsOpen: (bool) => set((state) => ({ isOpen: bool })),
+  setButtonsEnabled: (bool) => set((state) => ({ areButtonsEnabled: bool })),
 }));
 
 export interface TokenState {
@@ -882,6 +886,10 @@ export const useProfile = () =>
   useUserStore((state) => state.currentUserProfile);
 export const useIsModalOpen = () => useModalStore((state) => state.isOpen);
 export const useSetModalOpen = () => useModalStore((state) => state.setIsOpen);
+export const useAreButtonsEnabled = () =>
+  useModalStore((state) => state.areButtonsEnabled);
+export const useSetButtonsEnabled = () =>
+  useModalStore((state) => state.setButtonsEnabled);
 
 export const useRelations = () => useRelationsStore((state) => state.relations);
 export const useAddRelation = () =>

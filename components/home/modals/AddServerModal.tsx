@@ -13,6 +13,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { PostgrestError } from '@supabase/supabase-js';
 import Button from '@/components/svgs/Button';
 import { Roboto_Slab } from 'next/font/google';
+import { useAreButtonsEnabled, useSetButtonsEnabled } from '@/lib/store';
 
 const robotoSlab = Roboto_Slab({
   subsets: ['latin'],
@@ -29,6 +30,9 @@ export default function AddServerModal({
   const [serverImage, setServerImage] = useState<File | null>(null);
   const [serverError, setServerError] = useState<string>('');
   const [showDesc, setSetShowDesc] = useState<boolean>(false);
+
+  const setButtonsEnabled = useSetButtonsEnabled();
+  const areButtonsEnabled = useAreButtonsEnabled();
 
   const supabase = useSupabaseClient();
 
@@ -120,10 +124,15 @@ export default function AddServerModal({
             className={`${robotoSlab.className} flex flex-col justify-end items-center mt-4 space-y-4`}
           >
             <div
-              className="  hover:cursor-pointer relative"
-              onClick={() => {
-                handleSubmit(onSubmit)();
-              }}
+              className={`${areButtonsEnabled ? 'hover:cursor-pointer' : ''}`}
+              onClick={
+                areButtonsEnabled
+                  ? () => {
+                      setButtonsEnabled(false);
+                      handleSubmit(onSubmit)();
+                    }
+                  : () => null
+              }
             >
               <Button
                 fill1="hsla(198, 80%, 45%,0.6)"
@@ -133,26 +142,29 @@ export default function AddServerModal({
                 initY={40}
               />
             </div>
-            <div
-              className=" hover:cursor-pointer relative"
-              onClick={() => {
-                setServerImage(null);
-                setShowModal(false);
-                setSetShowDesc(false);
-                reset();
-                addServerRef.current?.close();
-              }}
-            >
-              <Button
-                fill1="hsla(198, 70%, 55%,0.15)"
-                fill2="hsla(198, 70%, 55%,0.01)"
-                stroke2Opacity={0.8}
-                text="CANCEL"
-                initX={-80}
-                initY={40}
-                x={60}
-              />
-            </div>
+
+            <Button
+              fill1="hsla(198, 70%, 55%,0.15)"
+              fill2="hsla(198, 70%, 55%,0.01)"
+              stroke2Opacity={0.8}
+              text="CANCEL"
+              initX={-80}
+              initY={40}
+              x={60}
+              onClick={
+                areButtonsEnabled
+                  ? () => {
+                      setButtonsEnabled(false);
+                      setServerImage(null);
+                      setShowModal(false);
+                      setSetShowDesc(false);
+                      reset();
+                      addServerRef.current?.close();
+                    }
+                  : () => null
+              }
+              twStyles={`${areButtonsEnabled ? 'hover:cursor-pointer' : ''}`}
+            />
           </div>
         </>
       }

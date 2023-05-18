@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { MouseEventHandler, useEffect, useState } from 'react';
 import { useAnimate, usePresence } from 'framer-motion';
 import Clover from '@/components/svgs/Clover';
 import ButtonDetail from './ButtonDetail';
+import { useAreButtonsEnabled } from '@/lib/store';
 
 export default function Button({
   fill1 = '#FFFFFF',
@@ -14,6 +15,9 @@ export default function Button({
   initY = 0,
   x = 0,
   y = 0,
+  size = 'big',
+  onClick = () => null,
+  twStyles = '',
 }: {
   fill1?: string;
   fill2?: string;
@@ -24,6 +28,9 @@ export default function Button({
   initY?: number;
   x?: number;
   y?: number;
+  size?: 'small' | 'big';
+  onClick?: MouseEventHandler<HTMLDivElement> | undefined;
+  twStyles?: string;
 }) {
   const [scope1, animate1] = useAnimate();
   const [scope2, animate2] = useAnimate();
@@ -31,6 +38,8 @@ export default function Button({
   const [scopeParent, animateParent] = useAnimate();
   const [isPresent, safeToRemove] = usePresence();
   const [isHovered, setIsHovered] = useState(false);
+
+  const areButtonsEnabled = useAreButtonsEnabled();
 
   //NOTE: probably use usePresence in the modal and pass it as a prop in here, we wanna annimate and show this button only if that modal is up too (mainly because we need it to sync with the video). This may not work however, we may need to use a listener from the VideoPlayer for video start, once video starts it should trigger a callback and we can pass that in here as a prop and use that in the useEffect along with isPresent
 
@@ -41,7 +50,7 @@ export default function Button({
         animate2(scope2.current, { opacity: 1 }, { duration: 3 });
         animateParent(
           scopeParent.current,
-          { y: y, x: x, scale: 1 },
+          { y: y, x: x, scale: 1, opacity: 1 },
           { duration: 3 }
         );
         animateText(
@@ -50,7 +59,13 @@ export default function Button({
           { duration: 3 }
         );
       };
-      enterAnimation();
+      if (size == 'big') {
+        enterAnimation();
+      } else {
+        setTimeout(() => {
+          enterAnimation();
+        }, 500);
+      }
     } else {
       const exitAnimation = async () => {
         await animate1(scope1.current, { opacity: 0 }, { duration: 2 });
@@ -71,6 +86,7 @@ export default function Button({
     scope2,
     scopeParent,
     scopeText,
+    size,
     x,
     y,
   ]);
@@ -78,19 +94,28 @@ export default function Button({
   return (
     <>
       <motion.div
-        className="relative z-50"
-        onHoverStart={() => {
-          animate1(scope1.current, { fill: 'hsla(198, 80%, 45%,0.6)' });
-          animate2(scope2.current, { fill: 'hsla(198, 80%, 45%,0.1)' });
-          setIsHovered(true);
-        }}
-        onHoverEnd={() => {
-          animate1(scope1.current, { fill: 'hsla(198, 70%, 55%,0.15)' });
-          animate2(scope2.current, { fill: 'hsla(198, 70%, 55%,0.015)' });
-          setIsHovered(false);
-        }}
+        className={`${twStyles} relative z-50`}
+        onHoverStart={
+          areButtonsEnabled
+            ? () => {
+                animate1(scope1.current, { fill: 'hsla(198, 80%, 45%,0.6)' });
+                animate2(scope2.current, { fill: 'hsla(198, 80%, 45%,0.1)' });
+                setIsHovered(true);
+              }
+            : () => null
+        }
+        onHoverEnd={
+          areButtonsEnabled
+            ? () => {
+                animate1(scope1.current, { fill: 'hsla(198, 70%, 55%,0.15)' });
+                animate2(scope2.current, { fill: 'hsla(198, 70%, 55%,0.015)' });
+                setIsHovered(false);
+              }
+            : () => null
+        }
         ref={scopeParent}
-        initial={{ x: initX, y: initY, scale: 0.9 }}
+        initial={{ x: initX, y: initY, scale: 0.9, opacity: 0 }}
+        onClick={onClick}
       >
         <motion.svg
           version="1.1"
@@ -159,5 +184,3 @@ export default function Button({
     </>
   );
 }
-// absolute top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]
-// initY={-50} y={-50}
