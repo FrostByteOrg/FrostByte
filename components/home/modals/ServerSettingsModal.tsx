@@ -132,7 +132,7 @@ export default function ServerSettingsModal({
       title={`${server?.name} - Server Settings`}
       buttons={
         <button
-          className="btn btn-primary"
+          className="btn btn-primary pb-5"
           onClick={() => {
             modalRef.current?.close();
             setShowModal(false);

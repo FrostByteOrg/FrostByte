@@ -63,7 +63,6 @@ export default function Modal({
   titleTextX?: number;
   titleTextY?: number;
 }) {
-  //TODO: Fix server settings modal
   //TODO: Fix user settings modal (easy fix)
   //TODO: See if all is good on mobile
   //TODO: at 640 height, scale down

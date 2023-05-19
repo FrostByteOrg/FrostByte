@@ -168,33 +168,6 @@ export default function AddServerModal({
           </div>
         </>
       }
-      // <Button
-      //           fill1="hsla(198, 80%, 45%,0.6)"
-      //           fill2="hsla(198, 80%, 45%,0.08)"
-      //           text="SUBMIT"
-      //           initX={40}
-      //           initY={40}
-      //         />
-      //       </div>
-      //       <div
-      //         className=" hover:cursor-pointer relative"
-      //         onClick={() => {
-      //           setServerImage(null);
-      //           setShowModal(false);
-      //           setSetShowDesc(false);
-      //           reset();
-      //           addServerRef.current?.close();
-      //         }}
-      //       >
-      //         <Button
-      //           fill1="hsla(198, 70%, 55%,0.15)"
-      //           fill2="hsla(198, 70%, 55%,0.01)"
-      //           stroke2Opacity={0.8}
-      //           text="CANCEL"
-      //           initX={80}
-      //           initY={40}
-      //           x={60}
-      //         />
     >
       <AddServer
         serverImage={serverImage}
