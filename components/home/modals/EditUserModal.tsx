@@ -36,7 +36,7 @@ export default function EditUserModal({
       buttons={
         <>
           <Button
-            twStyles="hover:underline hover:cursor-pointer"
+            twStyles="hover:cursor-pointer"
             y={25}
             x={0}
             initX={150}
@@ -47,7 +47,7 @@ export default function EditUserModal({
             }}
           />
           <Button
-            twStyles="hover:underline hover:cursor-pointer"
+            twStyles="hover:cursor-pointer"
             y={50}
             x={40}
             initX={-150}

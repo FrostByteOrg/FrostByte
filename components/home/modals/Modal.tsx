@@ -63,7 +63,7 @@ export default function Modal({
   titleTextX?: number;
   titleTextY?: number;
 }) {
-  //TODO: Fix user settings modal (easy fix)
+  //TODO: Re model rest of modals, I HAVENT DONE THE DISABLE BUTTONS ON THEM YET!!!
   //TODO: See if all is good on mobile
   //TODO: at 640 height, scale down
   //TODO: check for error when resizing modal

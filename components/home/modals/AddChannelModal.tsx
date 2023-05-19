@@ -11,6 +11,7 @@ import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { createChannel } from '@/services/channels.service';
 import { PostgrestError } from '@supabase/supabase-js';
 import { useGetUserPermsForServer } from '@/lib/store';
+import Button from '@/components/svgs/Button';
 
 export default function AddChannelModal({
   showModal,
@@ -86,7 +87,7 @@ export default function AddChannelModal({
 
   return (
     <Modal
-      size="big"
+      size="small"
       modalRef={addChannelRef}
       showModal={showModal}
       title={'Create a new Channel'}
@@ -97,8 +98,8 @@ export default function AddChannelModal({
       }}
       buttons={
         <>
-          <div
-            className="hover:underline hover:cursor-pointer"
+          <Button
+            twStyles=" hover:cursor-pointer"
             onClick={() => {
               setShowModal(false);
               setSetShowDesc(false);
@@ -106,19 +107,31 @@ export default function AddChannelModal({
               reset();
               addChannelRef.current?.close();
             }}
-          >
-            Cancel
-          </div>
-          <div
-            className="bg-frost-500 py-2 px-5 rounded-lg hover:cursor-pointer hover:bg-frost-700"
+            y={50}
+            x={20}
+            text="Cancel"
+          />
+
+          <Button
+            twStyles=" hover:cursor-pointer "
             onClick={() => {
               handleSubmit(onSubmit)();
             }}
-          >
-            Submit
-          </div>
+            y={75}
+            x={55}
+            text="Submit"
+          />
         </>
       }
+      contentY={35}
+      contentX={10}
+      initContentY={50}
+      titleY={75}
+      titleX={15}
+      initTitleX={-55}
+      titleScale={0.85}
+      initTitleScale={0.5}
+      initTitleOpacity={0.015}
     >
       <AddChannel
         register={register}
