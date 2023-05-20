@@ -305,7 +305,7 @@ export default function Modal({
 
             {isPlaying ? (
               <motion.div
-                className={`${robotoSlab.className} absolute top-[52%] left-[40%] z-50`}
+                className={`${robotoSlab.className} absolute ${styles.modalContent} z-50 `}
                 onKeyDown={onKeyDown}
                 ref={scopeModal}
                 initial={{ x: -150, y: -330 }}

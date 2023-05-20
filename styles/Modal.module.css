@@ -13,6 +13,11 @@
     min-width: 1480px;
     min-height: 1080px;
   }
+
+  .modalContent {
+    top: 52%;
+    left: 48%;
+  }
 }
 
 @media only screen and (min-width: 1280px) {
@@ -28,6 +33,10 @@
     min-width: 1780px;
     min-height: 1280px;
   }
+  .modalContent {
+    top: 52%;
+    left: 48%;
+  }
 }
 
 @media only screen and (min-width: 1680px) {
@@ -38,6 +47,10 @@
   .bigModalSecondary {
     min-width: 3580px;
     min-height: 2580px;
+  }
+  .modalContent {
+    top: 52%;
+    left: 48%;
   }
 }
 
@@ -50,6 +63,10 @@
     min-width: 3980px;
     min-height: 2580px;
   }
+  .modalContent {
+    top: 52%;
+    left: 48%;
+  }
 }
 
 @media only screen and (min-width: 2120px) {
@@ -60,6 +77,10 @@
   .bigModalSecondary {
     min-width: 4480px;
     min-height: 2580px;
+  }
+  .modalContent {
+    top: 52%;
+    left: 48%;
   }
 }
 .userSettings {

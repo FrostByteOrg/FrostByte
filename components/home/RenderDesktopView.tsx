@@ -78,7 +78,6 @@ export default function RenderDesktopView() {
 
       <div className="col-start-4 col-end-13 row-start-1 row-end-4 flex flex-col h-screen relative overflow-y-auto ">
         {mainView}
-        <div id="modalPortal" />
       </div>
 
       <div
