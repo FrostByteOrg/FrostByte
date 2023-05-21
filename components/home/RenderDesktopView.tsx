@@ -33,6 +33,8 @@ import MicrophoneOff from '../icons/MicroPhoneOff';
 import HeadPhonesIcon from '../icons/HeadPhonesIcon';
 import HeadPhonesOffIcon from '../icons/HeadPhonesOffIcon';
 import EditUserModal from './modals/EditUserModal';
+import InfoIcon from '@/components/icons/InfoIcon';
+import FAQModal from './modals/FAQModal';
 
 export default function RenderDesktopView() {
   const supabase = useSupabaseClient();
@@ -48,6 +50,8 @@ export default function RenderDesktopView() {
   const editUser = useProfile();
 
   const [showEditUser, setShowEditUser] = useState(false);
+  const [infoHover, setInfoHover] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   const setUserRef = useSetUserProfile();
 
@@ -59,8 +63,20 @@ export default function RenderDesktopView() {
   return (
     <div className={`${styles.container} `}>
       {deafenRoom ? <></> : <RoomAudioRenderer />}
-      <div className="col-start-1 col-end-2 row-start-1 row-end-4  bg-grey-950 flex-col justify-center ">
+      <div className="col-start-1 col-end-2 row-start-1 row-end-4 bg-grey-950 flex-col justify-center relative">
         <NavBar type="vertical" />
+        <InfoIcon
+          onMouseEnter={() => setInfoHover(true)}
+          onMouseLeave={() => setInfoHover(false)}
+          onClick={() => setShowInfoModal(!showInfoModal)}
+          className="absolute bottom-8 left-[22px] hover:cursor-pointer"
+          hovered={infoHover}
+        />
+        {showInfoModal ? (
+          <FAQModal showModal={showInfoModal} setShowModal={setShowInfoModal} />
+        ) : (
+          ''
+        )}
       </div>
       <div className="col-start-2 col-end-4 row-start-1 row-end-4  flex-col bg-grey-900 relative ">
         {sideBarView}

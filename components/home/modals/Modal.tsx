@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from 'react';
+import { useEffect, RefObject, DetailedHTMLProps, HTMLAttributes } from 'react';
 import styles from '@/styles/Modal.module.css';
 import { KeyboardEventHandler } from 'react';
 
@@ -10,14 +10,16 @@ export default function Modal({
   buttons,
   onKeyDown = undefined,
   closeBtn = '',
+  className = '',
 }: {
   modalRef: RefObject<HTMLDialogElement>;
   showModal: boolean;
-  title: string;
+  title: string | JSX.Element;
   children: JSX.Element;
   buttons: JSX.Element;
   onKeyDown?: KeyboardEventHandler<HTMLDialogElement> | undefined;
   closeBtn?: JSX.Element | '';
+  className?: string;
 }) {
   useEffect(() => {
     if (showModal && !modalRef.current?.open) {
@@ -31,7 +33,7 @@ export default function Modal({
       className={`${styles.modal} rounded-lg`}
       onKeyDown={onKeyDown}
     >
-      <div className="bg-grey-900 p-4 rounded-lg  z-50 ">
+      <div className={`${className} bg-grey-900 p-5 rounded-lg z-50`}>
         <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
           {title}
           {closeBtn}
