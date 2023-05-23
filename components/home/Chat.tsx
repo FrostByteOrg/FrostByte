@@ -1,5 +1,5 @@
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import MessageInput from './MessageInput';
@@ -9,7 +9,13 @@ import type {
 } from '@/types/dbtypes';
 import { createMessage } from '@/services/message.service';
 import Message from '@/components/home/Message';
-import { useChannel, useMessages, useServerUserProfilePermissions, useUserPerms } from '@/lib/store';
+import {
+  useChannel,
+  useLoadMoreMessages,
+  useMessages,
+  useServerUserProfilePermissions,
+  useUserPerms,
+} from '@/lib/store';
 import { Channel } from '@/types/dbtypes';
 import { ChannelMediaIcon } from '@/components/icons/ChannelMediaIcon';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
@@ -24,17 +30,49 @@ export default function Chat() {
   const messages = useMessages();
   const channel = useChannel();
   const userPerms = useUserPerms();
-  const serverPermissions = useServerUserProfilePermissions(channel?.server_id!, user?.id!);
+  const serverPermissions = useServerUserProfilePermissions(
+    channel?.server_id!,
+    user?.id!
+  );
   const connectionState = useConnectionState();
+  const loadMoreMessages = useLoadMoreMessages();
+  const [pageNum, setPageNum] = useState(1);
+  const [initalScroll, setInitalScroll] = useState(true);
+  console.log(pageNum);
+
+  const messagesRef = useRef<HTMLDivElement>(null);
+  const shouldScrollToBottomRef = useRef(true);
+  useEffect(() => {
+    if (
+      shouldScrollToBottomRef.current &&
+      messagesRef.current &&
+      messages.length > 0 &&
+      initalScroll
+    ) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      setInitalScroll(false);
+    }
+  }, [initalScroll, messages.length]);
 
   useEffect(() => {
-    if (newestMessageRef && messages) {
-      newestMessageRef.current?.scrollIntoView({
-        block: 'end',
-        behavior: 'auto',
-      });
+    console.log('messages');
+  }, [messages]);
+
+  const handleScroll = () => {
+    if (messagesRef.current && messagesRef.current.scrollTop === 0) {
+      loadMoreMessages(supabase, channel!.channel_id, pageNum, 100);
+      setPageNum(pageNum + 1);
     }
-  }, [newestMessageRef, messages]);
+  };
+
+  // useEffect(() => {
+  //   if (newestMessageRef && messages) {
+  //     newestMessageRef.current?.scrollIntoView({
+  //       block: 'end',
+  //       behavior: 'auto',
+  //     });
+  //   }
+  // }, [newestMessageRef, messages]);
 
   return (
     <>
@@ -56,6 +94,8 @@ export default function Chat() {
       {connectionState === ConnectionState.Connected && <MobileCallControls />}
       <div
         className={`${styles.messagesParent}  flex flex-col p-5 bg-grey-800 overflow-y-auto`}
+        ref={messagesRef}
+        onScroll={handleScroll}
       >
         <div className={`${styles.messageList} flex flex-col `}>
           {messages &&
@@ -73,12 +113,13 @@ export default function Chat() {
                     previousMessage.profile_id === value.profile_id
                   }
                   hasDeletePerms={
-                    (serverPermissions & ServerPermissions.MANAGE_MESSAGES) !== 0
+                    (serverPermissions & ServerPermissions.MANAGE_MESSAGES) !==
+                    0
                   }
                 />
               );
             })}
-          <div ref={newestMessageRef} className=""></div>
+          {/* <div ref={newestMessageRef} className=""></div> */}
         </div>
       </div>
       <div className="flex grow"></div>

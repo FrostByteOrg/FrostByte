@@ -4,9 +4,21 @@ import { Database } from '@/types/database.supabase';
 import { MessageWithServerProfile, UnsavedMessage } from '@/types/dbtypes';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-export async function getMessagesInChannel(supabase: SupabaseClient<Database>, channelId: number, page: number = 0, pageSize: number = 100) {
+export async function getMessagesInChannel(
+  supabase: SupabaseClient<Database>,
+  channelId: number,
+  page: number = 0,
+  pageSize: number = 100
+) {
   // Paginate
+
+  //take note of scroll location
+  //if scrolled enough
+  //make another request to this function, with old pageSize as page and pageSize as old pageSize + 100
+  //then add these messages to the messages store (it should sort then by default?)
+
   const { from, to } = getPagination(page, pageSize);
+  console.log(from, to);
 
   return await supabase
     .from('messages')
@@ -35,43 +47,58 @@ export async function getMessagesInChannelWithUser(
 }
 
 type Profiles = Database['public']['Tables']['profiles']['Row'];
-type MessagesWithUsersResponse = Awaited<ReturnType<typeof getMessagesInChannelWithUser>>;
+type MessagesWithUsersResponse = Awaited<
+  ReturnType<typeof getMessagesInChannelWithUser>
+>;
 // export type MessagesWithUsersResponseSuccess = MessagesWithUsersResponse['data'] & {
 //   profiles: Profiles
 // }
-export type MessagesWithUsersResponseError = MessagesWithUsersResponse['error']
+export type MessagesWithUsersResponseError = MessagesWithUsersResponse['error'];
 
-
-export async function getMessageWithUser(supabase: SupabaseClient<Database>, messageId: number) {
+export async function getMessageWithUser(
+  supabase: SupabaseClient<Database>,
+  messageId: number
+) {
   return await supabase
     .from('messages')
-    .select('*, profiles(\*), server_users(nickname)')
+    .select('*, profiles(*), server_users(nickname)')
     .eq('id', messageId)
     .single();
 }
 
 type MessageWithUsersResponse = Awaited<ReturnType<typeof getMessageWithUser>>;
-export type MessageWithUsersResponseSuccess = MessageWithUsersResponse['data'] & {
-  profiles: Profiles
-}
-export type MessageWithUsersResponseError = MessageWithUsersResponse['error']
+export type MessageWithUsersResponseSuccess =
+  MessageWithUsersResponse['data'] & {
+    profiles: Profiles;
+  };
+export type MessageWithUsersResponseError = MessageWithUsersResponse['error'];
 
-export async function createMessage(supabase: SupabaseClient<Database>, message: UnsavedMessage) {
+export async function createMessage(
+  supabase: SupabaseClient<Database>,
+  message: UnsavedMessage
+) {
   const { profile_id, channel_id } = message;
   const content = sanitizeMessage(message.content.trim());
 
-  return await supabase
-    .rpc('createmessage', { content, p_id: profile_id, c_id: channel_id });
+  return await supabase.rpc('createmessage', {
+    content,
+    p_id: profile_id,
+    c_id: channel_id,
+  });
 }
 
-export async function deleteMessage(supabase: SupabaseClient<Database>, messageId: number) {
-  return await supabase
-    .from('messages')
-    .delete().eq('id', messageId)
-    .single();
+export async function deleteMessage(
+  supabase: SupabaseClient<Database>,
+  messageId: number
+) {
+  return await supabase.from('messages').delete().eq('id', messageId).single();
 }
 
-export async function editMessage(supabase: SupabaseClient<Database>, messageId: number, content: string) {
+export async function editMessage(
+  supabase: SupabaseClient<Database>,
+  messageId: number,
+  content: string
+) {
   // process anything necessary here
   content = sanitizeMessage(content);
 

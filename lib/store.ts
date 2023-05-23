@@ -18,9 +18,17 @@ import {
   getServerForUser,
   getServersForUser,
 } from '@/services/server.service';
-import { getMessagesInChannel, getMessagesInChannelWithUser } from '@/services/message.service';
+import {
+  getMessagesInChannel,
+  getMessagesInChannelWithUser,
+} from '@/services/message.service';
 import { getCurrentUserChannelPermissions } from '@/services/channels.service';
-import { getMessageWithServerProfile, getProfile, getServerProfileForUser, getServerProfileForUserByServerUser } from '@/services/profile.service';
+import {
+  getMessageWithServerProfile,
+  getProfile,
+  getServerProfileForUser,
+  getServerProfileForUserByServerUser,
+} from '@/services/profile.service';
 import {
   getRelationships,
   relationToDetailedRelation,
@@ -31,7 +39,11 @@ import {
   getAllDMChannels,
 } from '@/services/directmessage.service';
 import { Room } from '@/types/client/room';
-import { getRolesFromAllServersUserIsIn, getServerRoles, getHighestRolePositionForUser } from '@/services/roles.service';
+import {
+  getRolesFromAllServersUserIsIn,
+  getServerRoles,
+  getHighestRolePositionForUser,
+} from '@/services/roles.service';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
 
 export interface ServerState {
@@ -104,6 +116,12 @@ export interface MessagesState {
   updateMessage: (newMessage: Message) => void;
   removeMessage: (messageId: number) => void;
   getMessages: (supabase: SupabaseClient<Database>, channelId: number) => void;
+  loadMoreMessages: (
+    supabase: SupabaseClient<Database>,
+    channelId: number,
+    page: number,
+    pageSize: number
+  ) => void;
 }
 
 const useMessagesStore = create<MessagesState>()((set) => ({
@@ -112,7 +130,7 @@ const useMessagesStore = create<MessagesState>()((set) => ({
   setChannelId: (chId) => set((state) => ({ channelId: chId })),
   addMessage: async (message) => {
     set((state) => ({
-      messages: [...state.messages, message ],
+      messages: [...state.messages, message],
     }));
   },
   updateMessage: async (newMessage) => {
@@ -147,6 +165,26 @@ const useMessagesStore = create<MessagesState>()((set) => ({
       set({ messages: data });
     }
   },
+  loadMoreMessages: async (supabase, channelId, page, pageSize) => {
+    const { data, error } = await getMessagesInChannel(
+      supabase,
+      channelId,
+      page,
+      pageSize
+    );
+
+    if (error) {
+      console.error(error);
+    }
+
+    if (data) {
+      console.log(data);
+      data.reverse();
+      set((state) => ({
+        messages: [...data, ...state.messages],
+      }));
+    }
+  },
 }));
 
 /**
@@ -169,7 +207,6 @@ export interface UserPermsState {
     serverId: number,
     userId: string
   ) => void;
-
 }
 
 /**
@@ -226,7 +263,7 @@ const useUserPermsStore = create<UserPermsState>()((set) => ({
     if (data) {
       set({ userHighestRolePosition: data });
     }
-  }
+  },
 }));
 
 export interface ChannelState {
@@ -269,10 +306,7 @@ export interface CurrentRoomState {
     currentRoomServerId: number | undefined,
     servers: ServersForUser[]
   ) => void;
-  fetchProfile: (
-    supabase: SupabaseClient<Database>,
-    userId: string
-  ) => void;
+  fetchProfile: (supabase: SupabaseClient<Database>, userId: string) => void;
 }
 
 const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
@@ -305,7 +339,9 @@ const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
   },
 
   fetchProfile: async (supabase, userId) => {
-    const profile: Profile | undefined = useCurrentRoomStore.getState().profileMap.get(userId);
+    const profile: Profile | undefined = useCurrentRoomStore
+      .getState()
+      .profileMap.get(userId);
 
     if (profile) {
       return;
@@ -325,7 +361,7 @@ const useCurrentRoomStore = create<CurrentRoomState>()((set) => ({
     }));
 
     return;
-  }
+  },
 }));
 
 export interface CurrentProfileState {
@@ -338,8 +374,7 @@ export interface CurrentProfileState {
 const useUserStore = create<CurrentProfileState>()((set) => ({
   currentSetting: false,
   currentUserProfile: undefined,
-  setCurrentSetting: (currentSetting) =>
-    set((state) => ({ currentSetting })),
+  setCurrentSetting: (currentSetting) => set((state) => ({ currentSetting })),
   setCurrentUserProfile: (currentUser) =>
     set((state) => ({ currentUserProfile: currentUser })),
 }));
@@ -506,7 +541,10 @@ export interface ServerRolesState {
   removeRole: (role: number) => void;
 
   getRolesForAllServers: (supabase: SupabaseClient<Database>) => void;
-  getRolesForServer: (supabase: SupabaseClient<Database>, serverId: number) => void;
+  getRolesForServer: (
+    supabase: SupabaseClient<Database>,
+    serverId: number
+  ) => void;
 }
 
 const useServerRolesStore = create<ServerRolesState>()((set) => ({
@@ -515,10 +553,10 @@ const useServerRolesStore = create<ServerRolesState>()((set) => ({
   addRole: async (role) => {
     set((state) => ({
       serverRoles: new Map(
-        state.serverRoles.set(
-          role.server_id,
-          [...state.serverRoles.get(role.server_id) || [], role]
-        )
+        state.serverRoles.set(role.server_id, [
+          ...(state.serverRoles.get(role.server_id) || []),
+          role,
+        ])
       ),
     }));
   },
@@ -528,9 +566,9 @@ const useServerRolesStore = create<ServerRolesState>()((set) => ({
       serverRoles: new Map(
         state.serverRoles.set(
           role.server_id,
-          (state.serverRoles
-            .get(role.server_id) || [])
-            .map((r) => (r.id === role.id ? role : r))
+          (state.serverRoles.get(role.server_id) || []).map((r) =>
+            r.id === role.id ? role : r
+          )
         )
       ),
     }));
@@ -541,7 +579,10 @@ const useServerRolesStore = create<ServerRolesState>()((set) => ({
       const rv = new Map();
 
       for (const [serverId, roles] of state.serverRoles) {
-        rv.set(serverId, roles.filter((r) => r.id !== roleId));
+        rv.set(
+          serverId,
+          roles.filter((r) => r.id !== roleId)
+        );
       }
 
       return {
@@ -585,18 +626,31 @@ const useServerRolesStore = create<ServerRolesState>()((set) => ({
     set((state) => ({
       serverRoles: new Map(state.serverRoles.set(serverId, data)),
     }));
-  }
+  },
 }));
 
 export interface ServerProfilesState {
   serverProfiles: Map<number, Map<string, ServerUserProfile>>;
 
-  addServerProfiles: (supabase: SupabaseClient<Database>, server_id: number) => void;
-  updateServerProfile: (supabase: SupabaseClient<Database>, profile_id: string, server_id: number) => void;
-  updateServerProfileByServerUser: (supabase: SupabaseClient<Database>, server_user_id: number) => void;
+  addServerProfiles: (
+    supabase: SupabaseClient<Database>,
+    server_id: number
+  ) => void;
+  updateServerProfile: (
+    supabase: SupabaseClient<Database>,
+    profile_id: string,
+    server_id: number
+  ) => void;
+  updateServerProfileByServerUser: (
+    supabase: SupabaseClient<Database>,
+    server_user_id: number
+  ) => void;
   stripServerUserAndRoles: (server_user_id: number) => void;
   removeServerProfile: (profile_id: string, server_id: number) => void;
-  removeProfilesForServerByServerUserId: (supabase: SupabaseClient<Database>, server_user_id: number) => void;
+  removeProfilesForServerByServerUserId: (
+    supabase: SupabaseClient<Database>,
+    server_user_id: number
+  ) => void;
 }
 
 const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
@@ -609,7 +663,6 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
       console.error(error);
       return;
     }
-
 
     set((state) => {
       const rv = new Map(state.serverProfiles);
@@ -630,7 +683,11 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
   },
 
   updateServerProfile: async (supabase, profile_id, server_id) => {
-    const { data, error } = await getServerProfileForUser(supabase, profile_id, server_id);
+    const { data, error } = await getServerProfileForUser(
+      supabase,
+      profile_id,
+      server_id
+    );
 
     if (error) {
       console.error(error);
@@ -653,7 +710,10 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
   },
 
   updateServerProfileByServerUser: async (supabase, server_user_id) => {
-    const { data, error } = await getServerProfileForUserByServerUser(supabase, server_user_id);
+    const { data, error } = await getServerProfileForUserByServerUser(
+      supabase,
+      server_user_id
+    );
 
     if (error) {
       console.error(error);
@@ -733,16 +793,34 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
       console.log('User: ', user);
       // Find the server user
       for (const [server_id, profiles] of rv) {
-        console.log('Searching for server user', server_user_id, 'in server', server_id, '...');
+        console.log(
+          'Searching for server user',
+          server_user_id,
+          'in server',
+          server_id,
+          '...'
+        );
         for (const [profile_id, profile] of profiles) {
-          console.log('Checking profile', profile_id, 'with server_user_id', profile.server_user?.id, '...');
+          console.log(
+            'Checking profile',
+            profile_id,
+            'with server_user_id',
+            profile.server_user?.id,
+            '...'
+          );
 
           if (!profile.server_user) {
             continue;
           }
 
           if (profile.server_user.id === server_user_id) {
-            console.log('Found server user', server_user_id, 'in server', server_id, '...');
+            console.log(
+              'Found server user',
+              server_user_id,
+              'in server',
+              server_id,
+              '...'
+            );
             _server_id = server_id;
 
             console.table(user.user);
@@ -778,6 +856,8 @@ export const useGetServers = () => useServerStore((state) => state.getServers);
 export const useMessages = () => useMessagesStore((state) => state.messages);
 export const useGetMessages = () =>
   useMessagesStore((state) => state.getMessages);
+export const useLoadMoreMessages = () =>
+  useMessagesStore((state) => state.loadMoreMessages);
 export const useAddMessage = () =>
   useMessagesStore((state) => state.addMessage);
 export const useRemoveMessage = () =>
@@ -814,8 +894,10 @@ export const useSetUserSettings = () =>
   useUserStore((state) => state.setCurrentSetting);
 export const useUserSettings = () =>
   useUserStore((state) => state.currentSetting);
-export const useSetUserProfile = () => useUserStore((state) => state.setCurrentUserProfile);
-export const useProfile = () => useUserStore((state) => state.currentUserProfile);
+export const useSetUserProfile = () =>
+  useUserStore((state) => state.setCurrentUserProfile);
+export const useProfile = () =>
+  useUserStore((state) => state.currentUserProfile);
 
 export const useRelations = () => useRelationsStore((state) => state.relations);
 export const useAddRelation = () =>
@@ -838,17 +920,20 @@ export const useGetUserPermsForServer = () =>
 /**
  * @deprecated inconsistent behaviour.
  */
-export const useGetUserHighestRolePosition = () => useUserPermsStore((state) => state.getHighestRolePositionForUser);
+export const useGetUserHighestRolePosition = () =>
+  useUserPermsStore((state) => state.getHighestRolePositionForUser);
 
 /**
  * @deprecated use useServerUserProfilePermissions
  */
-export const useUserServerPerms = () => useUserPermsStore((state) => state.userServerPerms);
+export const useUserServerPerms = () =>
+  useUserPermsStore((state) => state.userServerPerms);
 
 /**
  * @deprecated use useServerUserProfileHighestRolePosition
  */
-export const useUserHighestRolePosition = () => useUserPermsStore((state) => state.userHighestRolePosition);
+export const useUserHighestRolePosition = () =>
+  useUserPermsStore((state) => state.userHighestRolePosition);
 
 export const useAddDMChannel = () =>
   useDMChannelsStore((state) => state.addDMChannel);
@@ -856,24 +941,43 @@ export const useDMChannels = () =>
   useDMChannelsStore((state) => state.dmChannels);
 export const useGetDMChannels = () =>
   useDMChannelsStore((state) => state.getDMChannels);
-export const useServerRoles = (server_id: number) => useServerRolesStore((state) => state.serverRoles.get(server_id) || []);
-export const useAddServerRole = () => useServerRolesStore((state) => state.addRole);
-export const useUpdateServerRole = () => useServerRolesStore((state) => state.updateRole);
-export const useRemoveServerRole = () => useServerRolesStore((state) => state.removeRole);
-export const useGetAllServerRoles = () => useServerRolesStore((state) => state.getRolesForAllServers);
-export const useGetRolesForServer = () => useServerRolesStore((state) => state.getRolesForServer);
-export const useGetAllServerUserProfiles = () => useServerProfilesStore((state) => state.addServerProfiles);
-export const useUpateServerUserProfile = () => useServerProfilesStore((state) => state.updateServerProfile);
-export const useUpdateServerUserProfileByServerUserId = () => useServerProfilesStore((state) => state.updateServerProfileByServerUser);
-export const useAllServerProfiles = () => useServerProfilesStore((state) => state.serverProfiles);
-export const useServerUserProfile = (server_id: number, profile_id: string) => useServerProfilesStore(
-  (state) => state.serverProfiles.get(server_id)?.get(profile_id)
-);
-export const useRemoveServerUserProfile = () => useServerProfilesStore((state) => state.removeServerProfile);
-export const useStripServerUserAndRoles = () => useServerProfilesStore((state) => state.stripServerUserAndRoles);
-export const useRemoveProfilesForServerByServerUserId = () => useServerProfilesStore((state) => state.removeProfilesForServerByServerUserId);
-export const useServerUserProfileHighestRolePosition = (server_id: number | null, profile_id: string) => useServerProfilesStore(
-  (state) => {
+export const useServerRoles = (server_id: number) =>
+  useServerRolesStore((state) => state.serverRoles.get(server_id) || []);
+export const useAddServerRole = () =>
+  useServerRolesStore((state) => state.addRole);
+export const useUpdateServerRole = () =>
+  useServerRolesStore((state) => state.updateRole);
+export const useRemoveServerRole = () =>
+  useServerRolesStore((state) => state.removeRole);
+export const useGetAllServerRoles = () =>
+  useServerRolesStore((state) => state.getRolesForAllServers);
+export const useGetRolesForServer = () =>
+  useServerRolesStore((state) => state.getRolesForServer);
+export const useGetAllServerUserProfiles = () =>
+  useServerProfilesStore((state) => state.addServerProfiles);
+export const useUpateServerUserProfile = () =>
+  useServerProfilesStore((state) => state.updateServerProfile);
+export const useUpdateServerUserProfileByServerUserId = () =>
+  useServerProfilesStore((state) => state.updateServerProfileByServerUser);
+export const useAllServerProfiles = () =>
+  useServerProfilesStore((state) => state.serverProfiles);
+export const useServerUserProfile = (server_id: number, profile_id: string) =>
+  useServerProfilesStore((state) =>
+    state.serverProfiles.get(server_id)?.get(profile_id)
+  );
+export const useRemoveServerUserProfile = () =>
+  useServerProfilesStore((state) => state.removeServerProfile);
+export const useStripServerUserAndRoles = () =>
+  useServerProfilesStore((state) => state.stripServerUserAndRoles);
+export const useRemoveProfilesForServerByServerUserId = () =>
+  useServerProfilesStore(
+    (state) => state.removeProfilesForServerByServerUserId
+  );
+export const useServerUserProfileHighestRolePosition = (
+  server_id: number | null,
+  profile_id: string
+) =>
+  useServerProfilesStore((state) => {
     if (!server_id) {
       return 32767; // Highest possible role position, smallint maxsize in postgres
     }
@@ -888,10 +992,12 @@ export const useServerUserProfileHighestRolePosition = (server_id: number | null
     profile.roles.sort((a, b) => a.position - b.position);
 
     return profile.roles[0].position;
-  }
-);
-export const useServerUserProfileRoles = (server_id: number, profile_id: string) => useServerProfilesStore(
-  (state) => {
+  });
+export const useServerUserProfileRoles = (
+  server_id: number,
+  profile_id: string
+) =>
+  useServerProfilesStore((state) => {
     const profile = state.serverProfiles.get(server_id)?.get(profile_id);
 
     if (!profile || !profile.roles) {
@@ -902,10 +1008,12 @@ export const useServerUserProfileRoles = (server_id: number, profile_id: string)
     profile.roles.sort((a, b) => a.position - b.position);
 
     return profile.roles;
-  }
-);
-export const useServerUserProfilePermissions = (server_id: number | null, profile_id: string) => useServerProfilesStore(
-  (state) => {
+  });
+export const useServerUserProfilePermissions = (
+  server_id: number | null,
+  profile_id: string
+) =>
+  useServerProfilesStore((state) => {
     if (!server_id) {
       return 0;
     }
@@ -921,6 +1029,8 @@ export const useServerUserProfilePermissions = (server_id: number | null, profil
     }
 
     // Iters over the roles and bitwise ORs the permissions
-    return profile.roles.reduce((acc, role) => (acc | role.permissions) as ServerPermissions, 0 as ServerPermissions);
-  }
-);
+    return profile.roles.reduce(
+      (acc, role) => (acc | role.permissions) as ServerPermissions,
+      0 as ServerPermissions
+    );
+  });
