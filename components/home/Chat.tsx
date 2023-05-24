@@ -55,8 +55,11 @@ export default function Chat() {
   }, [initalScroll, messages.length]);
 
   useEffect(() => {
-    console.log('messages');
-  }, [messages]);
+    setTimeout(() => {
+      setInitalScroll(true);
+      setPageNum(1);
+    }, 500);
+  }, [channel?.channel_id]);
 
   const handleScroll = () => {
     if (messagesRef.current && messagesRef.current.scrollTop === 0) {
@@ -64,15 +67,6 @@ export default function Chat() {
       setPageNum(pageNum + 1);
     }
   };
-
-  // useEffect(() => {
-  //   if (newestMessageRef && messages) {
-  //     newestMessageRef.current?.scrollIntoView({
-  //       block: 'end',
-  //       behavior: 'auto',
-  //     });
-  //   }
-  // }, [newestMessageRef, messages]);
 
   return (
     <>
