@@ -54,11 +54,22 @@ export default function Chat() {
     }
   }, [initalScroll, messages.length]);
 
+  //This useEffect is for pull the scroll bar down to the bottom if ur scroll bar is already close to the
+  //bottom of the messages
   useEffect(() => {
-    setTimeout(() => {
-      setInitalScroll(true);
-      setPageNum(1);
-    }, 500);
+    if (
+      shouldScrollToBottomRef.current &&
+      messagesRef.current &&
+      messagesRef.current.scrollHeight - messagesRef.current.scrollTop <=
+        messagesRef.current.clientHeight + 300
+    ) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    setInitalScroll(true);
+    setPageNum(1);
   }, [channel?.channel_id]);
 
   const handleScroll = () => {
