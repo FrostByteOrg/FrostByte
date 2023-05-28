@@ -19,7 +19,7 @@ export async function getOrCreateDMChannel(
       name: profile.username,
       is_media: false,
       description: null,
-      created_at: null
+      created_at: null,
     };
   }
 
@@ -33,12 +33,12 @@ export async function getOrCreateDMChannel(
 
   if (data) {
     return {
-      channel_id: data.channel_id,
-      server_id: data.server_id,
+      channel_id: data['channel_id'],
+      server_id: data['server_id'],
       name: profile.username,
       is_media: false,
       description: null,
-      created_at: null
+      created_at: null,
     };
   }
 
