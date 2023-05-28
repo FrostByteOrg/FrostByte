@@ -34,7 +34,7 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
         setInvite(data);
         if (data['servers']) {
           setUserInServer(
-            servers.some((s) => s.server_id === data['servers'].id)
+            servers.some((s) => s.server_id === data['servers']['id'])
           );
         }
       }
