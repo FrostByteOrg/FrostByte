@@ -6,21 +6,25 @@ import { useEffect, useState } from 'react';
 
 export function ServerBansList({ serverId }: { serverId: number }) {
   const supabase = useSupabaseClient();
-  const [ bans, setBans ] = useState<ServerBanWithProfile[]>([]);
+  const [bans, setBans] = useState<ServerBanWithProfile[]>([]);
 
   useEffect(() => {
     async function handleAsync() {
-      const { data, error } = await getServerBans(
-        supabase,
-        serverId
-      );
+      const { data, error } = await getServerBans(supabase, serverId);
 
       if (error) {
         console.error(error);
         return;
       }
 
-      setBans(data);
+      if (data) {
+        if (Array.isArray(data)) {
+          setBans(data!);
+        }
+        else {
+          setBans([data!]);
+        }
+      }
     }
 
     handleAsync();
@@ -29,7 +33,12 @@ export function ServerBansList({ serverId }: { serverId: number }) {
   return (
     <div className="flex flex-col w-full h-full">
       {bans.map((ban) => (
-        <BanListItem ban={ban} serverId={serverId} key={ban.id} setServerBans={setBans}/>
+        <BanListItem
+          ban={ban}
+          serverId={serverId}
+          key={ban.id}
+          setServerBans={setBans}
+        />
       ))}
     </div>
   );
