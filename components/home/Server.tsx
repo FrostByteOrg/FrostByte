@@ -66,7 +66,7 @@ export default function Server({
             setChannels(data!);
           }
           else {
-            setChannels([...data!]);
+            setChannels([data!]);
           }
         }
       }
