@@ -1,4 +1,4 @@
-@media only screen and (min-width: 1280px) {
+@media only screen and (min-width: 1130px) {
   .authMD {
     display: grid;
     grid-template-columns:
@@ -9,7 +9,7 @@
       minmax(0, 128px) minmax(0, 192px) minmax(0, 128px)
       repeat(3, minmax(16px, 1fr));
 
-    grid-template-rows: minmax(8px, 1fr) minmax(640px, 768px) minmax(64px, 1fr);
+    grid-template-rows: minmax(8px, 1fr) minmax(640px, 768px) minmax(32px, 1fr);
   }
 
   .rightSide {
@@ -20,13 +20,12 @@
       ),
       linear-gradient(
         to top,
-        hsla(197, 79%, 74%, 100%),
+        hsla(197, 79%, 74%, 70%),
         hsla(197, 81%, 39%, 70%)
       ),
-      url('../public/bubbles.svg'),
       linear-gradient(
         to top,
-        hsla(197, 79%, 74%, 90%),
+        hsla(197, 79%, 74%, 50%),
         hsla(197, 81%, 39%, 100%)
       );
     box-shadow: inset 0 10px 4px hsla(197, 81%, 44%, 30%),
@@ -55,7 +54,7 @@
   }
 }
 
-@media only screen and (max-width: 1280px) {
+@media only screen and (max-width: 1130px) {
   .mainBackground {
     background-image: linear-gradient(
         to top left,
@@ -64,13 +63,12 @@
       ),
       linear-gradient(
         to top,
-        hsla(197, 79%, 74%, 100%),
+        hsla(197, 79%, 74%, 70%),
         hsla(197, 81%, 39%, 70%)
       ),
-      url('../public/bubbles.svg'),
       linear-gradient(
         to top,
-        hsla(197, 79%, 74%, 90%),
+        hsla(197, 79%, 74%, 50%),
         hsla(197, 81%, 39%, 100%)
       );
     box-shadow: inset 0 10px 4px hsla(197, 81%, 44%, 30%),

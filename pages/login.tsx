@@ -5,11 +5,14 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Yeti from '../public/test1.png';
 import VideoChat from '../public/test4.png';
+import { useRouter } from 'next/router';
 
 export default function Login() {
   const [authType, setAuthType] = useState<
     'login' | 'register' | 'resetPassword'
   >('login');
+
+  const router = useRouter();
 
   return (
     <>
@@ -74,6 +77,20 @@ export default function Login() {
                 />
               </div>
               <Auth type={authType} setAuthType={setAuthType} />
+            </div>
+          </div>
+          <div className="flex tracking-wider justify-center mt-3 mr-8 row-start-3 row-end-4 col-start-7 col-end-10">
+            <div
+              className="flex justify-center text-frost-300 text-sm hover:cursor-pointer hover:text-frost-500"
+              onClick={() => router.push('/privacy')}
+            >
+              Privacy policy |
+            </div>
+            <div
+              className="flex justify-center text-frost-300 text-sm hover:cursor-pointer hover:text-frost-500"
+              onClick={() => router.push('/tos')}
+            >
+              &nbsp;Terms of service{' '}
             </div>
           </div>
         </div>

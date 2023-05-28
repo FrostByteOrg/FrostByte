@@ -9,7 +9,12 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   // Forward req if User tries to reset password, authorization will happen on the client
   // console.log(req.cookies.has('supabase-auth-token'));
-  if (req.nextUrl.pathname == '/passwordreset') return res;
+  if (
+    req.nextUrl.pathname == '/passwordreset' ||
+    req.nextUrl.pathname == '/tos' ||
+    req.nextUrl.pathname == '/privacy'
+  )
+    return res;
   // Create authenticated Supabase Client.
   const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
   // Check if we have a session
@@ -42,5 +47,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!favicon.ico|_next).*)','/api/:path*'],
+  matcher: ['/((?!favicon.ico|_next).*)', '/api/:path*'],
 };
