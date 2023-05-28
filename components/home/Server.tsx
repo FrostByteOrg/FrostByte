@@ -61,7 +61,14 @@ export default function Server({
     const handleAsync = async () => {
       if (server) {
         const { data } = await getChannelsInServer(supabase, server.id);
-        setChannels(data!);
+        if (data) {
+          if (Array.isArray(data)) {
+            setChannels(data!);
+          }
+          else {
+            setChannels([...data!]);
+          }
+        }
       }
     };
     handleAsync();
