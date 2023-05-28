@@ -64,7 +64,7 @@ const useServerStore = create<ServerState>()((set) => ({
       return;
     }
 
-    if (data && !data.servers.is_dm) {
+    if (data && !data['servers']['is_dm']) {
       set((state) => ({
         servers: [...state.servers, data as ServersForUser],
       }));
