@@ -32,7 +32,7 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
 
       if (data) {
         setInvite(data);
-        if (data.servers) {
+        if (data?.servers) {
           setUserInServer(servers.some((s) => s.server_id === data.servers.id));
         }
       }
