@@ -1,4 +1,3 @@
-import { User } from '@/types/dbtypes';
 import { FieldErrorsImpl, useForm, UseFormRegister } from 'react-hook-form';
 import {
   useRef,
@@ -8,7 +7,6 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useUserRef } from '@/lib/store';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import router from 'next/router';
 import LogOutIcon from '@/components/icons/LogOutIcon';
@@ -46,33 +44,49 @@ export default function EditUser() {
   }
   return (
     <div className={`flex flex-row ${modalStyle.userSettings}`}>
-      <div className='w-10 mr-4 flex flex-col justify-between items-start border-r border-grey-700'>
+      <div className="w-10 mr-4 flex flex-col justify-between items-start border-r border-grey-700">
         <div>
-          <div className={`flex flex-row w-10 px-3 py-1 items-center ${formSwitch === 'editUser' && 'border-r border-r-white bg-gray-500'}`}>
+          <div
+            className={`flex flex-row w-10 px-3 py-1 items-center ${
+              formSwitch === 'editUser' && 'border-r border-r-white bg-gray-500'
+            }`}
+          >
             <button
-              className='h-6 text-sm tracking-wide hover:text-frost-400'
-              onClick={() => setFormSwitch('editUser')}>
+              className="h-6 text-sm tracking-wide hover:text-frost-400"
+              onClick={() => setFormSwitch('editUser')}
+            >
               Edit Profile
             </button>
           </div>
-          <div className={`flex flex-row w-10 px-3 py-1 items-center ${formSwitch === 'changePassword' && 'border-r border-r-white bg-gray-500'}`}>
+          <div
+            className={`flex flex-row w-10 px-3 py-1 items-center ${
+              formSwitch === 'changePassword' &&
+              'border-r border-r-white bg-gray-500'
+            }`}
+          >
             <button
-              className='h-6 text-sm tracking-wide hover:text-frost-400'
-              onClick={() => setFormSwitch('changePassword')}>
+              className="h-6 text-sm tracking-wide hover:text-frost-400"
+              onClick={() => setFormSwitch('changePassword')}
+            >
               Edit Password
             </button>
           </div>
-          <div className={`flex flex-row w-10 px-3 py-1 items-center ${formSwitch === 'setMedia' && 'border-r border-r-white bg-gray-500'}`}>
+          <div
+            className={`flex flex-row w-10 px-3 py-1 items-center ${
+              formSwitch === 'setMedia' && 'border-r border-r-white bg-gray-500'
+            }`}
+          >
             <button
-              className='h-6 text-sm tracking-wide hover:text-frost-400'
-              onClick={() => setFormSwitch('setMedia')}>
+              className="h-6 text-sm tracking-wide hover:text-frost-400"
+              onClick={() => setFormSwitch('setMedia')}
+            >
               Device Settings
             </button>
           </div>
         </div>
-        <div className='flex flex-row mb-1'>
+        <div className="flex flex-row mb-1">
           <button
-            className='
+            className="
             tracking-wide 
             text-md mb-1 
             text-frost-100 
@@ -81,8 +95,9 @@ export default function EditUser() {
             items-center 
             justify-evenly
              w-9
-             hover:text-red-500'
-            onClick={handleLogout}>
+             hover:text-red-500"
+            onClick={handleLogout}
+          >
             Logout
             <LogOutIcon width={5} height={5} />
           </button>

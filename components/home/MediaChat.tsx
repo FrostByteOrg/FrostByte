@@ -68,6 +68,7 @@ export default function MediaChat({
     }
     // NOTE: We only want this to run when the channel changes. Not when currentRoom or connectionstate changes.
     // Hence why we're not including them in the dependency array.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channel?.channel_id]);
 
   return (

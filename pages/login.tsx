@@ -64,7 +64,7 @@ export default function Login() {
               </div>
             </div>
             <div
-              className={`flex flex-col w-full  items-center xl:rounded-3xl ${styles.rightSide} z-50`}
+              className={`flex flex-col w-full items-center xl:rounded-3xl ${styles.rightSide} z-50`}
             >
               <div className="basis-1/4 flex items-center relative mt-7">
                 <Image
