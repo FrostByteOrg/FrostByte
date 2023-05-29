@@ -83,7 +83,13 @@ const useServerStore = create<ServerState>()((set) => ({
     }
 
     if (data) {
-      set({ servers: data as ServersForUser[] });
+      const convertedData = data.map(({ server_id, servers }) => ({
+        server_id,
+        servers: Array.isArray(servers) ? servers[0] : servers,
+      }));
+
+      set({ servers: convertedData as ServersForUser[] });
+      // set({ servers: data as ServersForUser[] });
     }
   },
   updateServer: async (supabase, serverId) => {
