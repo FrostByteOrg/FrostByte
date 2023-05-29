@@ -433,7 +433,7 @@ const useRelationsStore = create<RelationsState>()((set) => ({
     set((state) => ({
       relations: state.relations.map((relation) => {
         // Once we hit a relation that matches the id, we can return the updated relation instead of the old one
-        if (relation.id === data.id) {
+        if (relation.id === data['id']) {
           return data as DetailedProfileRelation;
         }
 
