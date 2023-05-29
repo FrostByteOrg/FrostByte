@@ -532,15 +532,29 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
       return;
     }
 
+    const dmChannelsData = data as
+      | DMChannelWithRecipient[]
+      | DMChannelWithRecipient;
+
     set((state) => ({
       dmChannels: new Map(
-        data.map((channel) => [
-          channel.recipient.id,
-          {
-            ...channel,
-            name: channel.recipient.username,
-          },
-        ])
+        Array.isArray(dmChannelsData)
+          ? dmChannelsData.map((channel) => [
+            channel.recipient.id,
+            {
+              ...channel,
+              name: channel.recipient.username,
+            },
+          ])
+          : [
+            [
+              dmChannelsData.recipient.id,
+              {
+                ...dmChannelsData,
+                name: dmChannelsData.recipient.username,
+              },
+            ],
+          ]
       ),
     }));
   },
