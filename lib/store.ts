@@ -459,7 +459,14 @@ const useRelationsStore = create<RelationsState>()((set) => ({
     }
 
     if (data) {
-      set({ relations: data as DetailedProfileRelation[] });
+      // set({ relations: data as DetailedProfileRelation[] });
+
+      if (Array.isArray(data)) {
+        set({ relations: data as DetailedProfileRelation[] });
+      }
+      else {
+        set({ relations: [data] as DetailedProfileRelation[] });
+      }
     }
   },
 }));

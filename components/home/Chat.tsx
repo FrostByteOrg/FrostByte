@@ -42,6 +42,7 @@ export default function Chat() {
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const shouldScrollToBottomRef = useRef(true);
+  //NOTE: should figure out a way to store to bottom on page load only IF the messages have loaded (the component)
   useEffect(() => {
     if (
       shouldScrollToBottomRef.current &&
