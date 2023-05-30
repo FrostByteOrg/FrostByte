@@ -18,9 +18,9 @@ export default function InviteSplash() {
   const { inviteCode } = router.query;
   const supabase = useSupabaseClient();
   const [invite, setInvite] = useState<ServerInvite | null>(null);
-  const [ userInServer, setUserInServer ] = useState<boolean>(false);
+  const [userInServer, setUserInServer] = useState<boolean>(false);
   const mq = useMediaQuery({ query: '(max-width: 1280px)' });
-  const [ isMobile, setIsMobile ] = useState(true);
+  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
     setIsMobile(mq);
@@ -32,8 +32,14 @@ export default function InviteSplash() {
         return;
       }
 
-      const { data, error } = await getInviteAndServer(supabase, inviteCode as string);
-      const { data: servers, error: serverError } = await getServersForUser(supabase, user!.id);
+      const { data, error } = await getInviteAndServer(
+        supabase,
+        inviteCode as string
+      );
+      const { data: servers, error: serverError } = await getServersForUser(
+        supabase,
+        user!.id
+      );
 
       if (error) {
         console.error(error);
@@ -49,8 +55,10 @@ export default function InviteSplash() {
         return;
       }
 
-      setUserInServer(servers.some((s) => s.server_id === data.servers.id));
-    };
+      setUserInServer(
+        servers.some((s) => s.server_id === data['servers']['id'])
+      );
+    }
 
     handleAsync();
   }, [inviteCode, supabase, user]);
@@ -68,10 +76,10 @@ export default function InviteSplash() {
           <div
             className={`${styles.mainContainer} col-start-4 col-end-10 row-start-2 row-end-3 flex w-full h-full xl:rounded-3xl`}
           >
-            <div className="w-full hidden xl:flex xl:flex-col  h-full ">
-
-            </div>
-            <div className={`flex flex-col items-center xl:rounded-r-3xl ${styles.rightSide} w-full overflow-hidden`}>
+            <div className="w-full hidden xl:flex xl:flex-col  h-full "></div>
+            <div
+              className={`flex flex-col items-center xl:rounded-r-3xl ${styles.rightSide} w-full overflow-hidden`}
+            >
               <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden">
                 {!!invite && (
                   <div className="basis-1/4 flex flex-col items-center relative mt-8 space-y-6 !w-1/2">
@@ -79,15 +87,20 @@ export default function InviteSplash() {
                       <ServersIcon
                         server={invite.servers}
                         hovered={false}
-                        className='w-8 h-8'
+                        className="w-8 h-8"
                       />
                     </div>
                     <div className="h-full flex flex-col justify-center items-center text-8xl font-extrabold">
-                      <div className={`${styles.frostCord} max-w-[450px] h-10 overflow-hidden`}>
-                        <OverflowMarquee content={invite.servers.name} maxLength={8}/>
+                      <div
+                        className={`${styles.frostCord} max-w-[450px] h-10 overflow-hidden`}
+                      >
+                        <OverflowMarquee
+                          content={invite.servers.name}
+                          maxLength={8}
+                        />
                       </div>
                       {!!invite.servers.description && (
-                        <p className='text-center text-2xl font-semibold tracking-wide overflow-hidden w-[80%]'>
+                        <p className="text-center text-2xl font-semibold tracking-wide overflow-hidden w-[80%]">
                           {invite.servers.description}
                         </p>
                       )}
@@ -110,14 +123,20 @@ export default function InviteSplash() {
                         "
                         disabled={userInServer}
                         onClick={async () => {
-                          const { error } = await addUserToServer(supabase, invite.servers.id);
+                          const { error } = await addUserToServer(
+                            supabase,
+                            invite.servers.id
+                          );
 
                           if (error) {
                             toast.error('You cannot join this server.');
                             return;
                           }
 
-                          router.push(`/?c=${invite.channel_id}&s=${invite.server_id}`, '/');
+                          router.push(
+                            `/?c=${invite.channel_id}&s=${invite.server_id}`,
+                            '/'
+                          );
                         }}
                       >
                         {userInServer ? 'Joined' : 'Join'}
