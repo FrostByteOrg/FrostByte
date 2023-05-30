@@ -696,7 +696,9 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
     set((state) => {
       const rv = new Map(state.serverProfiles);
 
-      data.forEach((profile) => {
+      const dataArray = Array.isArray(data) ? data : [data];
+
+      dataArray.forEach((profile) => {
         if (!rv.has(server_id)) {
           rv.set(server_id, new Map());
         }
