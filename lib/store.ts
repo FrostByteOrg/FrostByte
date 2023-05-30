@@ -753,7 +753,7 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
 
     set((state) => {
       // Sanity check
-      if (!data.server_user) {
+      if (!data['server_user']) {
         return {
           serverProfiles: state.serverProfiles,
         };
