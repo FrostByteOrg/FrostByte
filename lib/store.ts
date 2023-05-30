@@ -761,13 +761,13 @@ const useServerProfilesStore = create<ServerProfilesState>()((set) => ({
 
       const rv = new Map(state.serverProfiles);
 
-      if (!rv.has(data.server_user.server_id)) {
-        rv.set(data.server_user.server_id, new Map());
+      if (!rv.has(data['server_user']['server_id'])) {
+        rv.set(data['server_user']['server_id'], new Map());
       }
 
       console.log('updating by server user');
       console.table(data);
-      rv.get(data.server_user.server_id)!.set(data.id, data);
+      rv.get(data['server_user']['server_id'])!.set(data['id'], data);
 
       return {
         serverProfiles: rv,
