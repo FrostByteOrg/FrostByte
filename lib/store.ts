@@ -630,7 +630,9 @@ const useServerRolesStore = create<ServerRolesState>()((set) => ({
     set((state) => {
       const rv = new Map();
 
-      for (const role of data) {
+      const dataArray = Array.isArray(data) ? data : [data];
+
+      for (const role of dataArray) {
         if (!rv.has(role.server_id)) {
           rv.set(role.server_id, []);
         }
