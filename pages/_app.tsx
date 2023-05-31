@@ -1,5 +1,5 @@
 import '@/styles/globals.css';
-import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider, Session } from '@supabase/auth-helpers-react';
 import { AppProps } from 'next/app';
 import { Source_Sans_3 } from '@next/font/google';
@@ -19,9 +19,7 @@ function App({
 }: AppProps<{
   initialSession: Session;
 }>) {
-  const [supabaseClient] = useState(() =>
-    createBrowserSupabaseClient<Database>()
-  );
+  const [supabaseClient] = useState(() => createPagesBrowserClient<Database>());
 
   return (
     <SessionContextProvider
