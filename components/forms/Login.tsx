@@ -59,6 +59,9 @@ export default function Login({
       },
     });
     if (error) console.log(error);
+    if (data && !error) {
+      router.push('/');
+    }
   }
 
   async function signInWithGitHub() {
@@ -69,6 +72,10 @@ export default function Login({
         redirectTo: 'https://www.frostbyteapp.com/',
       },
     });
+    if (error) console.log(error);
+    if (data && !error) {
+      router.push('/');
+    }
   }
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
