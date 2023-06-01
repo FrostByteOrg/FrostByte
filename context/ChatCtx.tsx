@@ -1,28 +1,30 @@
-import { useFlagUserOffline, useFlagUserOnline } from '@/lib/store';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import {
-  createContext, useEffect,
-} from 'react';
+'use client';
 
-type ChatCtxValue = { };
-export const ChatCtxDefaultVal: ChatCtxValue = { };
+import { useFlagUserOffline, useFlagUserOnline } from '@/lib/store';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createContext, useEffect } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+
+type ChatCtxValue = {};
+export const ChatCtxDefaultVal: ChatCtxValue = {};
 export const ChatCtx = createContext(ChatCtxDefaultVal);
 
 export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const user = useUser();
   const flagUserOnline = useFlagUserOnline();
   const flagUserOffline = useFlagUserOffline();
 
   useEffect(() => {
     console.log('[PRESENCE]: initializing');
-    const onlinePresenceRef = supabase.channel('online-users', {
-      config: {
-        presence: {
-          key: user?.id,
+    const onlinePresenceRef = supabase
+      .channel('online-users', {
+        config: {
+          presence: {
+            key: user?.id,
+          },
         },
-      },
-    })
+      })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
         console.log('joined');
         flagUserOnline(key, newPresences);
@@ -42,11 +44,9 @@ export function ChatCtxProvider({ children }: { children: React.ReactNode }) {
           });
         }
       });
-  }, [flagUserOffline, flagUserOnline, supabase, user?.id,user]);
+  }, [flagUserOffline, flagUserOnline, supabase, user?.id, user]);
 
   return (
-    <ChatCtx.Provider value={ChatCtxDefaultVal}>
-      {children}
-    </ChatCtx.Provider>
+    <ChatCtx.Provider value={ChatCtxDefaultVal}>{children}</ChatCtx.Provider>
   );
 }

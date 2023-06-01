@@ -1,7 +1,8 @@
 import ChannelMessageIcon from '../icons/ChannelMessageIcon';
 import { useRef, useEffect, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import MessageInput from './MessageInput';
 import type {
   MessageWithServerProfile,
@@ -24,8 +25,9 @@ import { useConnectionState } from '@livekit/components-react';
 import { ConnectionState } from 'livekit-client';
 
 export default function Chat() {
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const user = useUser();
+  console.log('user', user);
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
   const messages = useMessages();
   const channel = useChannel();

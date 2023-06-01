@@ -12,7 +12,8 @@ export async function middleware(req: NextRequest) {
   if (
     req.nextUrl.pathname == '/passwordreset' ||
     req.nextUrl.pathname == '/tos' ||
-    req.nextUrl.pathname == '/privacy'
+    req.nextUrl.pathname == '/privacy' ||
+    req.nextUrl.pathname == '/auth/callback'
   )
     return res;
   // Create authenticated Supabase Client.
@@ -40,14 +41,14 @@ export async function middleware(req: NextRequest) {
 
   // Auth condition not met, redirect to home page.
   if (req.nextUrl.pathname == '/login') return res;
-
+  console.log('bruh');
   redirectUrl.pathname = '/login';
   redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname);
   return NextResponse.redirect(redirectUrl);
 }
 
 export const config = {
-  matcher: ['/((?!favicon.ico|_next).*)'],
+  matcher: ['/((?!favicon.ico|_next).*)', '/api/:path*'],
 };
 
 // export const config = {

@@ -23,7 +23,7 @@ import {
   useLocalParticipant,
 } from '@livekit/components-react';
 import { Track, ConnectionState } from 'livekit-client';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/services/profile.service';
 import UserIcon from '../icons/UserIcon';
@@ -37,8 +37,6 @@ import InfoIcon from '@/components/icons/InfoIcon';
 import FAQModal from './modals/FAQModal';
 
 export default function RenderDesktopView() {
-  const supabase = useSupabaseClient();
-
   const channel = useChannel();
   const sideBarOption = useSideBarOptionValue();
   const audioTrack = useLocalParticipant();

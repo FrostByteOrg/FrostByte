@@ -5,7 +5,8 @@ import { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import TrashIcon from '@/components/icons/TrashIcon';
 import EditIcon from '@/components/icons/EditIcon';
 import { editMessage } from '@/services/message.service';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import MessageContent from './MessageContent';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
 import {
@@ -27,7 +28,7 @@ export default function Message({
 }) {
   const displayTime = formatDateStr(message.sent_time);
 
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const user = useUser();
   const channel = useChannel();
   const [showOptions, setShowOptions] = useState<'show' | 'hide'>('hide');

@@ -1,7 +1,7 @@
 import { useSetUserProfile, useProfile } from '@/lib/store';
 import { Profile } from '@/types/dbtypes';
 import UserIcon from '@/components/icons/UserIcon';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import {
   updateUserAvatar,
   updateUserProfile,
@@ -21,7 +21,7 @@ export default function EditUserForm() {
   const imageRef = useRef<HTMLInputElement | null>(null);
   const previewImage = userImage ? URL.createObjectURL(userImage) : '';
   const user = useProfile();
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
@@ -86,8 +86,7 @@ export default function EditUserForm() {
   ) => {
     if (userString === null || userString.length === 0) {
       return emptyMessage;
-    }
-    else if (userString.length >= 25) {
+    } else if (userString.length >= 25) {
       return `${userString.slice(0, 25)}...`;
     }
     return userString;

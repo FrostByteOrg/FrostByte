@@ -5,7 +5,7 @@ import {
 } from '@/services/server.service';
 import styles from '@/styles/Servers.module.css';
 import { Server } from '@/types/dbtypes';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 
 export function ServerMemberStats({
@@ -17,7 +17,7 @@ export function ServerMemberStats({
 }) {
   const [memberCount, setMemberCount] = useState(0);
   const [onlineCount, setOnlineCount] = useState(0);
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const onlineUsers = useOnlineUsers();
 
   useEffect(() => {
@@ -40,8 +40,7 @@ export function ServerMemberStats({
             }
           }
           setOnlineCount(amtOnlineUsers);
-        }
-        else {
+        } else {
           //NOTE: this could be wrong, might have to revise
           setOnlineCount(0);
         }

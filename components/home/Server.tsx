@@ -9,7 +9,8 @@ import {
 } from 'react';
 import { getChannelsInServer } from '@/services/channels.service';
 import ServersIcon from '../icons/ServersIcon';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import styles from '@/styles/Servers.module.css';
 import { Channel, Server as ServerType } from '@/types/dbtypes';
 import { ServerMemberStats } from './ServerMemberStats';
@@ -44,7 +45,7 @@ export default function Server({
   setExpanded: Dispatch<SetStateAction<number>>;
 }) {
   const expand = expanded == server.id;
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const [isSettingsHovered, setIsSettingsHovered] = useState(false);
   const [channels, setChannels] = useState<Channel[]>([]);
   const currentChannel = useChannel();
@@ -64,8 +65,7 @@ export default function Server({
         if (data) {
           if (Array.isArray(data)) {
             setChannels(data!);
-          }
-          else {
+          } else {
             setChannels([data!]);
           }
         }

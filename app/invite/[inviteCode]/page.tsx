@@ -1,3 +1,4 @@
+'use client';
 import { useRouter } from 'next/router';
 import styles from '@/styles/Invite.module.css';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';

@@ -1,6 +1,9 @@
+'use client';
+
 import Head from 'next/head';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
-import { useRouter } from 'next/router';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { SideBarOptionProvider } from '@/context/SideBarOptionCtx';
 import RenderMobileView from '@/components/home/mobile/RenderMobileView';
 import RenderDesktopView from '@/components/home/RenderDesktopView';
@@ -19,14 +22,16 @@ import { useSetChannel } from '@/lib/store';
 import { getChannelById } from '@/services/channels.service';
 import Modal from '@/components/home/modals/Modal';
 
-export default function Home() {
+export default function Page() {
   const user = useUser();
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const router = useRouter();
   const token = useTokenRef();
   const userSettings = useUserSettings();
   const setChannel = useSetChannel();
-  const { c: channel_id, s: server_id } = router.query;
+  const searchParams = useSearchParams();
+  const channel_id = searchParams?.get('c');
+  const server_id = searchParams?.get('s');
 
   useRealtimeStore(supabase);
   const [isMobile, setIsMobile] = useState(false);
@@ -82,11 +87,16 @@ export default function Home() {
       if (!isNaN(server_id_as_number)) {
         getAllServerProfilesForServer(supabase, server_id_as_number);
       }
-
     }
 
     handleAsync();
-  }, [channel_id, setChannel, supabase, server_id, getAllServerProfilesForServer]);
+  }, [
+    channel_id,
+    setChannel,
+    supabase,
+    server_id,
+    getAllServerProfilesForServer,
+  ]);
 
   return (
     <>
@@ -130,7 +140,6 @@ export default function Home() {
           }}
         >
           {isMobile ? (
-
             <div>
               <div className={'bg-grey-800'}>
                 <RenderMobileView />
@@ -139,7 +148,7 @@ export default function Home() {
           ) : (
             <div>
               <div className={'bg-grey-800 '}>
-                <RenderDesktopView/>
+                <RenderDesktopView />
               </div>
             </div>
           )}

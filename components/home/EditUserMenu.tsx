@@ -7,8 +7,8 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import router from 'next/router';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
 import LogOutIcon from '@/components/icons/LogOutIcon';
 import EditUserForm from '../forms/EditUserForm';
 import MediaPick from './MediaPick';
@@ -16,7 +16,9 @@ import modalStyle from '@/styles/Modal.module.css';
 import ChangePassword from '../forms/SettingsUpdatePassword';
 
 export default function EditUser() {
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
+
+  const router = useRouter();
 
   const [formSwitch, setFormSwitch] = useState('editUser');
 

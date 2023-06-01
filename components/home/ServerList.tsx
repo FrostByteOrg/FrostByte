@@ -3,7 +3,8 @@ import { SearchBar } from '@/components/forms/Styles';
 import mediaStyle from '@/styles/Livekit.module.css';
 import { useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import AddServerModal from '@/components/home/modals/AddServerModal';
 import AddChannelModal from '@/components/home/modals/AddChannelModal';
 import {
@@ -35,9 +36,8 @@ export default function ServerList() {
   );
 
   const user = useUser();
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const editUser = useProfile();
-
 
   const servers = useServers();
   const [filteredServers, setFilteredServers] = useState(servers);
@@ -102,18 +102,22 @@ export default function ServerList() {
         </div>
       </div>
       <div className={`${mediaStyle.appear}`}>
-        <EditUserModal 
-          showModal={showEditUser} 
-          setShowModal={setShowEditUser} 
-          user={editUser}/>
-        <button 
+        <EditUserModal
+          showModal={showEditUser}
+          setShowModal={setShowEditUser}
+          user={editUser}
+        />
+        <button
           className="w-7 h-7 hover:text-grey-400"
-          onClick={() => {setShowEditUser(true);}}>
-          <GearIcon width={6} height={6}/>
+          onClick={() => {
+            setShowEditUser(true);
+          }}
+        >
+          <GearIcon width={6} height={6} />
         </button>
       </div>
       {connectionState === ConnectionState.Connected && <MobileCallControls />}
-       
+
       <div className="pt-4 pb-4">
         <input
           type="text"
@@ -133,37 +137,37 @@ export default function ServerList() {
           }}
         />
       </div>
-        
+
       <div className="flex-grow overflow-y-auto ">
         {filteredServers &&
-        filteredServers
-          .sort(function (a, b) {
-            var textA = a.servers.name.toUpperCase();
-            var textB = b.servers.name.toUpperCase();
-            return textA < textB ? -1 : textA > textB ? 1 : 0;
-          })
-          .map((server, idx, serverList) => {
-            if (server) {
-              return (
-                <span
-                  key={server.server_id}
-                  onClick={() => {
-                    return expanded !== server.server_id
-                      ? (setExpanded(server.server_id),
-                      setCurrentServer(server))
-                      : '';
-                  }}
-                >
-                  <Server
-                    server={server.servers}
-                    expanded={expanded}
-                    isLast={idx == serverList.length - 1}
-                    setExpanded={setExpanded}
-                  />
-                </span>
-              );
-            }
-          })}
+          filteredServers
+            .sort(function (a, b) {
+              var textA = a.servers.name.toUpperCase();
+              var textB = b.servers.name.toUpperCase();
+              return textA < textB ? -1 : textA > textB ? 1 : 0;
+            })
+            .map((server, idx, serverList) => {
+              if (server) {
+                return (
+                  <span
+                    key={server.server_id}
+                    onClick={() => {
+                      return expanded !== server.server_id
+                        ? (setExpanded(server.server_id),
+                          setCurrentServer(server))
+                        : '';
+                    }}
+                  >
+                    <Server
+                      server={server.servers}
+                      expanded={expanded}
+                      isLast={idx == serverList.length - 1}
+                      setExpanded={setExpanded}
+                    />
+                  </span>
+                );
+              }
+            })}
       </div>
       {isInVoice && (
         <div className={`w-full self-end mb-7 ${mediaStyle.disappear}`}>
@@ -172,5 +176,4 @@ export default function ServerList() {
       )}
     </div>
   );
-  
 }

@@ -7,7 +7,7 @@ import {
 } from '@/types/client/passwordRecovery';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/database.supabase';
 import { toast } from 'react-toastify';
 import EmailIcon from '../icons/EmailIcon';
@@ -19,7 +19,7 @@ export default function PasswordReset({
   setServerError: Dispatch<SetStateAction<string | null>>;
   setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
 }) {
-  const supabase = useSupabaseClient<Database>();
+  const supabase = createClientComponentClient<Database>();
 
   const {
     register,

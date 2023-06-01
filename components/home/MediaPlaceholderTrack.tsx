@@ -1,14 +1,21 @@
-import { useCurrentRoomFetchProfile, useCurrentRoomProfilesMap } from '@/lib/store';
+import {
+  useCurrentRoomFetchProfile,
+  useCurrentRoomProfilesMap,
+} from '@/lib/store';
 import { ParticipantName } from '@livekit/components-react';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Participant } from 'livekit-client';
 import { useEffect } from 'react';
 import UserIcon from '../icons/UserIcon';
 
-export function MediaPlaceholderTrack({ participant }: { participant: Participant }) {
+export function MediaPlaceholderTrack({
+  participant,
+}: {
+  participant: Participant;
+}) {
   const profiles = useCurrentRoomProfilesMap();
   const fetchProfile = useCurrentRoomFetchProfile();
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     fetchProfile(supabase, participant.identity);
@@ -29,8 +36,12 @@ export function MediaPlaceholderTrack({ participant }: { participant: Participan
           ${participant.isSpeaking ? 'border-green-600' : 'border-gray-800'}
         `}
       >
-        { !!profiles.get(participant.identity) && (
-          <UserIcon user={profiles.get(participant.identity)!} indicator={false} className="!w-10 !h-10"/>
+        {!!profiles.get(participant.identity) && (
+          <UserIcon
+            user={profiles.get(participant.identity)!}
+            indicator={false}
+            className="!w-10 !h-10"
+          />
         )}
       </div>
 

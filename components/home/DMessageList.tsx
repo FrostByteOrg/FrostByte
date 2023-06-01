@@ -1,20 +1,29 @@
 import { Channel, DMChannelWithRecipient } from '@/types/dbtypes';
 import UserIcon from '../icons/UserIcon';
 import styles from '@/styles/Chat.module.css';
-import { useChannel, useConnectionRef, useDMChannels, useSetChannel, useGetAllServerUserProfiles } from '@/lib/store';
+import {
+  useChannel,
+  useConnectionRef,
+  useDMChannels,
+  useSetChannel,
+  useGetAllServerUserProfiles,
+} from '@/lib/store';
 import SidebarCallControl from '@/components/home/SidebarCallControl';
 import { SearchBar } from '@/components/forms/Styles';
 import { useState } from 'react';
 import { Database } from '@/types/database.supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 function mapToComponentArray(
   _map: Map<string, DMChannelWithRecipient>,
   setChannel: (channel: Channel) => void,
   channel: Channel | null,
-  getAllServerUserProfiles: (supabase: SupabaseClient<Database>, server_id: number) => void,
-  supabase: SupabaseClient<Database>,
+  getAllServerUserProfiles: (
+    supabase: SupabaseClient<Database>,
+    server_id: number
+  ) => void,
+  supabase: SupabaseClient<Database>
 ) {
   const rv = [];
 
@@ -48,13 +57,13 @@ function mapToComponentArray(
   return rv;
 }
 export default function DMessageList() {
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const setChannel = useSetChannel();
   const dmChannels = useDMChannels();
   const channel = useChannel();
   const isInVoice = useConnectionRef();
   const getAllServerProfiles = useGetAllServerUserProfiles();
-  const [ filteredDMs, setFilteredDMs ] = useState(dmChannels);
+  const [filteredDMs, setFilteredDMs] = useState(dmChannels);
 
   return (
     <div className="flex flex-col h-full">
@@ -86,15 +95,15 @@ export default function DMessageList() {
             }}
           />
         </div>
-        { mapToComponentArray(
+        {mapToComponentArray(
           filteredDMs,
           setChannel,
           channel,
           getAllServerProfiles,
-          supabase,
+          supabase
         )}
       </div>
-      { isInVoice && (
+      {isInVoice && (
         <div className="w-full self-end p-4 mb-7">
           <SidebarCallControl />
         </div>

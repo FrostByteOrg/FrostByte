@@ -1,13 +1,14 @@
+'use client';
 import Head from 'next/head';
 import styles from '@/styles/Auth.module.css';
 import Auth from '@/components/Auth';
 import { useState } from 'react';
 import Image from 'next/image';
-import Yeti from '../public/test1.png';
-import VideoChat from '../public/test4.png';
-import { useRouter } from 'next/router';
+import Yeti from '../../public/test1.png';
+import VideoChat from '../../public/test4.png';
+import { useRouter } from 'next/navigation';
 
-export default function Login() {
+export default function Page() {
   const [authType, setAuthType] = useState<
     'login' | 'register' | 'resetPassword'
   >('login');

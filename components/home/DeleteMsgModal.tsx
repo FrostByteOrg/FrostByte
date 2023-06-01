@@ -2,11 +2,15 @@ import { deleteMessage } from '@/services/message.service';
 import { Dispatch, RefObject, SetStateAction, useRef } from 'react';
 import UserIcon from '@/components/icons/UserIcon';
 import MessageContent from '@/components/home/MessageContent';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import styles from '@/styles/Components.module.css';
 import { useEffect } from 'react';
 import Modal from '@/components/home/modals/Modal';
-import { Message, MessageWithServerProfile, ServerUserProfile } from '@/types/dbtypes';
+import {
+  Message,
+  MessageWithServerProfile,
+  ServerUserProfile,
+} from '@/types/dbtypes';
 
 export default function DeleteMsgModal({
   showModal,
@@ -21,7 +25,7 @@ export default function DeleteMsgModal({
   displayTime: string;
   setMessageOptions: Dispatch<SetStateAction<'delete' | 'edit' | null>>;
 }) {
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
 
   const modalRef = useRef<HTMLDialogElement>(null);
 

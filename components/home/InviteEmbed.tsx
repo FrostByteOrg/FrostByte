@@ -2,7 +2,7 @@ import { useServers } from '@/lib/store';
 import { getInviteAndServer } from '@/services/invites.service';
 import { addUserToServer } from '@/services/profile.service';
 import { ServerInvite } from '@/types/dbtypes';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { PostgrestError } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 
 export function InviteEmbed({ invite_code }: { invite_code: string }) {
   const servers = useServers();
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const router = useRouter();
   const [invite, setInvite] = useState<ServerInvite | null>(null);
   const [userInServer, setUserInServer] = useState<boolean>(false);

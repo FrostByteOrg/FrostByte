@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('./ContextMenu.module.css');
-@import url('./TabNav.module.css');
+@import url('../styles/ContextMenu.module.css');
+@import url('../styles/TabNav.module.css');
 
 :root {
   --max-width: 1100px;
