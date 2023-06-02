@@ -55,7 +55,7 @@ export default function Login({
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'https://frostbyteapp.com/auth/callback',
+        redirectTo: 'https://www.frostbyteapp.com/auth/callback',
       },
     });
     if (error) console.log(error);
@@ -69,7 +69,7 @@ export default function Login({
       provider: 'github',
       options: {
         scopes: 'user',
-        redirectTo: 'https://frostbyteapp.com/auth/callback',
+        redirectTo: 'https://www.frostbyteapp.com/auth/callback',
       },
     });
     if (error) console.log(error);
