@@ -177,8 +177,8 @@ export function RoleEditForm({
             value={value}
             defaultChecked={
               !role ||
-              // @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown
               (role.permissions & (value as number)) ===
+                // @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown
                 ServerPermissions[permission]
             }
             disabled={
@@ -190,13 +190,12 @@ export function RoleEditForm({
             {...register('permissions')}
           />
           <div>
-            {/* @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown */}
             <label>
-              {' '}
+              {/* @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown */}
               {permissionEnumToInfoMap.get(ServerPermissions[permission])[0]}
             </label>
-            {/* @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown */}
             <p className="text-sm text-gray-400 text-left w-full">
+              {/* @ts-expect-error permission is always a keyof ServerPermissions. This error will never be thrown */}
               {permissionEnumToInfoMap.get(ServerPermissions[permission])[1]}
             </p>
           </div>
