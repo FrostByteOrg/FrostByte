@@ -175,50 +175,50 @@ export function MessageHeader({
             currentUserOutranksTarget &&
             (currentUserPermissions & ServerPermissions.MANAGE_USERS) ===
               ServerPermissions.MANAGE_USERS && (
-              <>
-                <ContextMenu.Separator className="ContextMenuSeparator" />
-                <ContextMenu.Item
-                  className="ContextMenuItem text-red-500"
-                  onClick={async () => {
-                    const { error } = await kickUser(
-                      supabase,
-                      server_user_profile.id,
+            <>
+              <ContextMenu.Separator className="ContextMenuSeparator" />
+              <ContextMenu.Item
+                className="ContextMenuItem text-red-500"
+                onClick={async () => {
+                  const { error } = await kickUser(
+                    supabase,
+                    server_user_profile.id,
                       server_user_profile.server_user!.server_id
-                    );
+                  );
 
-                    if (error) {
-                      console.error(error);
-                      toast.error('Failed to kick user');
-                      return;
-                    }
+                  if (error) {
+                    console.error(error);
+                    toast.error('Failed to kick user');
+                    return;
+                  }
 
-                    toast.success('User kicked');
-                  }}
-                >
+                  toast.success('User kicked');
+                }}
+              >
                   Kick {targetUserDisplayName}
-                </ContextMenu.Item>
-                <ContextMenu.Item
-                  className="ContextMenuItem text-red-500"
-                  onClick={async () => {
-                    const { error } = await banUser(
-                      supabase,
-                      server_user_profile.id,
+              </ContextMenu.Item>
+              <ContextMenu.Item
+                className="ContextMenuItem text-red-500"
+                onClick={async () => {
+                  const { error } = await banUser(
+                    supabase,
+                    server_user_profile.id,
                       server_user_profile.server_user!.server_id
-                    );
+                  );
 
-                    if (error) {
-                      console.error(error);
-                      toast.error('Failed to ban user');
-                      return;
-                    }
+                  if (error) {
+                    console.error(error);
+                    toast.error('Failed to ban user');
+                    return;
+                  }
 
-                    toast.success('User banned');
-                  }}
-                >
+                  toast.success('User banned');
+                }}
+              >
                   Ban {server_user_profile.username}
-                </ContextMenu.Item>
-              </>
-            )}
+              </ContextMenu.Item>
+            </>
+          )}
         </ContextMenu.Content>
       )}
     </ContextMenu.Root>

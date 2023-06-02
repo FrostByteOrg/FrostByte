@@ -20,7 +20,8 @@ export function ServerBansList({ serverId }: { serverId: number }) {
       if (data) {
         if (Array.isArray(data)) {
           setBans(data!);
-        } else {
+        }
+        else {
           setBans([data!]);
         }
       }

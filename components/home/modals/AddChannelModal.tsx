@@ -68,7 +68,8 @@ export default function AddChannelModal({
     if (error) {
       if ((error as PostgrestError).message) {
         setServerError((error as PostgrestError).message);
-      } else {
+      }
+      else {
         setServerError(error as string);
       }
 
@@ -76,7 +77,8 @@ export default function AddChannelModal({
         setServerError('');
       }, 7000);
       return;
-    } else {
+    }
+    else {
       addChannelRef.current?.close();
       setChannelType('text');
       setSetShowDesc(false);

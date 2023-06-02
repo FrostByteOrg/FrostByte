@@ -65,7 +65,8 @@ export default function Server({
         if (data) {
           if (Array.isArray(data)) {
             setChannels(data!);
-          } else {
+          }
+          else {
             setChannels([data!]);
           }
         }

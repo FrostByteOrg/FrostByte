@@ -88,82 +88,82 @@ export function MiniProfile({
                     ServerPermissions.MANAGE_ROLES &&
                   role.position > userHighestRole &&
                   role.position !== serverRoles.length - 1 && (
-                    <button
-                      type="button"
-                      className="align-middle self-end"
-                      style={{
-                        fill: `#${!!role.color ? role.color : 'cacacacc'}`,
-                      }}
-                      onClick={async () => {
-                        const { error } = await revokeRoleFromUser(
-                          supabase,
-                          role.id,
+                  <button
+                    type="button"
+                    className="align-middle self-end"
+                    style={{
+                      fill: `#${!!role.color ? role.color : 'cacacacc'}`,
+                    }}
+                    onClick={async () => {
+                      const { error } = await revokeRoleFromUser(
+                        supabase,
+                        role.id,
                           server_user_profile.server_user!.id
-                        );
+                      );
 
-                        if (error) {
-                          console.error(error);
-                          toast.error('Failed to revoke role from user');
-                          return;
-                        }
+                      if (error) {
+                        console.error(error);
+                        toast.error('Failed to revoke role from user');
+                        return;
+                      }
 
-                        toast.success('Role revoked from user');
-                      }}
-                    >
-                      <XIcon className="w-4 h-4" />
-                    </button>
-                  )}
+                      toast.success('Role revoked from user');
+                    }}
+                  >
+                    <XIcon className="w-4 h-4" />
+                  </button>
+                )}
               </span>
             ))}
 
             {(currentUserPerms & ServerPermissions.MANAGE_ROLES) ===
               ServerPermissions.MANAGE_ROLES &&
               filteredRoles.length > 0 && (
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger asChild>
-                    <button
-                      type="button"
-                      className="text-sm text-gray-400 py-1 px-2 border-2 border-solid w-full rounded-sm text-center"
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <button
+                    type="button"
+                    className="text-sm text-gray-400 py-1 px-2 border-2 border-solid w-full rounded-sm text-center"
+                    style={{
+                      border: '1px solid #cacacacc',
+                    }}
+                  >
+                      +
+                  </button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content
+                  side="right"
+                  className="ContextMenuContent"
+                >
+                  {filteredRoles.map((role) => (
+                    <DropdownMenu.Item
+                      key={role.id}
+                      className="ContextMenuItem"
                       style={{
-                        border: '1px solid #cacacacc',
+                        color: `#${!!role.color ? role.color : 'cacacacc'}`,
+                      }}
+                      onSelect={async () => {
+                        const { error } = await grantRoleToUser(
+                          supabase,
+                          role.id,
+                            server_user_profile.server_user!.id
+                        );
+
+                        if (error) {
+                          console.error(error);
+                          toast.error('Failed to grant role to user');
+                          return;
+                        }
+
+                        toast.success('Role granted to user');
                       }}
                     >
-                      +
-                    </button>
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content
-                    side="right"
-                    className="ContextMenuContent"
-                  >
-                    {filteredRoles.map((role) => (
-                      <DropdownMenu.Item
-                        key={role.id}
-                        className="ContextMenuItem"
-                        style={{
-                          color: `#${!!role.color ? role.color : 'cacacacc'}`,
-                        }}
-                        onSelect={async () => {
-                          const { error } = await grantRoleToUser(
-                            supabase,
-                            role.id,
-                            server_user_profile.server_user!.id
-                          );
-
-                          if (error) {
-                            console.error(error);
-                            toast.error('Failed to grant role to user');
-                            return;
-                          }
-
-                          toast.success('Role granted to user');
-                        }}
-                      >
-                        {role.name}
-                      </DropdownMenu.Item>
-                    ))}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Root>
-              )}
+                      {role.name}
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            )}
           </div>
         </>
       )}

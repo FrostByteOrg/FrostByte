@@ -89,7 +89,8 @@ export default function ServerSettingsModal({
     if (error) {
       if ((error as PostgrestError).message) {
         setServerError((error as PostgrestError).message);
-      } else {
+      }
+      else {
         setServerError(error as unknown as string);
       }
 

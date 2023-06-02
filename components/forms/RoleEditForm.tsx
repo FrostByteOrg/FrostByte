@@ -87,7 +87,8 @@ export function RoleEditForm({
   const onSubmit = async (formData: RoleEditFormResult) => {
     if (typeof formData.permissions === 'string') {
       formData.permissions = [formData.permissions];
-    } else if (typeof formData.permissions === 'boolean') {
+    }
+    else if (typeof formData.permissions === 'boolean') {
       formData.permissions = ['0'];
     }
 
