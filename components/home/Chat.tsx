@@ -27,7 +27,6 @@ import { ConnectionState } from 'livekit-client';
 export default function Chat() {
   const supabase = createClientComponentClient();
   const user = useUser();
-  console.log('user', user);
   const newestMessageRef = useRef<null | HTMLDivElement>(null);
   const messages = useMessages();
   const channel = useChannel();
@@ -40,7 +39,6 @@ export default function Chat() {
   const loadMoreMessages = useLoadMoreMessages();
   const [pageNum, setPageNum] = useState(1);
   const [initalScroll, setInitalScroll] = useState(true);
-  console.log(pageNum);
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const shouldScrollToBottomRef = useRef(true);
