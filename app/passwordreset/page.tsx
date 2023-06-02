@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Auth.module.css';
 import UpdatePassword from '@/components/forms/UpdatePassword';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export default function Passwordreset() {
   const user = useUser();
