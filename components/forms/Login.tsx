@@ -54,9 +54,6 @@ export default function Login({
   async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: 'https://www.frostbyteapp.com/',
-      },
     });
     if (error) console.log(error);
     if (data && !error) {
@@ -69,7 +66,6 @@ export default function Login({
       provider: 'github',
       options: {
         scopes: 'user',
-        redirectTo: 'https://www.frostbyteapp.com/',
       },
     });
     if (error) console.log(error);
