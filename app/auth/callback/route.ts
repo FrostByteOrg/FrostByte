@@ -16,5 +16,5 @@ export async function GET(request: NextRequest) {
   }
   console.log('weed', requestUrl.origin);
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect('https://nextjs.org/');
+  return NextResponse.redirect('https://www.frostbyteapp.com');
 }
