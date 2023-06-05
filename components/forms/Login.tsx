@@ -54,6 +54,9 @@ export default function Login({
   async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo: 'https://www.google.ca/',
+      },
     });
     if (error) console.log(error);
     if (data && !error) {
@@ -66,6 +69,7 @@ export default function Login({
       provider: 'github',
       options: {
         scopes: 'user',
+        redirectTo: 'https://www.google.ca/',
       },
     });
     if (error) console.log(error);
