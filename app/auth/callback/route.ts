@@ -6,7 +6,6 @@ import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/database.supabase';
 
 export async function GET(request: NextRequest) {
-  console.log('ya');
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
 
@@ -14,7 +13,7 @@ export async function GET(request: NextRequest) {
     const supabase = createRouteHandlerClient<Database>({ cookies });
     await supabase.auth.exchangeCodeForSession(code);
   }
-  console.log('weed', requestUrl.origin);
+
   // URL to redirect to after sign in process completes
   return NextResponse.redirect('https://www.frostbyteapp.com');
 }
