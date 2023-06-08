@@ -1,5 +1,6 @@
 import { KeyboardEvent, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
+import SendIcon from '@/components/icons/SendIcon';
 
 export default function MessageInput({
   onSubmit,
@@ -22,8 +23,15 @@ export default function MessageInput({
     }
   };
 
+  const submitMobile = () => {
+    if (messageText !== '') {
+      onSubmit(messageText);
+      setMessageText('');
+    }
+  };
+
   return (
-    <div className={`${styles.messageInput} mt-1 p-3`}>
+    <div className={`${styles.messageInput} mt-1 p-3 relative`}>
       <textarea
         className={`
         w-full
@@ -53,6 +61,11 @@ export default function MessageInput({
         }
         onChange={(e) => setMessageText(e.target.value)}
         onKeyDown={(e) => submitOnEnter(e)}
+      />
+
+      <SendIcon
+        onClick={() => submitMobile()}
+        styles="w-5 h-5 absolute right-5 top-6 mobile:flex hidden"
       />
     </div>
   );
