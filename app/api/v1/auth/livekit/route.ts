@@ -3,8 +3,8 @@ import { AccessToken } from 'livekit-server-sdk';
 import type { AccessTokenOptions, VideoGrant } from 'livekit-server-sdk';
 import { NextResponse } from 'next/server';
 
-const apiKey = process.env.LK_API_KEY;
-const apiSecret = process.env.LK_API_SECRET;
+const apiKey = process.env.NEXT_PUBLIC_LK_API_KEY;
+const apiSecret = process.env.NEXT_PUBLIC_LK_API_SECRET;
 
 const createToken = (userInfo: AccessTokenOptions, grant: VideoGrant) => {
   const at = new AccessToken(apiKey, apiSecret, userInfo);
