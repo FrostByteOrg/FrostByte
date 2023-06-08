@@ -10,7 +10,7 @@ import { Database } from '@/types/database.supabase';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'react-toastify';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import PasswordIcon from '../icons/PasswordIcon';
 
 export default function UpdatePassword({

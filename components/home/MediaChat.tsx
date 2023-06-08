@@ -46,13 +46,14 @@ export default function MediaChat({
   ]);
 
   const modalRef = useRef<HTMLDialogElement>(null);
-  console.log('ENDPOINTTTT', process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT);
+
+  // const [token, setToken] = useState<string | undefined>(undefined);
   const token = useToken(
     process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT,
     channel!.channel_id.toString(),
     {
       userInfo: {
-        identity: userID.id,
+        identity: userID?.id,
         name: user?.username,
       },
     }
@@ -108,7 +109,7 @@ export default function MediaChat({
             {`Looks like you're already connected to ${currentRoom.name}...`}
 
             {
-              'You\'ll need to end your current call before you can join another.'
+              "You'll need to end your current call before you can join another."
             }
           </p>
         </div>
@@ -160,8 +161,7 @@ export default function MediaChat({
                         )}
                       </>
                     );
-                  }
-                  else {
+                  } else {
                     return (
                       <MediaDispTrack
                         key={(track as TrackBundle).publication.trackSid}
