@@ -46,7 +46,7 @@ export default function MediaChat({
   ]);
 
   const modalRef = useRef<HTMLDialogElement>(null);
-
+  console.log('ENDPOINTTTT', process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT);
   const token = useToken(
     process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT,
     channel!.channel_id.toString(),
