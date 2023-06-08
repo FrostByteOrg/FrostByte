@@ -41,12 +41,12 @@ export async function GET(req: Request, res: NextApiResponse) {
 
   try {
     const token = createToken({ identity, name }, grant);
-
+    console.log(token);
     return NextResponse.json({ identity, accessToken: token });
   }
   catch (e) {
     res.statusMessage = (e as Error).message;
-
+    console.log(e);
     return NextResponse.error();
   }
 }
