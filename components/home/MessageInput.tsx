@@ -45,6 +45,7 @@ export default function MessageInput({
       `}
         disabled={disabled}
         placeholder={`Message ${channelName}`}
+        inputMode="text"
         value={
           disabled
             ? 'You do not have permission to message in this channel'
