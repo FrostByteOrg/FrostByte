@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import styles from '@/styles/Invite.module.css';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
@@ -16,7 +16,8 @@ import { useRealtimeStore } from '@/hooks/useRealtimeStore';
 export default function InviteSplash() {
   const user = useUser();
   const router = useRouter();
-  const { inviteCode } = router.query;
+  const searchParams = useSearchParams();
+  const inviteCode = searchParams.get('inviteCode');
   const supabase = useSupabaseClient();
   const [invite, setInvite] = useState<ServerInvite | null>(null);
   const [userInServer, setUserInServer] = useState<boolean>(false);
@@ -135,8 +136,7 @@ export default function InviteSplash() {
                           }
 
                           router.push(
-                            `/?c=${invite.channel_id}&s=${invite.server_id}`,
-                            '/'
+                            `/?c=${invite.channel_id}&s=${invite.server_id}`
                           );
                         }}
                       >
