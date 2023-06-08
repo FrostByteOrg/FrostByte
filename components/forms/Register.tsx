@@ -47,7 +47,7 @@ export default function Register({
     if (data && !error) {
       toast.success(`A confirmation email has been sent to ${formData.email}`, {
         position: 'top-center',
-        autoClose: 3000,
+        autoClose: false,
       });
       setAuthType('login');
     }
