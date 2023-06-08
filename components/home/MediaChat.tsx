@@ -109,7 +109,7 @@ export default function MediaChat({
             {`Looks like you're already connected to ${currentRoom.name}...`}
 
             {
-              "You'll need to end your current call before you can join another."
+              'You\'ll need to end your current call before you can join another.'
             }
           </p>
         </div>
@@ -161,7 +161,8 @@ export default function MediaChat({
                         )}
                       </>
                     );
-                  } else {
+                  }
+                  else {
                     return (
                       <MediaDispTrack
                         key={(track as TrackBundle).publication.trackSid}

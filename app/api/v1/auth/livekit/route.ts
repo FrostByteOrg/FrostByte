@@ -42,7 +42,8 @@ export async function GET(req: Request, res: NextApiResponse) {
   try {
     const token = createToken({ identity, name }, grant);
     return NextResponse.json({ identity, accessToken: token });
-  } catch (e) {
+  }
+  catch (e) {
     res.statusMessage = (e as Error).message;
 
     return NextResponse.error();
