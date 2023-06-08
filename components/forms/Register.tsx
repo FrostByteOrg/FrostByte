@@ -9,6 +9,7 @@ import { Input } from './Styles';
 import EmailIcon from '../icons/EmailIcon';
 import PasswordIcon from '../icons/PasswordIcon';
 import UsernameIcon from '../icons/UsernameIcon';
+import { toast } from 'react-toastify';
 
 export default function Register({
   setServerError,
@@ -44,6 +45,10 @@ export default function Register({
       }, 7000);
     }
     if (data && !error) {
+      toast.success(`A confirmation email has been sent to ${formData.email}`, {
+        position: 'top-center',
+        autoClose: 3000,
+      });
       setAuthType('login');
     }
   };
