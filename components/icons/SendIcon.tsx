@@ -17,7 +17,7 @@ export default function SendIcon({
       viewBox="0 0 24 24"
       strokeWidth={1.1}
       stroke="currentColor"
-      className={`${className} ${styles.send} pointer-events-auto`}
+      className={`${className} ${styles.send} cursor-pointer`}
       onClick={onClick}
       onTouchStart={onTouchStart}
     >
