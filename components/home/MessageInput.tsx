@@ -66,7 +66,7 @@ export default function MessageInput({
       <SendIcon
         onClick={() => submitMobile()}
         onTouchStart={() => submitMobile()}
-        styles="w-5 h-5 absolute right-5 top-6 mobile:flex hidden"
+        className="w-5 h-5 absolute right-5 top-6 "
       />
     </div>
   );

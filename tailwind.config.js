@@ -6,9 +6,6 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    screens: {
-      mobile: { max: '940px' },
-    },
     spacing: {
       1: '4px',
       2: '8px',
