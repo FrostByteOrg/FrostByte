@@ -36,6 +36,7 @@ export default function Register({
         data: {
           username: formData.username,
         },
+        emailRedirectTo: 'https://www.frostbyteapp.com/auth/callback',
       },
     });
     if (error) {
