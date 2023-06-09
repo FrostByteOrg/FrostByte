@@ -49,6 +49,7 @@ export default function MessageInput({
         focus:outline-none
         bg-grey-700
         disabled:opacity-70
+        cursor-pointer
 
       `}
         disabled={disabled}
