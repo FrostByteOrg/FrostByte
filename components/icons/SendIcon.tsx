@@ -1,11 +1,13 @@
-import { MouseEventHandler } from 'react';
+import { MouseEventHandler, TouchEventHandler } from 'react';
 
 export default function SendIcon({
   styles = '',
   onClick = () => {},
+  onTouchStart = () => {},
 }: {
   styles?: string;
   onClick?: MouseEventHandler<SVGSVGElement>;
+  onTouchStart?: TouchEventHandler<SVGSVGElement>;
 }) {
   return (
     <svg
@@ -16,6 +18,7 @@ export default function SendIcon({
       stroke="currentColor"
       className={`${styles} `}
       onClick={onClick}
+      onTouchStart={onTouchStart}
     >
       <path
         strokeLinecap="round"
