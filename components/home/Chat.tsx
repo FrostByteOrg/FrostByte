@@ -105,9 +105,9 @@ export default function Chat() {
         onScroll={handleScroll}
       >
         <div className={`${styles.messageList} flex flex-col `}>
-          {user ? user.id : 'as'}
+          {/* {user ? user.id : 'as'}
           {channel ? `    channel:${channel.channel_id}    ` : 's'}
-          {message ? `${message.data[0].content} ${message.error}` : ''}
+          {message ? `${message.data[0].content} ${message.error}` : ''} */}
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
