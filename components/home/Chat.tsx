@@ -106,8 +106,8 @@ export default function Chat() {
       >
         <div className={`${styles.messageList} flex flex-col `}>
           {/* {user ? user.id : 'as'}
-          {channel ? `    channel:${channel.channel_id}    ` : 's'}
-          {message ? `${message.data[0].content} ${message.error}` : ''} */}
+          {channel ? `    channel:${channel.channel_id}    ` : 's'} */}
+          {message ? `${message}` : ''}
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
@@ -140,7 +140,7 @@ export default function Chat() {
             channel_id: (channel as Channel).channel_id,
             profile_id: user!.id,
           });
-          setMessage(message);
+          setMessage('weed');
           console.log(message);
         }}
         disabled={!(userPerms & ChannelPermissions.SEND_MESSAGES)}
