@@ -32,10 +32,9 @@ export default function MessageInput({
 
   return (
     <div className={`${styles.messageInput} mt-1 p-3 relative`}>
-      <SendIcon
-        onClick={(e) => submitMobile(e)}
-        className="w-5 h-5  right-5 top-6 "
-      />
+      <div onClick={(e) => submitMobile(e)}>
+        <SendIcon className="w-5 h-5  right-5 top-6 " />
+      </div>
       <textarea
         className={`
         w-full
