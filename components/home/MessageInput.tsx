@@ -27,7 +27,7 @@ export default function MessageInput({
     console.log('asd');
     event.preventDefault();
     onSubmit(messageText);
-    setMessageText('');
+    setMessageText('test');
   };
 
   return (
