@@ -105,8 +105,8 @@ export default function Chat() {
         onScroll={handleScroll}
       >
         <div className={`${styles.messageList} flex flex-col `}>
-          {/* {user ? user.id : 'as'}
-          {channel ? `    channel:${channel.channel_id}    ` : 's'} */}
+          {user ? `${user.id}       ` : 'as'}
+          {/* {channel ? `    channel:${channel.channel_id}    ` : 's'} */}
           {message ? `${message}` : ''}
           {messages &&
             messages.map((value, index: number, array) => {
@@ -135,12 +135,13 @@ export default function Chat() {
       <div className="flex grow"></div>
       <MessageInput
         onSubmit={async (content: string) => {
+          setMessage(user!.id);
           const message = await createMessage(supabase, {
             content,
             channel_id: (channel as Channel).channel_id,
             profile_id: user!.id,
           });
-          setMessage('weed');
+
           console.log(message);
         }}
         disabled={!(userPerms & ChannelPermissions.SEND_MESSAGES)}
