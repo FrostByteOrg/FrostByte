@@ -86,7 +86,8 @@ export default function EditUserForm() {
   ) => {
     if (userString === null || userString.length === 0) {
       return emptyMessage;
-    } else if (userString.length >= 25) {
+    }
+    else if (userString.length >= 25) {
       return `${userString.slice(0, 25)}...`;
     }
     return userString;
