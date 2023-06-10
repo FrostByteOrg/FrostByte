@@ -23,8 +23,9 @@ export default function MessageInput({
     }
   };
 
-  const submitMobile = () => {
+  const submitMobile = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (messageText !== '') {
+      event.preventDefault();
       onSubmit(messageText);
       setMessageText('');
     }
@@ -65,7 +66,7 @@ export default function MessageInput({
       />
 
       <SendIcon
-        onClick={() => submitMobile()}
+        onClick={(e) => submitMobile(e)}
         className="w-5 h-5 absolute right-5 top-6 "
       />
     </div>
