@@ -32,9 +32,6 @@ export default function MessageInput({
 
   return (
     <div className={`${styles.messageInput} mt-1 p-3 relative`}>
-      <div onClick={(e) => submitMobile(e)}>
-        <SendIcon className="w-5 h-5  right-5 top-6 " />
-      </div>
       <textarea
         className={`
         w-full
@@ -52,7 +49,6 @@ export default function MessageInput({
         focus:outline-none
         bg-grey-700
         disabled:opacity-70
-        cursor-pointer
 
       `}
         disabled={disabled}
@@ -65,6 +61,10 @@ export default function MessageInput({
         }
         onChange={(e) => setMessageText(e.target.value)}
         onKeyDown={(e) => submitOnEnter(e)}
+      />
+      <SendIcon
+        onClick={(e) => submitMobile(e)}
+        className="w-5 h-5 absolute right-5 top-6 "
       />
     </div>
   );

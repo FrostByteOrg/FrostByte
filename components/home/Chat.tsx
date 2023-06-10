@@ -38,7 +38,6 @@ export default function Chat() {
   const connectionState = useConnectionState();
   const loadMoreMessages = useLoadMoreMessages();
   const [pageNum, setPageNum] = useState(1);
-  const [message, setMessage] = useState<any>('');
   const [initalScroll, setInitalScroll] = useState(true);
 
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -105,9 +104,6 @@ export default function Chat() {
         onScroll={handleScroll}
       >
         <div className={`${styles.messageList} flex flex-col `}>
-          {user ? `${user.id}       ` : 'as'}
-          {/* {channel ? `    channel:${channel.channel_id}    ` : 's'} */}
-          {message ? `${message}` : ''}
           {messages &&
             messages.map((value, index: number, array) => {
               // Get the previous message, if the authors are the same, we don't need to repeat the header (profile picture, name, etc.)
@@ -135,13 +131,12 @@ export default function Chat() {
       <div className="flex grow"></div>
       <MessageInput
         onSubmit={async (content: string) => {
-          setMessage(user!.id);
           // const message = await createMessage(supabase, {
           //   content,
           //   channel_id: (channel as Channel).channel_id,
           //   profile_id: user!.id,
           // });
-
+          //TODO: THIS WORKS HAHAHA
           const res = await fetch('/api/v1/message', {
             method: 'POST',
             body: JSON.stringify({
@@ -150,8 +145,6 @@ export default function Chat() {
               profile_id: user!.id,
             }),
           });
-
-          console.log(res);
         }}
         disabled={!(userPerms & ChannelPermissions.SEND_MESSAGES)}
         channelName={(channel as Channel).name}
