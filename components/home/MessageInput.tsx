@@ -24,10 +24,9 @@ export default function MessageInput({
   };
 
   const submitMobile = (event: any) => {
-    console.log('asd');
     event.preventDefault();
     onSubmit(messageText);
-    setMessageText('test');
+    setMessageText('');
   };
 
   return (
