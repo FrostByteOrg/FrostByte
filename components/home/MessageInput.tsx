@@ -24,15 +24,18 @@ export default function MessageInput({
   };
 
   const submitMobile = (event: any) => {
-    if (messageText !== '') {
-      event.preventDefault();
-      onSubmit(messageText);
-      setMessageText('');
-    }
+    console.log('asd');
+    event.preventDefault();
+    onSubmit(messageText);
+    setMessageText('');
   };
 
   return (
     <div className={`${styles.messageInput} mt-1 p-3 relative`}>
+      <SendIcon
+        onClick={(e) => submitMobile(e)}
+        className="w-5 h-5  right-5 top-6 "
+      />
       <textarea
         className={`
         w-full
@@ -63,11 +66,6 @@ export default function MessageInput({
         }
         onChange={(e) => setMessageText(e.target.value)}
         onKeyDown={(e) => submitOnEnter(e)}
-      />
-
-      <SendIcon
-        onTouchStart={(e) => submitMobile(e)}
-        className="w-5 h-5 absolute right-5 top-6 "
       />
     </div>
   );

@@ -18,7 +18,8 @@ export default function SendIcon({
       strokeWidth={1.1}
       stroke="currentColor"
       className={`${className} ${styles.send} cursor-pointer`}
-      onTouchStart={onTouchStart}
+      // onTouchStart={onTouchStart}
+      onClick={onClick}
     >
       <path
         className="svg-hidden"
