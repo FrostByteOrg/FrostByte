@@ -18,7 +18,6 @@ export default function SendIcon({
       strokeWidth={1.1}
       stroke="currentColor"
       className={`${className} ${styles.send} cursor-pointer`}
-      onClick={onClick}
       onTouchStart={onTouchStart}
     >
       <path
