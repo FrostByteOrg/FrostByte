@@ -66,7 +66,7 @@ export default function EditUser() {
                 className="h-6 text-sm tracking-wide hover:text-frost-400"
                 onClick={() => setFormSwitch('editUser')}
               >
-                Edit Profile weed
+                Edit Profile
               </button>
             </div>
             <div
@@ -161,18 +161,18 @@ export default function EditUser() {
             </button>
           </div>
         </div>
-        <div className="flex flex-row mb-1">
+        <div className="flex flex-row mb-1 ">
           <button
             className="
             tracking-wide 
-            text-md mb-1 
-            text-frost-100 
+            text-md mb-1  
             flex 
             flex-row 
             items-center 
             justify-evenly
              w-9
-             hover:text-red-500"
+             hover:text-red-500
+             "
             onClick={handleLogout}
           >
             Logout
