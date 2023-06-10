@@ -136,13 +136,22 @@ export default function Chat() {
       <MessageInput
         onSubmit={async (content: string) => {
           setMessage(user!.id);
-          const message = await createMessage(supabase, {
-            content,
-            channel_id: (channel as Channel).channel_id,
-            profile_id: user!.id,
+          // const message = await createMessage(supabase, {
+          //   content,
+          //   channel_id: (channel as Channel).channel_id,
+          //   profile_id: user!.id,
+          // });
+
+          const res = await fetch('/api/v1/message', {
+            method: 'POST',
+            body: JSON.stringify({
+              message: content,
+              channel_id: (channel as Channel).channel_id,
+              profile_id: user!.id,
+            }),
           });
 
-          console.log(message);
+          console.log(res);
         }}
         disabled={!(userPerms & ChannelPermissions.SEND_MESSAGES)}
         channelName={(channel as Channel).name}
