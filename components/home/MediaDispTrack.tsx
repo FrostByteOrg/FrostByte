@@ -1,13 +1,13 @@
 import { TrackBundle } from '@livekit/components-core';
 import { ParticipantName, VideoTrack } from '@livekit/components-react';
 
-export function MediaDispTrack({track}: { track: TrackBundle }) {
+export function MediaDispTrack({ track }: { track: TrackBundle }) {
   return (
     <div className="p-2 h-fit">
       <VideoTrack
         source={track.publication.source}
         participant={track.participant}
-        className={'rounded-lg border-2 border-gray-800'}
+        className={'rounded-lg border-2 border-gray-800 transform scale-x-[-1]'}
       />
       <ParticipantName
         participant={track.participant}
