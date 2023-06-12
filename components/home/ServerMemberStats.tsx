@@ -23,6 +23,7 @@ export function ServerMemberStats({
   useEffect(() => {
     async function handleAsync() {
       // Total Members
+      //TODO: Need to cache both of these, one is server_users and one is get_users_in_server
       setMemberCount(await getServerMemberCount(supabase, server.id));
 
       // Now we need to get the online count
@@ -40,8 +41,7 @@ export function ServerMemberStats({
             }
           }
           setOnlineCount(amtOnlineUsers);
-        }
-        else {
+        } else {
           //NOTE: this could be wrong, might have to revise
           setOnlineCount(0);
         }

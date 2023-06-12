@@ -76,6 +76,7 @@ const useServerStore = create<ServerState>()((set) => ({
     }));
   },
   getServers: async (supabase, userId) => {
+    //TODO: Cache this
     const { data, error } = await getServersForUser(supabase, userId);
 
     if (error) {
@@ -463,8 +464,7 @@ const useRelationsStore = create<RelationsState>()((set) => ({
 
       if (Array.isArray(data)) {
         set({ relations: data as DetailedProfileRelation[] });
-      }
-      else {
+      } else {
         set({ relations: [data] as DetailedProfileRelation[] });
       }
     }
@@ -540,21 +540,21 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
       dmChannels: new Map(
         Array.isArray(dmChannelsData)
           ? dmChannelsData.map((channel) => [
-            channel.recipient.id,
-            {
-              ...channel,
-              name: channel.recipient.username,
-            },
-          ])
-          : [
-            [
-              dmChannelsData.recipient.id,
+              channel.recipient.id,
               {
-                ...dmChannelsData,
-                name: dmChannelsData.recipient.username,
+                ...channel,
+                name: channel.recipient.username,
               },
-            ],
-          ]
+            ])
+          : [
+              [
+                dmChannelsData.recipient.id,
+                {
+                  ...dmChannelsData,
+                  name: dmChannelsData.recipient.username,
+                },
+              ],
+            ]
       ),
     }));
   },

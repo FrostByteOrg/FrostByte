@@ -1,7 +1,7 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
 import mediaStyle from '@/styles/Livekit.module.css';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
 import { useUser } from '@supabase/auth-helpers-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -48,6 +48,8 @@ export default function ServerList() {
   const isInVoice = useConnectionRef();
 
   const connectionState = useConnectionState();
+
+  const handleClose = useCallback(() => setExpanded(0), [setExpanded]);
 
   useEffect(() => {
     if (getServers) {
@@ -154,7 +156,7 @@ export default function ServerList() {
                     onClick={() => {
                       return expanded !== server.server_id
                         ? (setExpanded(server.server_id),
-                        setCurrentServer(server))
+                          setCurrentServer(server))
                         : '';
                     }}
                   >
@@ -162,7 +164,7 @@ export default function ServerList() {
                       server={server.servers}
                       expanded={expanded}
                       isLast={idx == serverList.length - 1}
-                      setExpanded={setExpanded}
+                      setExpanded={handleClose}
                     />
                   </span>
                 );

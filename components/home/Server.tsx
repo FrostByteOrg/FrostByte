@@ -32,6 +32,7 @@ import GearIcon from '@/components/icons/GearIcon';
 import { deleteServer, leaveServer } from '@/services/server.service';
 import TrashIcon from '@/components/icons/TrashIcon';
 import { LeaveIcon } from '@/components/icons/LeaveIcon';
+import { memo } from 'react';
 
 export default function Server({
   server,
@@ -42,7 +43,7 @@ export default function Server({
   server: ServerType;
   expanded: number;
   isLast?: boolean;
-  setExpanded: Dispatch<SetStateAction<number>>;
+  setExpanded: () => void;
 }) {
   const expand = expanded == server.id;
   const supabase = createClientComponentClient();
@@ -60,20 +61,19 @@ export default function Server({
   );
   useEffect(() => {
     const handleAsync = async () => {
-      if (server) {
+      if (server && expanded > 0) {
         const { data } = await getChannelsInServer(supabase, server.id);
         if (data) {
           if (Array.isArray(data)) {
             setChannels(data!);
-          }
-          else {
+          } else {
             setChannels([data!]);
           }
         }
       }
     };
     handleAsync();
-  }, [server, supabase]);
+  }, [expanded, server, supabase]);
 
   const showServerSettingsOption =
     (serverPermissions & ServerPermissions.MANAGE_INVITES) > 0 ||
@@ -101,7 +101,7 @@ export default function Server({
           <div className="flex items-center">
             <div
               className="bg-grey-900 p-[6px] rounded-xl hover:cursor-pointer"
-              onClick={() => setExpanded(0)}
+              onClick={setExpanded}
             >
               <ServersIcon server={server} hovered={false} />
             </div>
