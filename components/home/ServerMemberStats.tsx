@@ -41,7 +41,8 @@ export function ServerMemberStats({
             }
           }
           setOnlineCount(amtOnlineUsers);
-        } else {
+        }
+        else {
           //NOTE: this could be wrong, might have to revise
           setOnlineCount(0);
         }

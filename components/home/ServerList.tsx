@@ -55,6 +55,7 @@ export default function ServerList() {
     if (getServers) {
       if (user) {
         getServers(supabase, user.id);
+        //TODO: omg i think this is the cause, move this to a different useEffect
         getAllServerProfiles(supabase, expanded);
       }
     }
@@ -156,7 +157,7 @@ export default function ServerList() {
                     onClick={() => {
                       return expanded !== server.server_id
                         ? (setExpanded(server.server_id),
-                          setCurrentServer(server))
+                        setCurrentServer(server))
                         : '';
                     }}
                   >
