@@ -45,6 +45,7 @@ import {
   getHighestRolePositionForUser,
 } from '@/services/roles.service';
 import { ChannelPermissions, ServerPermissions } from '@/types/permissions';
+import { useQuery } from 'react-query';
 
 export interface ServerState {
   servers: ServersForUser[];
@@ -464,8 +465,7 @@ const useRelationsStore = create<RelationsState>()((set) => ({
 
       if (Array.isArray(data)) {
         set({ relations: data as DetailedProfileRelation[] });
-      }
-      else {
+      } else {
         set({ relations: [data] as DetailedProfileRelation[] });
       }
     }
@@ -541,21 +541,21 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
       dmChannels: new Map(
         Array.isArray(dmChannelsData)
           ? dmChannelsData.map((channel) => [
-            channel.recipient.id,
-            {
-              ...channel,
-              name: channel.recipient.username,
-            },
-          ])
-          : [
-            [
-              dmChannelsData.recipient.id,
+              channel.recipient.id,
               {
-                ...dmChannelsData,
-                name: dmChannelsData.recipient.username,
+                ...channel,
+                name: channel.recipient.username,
               },
-            ],
-          ]
+            ])
+          : [
+              [
+                dmChannelsData.recipient.id,
+                {
+                  ...dmChannelsData,
+                  name: dmChannelsData.recipient.username,
+                },
+              ],
+            ]
       ),
     }));
   },
@@ -898,6 +898,9 @@ export const useUpdateMessage = () =>
   useMessagesStore((state) => state.updateMessage);
 export const useGetUserPerms = () =>
   useUserPermsStore((state) => state.getUserPerms);
+
+export const setServers = (serverForUser: ServersForUser[]) =>
+  useServerStore.setState({ servers: serverForUser });
 
 export const useUserPerms = () => useUserPermsStore((state) => state.userPerms);
 export const useSetChannel = () => useChannelStore((state) => state.setChannel);

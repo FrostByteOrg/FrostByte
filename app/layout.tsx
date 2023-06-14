@@ -11,6 +11,9 @@ import { useState } from 'react';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Database } from '@/types/database.supabase';
 import ToastProvider from '@/lib/ToastProvider';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
@@ -24,9 +27,11 @@ export default function RootLayout({
     <html lang="en">
       <SessionContextProvider supabaseClient={supabaseClient}>
         <ChatCtxProvider>
-          <body className={sourceSans3.className}>
-            <ToastProvider>{children}</ToastProvider>
-          </body>
+          <QueryClientProvider client={queryClient}>
+            <body className={sourceSans3.className}>
+              <ToastProvider>{children}</ToastProvider>
+            </body>
+          </QueryClientProvider>
         </ChatCtxProvider>
       </SessionContextProvider>
     </html>

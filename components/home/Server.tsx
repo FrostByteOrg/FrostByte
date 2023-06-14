@@ -66,8 +66,7 @@ export default function Server({
         if (data) {
           if (Array.isArray(data)) {
             setChannels(data!);
-          }
-          else {
+          } else {
             setChannels([data!]);
           }
         }
@@ -110,7 +109,7 @@ export default function Server({
               <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
                 <OverflowMarquee content={server.name} maxLength={10} />
               </div>
-              <ServerMemberStats server={server} />
+              {/* <ServerMemberStats server={server} /> */}
             </div>
           </div>
           <DropdownMenu.Root>
@@ -223,7 +222,7 @@ export default function Server({
             <div className="text-lg tracking-wide font-bold max-w-[12ch] overflow-hidden hover:overflow-visible">
               <OverflowMarquee content={server.name} maxLength={10} />
             </div>
-            <ServerMemberStats server={server} />
+            {/* <ServerMemberStats server={server} /> */}
           </div>
         </div>
         <div></div>

@@ -14,6 +14,7 @@ import {
   useGetUserPermsForServer,
   useServers,
   useProfile,
+  setServers,
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import ServerSettingsModal from './modals/ServerSettingsModal';
@@ -25,6 +26,8 @@ import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
 import EditUserModal from './modals/EditUserModal';
 import GearIcon from '../icons/GearIcon';
+import useGetServerQuery from '@/lib/fetchHelpers';
+import { useQueryClient } from 'react-query';
 
 export default function ServerList() {
   //TODO: Display default page (when user belongs to and has no servers)
@@ -34,12 +37,18 @@ export default function ServerList() {
   const [currentServer, setCurrentServer] = useState<ServersForUser | null>(
     null
   );
-
+  const queryClient = useQueryClient();
   const user = useUser();
   const supabase = createClientComponentClient();
   const editUser = useProfile();
 
-  const servers = useServers();
+  // const servers = useServers();
+  const {
+    data: servers,
+    error,
+    refetch,
+  } = useGetServerQuery(supabase, user!.id);
+
   const [filteredServers, setFilteredServers] = useState(servers);
   const getServers = useGetServers();
 
@@ -51,15 +60,37 @@ export default function ServerList() {
 
   const handleClose = useCallback(() => setExpanded(0), [setExpanded]);
 
+  // useEffect(() => {
+  //   if (getServers) {
+  //     if (user) {
+  //       getServers(supabase, user.id);
+  //     }
+  //   }
+  // }, [getServers, supabase, user, getAllServerProfiles]);
+
   useEffect(() => {
-    if (getServers) {
-      if (user) {
-        getServers(supabase, user.id);
-        //TODO: omg i think this is the cause, move this to a different useEffect
-        getAllServerProfiles(supabase, expanded);
-      }
+    if (servers) {
+      const convertedData = servers.map(({ server_id, servers }) => ({
+        server_id,
+        servers: Array.isArray(servers) ? servers[0] : servers,
+      }));
+      setServers(convertedData as ServersForUser[]);
     }
-  }, [getServers, supabase, user, expanded, getAllServerProfiles]);
+  }, [servers]);
+
+  useEffect(() => {
+    if (getAllServerProfiles) {
+      getAllServerProfiles(supabase, expanded);
+    }
+  }, [expanded, getAllServerProfiles, supabase]);
+
+  useEffect(() => {
+    if (user?.id) {
+      console.log('tes');
+      refetch();
+      queryClient.invalidateQueries('getServers');
+    }
+  }, [queryClient, refetch, user?.id]);
 
   // HACK: At the time of component render, the servers are not yet loaded into the store.
   useEffect(() => {
@@ -157,7 +188,7 @@ export default function ServerList() {
                     onClick={() => {
                       return expanded !== server.server_id
                         ? (setExpanded(server.server_id),
-                        setCurrentServer(server))
+                          setCurrentServer(server))
                         : '';
                     }}
                   >
