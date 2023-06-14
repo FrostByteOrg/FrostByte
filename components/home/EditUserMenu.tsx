@@ -45,7 +45,7 @@ export default function EditUserMenu() {
       settingView = <ChangePassword />;
       break;
     case 'setMedia':
-      settingView = <MediaPick />;
+      settingView = <MediaPick isMobile={isMobile} />;
       break;
     default:
       settingView = <EditUserForm />;
@@ -97,22 +97,12 @@ export default function EditUserMenu() {
             </div>
           </div>
           <div className="flex flex-row mb-1">
-            <button
-              className="
-              tracking-wide 
-              text-md mb-2 
-              text-frost-100 
-              flex 
-              flex-row 
-              items-center 
-              justify-evenly
-               w-9
-               hover:text-red-500"
+            <div
+              className="bg-frost-500 py-2 px-5 rounded-lg hover:cursor-pointer hover:bg-frost-700"
               onClick={handleLogout}
             >
               Logout
-              <LogOutIcon width={5} height={5} />
-            </button>
+            </div>
           </div>
         </div>
         {settingView}
@@ -162,22 +152,12 @@ export default function EditUserMenu() {
           </div>
         </div>
         <div className="flex flex-row mb-1 ">
-          <button
-            className="
-            tracking-wide 
-            text-md mb-1  
-            flex 
-            flex-row 
-            items-center 
-            justify-evenly
-             w-9
-             hover:text-red-500
-             "
+          <div
+            className="bg-frost-500 py-2 px-5 rounded-lg hover:cursor-pointer hover:bg-frost-700"
             onClick={handleLogout}
           >
             Logout
-            <LogOutIcon width={5} height={5} />
-          </button>
+          </div>
         </div>
       </div>
       {settingView}
