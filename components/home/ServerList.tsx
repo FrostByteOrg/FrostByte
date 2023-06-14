@@ -152,17 +152,27 @@ export default function ServerList() {
         >
           <GearIcon width={6} height={6} />
         </button>
-        <InfoIcon
-          onMouseEnter={() => setInfoHover(true)}
-          onMouseLeave={() => setInfoHover(false)}
-          onClick={() => setShowInfoModal(!showInfoModal)}
-          className=" hover:cursor-pointer mt-2"
-          hovered={infoHover}
-        />
-        {showInfoModal ? (
-          <FAQModal showModal={showInfoModal} setShowModal={setShowInfoModal} />
-        ) : (
+
+        {servers && servers.length < 1 ? (
           ''
+        ) : (
+          <>
+            <InfoIcon
+              onMouseEnter={() => setInfoHover(true)}
+              onMouseLeave={() => setInfoHover(false)}
+              onClick={() => setShowInfoModal(!showInfoModal)}
+              className=" hover:cursor-pointer mt-2"
+              hovered={infoHover}
+            />
+            {showInfoModal ? (
+              <FAQModal
+                showModal={showInfoModal}
+                setShowModal={setShowInfoModal}
+              />
+            ) : (
+              ''
+            )}
+          </>
         )}
       </div>
       {connectionState === ConnectionState.Connected && <MobileCallControls />}

@@ -12,13 +12,25 @@ import GearIcon from '@/components/icons/GearIcon';
 import EditUserModal from '../modals/EditUserModal';
 import { useState } from 'react';
 import DefaultSplash from '../DefaultSplash';
+import { useQueryClient } from 'react-query';
+import useGetServerQuery from '@/lib/fetchHelpers';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export default function RenderMobileView() {
   const sideBarOption = useSideBarOptionValue();
 
   const channel = useChannel();
   const editUser = useProfile();
-  const servers = useServers();
+
+  const user = useUser();
+  const supabase = createClientComponentClient();
+  const queryClient = useQueryClient();
+  const {
+    data: servers,
+    error,
+    refetch,
+  } = useGetServerQuery(supabase, user?.id);
 
   const [showEditUser, setShowEditUser] = useState(false);
 
@@ -70,8 +82,8 @@ export default function RenderMobileView() {
     <div className=" flex flex-col h-screen">
       <div className=" grow overflow-y-scroll flex flex-col h-full ">
         {mainView}
-        {servers.length < 1 && mainViewText == 'SERVERS' ? (
-          <DefaultSplash />
+        {servers && servers.length < 1 && mainViewText == 'SERVERS' ? (
+          <DefaultSplash showFAQ={true} />
         ) : (
           ''
         )}

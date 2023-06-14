@@ -11,7 +11,7 @@
   "plugins": ["@typescript-eslint"],
   "rules": {
     "semi": ["error", "always"],
-    "quotes": ["error", "single"],
+
     "@typescript-eslint/prefer-ts-expect-error": "warn",
     "@typescript-eslint/ban-ts-comment": "error",
     "@next/next/no-img-element": "off"
