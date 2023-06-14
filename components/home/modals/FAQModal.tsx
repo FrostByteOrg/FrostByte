@@ -107,6 +107,10 @@ export default function FAQModal({
           question="How do I create a server invite?"
           answer="To create an invite to your server, simply expand your server so that all of the channels are showing. Next, right click on any channel and you should see an option to create an invite. Follow the instructions, once created the invite link will copied to your clipboard, simply paste it anywhere and you should be set!"
         />
+        <FAQItem
+          question="How do I voice/video chat?"
+          answer="First you have to add a new channel by clicking on the 3 vertical dots next to the server, then make sure to select the 'Voice' channel type. Once the channel is created you can click on it, then click the green phone button to join the voice/video call. Video and voice are disabled by default so if you wish to share either media, you will have to click on its respected button (camera icon and microphone icon). You will then be prompted to accept the sharing of your media and once that is done you will successfully be sharing your voice and/or video!"
+        />
       </div>
     </Modal>
   );
