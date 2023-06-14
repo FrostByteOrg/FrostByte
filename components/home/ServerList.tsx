@@ -188,7 +188,7 @@ export default function ServerList() {
                     onClick={() => {
                       return expanded !== server.server_id
                         ? (setExpanded(server.server_id),
-                          setCurrentServer(server))
+                        setCurrentServer(server))
                         : '';
                     }}
                   >

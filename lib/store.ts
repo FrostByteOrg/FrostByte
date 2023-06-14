@@ -465,7 +465,8 @@ const useRelationsStore = create<RelationsState>()((set) => ({
 
       if (Array.isArray(data)) {
         set({ relations: data as DetailedProfileRelation[] });
-      } else {
+      }
+      else {
         set({ relations: [data] as DetailedProfileRelation[] });
       }
     }
@@ -541,21 +542,21 @@ const useDMChannelsStore = create<DMChannelsState>()((set) => ({
       dmChannels: new Map(
         Array.isArray(dmChannelsData)
           ? dmChannelsData.map((channel) => [
-              channel.recipient.id,
-              {
-                ...channel,
-                name: channel.recipient.username,
-              },
-            ])
+            channel.recipient.id,
+            {
+              ...channel,
+              name: channel.recipient.username,
+            },
+          ])
           : [
-              [
-                dmChannelsData.recipient.id,
-                {
-                  ...dmChannelsData,
-                  name: dmChannelsData.recipient.username,
-                },
-              ],
-            ]
+            [
+              dmChannelsData.recipient.id,
+              {
+                ...dmChannelsData,
+                name: dmChannelsData.recipient.username,
+              },
+            ],
+          ]
       ),
     }));
   },
