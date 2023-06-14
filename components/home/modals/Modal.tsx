@@ -42,7 +42,7 @@ export default function Modal({
         </div>
         <div className="px-2 pt-4 pb-4 flex flex-col text-white">{content}</div>
         <div className=" border-t-2 mx-5 border-grey-700"></div>
-        <div className={buttonsClassName}>{buttons}</div>
+        <div className={`${buttonsClassName} text-white`}>{buttons}</div>
       </div>
     </dialog>
   );

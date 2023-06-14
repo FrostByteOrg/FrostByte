@@ -1,10 +1,11 @@
 import Modal from '@/components/home/modals/Modal';
 import EditUser from '@/components/home/EditUserMenu';
-import { Dispatch, SetStateAction, useRef } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { Profile } from '@/types/dbtypes';
 import FAQItem from '@/components/home/FAQItem';
 import ServerHover from '../../../public/serverHover.png';
 import Image from 'next/image';
+import { useMediaQuery } from 'react-responsive';
 
 export default function FAQModal({
   showModal,
@@ -15,11 +16,18 @@ export default function FAQModal({
 }) {
   const faqRef = useRef<HTMLDialogElement>(null);
 
+  const checkMobile = useMediaQuery({ query: '(max-width: 630px)' });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(checkMobile);
+  }, [checkMobile]);
+
   return (
     <Modal
       modalRef={faqRef}
       showModal={showModal}
-      className="w-15 h-[522px] overflow-y-auto"
+      className={`${isMobile ? 'w-13' : 'w-15'} h-[522px] overflow-y-auto`}
       title={
         <div>
           {' '}

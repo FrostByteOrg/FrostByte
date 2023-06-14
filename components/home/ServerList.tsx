@@ -28,11 +28,15 @@ import EditUserModal from './modals/EditUserModal';
 import GearIcon from '../icons/GearIcon';
 import useGetServerQuery from '@/lib/fetchHelpers';
 import { useQueryClient } from 'react-query';
+import InfoIcon from '../icons/InfoIcon';
+import FAQModal from './modals/FAQModal';
 
 export default function ServerList() {
   const [showEditUser, setShowEditUser] = useState(false);
   const [showAddServer, setShowAddServer] = useState(false);
   const [expanded, setExpanded] = useState(0);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [infoHover, setInfoHover] = useState(false);
   const [currentServer, setCurrentServer] = useState<ServersForUser | null>(
     null
   );
@@ -134,7 +138,7 @@ export default function ServerList() {
           </Tooltip>
         </div>
       </div>
-      <div className={`${mediaStyle.appear}`}>
+      <div className={`${mediaStyle.appear} flex justify-between`}>
         <EditUserModal
           showModal={showEditUser}
           setShowModal={setShowEditUser}
@@ -148,6 +152,18 @@ export default function ServerList() {
         >
           <GearIcon width={6} height={6} />
         </button>
+        <InfoIcon
+          onMouseEnter={() => setInfoHover(true)}
+          onMouseLeave={() => setInfoHover(false)}
+          onClick={() => setShowInfoModal(!showInfoModal)}
+          className=" hover:cursor-pointer mt-2"
+          hovered={infoHover}
+        />
+        {showInfoModal ? (
+          <FAQModal showModal={showInfoModal} setShowModal={setShowInfoModal} />
+        ) : (
+          ''
+        )}
       </div>
       {connectionState === ConnectionState.Connected && <MobileCallControls />}
 
