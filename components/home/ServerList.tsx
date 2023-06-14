@@ -47,7 +47,7 @@ export default function ServerList() {
     data: servers,
     error,
     refetch,
-  } = useGetServerQuery(supabase, user!.id);
+  } = useGetServerQuery(supabase, user?.id);
 
   const [filteredServers, setFilteredServers] = useState(servers);
   const getServers = useGetServers();
