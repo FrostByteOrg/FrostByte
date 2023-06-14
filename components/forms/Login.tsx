@@ -59,9 +59,9 @@ export default function Login({
       },
     });
     if (error) console.log(error);
-    if (data && !error) {
-      router.push('/');
-    }
+    // if (data && !error) {
+    //   router.push('/');
+    // }
   }
 
   async function signInWithGitHub() {
@@ -73,9 +73,9 @@ export default function Login({
       },
     });
     if (error) console.log(error);
-    if (data && !error) {
-      router.push('/');
-    }
+    // if (data && !error) {
+    //   router.push('/');
+    // }
   }
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
