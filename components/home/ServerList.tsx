@@ -30,7 +30,6 @@ import useGetServerQuery from '@/lib/fetchHelpers';
 import { useQueryClient } from 'react-query';
 
 export default function ServerList() {
-  //TODO: Display default page (when user belongs to and has no servers)
   const [showEditUser, setShowEditUser] = useState(false);
   const [showAddServer, setShowAddServer] = useState(false);
   const [expanded, setExpanded] = useState(0);
@@ -192,8 +191,8 @@ export default function ServerList() {
                     onClick={() => {
                       return expanded !== server.server_id
                         ? (setExpanded(server.server_id),
-                        // @ts-expect-error: Let's ignore a compile error like this unreachable code
-                        setCurrentServer(server))
+                          // @ts-expect-error: Let's ignore a compile error like this unreachable code
+                          setCurrentServer(server))
                         : '';
                     }}
                   >

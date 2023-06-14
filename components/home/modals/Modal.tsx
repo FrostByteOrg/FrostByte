@@ -36,11 +36,11 @@ export default function Modal({
       onKeyDown={onKeyDown}
     >
       <div className={`${className} bg-grey-900 p-5 rounded-lg z-50 `}>
-        <div className="text-2xl font-bold tracking-wider flex justify-between items-center">
+        <div className="text-2xl font-bold tracking-wider flex justify-between items-center text-white">
           {title}
           {closeBtn}
         </div>
-        <div className="px-2 pt-4 pb-4 flex flex-col ">{content}</div>
+        <div className="px-2 pt-4 pb-4 flex flex-col text-white">{content}</div>
         <div className=" border-t-2 mx-5 border-grey-700"></div>
         <div className={buttonsClassName}>{buttons}</div>
       </div>

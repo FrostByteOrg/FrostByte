@@ -16,7 +16,7 @@ import modalStyle from '@/styles/Modal.module.css';
 import ChangePassword from '../forms/SettingsUpdatePassword';
 import { useMediaQuery } from 'react-responsive';
 
-export default function EditUser() {
+export default function EditUserMenu() {
   const supabase = createClientComponentClient();
 
   const router = useRouter();
@@ -59,7 +59,7 @@ export default function EditUser() {
             <div
               className={`flex flex-row w-10 px-3 py-1 items-center ${
                 formSwitch === 'editUser' &&
-                'border-r border-r-white bg-gray-500'
+                'border-r border-r-white bg-grey-500'
               }`}
             >
               <button
@@ -125,7 +125,7 @@ export default function EditUser() {
         <div>
           <div
             className={`flex flex-row w-10 px-3 py-1 items-center ${
-              formSwitch === 'editUser' && 'border-r border-r-white bg-gray-500'
+              formSwitch === 'editUser' && 'border-r border-r-white bg-grey-500'
             }`}
           >
             <button
@@ -138,7 +138,7 @@ export default function EditUser() {
           <div
             className={`flex flex-row w-10 px-3 py-1 items-center ${
               formSwitch === 'changePassword' &&
-              'border-r border-r-white bg-gray-500'
+              'border-r border-r-white bg-grey-500'
             }`}
           >
             <button
@@ -150,7 +150,7 @@ export default function EditUser() {
           </div>
           <div
             className={`flex flex-row w-10 px-3 py-1 items-center ${
-              formSwitch === 'setMedia' && 'border-r border-r-white bg-gray-500'
+              formSwitch === 'setMedia' && 'border-r border-r-white bg-grey-500'
             }`}
           >
             <button

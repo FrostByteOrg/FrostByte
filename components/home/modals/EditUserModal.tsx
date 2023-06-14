@@ -1,5 +1,5 @@
 import Modal from '@/components/home/modals/Modal';
-import EditUser from '@/components/home/EditUserMenu';
+import EditUserMenu from '@/components/home/EditUserMenu';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { Profile } from '@/types/dbtypes';
 import { useMediaQuery } from 'react-responsive';
@@ -45,7 +45,7 @@ export default function EditUserModal({
         </>
       }
     >
-      <EditUser />
+      <EditUserMenu />
     </Modal>
   );
 }
