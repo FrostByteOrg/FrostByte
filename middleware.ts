@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest) {
 
   const redirectUrl = req.nextUrl.clone();
 
-  // Check auth condition
+  // Check auth conditions
   if (session?.user) {
     // Authentication successful, forward request to protected route.
 
