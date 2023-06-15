@@ -12,18 +12,18 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'FrostByte',
   description: 'The Next Generation Open-Source Instant Messaging Application',
-  openGraph: {
-    url: 'https://www.frostbyteapp.com/',
-    siteName: 'FrostByte',
-    images: [
-      {
-        url: 'https://drive.google.com/uc?id=109htcEWnRyq1f3SN7Wp3h-CNns1zmkKo',
-        width: 800,
-        height: 600,
-      },
-    ],
-    type: 'website',
-  },
+  // openGraph: {
+  //   url: 'https://www.frostbyteapp.com/',
+  //   siteName: 'FrostByte',
+  //   images: [
+  //     {
+  //       url: 'https://drive.google.com/uc?id=109htcEWnRyq1f3SN7Wp3h-CNns1zmkKo',
+  //       width: 800,
+  //       height: 600,
+  //     },
+  //   ],
+  //   type: 'website',
+  // },
   twitter: {
     card: 'summary_large_image',
     title: 'FrostByte',
