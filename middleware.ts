@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest) {
 
   const redirectUrl = req.nextUrl.clone();
 
-  // Check auth conditions
+  // Check auth condition
   if (session?.user) {
     // Authentication successful, forward request to protected route.
 
@@ -48,11 +48,7 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/!opengraph*',
-    '/((?!favicon.ico|_next|opengraph*).*)',
-    '/api/:path*',
-  ],
+  matcher: ['/((?!favicon.ico|_next|opengraph*).*)', '/api/:path*'],
 };
 
 // export const config = {
