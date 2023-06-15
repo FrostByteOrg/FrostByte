@@ -12,6 +12,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'FrostByte',
   description: 'The Next Generation Open-Source Instant Messaging Application',
+  metadataBase: new URL('https://www.frostbyteapp.com'),
   // openGraph: {
   //   url: 'https://www.frostbyteapp.com/',
   //   siteName: 'FrostByte',
