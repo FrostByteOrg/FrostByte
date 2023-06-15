@@ -36,9 +36,7 @@ export default function DefaultSplash({
   return (
     <div className="w-full h-full flex flex-col items-center">
       <FrostcordSnowflake
-        className={`fill-slate-600 w-full  ${isMobile ? '' : 'h-full'} ${
-          anim.snowFlakeAnim
-        }`}
+        className={`fill-slate-600 w-full  h-full ${anim.snowFlakeAnim}`}
         fillColor="#8a94a633"
       />
       {servers && servers.length === 0 && (
