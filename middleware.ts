@@ -48,7 +48,11 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!favicon.ico|_next).*)', '/api/:path*'],
+  matcher: [
+    '/!opengraph*',
+    '/((?!favicon.ico|_next|opengraph*).*)',
+    '/api/:path*',
+  ],
 };
 
 // export const config = {
