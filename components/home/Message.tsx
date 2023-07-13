@@ -5,12 +5,16 @@ import { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import TrashIcon from '@/components/icons/TrashIcon';
 import EditIcon from '@/components/icons/EditIcon';
 import { editMessage } from '@/services/message.service';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import MessageContent from './MessageContent';
 import DeleteMsgModal from '@/components/home/DeleteMsgModal';
-import { Message as MessageType, MessageWithServerProfile } from '@/types/dbtypes';
+import {
+  Message as MessageType,
+  MessageWithServerProfile,
+} from '@/types/dbtypes';
 import { MessageHeader } from './MessageHeader';
-import { useChannel, useServerUserProfile, useSetUser } from '@/lib/store';
+import { useChannel, useServerUserProfile } from '@/lib/store';
 import { formatDateStr } from '@/lib/dateManagement';
 
 export default function Message({
@@ -24,12 +28,17 @@ export default function Message({
 }) {
   const displayTime = formatDateStr(message.sent_time);
 
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const user = useUser();
   const channel = useChannel();
   const [showOptions, setShowOptions] = useState<'show' | 'hide'>('hide');
-  const [messageOptions, setMessageOptions] = useState<null | 'delete' | 'edit'>(null);
-  const serverUser = useServerUserProfile(channel!.server_id, message.profile_id);
+  const [messageOptions, setMessageOptions] = useState<
+    null | 'delete' | 'edit'
+  >(null);
+  const serverUser = useServerUserProfile(
+    channel!.server_id,
+    message.profile_id
+  );
 
   const chatMessage = useRef<HTMLInputElement>(null);
 
@@ -58,7 +67,7 @@ export default function Message({
   return (
     <>
       <div className="px-2 pt-1 pb-1 flex flex-col">
-        {(!collapse_user && serverUser) && (
+        {!collapse_user && serverUser && (
           <MessageHeader
             server_user_profile={serverUser}
             message_id={message.id}
@@ -69,13 +78,15 @@ export default function Message({
 
         {/* TODO: figure out how to close modal on blur (cant use onBlur on the dialog cuz it takes up the entire screen meaning you can never focus off of it) */}
 
-        { serverUser && <DeleteMsgModal
-          message={message}
-          server_user_profile={serverUser}
-          displayTime={displayTime}
-          showModal={messageOptions == 'delete' ? true : false}
-          setMessageOptions={setMessageOptions}
-        />}
+        {serverUser && (
+          <DeleteMsgModal
+            message={message}
+            server_user_profile={serverUser}
+            displayTime={displayTime}
+            showModal={messageOptions == 'delete' ? true : false}
+            setMessageOptions={setMessageOptions}
+          />
+        )}
 
         <div
           className="font-light tracking-wide ml-8 -mt-2 hover:bg-grey-900 rounded-lg p-1 transition-colors break-all relative flex flex-col items-start"

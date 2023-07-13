@@ -10,10 +10,8 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
-    "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
-    "indent": ["error", 2, {"SwitchCase": 1}],
     "semi": ["error", "always"],
-    "quotes": ["error", "single"],
+
     "@typescript-eslint/prefer-ts-expect-error": "warn",
     "@typescript-eslint/ban-ts-comment": "error",
     "@next/next/no-img-element": "off"

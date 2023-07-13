@@ -7,10 +7,10 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Database } from '@/types/database.supabase';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'react-toastify';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import PasswordIcon from '../icons/PasswordIcon';
 
 export default function UpdatePassword({
@@ -19,7 +19,7 @@ export default function UpdatePassword({
   setServerError: Dispatch<SetStateAction<string | null>>;
 }) {
   const router = useRouter();
-  const supabase = useSupabaseClient<Database>();
+  const supabase = createClientComponentClient<Database>();
 
   const {
     register,

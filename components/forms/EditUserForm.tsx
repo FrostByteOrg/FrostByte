@@ -1,7 +1,7 @@
 import { useSetUserProfile, useProfile } from '@/lib/store';
 import { Profile } from '@/types/dbtypes';
 import UserIcon from '@/components/icons/UserIcon';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import {
   updateUserAvatar,
   updateUserProfile,
@@ -21,7 +21,7 @@ export default function EditUserForm() {
   const imageRef = useRef<HTMLInputElement | null>(null);
   const previewImage = userImage ? URL.createObjectURL(userImage) : '';
   const user = useProfile();
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
@@ -94,8 +94,8 @@ export default function EditUserForm() {
   };
 
   return (
-    <div className="flex flex-row ml-5 overflow-y-scroll">
-      <div className="flex flex-col w-12">
+    <div className="flex flex-row ml-5 overflow-y-scroll ">
+      <div className="flex flex-col w-12 ">
         <div className="flex flex-row">
           <h1 className="text-2xl font-semibold">User Profile</h1>
         </div>
@@ -178,7 +178,7 @@ export default function EditUserForm() {
               )}
             </div>
           </div>
-          <div className="flex flex-row justify-end items-center">
+          <div className="flex flex-row justify-start items-center">
             <div className="flex flex-row">
               <button
                 className=" hover:text-frost-500 px-2 py-1 rounded-lg"

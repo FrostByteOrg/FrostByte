@@ -1,9 +1,10 @@
 import AddServerIcon from '@/components/icons/AddServerIcon';
 import { SearchBar } from '@/components/forms/Styles';
 import mediaStyle from '@/styles/Livekit.module.css';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Server from '@/components/home/Server';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import AddServerModal from '@/components/home/modals/AddServerModal';
 import AddChannelModal from '@/components/home/modals/AddChannelModal';
 import {
@@ -13,6 +14,7 @@ import {
   useGetUserPermsForServer,
   useServers,
   useProfile,
+  setServers,
 } from '@/lib/store';
 import { Tooltip } from 'react-tooltip';
 import ServerSettingsModal from './modals/ServerSettingsModal';
@@ -24,22 +26,32 @@ import { useConnectionState } from '@livekit/components-react';
 import MobileCallControls from './mobile/MobileCallControls';
 import EditUserModal from './modals/EditUserModal';
 import GearIcon from '../icons/GearIcon';
+import useGetServerQuery from '@/lib/fetchHelpers';
+import { useQueryClient } from 'react-query';
+import InfoIcon from '../icons/InfoIcon';
+import FAQModal from './modals/FAQModal';
 
 export default function ServerList() {
-  //TODO: Display default page (when user belongs to and has no servers)
   const [showEditUser, setShowEditUser] = useState(false);
   const [showAddServer, setShowAddServer] = useState(false);
   const [expanded, setExpanded] = useState(0);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [infoHover, setInfoHover] = useState(false);
   const [currentServer, setCurrentServer] = useState<ServersForUser | null>(
     null
   );
-
+  const queryClient = useQueryClient();
   const user = useUser();
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const editUser = useProfile();
 
+  // const servers = useServers();
+  const {
+    data: servers,
+    error,
+    refetch,
+  } = useGetServerQuery(supabase, user?.id);
 
-  const servers = useServers();
   const [filteredServers, setFilteredServers] = useState(servers);
   const getServers = useGetServers();
 
@@ -49,14 +61,39 @@ export default function ServerList() {
 
   const connectionState = useConnectionState();
 
+  const handleClose = useCallback(() => setExpanded(0), [setExpanded]);
+
+  // useEffect(() => {
+  //   if (getServers) {
+  //     if (user) {
+  //       getServers(supabase, user.id);
+  //     }
+  //   }
+  // }, [getServers, supabase, user, getAllServerProfiles]);
+
   useEffect(() => {
-    if (getServers) {
-      if (user) {
-        getServers(supabase, user.id);
-        getAllServerProfiles(supabase, expanded);
-      }
+    if (servers) {
+      const convertedData = servers.map(({ server_id, servers }) => ({
+        server_id,
+        servers: Array.isArray(servers) ? servers[0] : servers,
+      }));
+      setServers(convertedData as ServersForUser[]);
     }
-  }, [getServers, supabase, user, expanded, getAllServerProfiles]);
+  }, [servers]);
+
+  useEffect(() => {
+    if (getAllServerProfiles) {
+      getAllServerProfiles(supabase, expanded);
+    }
+  }, [expanded, getAllServerProfiles, supabase]);
+
+  useEffect(() => {
+    if (user?.id) {
+      console.log('tes');
+      refetch();
+      queryClient.invalidateQueries('getServers');
+    }
+  }, [queryClient, refetch, user?.id]);
 
   // HACK: At the time of component render, the servers are not yet loaded into the store.
   useEffect(() => {
@@ -101,19 +138,45 @@ export default function ServerList() {
           </Tooltip>
         </div>
       </div>
-      <div className={`${mediaStyle.appear}`}>
-        <EditUserModal 
-          showModal={showEditUser} 
-          setShowModal={setShowEditUser} 
-          user={editUser}/>
-        <button 
+      <div className={`${mediaStyle.appear} flex justify-between`}>
+        <EditUserModal
+          showModal={showEditUser}
+          setShowModal={setShowEditUser}
+          user={editUser}
+        />
+        <button
           className="w-7 h-7 hover:text-grey-400"
-          onClick={() => {setShowEditUser(true);}}>
-          <GearIcon width={6} height={6}/>
+          onClick={() => {
+            setShowEditUser(true);
+          }}
+        >
+          <GearIcon width={6} height={6} />
         </button>
+
+        {servers && servers.length < 1 ? (
+          ''
+        ) : (
+          <>
+            <InfoIcon
+              onMouseEnter={() => setInfoHover(true)}
+              onMouseLeave={() => setInfoHover(false)}
+              onClick={() => setShowInfoModal(!showInfoModal)}
+              className=" hover:cursor-pointer mt-2"
+              hovered={infoHover}
+            />
+            {showInfoModal ? (
+              <FAQModal
+                showModal={showInfoModal}
+                setShowModal={setShowInfoModal}
+              />
+            ) : (
+              ''
+            )}
+          </>
+        )}
       </div>
       {connectionState === ConnectionState.Connected && <MobileCallControls />}
-       
+
       <div className="pt-4 pb-4">
         <input
           type="text"
@@ -123,7 +186,9 @@ export default function ServerList() {
             const value = (e.target as HTMLInputElement).value;
 
             // Filter servers
+            // @ts-expect-error: Let's ignore a compile error like this unreachable code
             const filteredServers = servers.filter((server) => {
+              // @ts-expect-error: Let's ignore a compile error like this unreachable code
               return server.servers.name
                 .toLowerCase()
                 .includes(value.toLowerCase());
@@ -133,37 +198,41 @@ export default function ServerList() {
           }}
         />
       </div>
-        
+
       <div className="flex-grow overflow-y-auto ">
         {filteredServers &&
-        filteredServers
-          .sort(function (a, b) {
-            var textA = a.servers.name.toUpperCase();
-            var textB = b.servers.name.toUpperCase();
-            return textA < textB ? -1 : textA > textB ? 1 : 0;
-          })
-          .map((server, idx, serverList) => {
-            if (server) {
-              return (
-                <span
-                  key={server.server_id}
-                  onClick={() => {
-                    return expanded !== server.server_id
-                      ? (setExpanded(server.server_id),
-                      setCurrentServer(server))
-                      : '';
-                  }}
-                >
-                  <Server
-                    server={server.servers}
-                    expanded={expanded}
-                    isLast={idx == serverList.length - 1}
-                    setExpanded={setExpanded}
-                  />
-                </span>
-              );
-            }
-          })}
+          filteredServers
+            .sort(function (a, b) {
+              // @ts-expect-error: Let's ignore a compile error like this unreachable code
+              var textA = a.servers.name.toUpperCase();
+              // @ts-expect-error: Let's ignore a compile error like this unreachable code
+              var textB = b.servers.name.toUpperCase();
+              return textA < textB ? -1 : textA > textB ? 1 : 0;
+            })
+            .map((server, idx, serverList) => {
+              if (server) {
+                return (
+                  <span
+                    key={server.server_id}
+                    onClick={() => {
+                      return expanded !== server.server_id
+                        ? (setExpanded(server.server_id),
+                          // @ts-expect-error: Let's ignore a compile error like this unreachable code
+                          setCurrentServer(server))
+                        : '';
+                    }}
+                  >
+                    <Server
+                      // @ts-expect-error: Let's ignore a compile error like this unreachable code
+                      server={server.servers}
+                      expanded={expanded}
+                      isLast={idx == serverList.length - 1}
+                      setExpanded={handleClose}
+                    />
+                  </span>
+                );
+              }
+            })}
       </div>
       {isInVoice && (
         <div className={`w-full self-end mb-7 ${mediaStyle.disappear}`}>
@@ -172,5 +241,4 @@ export default function ServerList() {
       )}
     </div>
   );
-  
 }

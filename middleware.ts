@@ -1,4 +1,4 @@
-import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Database } from '@/types/database.supabase';
@@ -9,9 +9,15 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   // Forward req if User tries to reset password, authorization will happen on the client
   // console.log(req.cookies.has('supabase-auth-token'));
-  if (req.nextUrl.pathname == '/passwordreset') return res;
+  if (
+    req.nextUrl.pathname == '/passwordreset' ||
+    req.nextUrl.pathname == '/tos' ||
+    req.nextUrl.pathname == '/privacy' ||
+    req.nextUrl.pathname == '/auth/callback'
+  )
+    return res;
   // Create authenticated Supabase Client.
-  const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
+  const supabase = createMiddlewareClient<Database>({ req, res });
   // Check if we have a session
 
   const {
@@ -35,12 +41,16 @@ export async function middleware(req: NextRequest) {
 
   // Auth condition not met, redirect to home page.
   if (req.nextUrl.pathname == '/login') return res;
-
+  console.log('bruh');
   redirectUrl.pathname = '/login';
   redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname);
   return NextResponse.redirect(redirectUrl);
 }
 
 export const config = {
-  matcher: ['/((?!favicon.ico|_next).*)','/api/:path*'],
+  matcher: ['/((?!favicon.ico|_next|opengraph*).*)', '/api/:path*'],
 };
+
+// export const config = {
+//   matcher: ['/((?!favicon.ico|_next).*)', '/api/:path*'],
+// };

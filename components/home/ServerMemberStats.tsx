@@ -1,32 +1,51 @@
 import { useOnlineUsers } from '@/lib/store';
-import { getServerMemberCount, getUsersInServer } from '@/services/server.service';
+import {
+  getServerMemberCount,
+  getUsersInServer,
+} from '@/services/server.service';
 import styles from '@/styles/Servers.module.css';
 import { Server } from '@/types/dbtypes';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 
-export function ServerMemberStats({ server, flexStyle }: { server: Server, flexStyle?: string }) {
-  const [ memberCount, setMemberCount ] = useState(0);
-  const [ onlineCount, setOnlineCount ] = useState(0);
-  const supabase = useSupabaseClient();
+export function ServerMemberStats({
+  server,
+  flexStyle,
+}: {
+  server: Server;
+  flexStyle?: string;
+}) {
+  const [memberCount, setMemberCount] = useState(0);
+  const [onlineCount, setOnlineCount] = useState(0);
+  const supabase = createClientComponentClient();
   const onlineUsers = useOnlineUsers();
 
   useEffect(() => {
     async function handleAsync() {
       // Total Members
+      //TODO: Need to cache both of these, one is server_users and one is get_users_in_server
       setMemberCount(await getServerMemberCount(supabase, server.id));
 
       // Now we need to get the online count
-      const { data: onlineData, error } = await getUsersInServer(supabase, server.id);
+      const { data: onlineData, error } = await getUsersInServer(
+        supabase,
+        server.id
+      );
 
       let amtOnlineUsers = 0;
       if (!error) {
-        for (const profile of onlineData) {
-          if (onlineUsers[profile.id] !== undefined) {
-            amtOnlineUsers++;
+        if (Array.isArray(onlineData)) {
+          for (const profile of onlineData) {
+            if (onlineUsers[profile.id] !== undefined) {
+              amtOnlineUsers++;
+            }
           }
+          setOnlineCount(amtOnlineUsers);
         }
-        setOnlineCount(amtOnlineUsers);
+        else {
+          //NOTE: this could be wrong, might have to revise
+          setOnlineCount(0);
+        }
       }
     }
 

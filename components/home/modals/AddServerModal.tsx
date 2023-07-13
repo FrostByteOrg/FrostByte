@@ -9,7 +9,7 @@ import {
   addServerIcon,
   getServer,
 } from '@/services/server.service';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { PostgrestError } from '@supabase/supabase-js';
 
 export default function AddServerModal({
@@ -24,7 +24,7 @@ export default function AddServerModal({
   const [serverError, setServerError] = useState<string>('');
   const [showDesc, setSetShowDesc] = useState<boolean>(false);
 
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
 
   const {
     register,

@@ -1,4 +1,12 @@
-import { ServerUser, Server, ProfileRelation, Channel, Role, ServerUserRole, Profile } from '@/types/dbtypes';
+import {
+  ServerUser,
+  Server,
+  ProfileRelation,
+  Channel,
+  Role,
+  ServerUserRole,
+  Profile,
+} from '@/types/dbtypes';
 import {
   useAddMessage,
   useAddRelation,
@@ -38,6 +46,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import type { Message as MessageType } from '@/types/dbtypes';
 import { getProfile } from '@/services/profile.service';
 import { ChannelPermissions as ChannelPermissionsTableType } from '@/types/dbtypes';
+import useGetServerQuery from '@/lib/fetchHelpers';
+import { useQueryClient } from 'react-query';
 
 export function useRealtimeStore(supabase: SupabaseClient<Database>) {
   const addServer = useAddServer();
@@ -70,21 +80,29 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
 
   const getAllServerProfilesForServer = useGetAllServerUserProfiles();
   const updateServerUserProfile = useUpateServerUserProfile();
-  const updateServerUserProfileByServerUserId = useUpdateServerUserProfileByServerUserId();
+  const updateServerUserProfileByServerUserId =
+    useUpdateServerUserProfileByServerUserId();
   const stripServerUserAndRoles = useStripServerUserAndRoles();
-  const removeProfilesforServerByServerUserId = useRemoveProfilesForServerByServerUserId();
+  const removeProfilesforServerByServerUserId =
+    useRemoveProfilesForServerByServerUserId();
   const allServerProfiles = useAllServerProfiles();
   const user = useUser();
 
   const currProfile = useProfile();
   const setUserProfile = useSetUserProfile();
 
+  const queryClient = useQueryClient();
+  const { data, error, refetch } = useGetServerQuery(
+    supabase,
+    user?.id as string
+  );
+
   //TODO: CASCADE DELETE ICONS
 
   useEffect(() => {
     //this condition makes sure that the functions in the store are initialized, realistically it can be any function, I just chose addServer
 
-    if (addServer) {
+    if (updateServerUserProfileByServerUserId) {
       supabase
         .channel('server_users')
         .on<ServerUser>(
@@ -92,7 +110,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           {
             event: 'UPDATE',
             schema: 'public',
-            table: 'server_users'
+            table: 'server_users',
           },
           async (payload) => {
             console.log('A user updated their server profile');
@@ -113,7 +131,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             // we should try to use the removeServer function from the store but the only resource
             // on the payload is payload.old.id which is the server_user id and not the server id
             if (user) {
-              getServers(supabase, user.id);
+              refetch();
+              // getServers(supabase, user.id);
               removeProfilesforServerByServerUserId(supabase, payload.old.id!);
             }
           }
@@ -140,8 +159,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('current user joined a server');
-
-            addServer(supabase, (payload.new as ServerUser).id);
+            refetch();
+            // addServer(supabase, (payload.new as ServerUser).id);
             getRolesForServer(supabase, payload.new.server_id);
             getAllServerProfilesForServer(supabase, payload.new.id);
           }
@@ -158,7 +177,8 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             console.log('update');
 
             if (user) {
-              getServers(supabase, user.id);
+              refetch();
+              // getServers(supabase, user.id);
             }
           }
         )
@@ -209,7 +229,7 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             console.log('Profile update event');
             console.table(payload.new);
             // This is cursed but it'll do lol
-            for (const [ server_id, profiles ] of allServerProfiles) {
+            for (const [server_id, profiles] of allServerProfiles) {
               updateServerUserProfile(supabase, payload.new.id, server_id);
             }
 
@@ -297,7 +317,10 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
           },
           async (payload) => {
             console.log('Server user role insert event');
-            updateServerUserProfileByServerUserId(supabase, payload.new.server_user_id);
+            updateServerUserProfileByServerUserId(
+              supabase,
+              payload.new.server_user_id
+            );
           }
         )
         .on<ServerUserRole>(
@@ -340,13 +363,13 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
             );
 
             if (server) {
-              updateServer(supabase, server.server_id);
+              // updateServer(supabase, server.server_id);
+              refetch();
             }
           }
         )
         .subscribe();
     }
-
 
     const handleAsync = async () => {
       if (user) {
@@ -358,7 +381,6 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
       }
     };
     handleAsync();
-
 
     // add return right here!
     // return serverUsersListener.unsubscribe();
@@ -382,7 +404,10 @@ export function useRealtimeStore(supabase: SupabaseClient<Database>) {
     allServerProfiles,
     updateServerUserProfile,
     stripServerUserAndRoles,
-    removeProfilesforServerByServerUserId,setUserProfile
+    removeProfilesforServerByServerUserId,
+    setUserProfile,
+    refetch,
+    currProfile?.id,
   ]);
 
   useEffect(() => {

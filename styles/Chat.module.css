@@ -1,0 +1,5 @@
+@media (min-width: 940px) {
+  .send {
+    display: none;
+  }
+}

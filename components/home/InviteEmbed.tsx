@@ -2,7 +2,7 @@ import { useServers } from '@/lib/store';
 import { getInviteAndServer } from '@/services/invites.service';
 import { addUserToServer } from '@/services/profile.service';
 import { ServerInvite } from '@/types/dbtypes';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { PostgrestError } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -15,11 +15,11 @@ import { toast } from 'react-toastify';
 
 export function InviteEmbed({ invite_code }: { invite_code: string }) {
   const servers = useServers();
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const router = useRouter();
   const [invite, setInvite] = useState<ServerInvite | null>(null);
-  const [ userInServer, setUserInServer ] = useState<boolean>(false);
-  const [ error, setErrorText ] = useState<PostgrestError | null>(null);
+  const [userInServer, setUserInServer] = useState<boolean>(false);
+  const [error, setErrorText] = useState<PostgrestError | null>(null);
 
   useEffect(() => {
     async function handleAsync() {
@@ -31,19 +31,22 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
       }
 
       if (data) {
-        console.log(data);
         setInvite(data);
+        if (data['servers']) {
+          setUserInServer(
+            servers.some((s) => s.server_id === data['servers']['id'])
+          );
+        }
       }
-
-      setUserInServer(servers.some((s) => s.server_id === data.servers.id));
-    };
+    }
 
     handleAsync();
   }, [invite_code, supabase, servers]);
 
   if (!invite) {
     return (
-      <div className="flex
+      <div
+        className="flex
         flex-row
         items-center
         justify-center
@@ -56,13 +59,22 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
         w-full
         max-w-xl
         overflow-hidden
-      ">
+      "
+      >
         <div className="flex flex-col justify-center space-y-2 items-start max-w-full">
           <div className="text-xl font-semibold tracking-wide text-left overflow-hidden w-[45ch]">
-            { !!error ? <h1>{error.hint || 'Invalid invite.'}</h1> : <h1>Loading</h1>}
+            {!!error ? (
+              <h1>{error.hint || 'Invalid invite.'}</h1>
+            ) : (
+              <h1>Loading</h1>
+            )}
           </div>
           <div className="flex-shrink-0 bg-zinc-700 p-2 rounded-lg border-solid border-2 border-slate-800/50 ">
-            { !!error ? <InvalidInviteIcon className='w-7 h-7 fill-red-400'/> : <LoadingIcon className='w-7 h-7 stroke-frost-300'/> }
+            {!!error ? (
+              <InvalidInviteIcon className="w-7 h-7 fill-red-400" />
+            ) : (
+              <LoadingIcon className="w-7 h-7 stroke-frost-300" />
+            )}
           </div>
         </div>
       </div>
@@ -70,7 +82,8 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
   }
 
   return (
-    <div className="flex
+    <div
+      className="flex
       flex-row
       items-center
       justify-center
@@ -83,7 +96,8 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
       w-full
       max-w-xl
       overflow-hidden
-    ">
+    "
+    >
       <div className="flex flex-col justify-center space-y-2 items-start max-w-full">
         <div className="text-xl font-semibold tracking-wide text-left overflow-hidden w-[45ch]">
           <OverflowMarquee
@@ -96,7 +110,7 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
             <ServersIcon
               server={invite.servers}
               hovered={false}
-              className='w-7 h-7'
+              className="w-7 h-7"
             />
           </div>
           <div className="flex flex-col justify-center items-start px-2">
@@ -127,7 +141,10 @@ export function InviteEmbed({ invite_code }: { invite_code: string }) {
             "
             disabled={userInServer}
             onClick={async () => {
-              const { error } = await addUserToServer(supabase, invite.servers.id);
+              const { error } = await addUserToServer(
+                supabase,
+                invite.servers.id
+              );
 
               if (error) {
                 toast.error('You cannot join this server.');

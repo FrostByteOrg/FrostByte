@@ -47,12 +47,13 @@ export default function MediaChat({
 
   const modalRef = useRef<HTMLDialogElement>(null);
 
+  // const [token, setToken] = useState<string | undefined>(undefined);
   const token = useToken(
     process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT,
     channel!.channel_id.toString(),
     {
       userInfo: {
-        identity: userID.id,
+        identity: userID?.id,
         name: user?.username,
       },
     }
@@ -68,6 +69,7 @@ export default function MediaChat({
     }
     // NOTE: We only want this to run when the channel changes. Not when currentRoom or connectionstate changes.
     // Hence why we're not including them in the dependency array.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channel?.channel_id]);
 
   return (

@@ -1,6 +1,7 @@
 import Modal from '@/components/home/modals/Modal';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Server, ServersForUser } from '@/types/dbtypes';
 import { ServerPermissions } from '@/types/permissions';
 import * as Tabs from '@radix-ui/react-tabs';
@@ -49,7 +50,7 @@ export default function ServerSettingsModal({
   const [showDesc, setSetShowDesc] = useState<boolean>(false);
 
   const modalRef = useRef<HTMLDialogElement>(null);
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const roles = useServerRoles(server?.id!);
   const user = useUser();
   const userServerPerms = useServerUserProfilePermissions(

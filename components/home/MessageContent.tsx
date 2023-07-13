@@ -9,11 +9,15 @@ import { InviteEmbed } from './InviteEmbed';
 
 function CustomAnchorTag(props: AnchorHTMLAttributes<HTMLAnchorElement>) {
   // If the link is to our domain, let's see if it's a server invite
-  if (props.href?.startsWith(window.location.href) && props.href?.includes('/invite/')) {
+
+  if (
+    props.href?.includes(window.location.href) &&
+    props.href?.includes('/invite/')
+  ) {
     const inviteCode = props.href.split('/invite/')[1];
     return (
       <>
-        <a className="text-frost-300" {...props} target="_blank"/>
+        <a className="text-frost-300" {...props} target="_blank" />
         <InviteEmbed invite_code={inviteCode} />
       </>
     );
@@ -33,10 +37,14 @@ function CustomAnchorTag(props: AnchorHTMLAttributes<HTMLAnchorElement>) {
   );
 }
 
-export default function MessageContent({ messageContent }: { messageContent: string }) {
+export default function MessageContent({
+  messageContent,
+}: {
+  messageContent: string;
+}) {
   return (
     <ReactMarkdown
-      className='w-full'
+      className="w-full"
       components={{
         ul: ({ children }) => <ul className="list-disc ml-6">{children}</ul>,
         ol: ({ children }) => <ol className="list-decimal ml-6">{children}</ol>,

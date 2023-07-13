@@ -9,7 +9,7 @@
       minmax(0, 128px) minmax(0, 192px) minmax(0, 128px)
       repeat(3, minmax(16px, 1fr));
 
-    grid-template-rows: minmax(8px, 1fr) minmax(640px, 768px) minmax(32px, 1fr);
+    grid-template-rows: minmax(8px, 1fr) minmax(640px, 768px) minmax(64px, 1fr);
   }
 
   .rightSide {
@@ -79,6 +79,32 @@
   }
 }
 
+@media only screen and (max-height: 790px) {
+  .frostCordTitle {
+    flex-basis: 5%;
+    margin-top: 18px;
+  }
+}
+
+@media only screen and (min-height: 790px) {
+  .frostCordTitle {
+    flex-basis: 22%;
+    margin-top: 48px;
+  }
+}
+
+.textLeft {
+  transform: skew(22deg);
+  font-style: italic;
+  filter: drop-shadow(3px 3px 3px rgba(16, 16, 16, 0.704));
+}
+
+.textRight {
+  transform: skew(-5deg);
+  font-style: italic;
+  filter: drop-shadow(3px 3px 3px rgba(16, 16, 16, 0.704));
+}
+
 .icon {
   padding: 8px;
   margin-left: -1px;
@@ -114,6 +140,19 @@
     drop-shadow(0 10px 8px rgba(227, 214, 214, 0.08));
   font-family: 'BaronNeue', sans-serif;
   text-transform: uppercase;
+}
+
+.images:nth-child(1) {
+  /* filter: drop-shadow(3px 3px 8px rgba(237, 232, 232, 0.304)); */
+  /* drop-shadow(0 10px 8px rgba(227, 214, 214, 0.08)); */
+  box-shadow: inset 0 10px 4px hsla(197, 81%, 44%, 30%),
+    17px 17px 4px hsla(0, 0%, 18%, 0.749),
+    18px 25px 20px hsla(0, 0%, 21%, 0.749), -5px 1px 4px hsla(0, 0%, 21%, 0.749);
+}
+.images:nth-child(2) {
+  box-shadow: inset 0 9px 4px hsla(197, 81%, 44%, 30%),
+    17px 10px 4px hsla(0, 0%, 18%, 0.749),
+    18px 20px 20px hsla(0, 0%, 21%, 0.749), -5px 2px 4px hsla(0, 0%, 21%, 0.749);
 }
 
 .logo {

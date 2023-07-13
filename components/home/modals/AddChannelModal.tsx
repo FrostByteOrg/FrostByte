@@ -7,7 +7,8 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useUser } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { createChannel } from '@/services/channels.service';
 import { PostgrestError } from '@supabase/supabase-js';
 import { useGetUserPermsForServer } from '@/lib/store';
@@ -27,7 +28,7 @@ export default function AddChannelModal({
   const [showDesc, setSetShowDesc] = useState<boolean>(false);
   const [channelType, setChannelType] = useState<'media' | 'text'>('text');
 
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   const user = useUser();
   const getUserServerPerms = useGetUserPermsForServer();
 
@@ -68,7 +69,6 @@ export default function AddChannelModal({
       if ((error as PostgrestError).message) {
         setServerError((error as PostgrestError).message);
       }
-
       else {
         setServerError(error as string);
       }
@@ -78,7 +78,6 @@ export default function AddChannelModal({
       }, 7000);
       return;
     }
-
     else {
       addChannelRef.current?.close();
       setChannelType('text');

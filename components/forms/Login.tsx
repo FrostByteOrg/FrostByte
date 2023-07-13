@@ -6,8 +6,8 @@ import {
 } from '@/types/client/session';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/router';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/database.supabase';
 import { Input } from './Styles';
 import EmailIcon from '../icons/EmailIcon';
@@ -24,7 +24,7 @@ export default function Login({
   setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
 }) {
   const router = useRouter();
-  const supabase = useSupabaseClient<Database>();
+  const supabase = createClientComponentClient<Database>();
   const {
     register,
     handleSubmit,
@@ -54,8 +54,14 @@ export default function Login({
   async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo: 'https://www.frostbyteapp.com/auth/callback',
+      },
     });
     if (error) console.log(error);
+    // if (data && !error) {
+    //   router.push('/');
+    // }
   }
 
   async function signInWithGitHub() {
@@ -63,8 +69,13 @@ export default function Login({
       provider: 'github',
       options: {
         scopes: 'user',
+        redirectTo: 'https://www.frostbyteapp.com/auth/callback',
       },
     });
+    if (error) console.log(error);
+    // if (data && !error) {
+    //   router.push('/');
+    // }
   }
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>

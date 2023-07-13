@@ -3,7 +3,7 @@ import Modal from '@/components/home/modals/Modal';
 import { createInvite } from '@/services/invites.service';
 import { Channel } from '@/types/dbtypes';
 import { CreateInviteFormInput } from '@/types/client/forms/createInvite';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Dispatch, SetStateAction, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -18,7 +18,7 @@ export default function CreateInviteModal({
   channel: Channel;
 }) {
   const modalRef = useRef<HTMLDialogElement>(null);
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
 
   const {
     register,

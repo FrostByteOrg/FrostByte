@@ -1,5 +1,6 @@
 import { KeyboardEvent, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
+import SendIcon from '@/components/icons/SendIcon';
 
 export default function MessageInput({
   onSubmit,
@@ -22,8 +23,14 @@ export default function MessageInput({
     }
   };
 
+  const submitMobile = (event: any) => {
+    event.preventDefault();
+    onSubmit(messageText);
+    setMessageText('');
+  };
+
   return (
-    <div className={`${styles.messageInput} mt-1 p-3`}>
+    <div className={`${styles.messageInput} mt-1 p-3 relative`}>
       <textarea
         className={`
         w-full
@@ -45,6 +52,7 @@ export default function MessageInput({
       `}
         disabled={disabled}
         placeholder={`Message ${channelName}`}
+        inputMode="text"
         value={
           disabled
             ? 'You do not have permission to message in this channel'
@@ -52,6 +60,10 @@ export default function MessageInput({
         }
         onChange={(e) => setMessageText(e.target.value)}
         onKeyDown={(e) => submitOnEnter(e)}
+      />
+      <SendIcon
+        onClick={(e) => submitMobile(e)}
+        className="w-5 h-5 absolute right-5 top-6 "
       />
     </div>
   );

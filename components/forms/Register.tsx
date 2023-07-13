@@ -3,12 +3,13 @@ import styles from '@/styles/Auth.module.css';
 import { createUserSchema, CreateUserInput } from '@/types/client/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/database.supabase';
 import { Input } from './Styles';
 import EmailIcon from '../icons/EmailIcon';
 import PasswordIcon from '../icons/PasswordIcon';
 import UsernameIcon from '../icons/UsernameIcon';
+import { toast } from 'react-toastify';
 
 export default function Register({
   setServerError,
@@ -17,7 +18,7 @@ export default function Register({
   setServerError: Dispatch<SetStateAction<string | null>>;
   setAuthType: Dispatch<SetStateAction<'login' | 'register' | 'resetPassword'>>;
 }) {
-  const supabase = useSupabaseClient<Database>();
+  const supabase = createClientComponentClient<Database>();
   const {
     register,
     handleSubmit,
@@ -35,6 +36,7 @@ export default function Register({
         data: {
           username: formData.username,
         },
+        emailRedirectTo: 'https://www.frostbyteapp.com/auth/callback',
       },
     });
     if (error) {
@@ -44,6 +46,10 @@ export default function Register({
       }, 7000);
     }
     if (data && !error) {
+      toast.success(`A confirmation email has been sent to ${formData.email}`, {
+        position: 'top-center',
+        autoClose: false,
+      });
       setAuthType('login');
     }
   };

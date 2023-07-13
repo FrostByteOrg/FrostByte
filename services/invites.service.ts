@@ -1,10 +1,12 @@
 import { addDate } from '@/lib/dateManagement';
 import { Database } from '@/types/database.supabase';
 import { Invite, ServerInvite } from '@/types/dbtypes';
-import { InviteExpiry } from '@/types/inviteExpiry';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-export async function getInviteByCode(supabase: SupabaseClient<Database>, inviteCode: string) {
+export async function getInviteByCode(
+  supabase: SupabaseClient<Database>,
+  inviteCode: string
+) {
   return await supabase
     .from('server_invites')
     .select('*')
@@ -20,7 +22,7 @@ export async function createInvite(
   supabase: SupabaseClient<Database>,
   serverId: number,
   channelId: number,
-  expiresAt: InviteExpiry | null = '1 week',
+  expiresAt: string = '1 week',
   numUses: number | null = null,
   urlId: string | undefined = undefined
 ) {
@@ -62,7 +64,10 @@ type CreateInviteResponse = Awaited<ReturnType<typeof createInvite>>;
 export type CreateInviteResponseSuccess = CreateInviteResponse['data'];
 export type CreateInviteResponseError = CreateInviteResponse['error'];
 
-export async function deleteInvite(supabase: SupabaseClient<Database>, inviteId: number) {
+export async function deleteInvite(
+  supabase: SupabaseClient<Database>,
+  inviteId: number
+) {
   return await supabase
     .from('server_invites')
     .delete()
@@ -75,7 +80,10 @@ type DeleteInviteResponse = Awaited<ReturnType<typeof deleteInvite>>;
 export type DeleteInviteResponseSuccess = DeleteInviteResponse['data'];
 export type DeleteInviteResponseError = DeleteInviteResponse['error'];
 
-export async function decrementInviteUses(supabase: SupabaseClient<Database>, invite: Invite) {
+export async function decrementInviteUses(
+  supabase: SupabaseClient<Database>,
+  invite: Invite
+) {
   return await supabase
     .from('server_invites')
     .update({ uses_remaining: invite.uses_remaining! - 1 })
@@ -84,9 +92,13 @@ export async function decrementInviteUses(supabase: SupabaseClient<Database>, in
     .single();
 }
 
-type DecrementInviteUsesResponse = Awaited<ReturnType<typeof decrementInviteUses>>;
-export type DecrementInviteUsesResponseSuccess = DecrementInviteUsesResponse['data'];
-export type DecrementInviteUsesResponseError = DecrementInviteUsesResponse['error'];
+type DecrementInviteUsesResponse = Awaited<
+  ReturnType<typeof decrementInviteUses>
+>;
+export type DecrementInviteUsesResponseSuccess =
+  DecrementInviteUsesResponse['data'];
+export type DecrementInviteUsesResponseError =
+  DecrementInviteUsesResponse['error'];
 
 export async function getInviteAndServer(
   supabase: SupabaseClient<Database>,
@@ -100,9 +112,13 @@ export async function getInviteAndServer(
     .single();
 }
 
-type GetInviteAndServerResponse = Awaited<ReturnType<typeof getInviteAndServer>>;
-export type GetInviteAndServerResponseSuccess = GetInviteAndServerResponse['data'];
-export type GetInviteAndServerResponseError = GetInviteAndServerResponse['error'];
+type GetInviteAndServerResponse = Awaited<
+  ReturnType<typeof getInviteAndServer>
+>;
+export type GetInviteAndServerResponseSuccess =
+  GetInviteAndServerResponse['data'];
+export type GetInviteAndServerResponseError =
+  GetInviteAndServerResponse['error'];
 
 export async function getInvitesForServer(
   supabase: SupabaseClient<Database>,
@@ -114,6 +130,10 @@ export async function getInvitesForServer(
     .eq('server_id', serverId);
 }
 
-type GetInvitesForServerResponse = Awaited<ReturnType<typeof getInvitesForServer>>;
-export type GetInvitesForServerResponseSuccess = GetInvitesForServerResponse['data'];
-export type GetInvitesForServerResponseError = GetInvitesForServerResponse['error'];
+type GetInvitesForServerResponse = Awaited<
+  ReturnType<typeof getInvitesForServer>
+>;
+export type GetInvitesForServerResponseSuccess =
+  GetInvitesForServerResponse['data'];
+export type GetInvitesForServerResponseError =
+  GetInvitesForServerResponse['error'];
